@@ -50,13 +50,14 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/utf-8 /ignore:4049 /ignore:4098 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+      <AdditionalOptions>/ignore:4049 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -68,7 +69,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/utf-8 /ignore:4049 /ignore:4098 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -77,6 +78,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+      <AdditionalOptions>/ignore:4049 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
