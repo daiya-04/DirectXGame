@@ -774,6 +774,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());  //頂点データをリソースにコピー
 
 	bool useMonsterBall = false;
+	bool createObject[] = {false,false,false,false};
 
 	MSG msg{};
 	//ウィンドウの✕ボタンが押されるまでループ
@@ -793,40 +794,57 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 			ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
 			static int item = 0;
 			ImGui::Combo("Model", &item, "Triangle\0Sprite\0Sphere\0Cube\0");
+			if (ImGui::Button("Create")) {
+				if (item == 0) {
+					createObject[0] = true;
+				}
+				if (item == 1) {
+					createObject[1] = true;
+				}
+				if (item == 2) {
+					createObject[2] = true;
+				}
+				if (item == 3) {
+					createObject[3] = true;
+				}
+			}
+
 			//Triangle
-			if (item == 0) {
+			if (createObject[0] == true) {
 
 			}
 			//Sprite
-			if (item == 1) {
-				ImGui::ColorEdit4("Color", &materialDataSprite->color.x);
-				ImGui::DragFloat3("Translate", &transformSprite.translate.x, 1.0f);
-				ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-				ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-				ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+			if (createObject[1] == true) {
+				if (ImGui::CollapsingHeader("object")){
+					ImGui::ColorEdit4("Color", &materialDataSprite->color.x);
+					ImGui::DragFloat3("Translate", &transformSprite.translate.x, 1.0f);
+					ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+					ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+					ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+				}
 			}
 			//Sphere
-			if (item == 2) {
-
-				ImGui::ColorEdit4("SphereColor", &materialData->color.x);
-				ImGui::SliderAngle("SphereRotateX", &transform.rotate.x);
-				ImGui::SliderAngle("SphereRotateY", &transform.rotate.y);
-				ImGui::SliderAngle("SphereRotateZ", &transform.rotate.z);
-				ImGui::Checkbox("useMonsterBall.intensity", &useMonsterBall);
-				if (ImGui::CollapsingHeader("Light")){
-					ImGui::ColorEdit3("directionalLightData.color", &directionalLightData->color.x);
-					ImGui::SliderFloat3("directionalLightData.direction", &directionalLightData->direction.x, -1.0f, 1.0f);
-					ImGui::DragFloat("directionalLightData", &directionalLightData->intensity, 0.01f);
+			if (createObject[2] == true) {
+				if (ImGui::CollapsingHeader("object")){
+					ImGui::ColorEdit4("SphereColor", &materialData->color.x);
+					ImGui::DragFloat3("Translate", &transform.translate.x, 0.01f);
+					ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f);
+					ImGui::DragFloat3("Scale", &transform.scale.x, 0.01f);
+					ImGui::Checkbox("useMonsterBall.intensity", &useMonsterBall);
+					if (ImGui::CollapsingHeader("Light")) {
+						ImGui::ColorEdit3("directionalLightData.color", &directionalLightData->color.x);
+						ImGui::SliderFloat3("directionalLightData.direction", &directionalLightData->direction.x, -1.0f, 1.0f);
+						ImGui::DragFloat("directionalLightData", &directionalLightData->intensity, 0.01f);
+					}
 				}
-				
 			}
 			//Cube
-			if (item == 3) {
+			if (createObject[3] = true) {
 
 			}
 
-			
 			ImGui::End();
+			
 
 			
 
@@ -888,51 +906,45 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 			commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
 			//指定した深度で画面全体をクリアする
 			commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-
+			
 			commandList->RSSetViewports(1, &viewport);  //Viewportを設定
 			commandList->RSSetScissorRects(1, &scissorRect);  //Scissorを設定
 			//RootSignatureを設定。PSOに設定しているけど別途設定が必要
 			commandList->SetGraphicsRootSignature(rootSignature.Get());
 			commandList->SetPipelineState(graphicsPipelineState);  //PSOを設定
-			
+			commandList->IASetVertexBuffers(0, 1, &vertexBufferView); //VBVを設定
 			//形状を設定。PSOに設定しているものとはまた別。斧地物を設定すると考えておけばいい
 			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
+			//マテリアルCBufferの場所を設定
+			commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+			//wvp用のCBufferの場所の設定
+			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+			//SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
+			commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU[1] : textureSrvHandleGPU[0]);
+			commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 			
 
 
 			//描画！（DrawCall/ドローコール）。3頂点で1つのインスタンス。
-			if (item == 2) {
-				//Sphereの描画
-				commandList->IASetVertexBuffers(0, 1, &vertexBufferView); //VBVを設定
-				//マテリアルCBufferの場所を設定
-				commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-				//wvp用のCBufferの場所の設定
-				commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-				//SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-				commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU[1] : textureSrvHandleGPU[0]);
-				commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
-
-				commandList->DrawInstanced(kSubdivision * kSubdivision * 6, 1, 0, 0);
+			if (createObject[2] == true) {
+				commandList->DrawInstanced(kSubdivision* kSubdivision * 6, 1, 0, 0);
 			}
 			
+
+			//Spriteの描画。変更が必要なものだけ変更する
+			commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);  //VBVを設定
+			commandList->IASetIndexBuffer(&indexBufferViewSprite);  //IBVを設定
+			//TransformationMatrixCBufferの場所を設定
+			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[0]);
+			commandList->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
 			//commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
-
-			
 			//commandList->DrawInstanced(6, 1, 0, 0);
-			if (item == 1) {
-				//Spriteの描画。変更が必要なものだけ変更する
-				commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);  //VBVを設定
-				commandList->IASetIndexBuffer(&indexBufferViewSprite);  //IBVを設定
-				//TransformationMatrixCBufferの場所を設定
-				commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-				commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[0]);
-				commandList->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
-
-
+			if (createObject[1] == true) {
 				commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 			}
 			
+
 
 			ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
 
