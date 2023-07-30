@@ -1125,6 +1125,10 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 				ImGui::DragFloat2("SphereUVTranslate", &uvTransformSphere.translate.x, 0.01f, -10.0f, 10.0f);
 				ImGui::DragFloat2("SphereUVScale", &uvTransformSphere.scale.x, 0.01f, -10.0f, 10.0f);
 				ImGui::SliderAngle("SphereUVRotate", &uvTransformSphere.rotate.z);
+				ImGui::RadioButton("None", &materialData->enableLightnig, 0); ImGui::SameLine();
+				ImGui::RadioButton("Lambert", &materialData->enableLightnig, 1); ImGui::SameLine();
+				ImGui::RadioButton("Half Lambert", &materialData->enableLightnig, 2);
+
 				ImGui::Checkbox("useMonsterBall.intensity", &useMonsterBall);
 				if (ImGui::CollapsingHeader("Light")) {
 					ImGui::ColorEdit3("directionalLightData.color", &directionalLightData->color.x);
