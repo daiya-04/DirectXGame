@@ -1025,7 +1025,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));  //書き込むためのアドレスを取得
 	//std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());  //頂点データをリソースにコピー
 
-	bool useMonsterBall = false;
+	bool useMonsterBall[5] = {};
 	bool createObject[5] = {};
 
 	
@@ -1070,11 +1070,13 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 				ImGui::DragFloat2("Triangle1UVTranslate", &uvTransformTriangle[0].translate.x, 0.01f, -10.0f, 10.0f);
 				ImGui::DragFloat2("Triangle1UVScale", &uvTransformTriangle[0].scale.x, 0.01f, -10.0f, 10.0f);
 				ImGui::SliderAngle("Triangle1UVRotate", &uvTransformTriangle[0].rotate.z);
+				ImGui::Checkbox("useMonsterBall1", &useMonsterBall[0]);
 				if (ImGui::Button("Delete1")) {
 					createObject[0] = false;
 					transformTriangle[0] = {{1.0f,1.0f,1.0f},{},{}};
 					uvTransformTriangle[0] = { {1.0f,1.0f,1.0f},{},{} };
 					materialDataTriangle->color = { 1.0f,1.0f,1.0f,1.0f };
+					useMonsterBall[0] = false;
 				}
 			}
 			
@@ -1088,11 +1090,13 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 				ImGui::DragFloat2("Triangle2UVTranslate", &uvTransformTriangle[1].translate.x, 0.01f, -10.0f, 10.0f);
 				ImGui::DragFloat2("Triangle2UVScale", &uvTransformTriangle[1].scale.x, 0.01f, -10.0f, 10.0f);
 				ImGui::SliderAngle("Triangle2UVRotate", &uvTransformTriangle[1].rotate.z);
+				ImGui::Checkbox("useMonsterBall2", &useMonsterBall[1]);
 				if (ImGui::Button("Delete2")) {
 					createObject[1] = false;
 					transformTriangle[1] = { {1.0f,1.0f,1.0f},{},{} };
 					uvTransformTriangle[1] = { {1.0f,1.0f,1.0f},{},{} };
 					materialDataTriangle2->color = { 1.0f,1.0f,1.0f,1.0f };
+					useMonsterBall[1] = false;
 				}
 			}
 			
@@ -1107,11 +1111,13 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 				ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
 				ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 				ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+				ImGui::Checkbox("useMonsterBall3", &useMonsterBall[2]);
 				if (ImGui::Button("Delete3")) {
 					createObject[2] = false;
 					transformSprite = { {1.0f,1.0f,1.0f},{},{} };
 					uvTransformSprite = { {1.0f,1.0f,1.0f},{},{} };
 					materialDataSprite->color = { 1.0f,1.0f,1.0f,1.0f };
+					useMonsterBall[2] = false;
 				}
 			}
 		}
@@ -1129,7 +1135,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 				ImGui::RadioButton("Lambert", &materialData->enableLightnig, 1); ImGui::SameLine();
 				ImGui::RadioButton("Half Lambert", &materialData->enableLightnig, 2);
 
-				ImGui::Checkbox("useMonsterBall.intensity", &useMonsterBall);
+				ImGui::Checkbox("useMonsterBall4", &useMonsterBall[3]);
 				if (ImGui::CollapsingHeader("Light")) {
 					ImGui::ColorEdit3("directionalLightData.color", &directionalLightData->color.x);
 					ImGui::SliderFloat3("directionalLightData.direction", &directionalLightData->direction.x, -1.0f, 1.0f);
@@ -1140,6 +1146,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 					transform = { {1.0f,1.0f,1.0f},{},{} };
 					uvTransformSphere = { {1.0f,1.0f,1.0f},{},{} };
 					materialData->color = { 1.0f,1.0f,1.0f,1.0f };
+					useMonsterBall[3] = false;
 				}
 			}
 		}
@@ -1153,11 +1160,13 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 				ImGui::DragFloat2("CubeUVTranslate", &uvTransformCube.translate.x, 0.01f, -10.0f, 10.0f);
 				ImGui::DragFloat2("CubeUVScale", &uvTransformCube.scale.x, 0.01f, -10.0f, 10.0f);
 				ImGui::SliderAngle("CubeUVRotate", &uvTransformCube.rotate.z);
+				ImGui::Checkbox("useMonsterBall5", &useMonsterBall[4]);
 				if (ImGui::Button("Delete5")) {
 					createObject[4] = false;
 					transformCube = { {1.0f,1.0f,1.0f},{},{} };
 					uvTransformCube = { {1.0f,1.0f,1.0f},{},{} };
 					materialDataCube->color = { 1.0f,1.0f,1.0f,1.0f };
+					useMonsterBall[4] = false;
 				}
 			}
 		}
@@ -1272,7 +1281,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		//wvp用のCBufferの場所の設定
 		commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 		//SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-		commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU[1] : textureSrvHandleGPU[0]);
+		commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall[3] ? textureSrvHandleGPU[1] : textureSrvHandleGPU[0]);
 		commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 
 		//描画！（DrawCall/ドローコール）。3頂点で1つのインスタンス。
@@ -1289,7 +1298,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		//wvp用のCBufferの場所の設定
 		commandList->SetGraphicsRootConstantBufferView(1, wvpResourceTriangle->GetGPUVirtualAddress());
 		//SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[0]);
+		commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall[0] ? textureSrvHandleGPU[1] : textureSrvHandleGPU[0]);
 		if (createObject[0] == true) {
 			commandList->DrawInstanced(3, 1, 0, 0);
 		}
@@ -1302,7 +1311,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		//wvp用のCBufferの場所の設定
 		commandList->SetGraphicsRootConstantBufferView(1, wvpResourceTriangle2->GetGPUVirtualAddress());
 		//SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[0]);
+		commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall[1] ? textureSrvHandleGPU[1] : textureSrvHandleGPU[0]);
 		if (createObject[1] == true) {
 			commandList->DrawInstanced(3, 1, 0, 0);
 		}
@@ -1316,7 +1325,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		//wvp用のCBufferの場所の設定
 		commandList->SetGraphicsRootConstantBufferView(1, wvpResourceCube->GetGPUVirtualAddress());
 		//SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[0]);
+		commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall[4] ? textureSrvHandleGPU[1] : textureSrvHandleGPU[0]);
 		if (createObject[4] == true) {
 			commandList->DrawInstanced(36, 1, 0, 0);
 		}
@@ -1328,7 +1337,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		commandList->IASetIndexBuffer(&indexBufferViewSprite);  //IBVを設定
 		//TransformationMatrixCBufferの場所を設定
 		commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-		commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[0]);
+		commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall[2] ? textureSrvHandleGPU[1] : textureSrvHandleGPU[0]);
 		commandList->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
 		//commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 		//commandList->DrawInstanced(6, 1, 0, 0);
