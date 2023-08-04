@@ -27,14 +27,15 @@ PixelShaderOutput main(VertexShaderOutput input){
 	float4 transformedUV = mul(float32_t4(input.texcoord,0.0f,1.0f),gMaterial.uvTransform);
 	float32_t4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
 
-	if(gMaterial.enableLighting != 0) {
-
+	if(gMaterial.enableLighting == 2) {
 	    float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
 	    float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
 		output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
-	} else {
+	} else if(gMaterial.enableLighting == 1) {
+	    float cos = saturate(dot(normalize(input.normal), -gDirectionalLight.direction));
+		output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
+	} else if(gMaterial.enableLighting == 0){
 	    output.color = gMaterial.color * textureColor;
 	}
-
 	return output;
 }
