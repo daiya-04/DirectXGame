@@ -390,10 +390,10 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	//Shaderをコンパイルする
-	IDxcBlob* verterShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+	IDxcBlob* verterShaderBlob = CompileShader(L"Resources/shaders/Object3D.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(verterShaderBlob != nullptr);
 
-	IDxcBlob* pixelShaderBlob = CompileShader(L"Object3D.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+	IDxcBlob* pixelShaderBlob = CompileShader(L"Resources/shaders/Object3D.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(pixelShaderBlob != nullptr);
 
 	//DepthStencilStateの設定
