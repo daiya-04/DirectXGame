@@ -69,9 +69,16 @@ struct DirectionalLight {
 	float intensity;
 };
 
+struct MaterialData {
+	std::string textureFilePath;
+};
+
 struct ModelData {
 	std::vector<VertexData> vertices;
+	MaterialData material;
 };
+
+
 
 struct D3DResourceLeakChecker {
 	~D3DResourceLeakChecker() {
@@ -112,6 +119,8 @@ D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> 
 D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
 ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
+
+MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
 int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	D3DResourceLeakChecker leakCheck;
@@ -491,7 +500,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//}
 	
 	//モデル読み込み
-	ModelData modelData = LoadObjFile("Resources", "plane.obj");
+	ModelData modelData = LoadObjFile("Resources", "axis.obj");
 	//頂点リソースを作る
 	ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size());
 	//頂点バッファビューを作成する
@@ -571,7 +580,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	ComPtr<ID3D12Resource> intermediateResource[2];
 
 	//Textureを読んで転送する
-	mipImages[0] = LoadTexture("Resources/uvChecker.png");
+	mipImages[0] = LoadTexture(modelData.material.textureFilePath);
 	const DirectX::TexMetadata& metadata = mipImages[0].GetMetadata();
 	textureResource[0] = CreateTextureResource(device, metadata);
 	intermediateResource[0] = UploadTextureData(textureResource[0], mipImages[0], device, commandList);
@@ -594,7 +603,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	device->CreateShaderResourceView(textureResource[0].Get(), &srvDesc[0], textureSrvHandleCPU[0]);
 
 	//2枚目のTextureを読んで転送する
-	mipImages[1] = LoadTexture("Resources/monsterBall.png");
+	mipImages[1] = LoadTexture(modelData.material.textureFilePath);
 	const DirectX::TexMetadata& metadata2 = mipImages[1].GetMetadata();
 	textureResource[1] = CreateTextureResource(device, metadata2);
 	intermediateResource[1] = UploadTextureData(textureResource[1], mipImages[1], device, commandList);
@@ -1716,7 +1725,7 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 
 			normals.push_back(normal);
 		}else if (identifier == "f") {
-			//VertexData triangle[3];
+			VertexData triangle[3];
 			//面は三角形限定。その他は未対応
 			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
 				std::string vertexDefinition;
@@ -1734,19 +1743,49 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				Vector3 normal = normals[elementIndices[2] - 1];
 				
-				
-				
+				position.x *= -1;
+				normal.x *= -1;
+				texcoord.y = 1.0f - texcoord.y;
 
-				VertexData vertex = { position,texcoord,normal };
-				modelData.vertices.push_back(vertex);
-				//triangle[faceVertex] = { position,texcoord,normal };
+				//VertexData vertex = { position,texcoord,normal };
+				//modelData.vertices.push_back(vertex);
+				triangle[faceVertex] = { position,texcoord,normal };
 			}
 			//頂点を逆順で登録することで、周り順を逆にする
-			/*modelData.vertices.push_back(triangle[2]);
+			modelData.vertices.push_back(triangle[2]);
 			modelData.vertices.push_back(triangle[1]);
-			modelData.vertices.push_back(triangle[0]);*/
+			modelData.vertices.push_back(triangle[0]);
+		}else if (identifier == "mtllib") {
+			//materialTemplateLibraryファイルの名前を取得する
+			std::string materialFilename;
+			s >> materialFilename;
+			//基本的にobjファイルと同一階層にmtlは存続させるので、ディレクトリ名とファイル名を渡す
+			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
 		}
 	}
 
 	return modelData;
+}
+
+MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
+
+	MaterialData materialData; //構築するMatrialData
+	std::string line; //ファイルから読んだ1行を格納するもの
+	std::ifstream file(directoryPath + "/" + filename); //ファイルを開く
+	assert(file.is_open()); //開かなかったら止める
+
+	while (std::getline(file, line)) {
+		std::string identifier;
+		std::istringstream s(line);
+		s >> identifier;
+
+		//identifierに応じた処理
+		if (identifier == "map_Kd") {
+			std::string textureFilename;
+			s >> textureFilename;
+			//連結してファイルパスにする
+			materialData.textureFilePath = directoryPath + "/" + textureFilename;
+		}
+	}
+	return materialData;
 }
