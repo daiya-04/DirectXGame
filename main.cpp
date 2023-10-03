@@ -20,16 +20,15 @@
 #include <fstream>
 #include <sstream>
 #include <wrl.h>
-#define DIRECTINPUT_VERSION    0x0800
-#include <dinput.h>
+#include "Input.h"
+
 
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
-#pragma comment(lib,"dinput8.lib")
-#pragma comment(lib,"dxguid.lib")
+
 
 
 using namespace Microsoft::WRL;
@@ -130,6 +129,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	D3DResourceLeakChecker leakCheck;
 
 	WinApp* win = nullptr;
+	Input* input = nullptr;
 
 	win = WinApp::GetInstance();
 	win->CreateGameWindow(L"Engine");
@@ -307,20 +307,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 	assert(SUCCEEDED(hr));
 
-	//DirectInputの初期化
-	ComPtr<IDirectInput8> directInput = nullptr;
-	hr = DirectInput8Create(win->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
-	assert(SUCCEEDED(hr));
-	//キーボードデバイスの生成
-	ComPtr<IDirectInputDevice8> keyBoard = nullptr;
-	hr = directInput->CreateDevice(GUID_SysKeyboard, &keyBoard, NULL);
-	assert(SUCCEEDED(hr));
-	//入力データの	形式セット
-	hr = keyBoard->SetDataFormat(&c_dfDIKeyboard); //標準形式
-	assert(SUCCEEDED(hr));
-	//排他制御レベルのセット
-	hr = keyBoard->SetCooperativeLevel(win->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
-	assert(SUCCEEDED(hr));
+	input = new Input();
+	input->Initialize(win->GetHInstance(), win->GetHwnd());
 
 	//FenceのSignalを持つためのイベントを作成する
 	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -1253,15 +1241,15 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		//ゲームの処理
 
-        //キーボードの情報の取得開始
-        keyBoard->Acquire();
-		//全キーの入力状態を取得する
-		BYTE key[256] = {};
-		keyBoard->GetDeviceState(sizeof(key), key);
+        input->Update();
 
-		if (key[DIK_D]) {
+		if (input->PushKey(DIK_D)) {
 			OutputDebugStringA("Hit D\n");
 		}
+		if (input->TriggerKey(DIK_SPACE)) {
+			OutputDebugStringA("Shot!\n");
+		}
+		
 
 		directionalLightData->direction = directionalLightData->direction.Normalize();
 
@@ -1485,7 +1473,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	verterShaderBlob->Release();
 	//VSBlobTriangle->Release();
 	//PSBlobTriangle->Release();
-	
+	delete input;
 	win->TerminateGameWindow();
 
 	return 0;
