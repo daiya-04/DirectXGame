@@ -22,7 +22,9 @@ public: //静的メンバ関数
 
 	static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 public: //メンバ関数
-	HWND GetHwnd() { return hwnd_; }
+	HWND GetHwnd() const { return hwnd_; }
+
+	HINSTANCE GetHInstance() const { return wc_.hInstance; }
 
 	void CreateGameWindow(const wchar_t* title = L"DirectXGame", int32_t clientWidth = kClientWidth, int32_t clientHeight = kClientHeight);
 

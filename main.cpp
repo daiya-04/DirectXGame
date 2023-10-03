@@ -20,12 +20,16 @@
 #include <fstream>
 #include <sstream>
 #include <wrl.h>
+#define DIRECTINPUT_VERSION    0x0800
+#include <dinput.h>
 
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
+#pragma comment(lib,"dinput8.lib")
+#pragma comment(lib,"dxguid.lib")
 
 
 using namespace Microsoft::WRL;
@@ -284,10 +288,38 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//2つ目を作る
 	device->CreateRenderTargetView(swapChainResource[1].Get(), &rtvDesc, rtvHandles[1]);
 
+	//DepthStencilTextureをウィンドウのサイズで作成
+	ComPtr<ID3D12Resource> depthStencilResource = CreateDepthStencilTextureResource(device, WinApp::kClientWidth, WinApp::kClientHeight);
+
+	//DSV用のヒープでディスクリプタの数は1。DSVはShader内で触るものではないので,ShaderVisibleはfalse
+	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+
+	//DVSの設定
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //Format。基本的にはResourceに合わせる
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2dTexture
+	//DSVHeapの先頭にDSVを作る
+	device->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+
 	//初期値0でFenceを作る
 	ComPtr<ID3D12Fence> fence = nullptr;
 	uint64_t fenceValue = 0;
 	hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+	assert(SUCCEEDED(hr));
+
+	//DirectInputの初期化
+	ComPtr<IDirectInput8> directInput = nullptr;
+	hr = DirectInput8Create(win->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
+	assert(SUCCEEDED(hr));
+	//キーボードデバイスの生成
+	ComPtr<IDirectInputDevice8> keyBoard = nullptr;
+	hr = directInput->CreateDevice(GUID_SysKeyboard, &keyBoard, NULL);
+	assert(SUCCEEDED(hr));
+	//入力データの	形式セット
+	hr = keyBoard->SetDataFormat(&c_dfDIKeyboard); //標準形式
+	assert(SUCCEEDED(hr));
+	//排他制御レベルのセット
+	hr = keyBoard->SetCooperativeLevel(win->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(hr));
 
 	//FenceのSignalを持つためのイベントを作成する
@@ -528,7 +560,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//}
 	
 	//モデル読み込み
-	ModelData modelData = LoadObjFile("Resources", "fence.obj");
+	ModelData modelData = LoadObjFile("Resources", "plane.obj");
 	//頂点リソースを作る
 	ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size());
 	//頂点バッファビューを作成する
@@ -648,18 +680,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//SRVの生成
 	device->CreateShaderResourceView(textureResource[1].Get(), &srvDesc[1], textureSrvHandleCPU[1]);
 
-	//DepthStencilTextureをウィンドウのサイズで作成
-	ComPtr<ID3D12Resource> depthStencilResource = CreateDepthStencilTextureResource(device, WinApp::kClientWidth, WinApp::kClientHeight);
-
-	//DSV用のヒープでディスクリプタの数は1。DSVはShader内で触るものではないので,ShaderVisibleはfalse
-	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
-
-	//DVSの設定
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //Format。基本的にはResourceに合わせる
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2dTexture
-	//DSVHeapの先頭にDSVを作る
-	device->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+	
 
 	//Sprite用の頂点リソースを作る
 	ComPtr<ID3D12Resource> vertexResourceSprite = CreateBufferResource(device, sizeof(VertexData) * 6);
@@ -1232,6 +1253,15 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		//ゲームの処理
 
+        //キーボードの情報の取得開始
+        keyBoard->Acquire();
+		//全キーの入力状態を取得する
+		BYTE key[256] = {};
+		keyBoard->GetDeviceState(sizeof(key), key);
+
+		if (key[DIK_D]) {
+			OutputDebugStringA("Hit D\n");
+		}
 
 		directionalLightData->direction = directionalLightData->direction.Normalize();
 
