@@ -3,12 +3,19 @@
 
 #pragma comment(lib,"dinput8.lib")
 
-void Input::Initialize(HINSTANCE hInstance, HWND hwnd) {
+Input* Input::GetInstance() {
+	static Input instance;
+
+	return &instance;
+}
+
+void Input::Initialize(WinApp* win) {
 
 	HRESULT hr;
+	win_ = win;
 
 	//DirectInputの初期化
-	hr = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
+	hr = DirectInput8Create(win_->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
 	assert(SUCCEEDED(hr));
 	//キーボードデバイスの生成
 	hr = directInput->CreateDevice(GUID_SysKeyboard, &keyBoard, NULL);
@@ -17,7 +24,7 @@ void Input::Initialize(HINSTANCE hInstance, HWND hwnd) {
 	hr = keyBoard->SetDataFormat(&c_dfDIKeyboard); //標準形式
 	assert(SUCCEEDED(hr));
 	//排他制御レベルのセット
-	hr = keyBoard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	hr = keyBoard->SetCooperativeLevel(win_->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(hr));
 
 }

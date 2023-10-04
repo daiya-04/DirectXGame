@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <wrl.h>
+#include "WinApp.h"
 
 #define DIRECTINPUT_VERSION    0x0800
 #include <dinput.h>
@@ -12,15 +13,24 @@ public:
 
 private:
 
-	ComPtr<IDirectInput8> directInput = nullptr;
-	ComPtr<IDirectInputDevice8> keyBoard = nullptr;
+	Input() = default;
+	~Input() = default;
+	Input(const Input&) = delete;
+	Input& operator=(const Input&) = delete;
+
+	ComPtr<IDirectInput8> directInput;
+	ComPtr<IDirectInputDevice8> keyBoard;
 	BYTE key[256] = {};
 	BYTE preKey[256] = {};
 
+	WinApp* win_ = nullptr;
+
 public:
 
+	static Input* GetInstance();
+
 	//初期化
-	void Initialize(HINSTANCE hInstance,HWND hwnd);
+	void Initialize(WinApp* win);
 	//更新
 	void Update();
 
