@@ -1,5 +1,6 @@
 #include "WinApp.h"
 #include "DirectXCommon.h"
+#include "ImGuiManager.h"
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <cstdint>
@@ -11,8 +12,6 @@
 #include "Matrix44.h"
 #include "Vec3.h"
 #include "externals/imgui/imgui.h"
-#include "externals/imgui/imgui_impl_dx12.h"
-#include "externals/imgui/imgui_impl_win32.h"
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/DirectXTex/d3dx12.h"
 #include <vector>
@@ -131,13 +130,18 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	WinApp* win = nullptr;
 	DirectXCommon* dxCommon = nullptr;
+
 	Input* input = nullptr;
+	
 
 	win = WinApp::GetInstance();
 	win->CreateGameWindow(L"Engine");
 
 	dxCommon = new DirectXCommon();
 	dxCommon->Initialize(win);
+
+	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
+	imguiManager->Initialize(win, dxCommon);
 
 //#ifdef _DEBUG
 //	ComPtr<ID3D12Debug1> debugController = nullptr;
@@ -615,17 +619,17 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		{0.0f,0.0f,0.0f}
 	};
 
-	//ImGuiの初期化
-	/*IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(win->GetHwnd());
-	ImGui_ImplDX12_Init(dxCommon->GetDevice(),
-		swapChainDesc.BufferCount,
-		rtvDesc.Format,
-		srvDescriptorHeap.Get(),
-		GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSRV, 0),
-		GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSRV, 0));*/
+	////ImGuiの初期化
+	//IMGUI_CHECKVERSION();
+	//ImGui::CreateContext();
+	//ImGui::StyleColorsDark();
+	//ImGui_ImplWin32_Init(win->GetHwnd());
+	//ImGui_ImplDX12_Init(dxCommon->GetDevice(),
+	//	static_cast<int>(dxCommon->GetBackBufferCount()),
+	//	DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+	//	srvDescriptorHeap.Get(),
+	//	GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSRV, 0),
+	//	GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSRV, 0));
 
 	DirectX::ScratchImage mipImages[2];
 	ComPtr<ID3D12Resource> textureResource[2];
@@ -1086,9 +1090,12 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		if (win->ProcessMessage()) { break; }
 		/*ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
+		ImGui::NewFrame();*/
+
+		imguiManager->Begin();
 
 		ImGui::Begin("Window");
+		ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
 		ImGui::ColorEdit4("SphereColor", &materialData->color.x);
 		ImGui::DragFloat3("SphereTranslate", &transform.translate.x, 0.01f);
 		ImGui::DragFloat3("SphereRotate", &transform.rotate.x, 0.01f);
@@ -1102,7 +1109,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 			ImGui::SliderFloat3("Light direction", &directionalLightData->direction.x, -1.0f, 1.0f);
 			ImGui::DragFloat("Light intensity", &directionalLightData->intensity, 0.01f);
 		}
-		ImGui::End();*/
+		ImGui::End();
 
 		//ImGui::Begin("Window");
 		//ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
@@ -1312,6 +1319,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		//ImGuiの内部コマンドを生成する
 		//ImGui::Render();
 
+		imguiManager->End();
+
 		dxCommon->preDraw();
 
 		////これから書き込むバックバッファのインデックスを取得
@@ -1425,6 +1434,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon->GetCommandList());
 
+		imguiManager->Draw();
+
 		dxCommon->postDraw();
 
 		////画面に描く処理はすべて終わり、画面に移すので、状態を遷移
@@ -1468,6 +1479,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	/*ImGui_ImplWin32_Shutdown();
 	ImGui_ImplDX12_Shutdown();
 	ImGui::DestroyContext();*/
+
+	imguiManager->Finalize();
 
 	//解放処理
 	

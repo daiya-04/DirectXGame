@@ -55,6 +55,7 @@ public:
 
 	ID3D12Device* GetDevice() const { return device_.Get(); }
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
+	size_t GetBackBufferCount() const { return backBuffers_.size(); }
 
 private:
 
