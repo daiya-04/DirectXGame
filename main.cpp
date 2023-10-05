@@ -11,6 +11,7 @@
 #include <dxcapi.h>
 #include "Matrix44.h"
 #include "Vec3.h"
+#include "Vec2.h"
 #include "externals/imgui/imgui.h"
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/DirectXTex/d3dx12.h"
@@ -38,9 +39,7 @@ struct Vector4 {
 	float x, y, z, w;
 };
 
-struct Vector2 {
-	float x, y;
-};
+
 
 struct VertexData {
 	Vector4 position;
