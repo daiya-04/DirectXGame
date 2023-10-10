@@ -5,9 +5,10 @@
 #include <vector>
 #include "WinApp.h"
 #include <chrono>
+#include <string>
 
 class DirectXCommon{
-public:
+private:
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
@@ -72,6 +73,13 @@ private:
 	void InitializeFixFPS();
 	//FPS固定更新
 	void UpdateFixFPS();
+
+	//ログ
+	void Log(const std::string& message);
+
+	std::wstring ConvertString(const std::string& str);
+
+	std::string ConvertString(const std::wstring& str);
 
 };
 

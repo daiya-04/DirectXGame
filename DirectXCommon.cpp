@@ -1,5 +1,6 @@
 #include "DirectXCommon.h"
 #include <cassert>
+#include <format>
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -34,7 +35,7 @@ void DirectXCommon::Initialize(WinApp* win) {
 void DirectXCommon::InitializeDevice() {
 
 #ifdef _DEBUG
-	ComPtr<ID3D12Debug1> debugController = nullptr;
+	ComPtr<ID3D12Debug1> debugController;
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
 		//デバッグレイヤーを有効化する
 		debugController->EnableDebugLayer();
@@ -60,7 +61,7 @@ void DirectXCommon::InitializeDevice() {
 		assert(SUCCEEDED(hr));
 		//ソフトウェアアダプターでなければ採用
 		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
-			//Log(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
+			Log(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
 			break;
 		}
 		//ソフトウェアアダプタの場合は見なかったことにする
@@ -81,12 +82,12 @@ void DirectXCommon::InitializeDevice() {
 		//指定した機能レベルでデバイスが生成できたかを確認
 		if (SUCCEEDED(hr)) {
 			//生成できたのでログ出力を行ってループを抜ける
-			//Log(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
+			Log(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
 			break;
 		}
 	}
 	assert(device_ != nullptr);
-	//Log("Complete create D3D12Device!!\n");//初期化完了のログを出す
+	Log("Complete create D3D12Device!!\n");//初期化完了のログを出す
 
 #ifdef _DEBUG
 	ComPtr<ID3D12InfoQueue> infoQueue;
@@ -386,4 +387,36 @@ D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCPUDescriptorHandle(ComPtr<ID3D12D
 	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	handleCPU.ptr += (descriptorSize * index);
 	return handleCPU;
+}
+
+void DirectXCommon::Log(const std::string& message) {
+	OutputDebugStringA(message.c_str());
+}
+
+std::wstring DirectXCommon::ConvertString(const std::string& str) {
+	if (str.empty()) {
+		return std::wstring();
+	}
+
+	auto sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), NULL, 0);
+	if (sizeNeeded == 0) {
+		return std::wstring();
+	}
+	std::wstring result(sizeNeeded, 0);
+	MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), &result[0], sizeNeeded);
+	return result;
+}
+
+std::string DirectXCommon::ConvertString(const std::wstring& str) {
+	if (str.empty()) {
+		return std::string();
+	}
+
+	auto sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), NULL, 0, NULL, NULL);
+	if (sizeNeeded == 0) {
+		return std::string();
+	}
+	std::string result(sizeNeeded, 0);
+	WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), result.data(), sizeNeeded, NULL, NULL);
+	return result;
 }

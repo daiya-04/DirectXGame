@@ -7,7 +7,7 @@
 #include <dinput.h>
 
 class Input{
-public:
+private:
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
