@@ -180,11 +180,11 @@ void Sprite::Finalize() {
 	graphicsPipelineState_.Reset();
 }
 
-uint32_t Sprite::LoadTexture(const std::string& fileName) {
-
-
-	return 0;
-}
+//uint32_t Sprite::LoadTexture(const std::string& fileName) {
+//
+//
+//	return 0;
+//}
 
 Sprite::Sprite(Vector2 position, Vector2 size, float rotate, Vector2 anchorpoint, Vector4 color) {
 

@@ -49,7 +49,7 @@ public: //静的メンバ関数
 
 	static void Finalize();
 
-	static uint32_t LoadTexture(const std::string& fileName);
+	//static uint32_t LoadTexture(const std::string& fileName);
 
 	/// <summary>
 	/// シェーダーのコンパイル
