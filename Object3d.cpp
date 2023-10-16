@@ -16,14 +16,6 @@ ComPtr<ID3D12RootSignature> Object3d::rootSignature_;
 ComPtr<ID3D12PipelineState> Object3d::graphicsPipelineState_;
 Matrix4x4 Object3d::viewMat_ = MakeIdentity44();
 Matrix4x4 Object3d::projectionMat_ = MakeIdentity44();
-//ComPtr<ID3D12Resource> Object3d::vertexResource_;
-ComPtr<ID3D12DescriptorHeap> Object3d::srvDescriptorHeap_;
-UINT Object3d::srvDescriptorHandleSize_ = 0;
-ComPtr<ID3D12Resource> Object3d::textureResource_;
-ComPtr<ID3D12Resource> Object3d::intermediateResource_;
-D3D12_CPU_DESCRIPTOR_HANDLE Object3d::textureSrvHandleCPU_;
-D3D12_GPU_DESCRIPTOR_HANDLE Object3d::textureSrvHandleGPU_;
-Matrix4x4 Object3d::cameraMat_ = MakeIdentity44();
 
 void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, int windowWidth, int windowHeight) {
 
@@ -35,18 +27,11 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 	projectionMat_ = MakePerspectiveFovMatrix(0.45f, float(windowWidth) / float(windowHeight), 0.1f, 1000.0f);
 
-	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
-	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	descriptorHeapDesc.NumDescriptors = 128;
-	descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	HRESULT hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&srvDescriptorHeap_));
-	assert(SUCCEEDED(hr));
-
-	srvDescriptorHandleSize_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	
 
 	IDxcUtils* dxcUtils = nullptr;
 	IDxcCompiler3* dxcCompiler = nullptr;
-	hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils));
+	HRESULT hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils));
 	assert(SUCCEEDED(hr));
 	hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler));
 	assert(SUCCEEDED(hr));
@@ -244,18 +229,14 @@ void Object3d::postDraw() {
 
 }
 
-void Object3d::SetCamera(const Vector3& rotate, const Vector3& position){
-	cameraMat_ = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotate, position);
+void Object3d::UpdateViewMatrix(const Vector3& rotate, const Vector3& position){
+	viewMat_ = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotate, position).Inverse();
 }
 
 void Object3d::Finalize() {
 
 	rootSignature_.Reset();
 	graphicsPipelineState_.Reset();
-	//vertexResource_.Reset();
-	srvDescriptorHeap_.Reset();
-	textureResource_.Reset();
-	intermediateResource_.Reset();
 
 }
 
@@ -375,8 +356,18 @@ ComPtr<ID3D12Resource> Object3d::CreateBufferResource(ComPtr<ID3D12Device> devic
 
 void Object3d::Initialize(const std::string& filePath) {
 
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
+	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	descriptorHeapDesc.NumDescriptors = 128;
+	descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	HRESULT hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&srvDescriptorHeap_));
+	assert(SUCCEEDED(hr));
+
+	srvDescriptorHandleSize_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
 	//モデル読み込み
 	ModelData modelData = LoadObjFile(filePath);
+
 	//頂点リソースを作る
 	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * modelData.vertices_.size());
 	//頂点バッファビューを作成する
@@ -422,14 +413,13 @@ void Object3d::Initialize(const std::string& filePath) {
 	directionalLightData->direction = { 0.0f,-1.0f,0.0f };
 	directionalLightData->intensity = 1.0f;
 
-	LoadTexture(modelData.material_.textureFilePath_);
+	
 
 }
 
 void Object3d::Draw() {
 
 	Matrix4x4 worldMat = MakeAffineMatrix(size_, rotate_, position_);
-	viewMat_ = cameraMat_.Inverse();
 	Matrix4x4 wvpMat = worldMat * viewMat_ * projectionMat_;
 	TransformationMatrix* wvpData = nullptr;
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
@@ -527,6 +517,7 @@ Object3d::ModelData Object3d::LoadObjFile(const std::string& filename) {
 			s >> materialFilename;
 			//基本的にobjファイルと同一階層にmtlは存続させるので、ディレクトリ名とファイル名を渡す
 			modelData.material_ = LoadMaterialTemplateFile(materialFilename);
+			LoadTexture(modelData.material_.textureFilePath_);
 		}
 	}
 
