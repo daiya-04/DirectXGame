@@ -204,10 +204,10 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 }
 
-Object3d* Object3d::Create(const std::string& filePath) {
+Object3d* Object3d::Create(const std::string& modelname) {
 
 	Object3d* obj = new Object3d();
-	obj->Initialize(filePath);
+	obj->Initialize(modelname);
 
 	return obj;
 
@@ -354,7 +354,7 @@ ComPtr<ID3D12Resource> Object3d::CreateBufferResource(ComPtr<ID3D12Device> devic
 	return Resource;
 }
 
-void Object3d::Initialize(const std::string& filePath) {
+void Object3d::Initialize(const std::string& modelname) {
 
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
 	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
@@ -366,7 +366,7 @@ void Object3d::Initialize(const std::string& filePath) {
 	srvDescriptorHandleSize_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	//モデル読み込み
-	ModelData modelData = LoadObjFile(filePath);
+	ModelData modelData = LoadObjFile(modelname);
 
 	//頂点リソースを作る
 	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * modelData.vertices_.size());
@@ -389,7 +389,7 @@ void Object3d::Initialize(const std::string& filePath) {
 	//書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	materialData->color_ = color_;
-	materialData->enableLightnig_ = true;
+	materialData->enableLightnig_ = false;
 	materialData->uvtransform_ = MakeIdentity44();
 
 	//WVP用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
@@ -447,7 +447,7 @@ void Object3d::UpdateWorldMatrix() {
 	worldMat_ = MakeAffineMatrix(scale_, rotate_, position_);
 }
 
-Object3d::ModelData Object3d::LoadObjFile(const std::string& filename) {
+Object3d::ModelData Object3d::LoadObjFile(const std::string& modelname) {
 
 	ModelData modelData; //構築するModelData
 	std::vector<Vector4> positions;  //位置
@@ -455,7 +455,10 @@ Object3d::ModelData Object3d::LoadObjFile(const std::string& filename) {
 	std::vector<Vector2> texcoords;  //テクスチャ座標
 	std::string line;  //ファイルから呼んだ1行を格納するもの
 
-	std::ifstream file(directoryPath_ + "/" + filename); //ファイルと開く
+	filename_ = modelname + ".obj";
+	directoryPath_ = "Resources/" + modelname + "/";
+
+	std::ifstream file(directoryPath_ + filename_); //ファイルと開く
 	assert(file.is_open());  //とりあえず開けなかったら止める
 
 	while (std::getline(file, line)) {
@@ -545,7 +548,7 @@ Object3d::MaterialData Object3d::LoadMaterialTemplateFile(const std::string& fil
 			std::string textureFilename;
 			s >> textureFilename;
 			//連結してファイルパスにする
-			materialData.textureFilePath_ = directoryPath_ + "/" + textureFilename;
+			materialData.textureFilePath_ = directoryPath_ + textureFilename;
 		}
 	}
 	return materialData;

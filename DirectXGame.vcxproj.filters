@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="ヘッダー ファイル">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="リソース ファイル">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -16,11 +8,14 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{9994cc14-7f0a-47aa-861e-c70ee5f4a53c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{64da1eb4-35aa-4e29-9a69-e2829f05c147}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{f2617904-622c-44e8-a063-16f2d196b4a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
@@ -42,26 +37,38 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="WinApp.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Skydome.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="DirectXCommon.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="ImGuiManager.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Sprite.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Input.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Object3d.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="main.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Object3d.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="WinApp.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Ground.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,38 +96,47 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix44.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Vec3.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="WinApp.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXCommon.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="ImGuiManager.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Vec2.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Input.h">
+      <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Vec4.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Object3d.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Matrix44.h">
+      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Object3d.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec2.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec3.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec4.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="WinApp.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Skydome.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Ground.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

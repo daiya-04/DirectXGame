@@ -10,6 +10,11 @@
 #include "Input.h"
 #include "Sprite.h"
 #include "Object3d.h"
+#include <memory>
+
+#include "Skydome.h"
+#include "Ground.h"
+#include "Player.h"
 
 
 #pragma comment(lib,"dxguid.lib")
@@ -54,15 +59,28 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList(),WinApp::kClientWidth, WinApp::kClientHeight);
 
-	Sprite* sprite = new Sprite({50.0f,50.0f}, { 100.0f,100.0f });
-	sprite->Initialize();
-	sprite->SetAnchorpoint({ 0.5f,0.5f });
+	///オブジェクトの初期化
+	
+	//天球
+	std::unique_ptr<Skydome> skydome_;
+	std::unique_ptr<Object3d> skydomeModel_;
+	
+	skydomeModel_.reset(Object3d::Create("skydome"));
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Initialize(skydomeModel_.get());
 
-	float rotate = sprite->GetRotate();
-	Vector2 pos = sprite->GetPosition();
+	//地面
+	std::unique_ptr<Ground> ground_;
+	std::unique_ptr<Object3d> groundModel_;
 
-	Object3d* obj = Object3d::Create("plane.obj");
-	Object3d* axis = Object3d::Create("teapot.obj");
+	groundModel_.reset(Object3d::Create("ground"));
+	ground_ = std::make_unique<Ground>();
+	ground_->Initialize(groundModel_.get());
+
+	//プレイヤー
+
+
+	///
 
 	//
 	//vertexDataCube[0].position = { -1.0f,1.0f,-1.0f,1.0f };    //左上前
@@ -124,10 +142,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//vertexDataCube[34].texcoord = { 1.0f,1.0f };
 	//vertexDataCube[35] = vertexDataCube[32];                   //右下奥
 
-	Object3d::UpdateViewMatrix({}, { 0.0f,1.0f,-10.0f });
-
-	Vector3 objPos{};
-	Vector3 potR{};
+	Vector3 cameraPos = {0.0f,5.0f,0.0f};
+	Vector3 cameraRotate = {};
 
 	
 	//ウィンドウの✕ボタンが押されるまでループ
@@ -142,36 +158,13 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
         input->Update();
 
-		
+		///オブジェクトの更新
+		skydome_->Update();
+		ground_->Update();
 
-		if (input->PushKey(DIK_D)) {
-			OutputDebugStringA("Hit D\n");
-		}
-		if (input->TriggerKey(DIK_SPACE)) {
-			OutputDebugStringA("Shot!\n");
-		}
+		///
 
-		XINPUT_STATE joyState{};
-
-		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_X) {
-				potR.y += 0.01f;
-			}
-		}
-		
-		rotate += 0.02f;
-		pos.x += 1.0f;
-		pos.y += 1.0f;
-		objPos.x += 0.01f;
-		
-
-		sprite->SetRotate(rotate);
-		sprite->SetPosition(pos);
-		obj->SetPosition(objPos);
-		axis->SetRotate(potR);
-		
-
-		
+		Object3d::UpdateViewMatrix(cameraRotate, cameraPos);
 
 		imguiManager->End();
 
@@ -181,17 +174,23 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		imguiManager->Draw();
 		
+		
 		Sprite::preDraw(dxCommon->GetCommandList());
+		///スプライト描画
+		
 
-		sprite->Draw();
 
+		///
 		Sprite::postDraw();
 
+		
 		Object3d::preDraw();
+		///3dオブジェクトの描画
+		
+		skydome_->Draw();
+		ground_->Draw();
 
-		obj->Draw();
-		axis->Draw();
-
+		///
 		Object3d::postDraw();
 
 		
@@ -203,9 +202,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	//解放処理
 	
-	delete axis;
-	delete obj;
-	delete sprite;
+	
 	delete dxCommon;
 	Sprite::Finalize();
 	Object3d::Finalize();
