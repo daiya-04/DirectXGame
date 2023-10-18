@@ -2,6 +2,8 @@
 #include <assert.h>
 
 #pragma comment(lib,"dinput8.lib")
+#pragma comment(lib,"dxguid.lib")
+#pragma comment(lib,"XInput.lib")
 
 Input* Input::GetInstance() {
 	static Input instance;
@@ -40,7 +42,7 @@ void Input::Update() {
 
 }
 
-bool Input::PushKey(BYTE keyNumber) {
+bool Input::PushKey(BYTE keyNumber) const{
 
 	if (key[keyNumber]) {
 		return true;
@@ -49,9 +51,24 @@ bool Input::PushKey(BYTE keyNumber) {
 	return false;
 }
 
-bool Input::TriggerKey(BYTE keyNumber) {
+bool Input::TriggerKey(BYTE keyNumber) const{
 
 	if (key[keyNumber] && !preKey[keyNumber]) {
+		return true;
+	}
+
+	return false;
+}
+
+bool Input::GetJoystickState(uint32_t stickNo, XINPUT_STATE& state) const {
+
+	DWORD dwResult;
+
+	ZeroMemory(&state, sizeof(XINPUT_STATE));
+
+	dwResult = XInputGetState(stickNo, &state);
+
+	if (dwResult == ERROR_SUCCESS) {
 		return true;
 	}
 

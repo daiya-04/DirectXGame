@@ -109,9 +109,10 @@ private: //メンバ変数
 
 	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 	Vector3 position_{};
-	Vector3 size_ = { 1.0f,1.0f,1.0f };
+	Vector3 scale_ = { 1.0f,1.0f,1.0f };
 	Vector3 rotate_{};
 	
+	Matrix4x4 worldMat_ = MakeIdentity44();
 
 public: //メンバ関数
 
@@ -127,14 +128,16 @@ public: //メンバ関数
 	void SetPosition(const Vector3& position) { position_ = position; }
 	//座標の取得
 	const Vector3& GetPosition() const { return position_; }
-	//サイズの設定
-	void SetSize(const Vector3& size) { size_ = size; }
-	//サイズの取得
-	const Vector3& GetSize() const { return size_; }
+	//スケールの設定
+	void SetScale(const Vector3& size) { scale_ = size; }
+	//スケールの取得
+	const Vector3& GetScale() const { return scale_; }
 	//回転の設定
 	void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
 	//回転の取得
 	const Vector3& GetRotate() const { return rotate_; }
+	//ワールド行列の更新
+	void UpdateWorldMatrix();
 
 
 private:

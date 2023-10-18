@@ -126,6 +126,9 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	Object3d::UpdateViewMatrix({}, { 0.0f,1.0f,-10.0f });
 
+	Vector3 objPos{};
+	Vector3 potR{};
+
 	
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (true) {
@@ -139,6 +142,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
         input->Update();
 
+		
 
 		if (input->PushKey(DIK_D)) {
 			OutputDebugStringA("Hit D\n");
@@ -146,14 +150,25 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		if (input->TriggerKey(DIK_SPACE)) {
 			OutputDebugStringA("Shot!\n");
 		}
+
+		XINPUT_STATE joyState{};
+
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_X) {
+				potR.y += 0.01f;
+			}
+		}
 		
 		rotate += 0.02f;
 		pos.x += 1.0f;
 		pos.y += 1.0f;
+		objPos.x += 0.01f;
+		
 
 		sprite->SetRotate(rotate);
 		sprite->SetPosition(pos);
-
+		obj->SetPosition(objPos);
+		axis->SetRotate(potR);
 		
 
 		

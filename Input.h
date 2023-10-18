@@ -3,6 +3,7 @@
 #include <wrl.h>
 #include "WinApp.h"
 
+#include <XInput.h>
 #define DIRECTINPUT_VERSION    0x0800
 #include <dinput.h>
 
@@ -12,11 +13,6 @@ private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 private:
-
-	Input() = default;
-	~Input() = default;
-	Input(const Input&) = delete;
-	Input& operator=(const Input&) = delete;
 
 	ComPtr<IDirectInput8> directInput;
 	ComPtr<IDirectInputDevice8> keyBoard;
@@ -35,10 +31,17 @@ public:
 	void Update();
 
 	//キーの押下をチェック
-	bool PushKey(BYTE keyNumber);
+	bool PushKey(BYTE keyNumber) const;
 
 	//キーのトリガーをチェック
-	bool TriggerKey(BYTE keyNumber);
+	bool TriggerKey(BYTE keyNumber) const;
 
+	bool GetJoystickState(uint32_t stickNo,XINPUT_STATE& state) const;
+
+private:
+	Input() = default;
+	~Input() = default;
+	Input(const Input&) = delete;
+	Input& operator=(const Input&) = delete;
 };
 

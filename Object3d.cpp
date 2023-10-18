@@ -419,8 +419,8 @@ void Object3d::Initialize(const std::string& filePath) {
 
 void Object3d::Draw() {
 
-	Matrix4x4 worldMat = MakeAffineMatrix(size_, rotate_, position_);
-	Matrix4x4 wvpMat = worldMat * viewMat_ * projectionMat_;
+	UpdateWorldMatrix();
+	Matrix4x4 wvpMat = worldMat_ * viewMat_ * projectionMat_;
 	TransformationMatrix* wvpData = nullptr;
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	wvpData->WVP = wvpMat;
@@ -441,6 +441,10 @@ void Object3d::Draw() {
 
 	commandList_->DrawInstanced(index_, 1, 0, 0);
 
+}
+
+void Object3d::UpdateWorldMatrix() {
+	worldMat_ = MakeAffineMatrix(scale_, rotate_, position_);
 }
 
 Object3d::ModelData Object3d::LoadObjFile(const std::string& filename) {
