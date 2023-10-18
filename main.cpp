@@ -61,8 +61,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	float rotate = sprite->GetRotate();
 	Vector2 pos = sprite->GetPosition();
 
-	Object3d* obj = Object3d::Create("plane.obj");
-	Object3d* axis = Object3d::Create("teapot.obj");
+	Object3d* obj = Object3d::Create("teapot");
 
 	//
 	//vertexDataCube[0].position = { -1.0f,1.0f,-1.0f,1.0f };    //左上前
@@ -126,7 +125,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	Object3d::UpdateViewMatrix({}, { 0.0f,1.0f,-10.0f });
 
-	Vector3 objPos{};
 	Vector3 potR{};
 
 	
@@ -162,13 +160,12 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		rotate += 0.02f;
 		pos.x += 1.0f;
 		pos.y += 1.0f;
-		objPos.x += 0.01f;
+		
 		
 
 		sprite->SetRotate(rotate);
 		sprite->SetPosition(pos);
-		obj->SetPosition(objPos);
-		axis->SetRotate(potR);
+		obj->SetRotate(potR);
 		
 
 		
@@ -190,7 +187,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		Object3d::preDraw();
 
 		obj->Draw();
-		axis->Draw();
 
 		Object3d::postDraw();
 
@@ -203,7 +199,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	//解放処理
 	
-	delete axis;
 	delete obj;
 	delete sprite;
 	delete dxCommon;

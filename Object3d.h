@@ -63,7 +63,7 @@ public: //静的メンバ関数
 	//静的初期化
 	static void StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, int windowWidth, int windowHeight);
 	//モデルの生成
-	static Object3d* Create(const std::string& filePath);
+	static Object3d* Create(const std::string& modelname);
 	//描画前処理
 	static void preDraw();
 	//描画後処理
@@ -92,8 +92,8 @@ private:
 	
 private: //メンバ変数
 
-	
-	const std::string directoryPath_ = "Resources";
+	std::string filename_;
+	std::string directoryPath_;
 	ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
 	UINT srvDescriptorHandleSize_ = 0;
 	ComPtr<ID3D12Resource> textureResource_;
@@ -117,7 +117,7 @@ private: //メンバ変数
 public: //メンバ関数
 
 	//初期化
-	void Initialize(const std::string& filePath);
+	void Initialize(const std::string& modelname);
 	//描画
 	void Draw();
 	//色の設定
@@ -142,7 +142,7 @@ public: //メンバ関数
 
 private:
 	//objファイルの読み込み
-	ModelData LoadObjFile(const std::string& filename);
+	ModelData LoadObjFile(const std::string& modelname);
 	//マテリアルの読み込み
 	MaterialData LoadMaterialTemplateFile(const std::string& filename);
 	//テクスチャの読み込み
