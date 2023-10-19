@@ -10,6 +10,8 @@
 #include "Input.h"
 #include "Sprite.h"
 #include "Object3d.h"
+#include "WorldTransform.h"
+#include "ViewProjection.h"
 
 
 #pragma comment(lib,"dxguid.lib")
@@ -52,7 +54,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	input->Initialize(win);
 
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
-	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList(),WinApp::kClientWidth, WinApp::kClientHeight);
+	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
 
 	Sprite* sprite = new Sprite({50.0f,50.0f}, { 100.0f,100.0f });
 	sprite->Initialize();
@@ -62,6 +64,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	Vector2 pos = sprite->GetPosition();
 
 	Object3d* obj = Object3d::Create("teapot");
+	Object3d* plane = Object3d::Create("Plane");
 
 	//
 	//vertexDataCube[0].position = { -1.0f,1.0f,-1.0f,1.0f };    //左上前
@@ -123,10 +126,12 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//vertexDataCube[34].texcoord = { 1.0f,1.0f };
 	//vertexDataCube[35] = vertexDataCube[32];                   //右下奥
 
-	Object3d::UpdateViewMatrix({}, { 0.0f,1.0f,-10.0f });
-
-	Vector3 potR{};
-
+	ViewProjection viewProjection;
+	viewProjection.Initialize();
+	
+	WorldTransform worldTransform;
+	WorldTransform worldTransformPlane;
+	worldTransformPlane.parent_ = &worldTransform;
 	
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (true) {
@@ -153,22 +158,22 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_X) {
-				potR.y += 0.01f;
+				
 			}
 		}
 		
 		rotate += 0.02f;
 		pos.x += 1.0f;
 		pos.y += 1.0f;
-		
+		worldTransform.translation_.x += 0.01f;
 		
 
 		sprite->SetRotate(rotate);
 		sprite->SetPosition(pos);
-		obj->SetRotate(potR);
 		
 
-		
+		worldTransform.UpdateMatrix();
+		worldTransformPlane.UpdateMatrix();
 
 		imguiManager->End();
 
@@ -186,7 +191,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		Object3d::preDraw();
 
-		obj->Draw();
+		obj->Draw(worldTransform,viewProjection);
+		plane->Draw(worldTransformPlane,viewProjection);
 
 		Object3d::postDraw();
 
@@ -198,7 +204,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	imguiManager->Finalize();
 
 	//解放処理
-	
+	delete plane;
 	delete obj;
 	delete sprite;
 	delete dxCommon;

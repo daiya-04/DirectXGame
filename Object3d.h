@@ -11,6 +11,8 @@
 #include "Vec4.h"
 #include "Matrix44.h"
 #include <vector>
+#include "WorldTransform.h"
+#include "ViewProjection.h"
 
 class Object3d{
 private:
@@ -55,21 +57,17 @@ private: //静的メンバ変数
 	static ID3D12GraphicsCommandList* commandList_;
 	static ComPtr<ID3D12RootSignature> rootSignature_;
 	static ComPtr<ID3D12PipelineState> graphicsPipelineState_;
-	static Matrix4x4 viewMat_;
-	static Matrix4x4 projectionMat_;
 
 public: //静的メンバ関数
 
 	//静的初期化
-	static void StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, int windowWidth, int windowHeight);
+	static void StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 	//モデルの生成
 	static Object3d* Create(const std::string& modelname);
 	//描画前処理
 	static void preDraw();
 	//描画後処理
 	static void postDraw();
-	//カメラの設定
-	static void UpdateViewMatrix(const Vector3& rotate, const Vector3& position);
 
 	static void Finalize();
 
@@ -108,36 +106,17 @@ private: //メンバ変数
 	UINT index_ = 0;
 
 	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
-	Vector3 position_{};
-	Vector3 scale_ = { 1.0f,1.0f,1.0f };
-	Vector3 rotate_{};
-	
-	Matrix4x4 worldMat_ = MakeIdentity44();
 
 public: //メンバ関数
 
 	//初期化
 	void Initialize(const std::string& modelname);
 	//描画
-	void Draw();
+	void Draw(const WorldTransform& worldTransform,const ViewProjection& viewProjwction);
 	//色の設定
 	void SetColor(const Vector4& color) { color_ = color; }
 	//色の取得
 	const Vector4& GetColor() const { return color_; }
-	//座標の設定
-	void SetPosition(const Vector3& position) { position_ = position; }
-	//座標の取得
-	const Vector3& GetPosition() const { return position_; }
-	//スケールの設定
-	void SetScale(const Vector3& size) { scale_ = size; }
-	//スケールの取得
-	const Vector3& GetScale() const { return scale_; }
-	//回転の設定
-	void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
-	//回転の取得
-	const Vector3& GetRotate() const { return rotate_; }
-	//ワールド行列の更新
-	void UpdateWorldMatrix();
 
 
 private:
