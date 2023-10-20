@@ -14,18 +14,13 @@ ID3D12Device* Object3d::device_ = nullptr;
 ID3D12GraphicsCommandList* Object3d::commandList_ = nullptr;
 ComPtr<ID3D12RootSignature> Object3d::rootSignature_;
 ComPtr<ID3D12PipelineState> Object3d::graphicsPipelineState_;
-Matrix4x4 Object3d::viewMat_ = MakeIdentity44();
-Matrix4x4 Object3d::projectionMat_ = MakeIdentity44();
 
-void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList, int windowWidth, int windowHeight) {
+void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
 
 	assert(device);
 	assert(commandList);
 	device_ = device;
 	commandList_ = commandList;
-
-
-	projectionMat_ = MakePerspectiveFovMatrix(0.45f, float(windowWidth) / float(windowHeight), 0.1f, 1000.0f);
 
 	
 
@@ -229,10 +224,6 @@ void Object3d::postDraw() {
 
 }
 
-void Object3d::UpdateViewMatrix(const Vector3& rotate, const Vector3& position){
-	viewMat_ = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotate, position).Inverse();
-}
-
 void Object3d::Finalize() {
 
 	rootSignature_.Reset();
@@ -417,10 +408,10 @@ void Object3d::Initialize(const std::string& modelname) {
 
 }
 
-void Object3d::Draw() {
+void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjwction) {
 
-	UpdateWorldMatrix();
-	Matrix4x4 wvpMat = worldMat_ * viewMat_ * projectionMat_;
+	
+	Matrix4x4 wvpMat = worldTransform.matWorld_ * (viewProjwction.matView_ * viewProjwction.matProjection_);
 	TransformationMatrix* wvpData = nullptr;
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	wvpData->WVP = wvpMat;
@@ -443,9 +434,7 @@ void Object3d::Draw() {
 
 }
 
-void Object3d::UpdateWorldMatrix() {
-	worldMat_ = MakeAffineMatrix(scale_, rotate_, position_);
-}
+
 
 Object3d::ModelData Object3d::LoadObjFile(const std::string& modelname) {
 
@@ -535,7 +524,7 @@ Object3d::MaterialData Object3d::LoadMaterialTemplateFile(const std::string& fil
 
 	MaterialData materialData; //構築するMatrialData
 	std::string line; //ファイルから読んだ1行を格納するもの
-	std::ifstream file(directoryPath_ + "/" + filename); //ファイルを開く
+	std::ifstream file(directoryPath_ + filename); //ファイルを開く
 	assert(file.is_open()); //開かなかったら止める
 
 	while (std::getline(file, line)) {
