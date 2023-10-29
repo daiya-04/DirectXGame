@@ -141,7 +141,7 @@ public:
 		};
 	}
 
-	inline Vector3 fTransform(const Vector3& vector, const Matrix4x4& matrix) {
+	inline Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
 		Vector3 result{};
 		result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
 		result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
@@ -237,3 +237,27 @@ public:
 	        vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1],
 	        vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2]};
     }
+
+	inline Vector3 MakeScale(const Matrix4x4& matrix) {
+
+		Vector3 scaleX = { matrix.m[0][0],matrix.m[0][1] ,matrix.m[0][2] };
+		Vector3 scaleY = { matrix.m[1][0],matrix.m[1][1] ,matrix.m[1][2] };
+		Vector3 scaleZ = { matrix.m[2][0],matrix.m[2][1] ,matrix.m[2][2] };
+		Vector3 result;
+
+		result.x = scaleX.Length();
+		result.y = scaleY.Length();
+		result.z = scaleZ.Length();
+
+		return result;
+	}
+
+	inline Vector3 MakeTranslation(const Matrix4x4& matrix) {
+		Vector3 result;
+
+		result.x = matrix.m[3][0];
+		result.y = matrix.m[3][1];
+		result.z = matrix.m[3][2];
+
+		return result;
+	}

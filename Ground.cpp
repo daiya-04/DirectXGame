@@ -1,24 +1,51 @@
 #include "Ground.h"
 #include <cassert>
+#include <cmath>
+#include <numbers>
 
-void Ground::Initialize(Object3d* model) {
+void Ground::Initialize(Object3d* model, Type type, const Vector3& position) {
 
 	assert(model);
 	model_ = model;
-
+	type_ = type;
+	worldTransform_.translation_ = position;
+	worldTransform_.scale_ = { 1.5f,1.0f,1.5f };
+	size_ = { worldTransform_.scale_.x * 6.0f,0.0f,worldTransform_.scale_.z * 6.0f };
+	worldTransform_.UpdateMatrix();
 }
 
 void Ground::Update() {
 
-	position_ = {};
-	scale_ = { 100.0f,100.0f,100.0f };
+	if (type_ == Type::Dynamic) {
 
-	model_->SetPosition(position_);
-	model_->SetScale(scale_);
+		const float step = 2.0f * (float)std::numbers::pi / (float)cycle;
+
+		moveingParameter += step;
+		moveingParameter = std::fmod(moveingParameter, 2.0f * (float) std::numbers::pi);
+
+		velocity_.x = std::cosf(moveingParameter) * amplitude;
+				
+		worldTransform_.translation_ += velocity_;
+
+	}
+
+	worldTransform_.UpdateMatrix();
 }
 
-void Ground::Draw() {
+void Ground::Draw(const ViewProjection& viewProjection) {
 
-	model_->Draw();
+	model_->Draw(worldTransform_,viewProjection);
 
+}
+
+
+
+Vector3 Ground::GetWorldPos() const {
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
 }

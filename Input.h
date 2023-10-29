@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <wrl.h>
 #include "WinApp.h"
+#include "Vec3.h"
 
 #include <XInput.h>
 #define DIRECTINPUT_VERSION    0x0800
@@ -18,6 +19,8 @@ private:
 	ComPtr<IDirectInputDevice8> keyBoard;
 	BYTE key[256] = {};
 	BYTE preKey[256] = {};
+	XINPUT_STATE joyState;
+	XINPUT_STATE preJoyState;
 
 	WinApp* win_ = nullptr;
 
@@ -35,8 +38,23 @@ public:
 
 	//キーのトリガーをチェック
 	bool TriggerKey(BYTE keyNumber) const;
+	//ゲームパッドの状態取得
+	bool GetJoystickState();
 
-	bool GetJoystickState(uint32_t stickNo,XINPUT_STATE& state) const;
+	Vector3 GetMoveXZ() {
+		return { (float)joyState.Gamepad.sThumbLX, 0.0f, (float)joyState.Gamepad.sThumbLY };
+	}
+
+	Vector3 GetCameraRotate() {
+		return { (float)joyState.Gamepad.sThumbRY / SHRT_MAX,(float)joyState.Gamepad.sThumbRX / SHRT_MAX,0.0f };
+	}
+
+	bool TriggerButton(int button) {
+		if ((joyState.Gamepad.wButtons & button) && !(preJoyState.Gamepad.wButtons & button)) {
+			return true;
+		}
+		return false;
+	}
 
 private:
 	Input() = default;

@@ -10,13 +10,13 @@ void Skydome::Initialize(Object3d* model){
 
 void Skydome::Update() {
 
-	position_ = {};
+	worldTransform_.translation_ = {};
 
-	model_->SetPosition(position_);
+	worldTransform_.UpdateMatrix();
 }
 
-void Skydome::Draw() {
+void Skydome::Draw(const ViewProjection& viewProjection) {
 
-	model_->Draw();
+	model_->Draw(worldTransform_,viewProjection);
 
 }
