@@ -1,5 +1,6 @@
 #include "Input.h"
 #include <assert.h>
+#include <cmath>
 
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
@@ -60,15 +61,27 @@ bool Input::TriggerKey(BYTE keyNumber) const{
 	return false;
 }
 
-bool Input::GetJoystickState(uint32_t stickNo, XINPUT_STATE& state) const {
+bool Input::GetJoystickState() {
 
 	DWORD dwResult;
 
-	ZeroMemory(&state, sizeof(XINPUT_STATE));
+	preJoyState = joyState;
 
-	dwResult = XInputGetState(stickNo, &state);
+	dwResult = XInputGetState(0, &joyState);
 
 	if (dwResult == ERROR_SUCCESS) {
+		if (fabs(joyState.Gamepad.sThumbLX) < 10000) {
+			joyState.Gamepad.sThumbLX = 0;
+		}
+		if (fabs(joyState.Gamepad.sThumbLY) < 10000) {
+			joyState.Gamepad.sThumbLY = 0;
+		}
+		if (fabs(joyState.Gamepad.sThumbRX) < 10000) {
+			joyState.Gamepad.sThumbRX = 0;
+		}
+		if (fabs(joyState.Gamepad.sThumbRY) < 10000) {
+			joyState.Gamepad.sThumbRY = 0;
+		}
 		return true;
 	}
 

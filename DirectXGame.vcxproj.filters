@@ -58,8 +58,12 @@
     <ClCompile Include="WinApp.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="ViewProjection.cpp" />
-    <ClCompile Include="WorldTransform.cpp" />
+    <ClCompile Include="ViewProjection.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldTransform.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -119,8 +123,12 @@
     <ClInclude Include="WinApp.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="ViewProjection.h" />
-    <ClInclude Include="WorldTransform.h" />
+    <ClInclude Include="ViewProjection.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldTransform.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
