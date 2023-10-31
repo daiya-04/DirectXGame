@@ -109,6 +109,9 @@
     <ClCompile Include="Game\Scene\SceneManager.cpp">
       <Filter>Engine\Game\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Scene\user\GameScene.cpp">
+      <Filter>Engine\Game\Scene\user</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -188,6 +191,9 @@
     </ClInclude>
     <ClInclude Include="Game\Math\Math.h">
       <Filter>Engine\Game\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\user\GameScene.h">
+      <Filter>Engine\Game\Scene\user</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
