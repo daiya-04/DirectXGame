@@ -26,6 +26,15 @@ private: // プライベート関数
 
 private: // プライベート変数
 
+	std::unique_ptr<Sprite> sprite_;
+	float rotate_;
+	Vector2 pos_;
 
+	std::unique_ptr<Object3d> pot_;
+	std::unique_ptr<Object3d> plane_;
 
+	std::unique_ptr<ViewProjection> viewProjection_;
+
+	WorldTransform wt_;
+	WorldTransform wtPlane_;
 };

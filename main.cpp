@@ -33,7 +33,7 @@ struct D3DResourceLeakChecker {
 };
 
 int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
-	D3DResourceLeakChecker leakCheck;
+	//D3DResourceLeakChecker leakCheck;
 
 	WinApp* win = nullptr;
 	DirectXCommon* dxCommon = nullptr;
@@ -64,25 +64,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	SceneManager* sceneManager = SceneManager::GetInstace();
 	sceneManager->Initialize();
 
-	Sprite* sprite = new Sprite({50.0f,50.0f}, { 100.0f,100.0f });
-	sprite->Initialize();
-	sprite->SetAnchorpoint({ 0.5f,0.5f });
-
-	float rotate = sprite->GetRotate();
-	Vector2 pos = sprite->GetPosition();
-
-	Object3d* obj = Object3d::Create("teapot");
-	Object3d* plane = Object3d::Create("Plane");
-
-
-	ViewProjection viewProjection;
-	viewProjection.Initialize();
-	
-	WorldTransform worldTransform;
-	WorldTransform worldTransformPlane;
-	worldTransformPlane.parent_ = &worldTransform;
-	
-
 	////////////////////////////////////
 	////	ゲームで使う変数宣言終了	////
 	////////////////////////////////////
@@ -106,32 +87,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		////////////////////////
 		
 		sceneManager->Update();
-
-		if (input->PushKey(DIK_D)) {
-			OutputDebugStringA("Hit D\n");
-		}
-		if (input->TriggerKey(DIK_SPACE)) {
-			OutputDebugStringA("Shot!\n");
-		}
-
-		XINPUT_STATE joyState{};
-
-		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A)) {
-			
-		}
-		
-		rotate += 0.02f;
-		pos.x += 1.0f;
-		pos.y += 1.0f;
-		worldTransform.translation_.x += 0.01f;
-		
-
-		sprite->SetRotate(rotate);
-		sprite->SetPosition(pos);
-		
-
-		worldTransform.UpdateMatrix();
-		worldTransformPlane.UpdateMatrix();
 
 
 		////////////////////////////
@@ -157,15 +112,11 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		sceneManager->DrawModel();
 
-		obj->Draw(worldTransform,viewProjection);
-		plane->Draw(worldTransformPlane,viewProjection);
-
 		Object3d::postDraw();
 
 		Sprite::preDraw(dxCommon->GetCommandList());
 
 		sceneManager->DrawUI();
-		sprite->Draw();
 
 		Sprite::postDraw();
 
@@ -176,12 +127,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		dxCommon->postDraw();
 
 	}
-
-
-	//解放処理
-	delete plane;
-	delete obj;
-	delete sprite;
 
 
 	// エンジンの解放

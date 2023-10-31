@@ -1,6 +1,11 @@
 #pragma once
 
 #include "../Math/Math.h"
+#include "../../Sprite.h"
+#include "../../Object3d.h"
+#include "../../WorldTransform.h"
+#include "../../ViewProjection.h"
+#include "../../Input.h"
 
 class IScene 
 {
@@ -19,8 +24,11 @@ public:
 	//	シーン番号管理
 	static int sSceneNo_;
 
+	static Input* input_;
 
 public:
+
+	static void StaticInitialize(Input* input);
 
 	// 純粋仮想関数
 
