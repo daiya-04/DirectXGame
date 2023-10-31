@@ -47,6 +47,9 @@
     <Filter Include="Engine\Game\Math">
       <UniqueIdentifier>{4e46fb8c-bebd-484c-9fce-c4974656b3e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Game\Object\Player">
+      <UniqueIdentifier>{ae24d7f7-1d0c-4cd6-aa05-c79f3da74b73}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -111,6 +114,12 @@
     </ClCompile>
     <ClCompile Include="Game\Scene\user\GameScene.cpp">
       <Filter>Engine\Game\Scene\user</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Player\Player.cpp">
+      <Filter>Engine\Game\Object\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\IObject.cpp">
+      <Filter>Engine\Game\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +203,12 @@
     </ClInclude>
     <ClInclude Include="Game\Scene\user\GameScene.h">
       <Filter>Engine\Game\Scene\user</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Player\Player.h">
+      <Filter>Engine\Game\Object\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\IObject.h">
+      <Filter>Engine\Game\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
