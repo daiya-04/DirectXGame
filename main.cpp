@@ -17,6 +17,7 @@
 #pragma comment(lib,"dxguid.lib")
 
 #include "Game/Scene/SceneManager.h"
+#include "Game/Object/IObject.h"
 
 using namespace Microsoft::WRL;
 
@@ -60,6 +61,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	////////////////////////////////
 	////	ゲームで使う変数宣言	////
 	////////////////////////////////
+	IScene::StaticInitialize(input);
+	IObject::StaticInitialize(input);
 
 	SceneManager* sceneManager = SceneManager::GetInstace();
 	sceneManager->Initialize();

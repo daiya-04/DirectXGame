@@ -1,5 +1,7 @@
 #include "TitleScene.h"
 
+#include "../SceneManager.h"
+
 void TitleScene::Initialize()
 {
 
@@ -27,7 +29,7 @@ void TitleScene::Update()
 		OutputDebugStringA("Hit D\n");
 	}
 	if (input_->TriggerKey(DIK_SPACE)) {
-		OutputDebugStringA("Shot!\n");
+		SceneManager::GetInstace()->ChegeScene(kGAME);
 	}
 
 	XINPUT_STATE joyState{};

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../IScene.h"
+#include "../../Object/ObjectList.h"
 
 class GameScene final : public IScene
 {
@@ -26,5 +27,7 @@ private: // プライベート関数
 
 private: // プライベート変数
 
+	std::unique_ptr<Player> player_;
+	std::unique_ptr<ViewProjection> viewProjection_;
 
 };

@@ -11,9 +11,8 @@ SceneManager* SceneManager::GetInstace()
 
 void SceneManager::Initialize()
 {
-	IScene::StaticInitialize(Input::GetInstance());
-
 	sceneArray_[kTITLE] = std::make_unique<TitleScene>();
+	sceneArray_[kGAME] = std::make_unique<GameScene>();
 
 
 	currentSceneNo_ = kTITLE;

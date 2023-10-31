@@ -210,6 +210,9 @@
     <ClInclude Include="Game\Object\IObject.h">
       <Filter>Engine\Game\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Object\ObjectList.h">
+      <Filter>Engine\Game\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

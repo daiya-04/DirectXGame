@@ -15,7 +15,7 @@ public:
 	enum SCENE : int
 	{
 		kTITLE,	// タイトル
-		//kSTAEG,	// ステージ
+		kGAME,	// ゲーム
 		//kCLEAR,	// クリア
 
 		kCountScene,	// シーン最大数

@@ -1,6 +1,14 @@
 #include "IObject.h"
 
+Input* IObject::input_ = nullptr;
 ViewProjection* IObject::viewProjection_ = nullptr;
+
+void IObject::StaticInitialize(Input* input, ViewProjection* vp)
+{
+	assert(input);
+	input_ = input;
+	viewProjection_ = vp;
+}
 
 void IObject::Initialize()
 {

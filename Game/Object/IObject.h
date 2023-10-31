@@ -10,6 +10,7 @@
 class IObject
 {
 protected:
+	static Input* input_;
 
 	static ViewProjection* viewProjection_;
 
@@ -19,11 +20,16 @@ protected:
 
 public:
 
+	static void StaticInitialize(Input* input, ViewProjection* vp = nullptr);
+	static void SetViewProjection(ViewProjection* view) { viewProjection_ = view; }
+
+
 	virtual void Initialize();
 
 	virtual void Update();
 
 	virtual void Draw();
+
 
 protected:
 
