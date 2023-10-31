@@ -156,10 +156,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		XINPUT_STATE joyState{};
 
-		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_X) {
-				
-			}
+		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A)) {
+			
 		}
 		
 		rotate += 0.02f;
