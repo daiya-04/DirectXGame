@@ -56,6 +56,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
 
+
 	////////////////////////////////
 	////	ゲームで使う変数宣言	////
 	////////////////////////////////
@@ -171,12 +172,15 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	}
 
-	imguiManager->Finalize();
 
 	//解放処理
 	delete plane;
 	delete obj;
 	delete sprite;
+
+
+	// エンジンの解放
+	imguiManager->Finalize();
 	delete dxCommon;
 	Sprite::Finalize();
 	Object3d::Finalize();
