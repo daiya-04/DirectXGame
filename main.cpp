@@ -12,6 +12,7 @@
 #include "Object3d.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
+#include "TextureManager.h"
 
 
 #pragma comment(lib,"dxguid.lib")
@@ -33,7 +34,7 @@ struct D3DResourceLeakChecker {
 };
 
 int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
-	D3DResourceLeakChecker leakCheck;
+	//D3DResourceLeakChecker leakCheck;
 
 	WinApp* win = nullptr;
 	DirectXCommon* dxCommon = nullptr;
@@ -44,7 +45,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	win = WinApp::GetInstance();
 	win->CreateGameWindow(L"Engine");
 
-	dxCommon = new DirectXCommon();
+	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(win);
 
 	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
@@ -52,6 +53,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	input = Input::GetInstance();
 	input->Initialize(win);
+
+	TextureManager::GetInstance()->Initialize();
 
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
@@ -205,9 +208,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	delete plane;
 	delete obj;
 	delete sprite;
-	delete dxCommon;
-	Sprite::Finalize();
-	Object3d::Finalize();
+	//Sprite::Finalize();
+	//Object3d::Finalize();
 	win->TerminateGameWindow();
 
 	return 0;

@@ -104,6 +104,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Object3d.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="ViewProjection.cpp" />
     <ClCompile Include="WinApp.cpp" />
     <ClCompile Include="WorldTransform.cpp" />
@@ -124,6 +125,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Model.h" />
     <ClInclude Include="Object3d.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="Vec4.h" />

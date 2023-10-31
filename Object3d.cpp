@@ -4,7 +4,7 @@
 #include <Windows.h>
 #include <fstream>
 #include <sstream>
-
+#include "TextureManager.h"
 
 #pragma comment(lib,"dxcompiler.lib")
 
@@ -347,15 +347,6 @@ ComPtr<ID3D12Resource> Object3d::CreateBufferResource(ComPtr<ID3D12Device> devic
 
 void Object3d::Initialize(const std::string& modelname) {
 
-	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
-	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	descriptorHeapDesc.NumDescriptors = 128;
-	descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	HRESULT hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&srvDescriptorHeap_));
-	assert(SUCCEEDED(hr));
-
-	srvDescriptorHandleSize_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
 	//モデル読み込み
 	ModelData modelData = LoadObjFile(modelname);
 
@@ -419,15 +410,12 @@ void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& 
 
 	//VBVを設定
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
-	//描画用のDescriptorHeapの設定
-	ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap_.Get() };
-	commandList_->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 	//マテリアルCBufferの場所を設定
 	commandList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//wvp用のCBufferの場所の設定
 	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	//SRVのDescriptorTableの先頭を設定。
-	commandList_->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, 2, uvHandle_);
 	commandList_->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 
 	commandList_->DrawInstanced(index_, 1, 0, 0);
@@ -511,7 +499,7 @@ Object3d::ModelData Object3d::LoadObjFile(const std::string& modelname) {
 			s >> materialFilename;
 			//基本的にobjファイルと同一階層にmtlは存続させるので、ディレクトリ名とファイル名を渡す
 			modelData.material_ = LoadMaterialTemplateFile(materialFilename);
-			LoadTexture(modelData.material_.textureFilePath_);
+			uvHandle_ = TextureManager::GetInstance()->LoadUv(materialFilename, modelData.material_.textureFilePath_);
 		}
 	}
 
@@ -539,97 +527,4 @@ Object3d::MaterialData Object3d::LoadMaterialTemplateFile(const std::string& fil
 		}
 	}
 	return materialData;
-}
-
-void Object3d::LoadTexture(const std::string& filePath) {
-	//テクスチャファイルを読んでプログラムで扱えるようにする
-	DirectX::ScratchImage image{};
-	std::wstring filePathW = ConvertString(filePath);
-	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
-	assert(SUCCEEDED(hr));
-
-	//ミニマップの作成
-	DirectX::ScratchImage mipImages{};
-	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-	assert(SUCCEEDED(hr));
-	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-
-	//metadataを基にResourceの設定
-	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Width = UINT(metadata.width);//Textureの幅
-	resourceDesc.Height = UINT(metadata.height);//Textureの高さ
-	resourceDesc.MipLevels = UINT16(metadata.mipLevels);//mipmapの数
-	resourceDesc.DepthOrArraySize = UINT16(metadata.arraySize);//奥行き　or　配列Textureの配列数
-	resourceDesc.Format = metadata.format;//TextureのFormat
-	resourceDesc.SampleDesc.Count = 1;//サンプリングカウント。1固定。
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);//Textureの次元数。普段使っているのは2次元
-
-	//利用するHeapの設定。
-	D3D12_HEAP_PROPERTIES heapProperties{};
-	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; //VRAM上に作成
-
-	//Resourceの生成
-	hr = device_->CreateCommittedResource(
-		&heapProperties, //Heapの設定
-		D3D12_HEAP_FLAG_NONE, //Heapの特殊な設定。特になし
-		&resourceDesc, //Resourceの設定
-		D3D12_RESOURCE_STATE_COPY_DEST, //データ転送される設定
-		nullptr, //Clear最適地。使わないのでnullptr
-		IID_PPV_ARGS(&textureResource_) //作成するResourceポインタへのポインタ
-	);
-	assert(SUCCEEDED(hr));
-
-	intermediateResource_ = UploadTextureData(mipImages);
-
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-
-	//metadataを基にSRVの設定
-	srvDesc.Format = metadata.format;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
-	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
-
-	//SRVを作成するDescriptorHeapの場所を決める
-	textureSrvHandleCPU_ = GetCPUDescriptorHandle(srvDescriptorHeap_, srvDescriptorHandleSize_, 0);
-	textureSrvHandleGPU_ = GetGPUDescriptorHandle(srvDescriptorHeap_, srvDescriptorHandleSize_, 0);
-	//SRVの生成
-	device_->CreateShaderResourceView(textureResource_.Get(), &srvDesc, textureSrvHandleCPU_);
-
-}
-
-ComPtr<ID3D12Resource> Object3d::UploadTextureData(const DirectX::ScratchImage& mipImage){
-	
-	std::vector<D3D12_SUBRESOURCE_DATA> subresource;
-	//読み込んだデータからDirectX12用のSubresouceの配列を作成する
-	DirectX::PrepareUpload(device_, mipImage.GetImages(), mipImage.GetImageCount(), mipImage.GetMetadata(), subresource);
-	//intermediateResourceに必要なサイズを計算する
-	uint64_t intermediateSize = GetRequiredIntermediateSize(textureResource_.Get(), 0, UINT(subresource.size()));
-	//計算したサイズでintermediateResourceを作る
-	ComPtr<ID3D12Resource> intermediateResource = CreateBufferResource(device_, intermediateSize);
-	//データ転送をコマンドに積む
-	UpdateSubresources(commandList_, textureResource_.Get(), intermediateResource.Get(), 0, 0, UINT(subresource.size()), subresource.data());
-
-	//Textureへの転送後は利用できるよう、D3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResourceStateを変更する
-	D3D12_RESOURCE_BARRIER barrier{};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = textureResource_.Get();
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
-	commandList_->ResourceBarrier(1, &barrier);
-	
-	return intermediateResource;
-}
-
-D3D12_CPU_DESCRIPTOR_HANDLE Object3d::GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index){
-	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	handleCPU.ptr += (descriptorSize * index);
-	return handleCPU;
-}
-
-D3D12_GPU_DESCRIPTOR_HANDLE Object3d::GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index){
-	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
-	handleGPU.ptr += (descriptorSize * index);
-	return handleGPU;
 }

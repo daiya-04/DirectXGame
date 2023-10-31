@@ -9,7 +9,6 @@ class ImGuiManager{
 private:
 
 	DirectXCommon* dxCommon_ = nullptr;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
 
 public:
 
