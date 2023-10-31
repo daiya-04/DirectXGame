@@ -98,6 +98,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Game\Scene\IScene.cpp" />
+    <ClCompile Include="Game\Scene\SceneManager.cpp" />
+    <ClCompile Include="Game\Scene\user\TitleScene.cpp" />
     <ClCompile Include="ImGuiManager.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
@@ -118,6 +121,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
+    <ClInclude Include="Game\Math\Math.h" />
+    <ClInclude Include="Game\Scene\IScene.h" />
+    <ClInclude Include="Game\Scene\SceneList.h" />
+    <ClInclude Include="Game\Scene\SceneManager.h" />
+    <ClInclude Include="Game\Scene\user\TitleScene.h" />
     <ClInclude Include="ImGuiManager.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Matrix44.h" />

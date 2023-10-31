@@ -16,7 +16,7 @@
 
 #pragma comment(lib,"dxguid.lib")
 
-
+#include "Game/Scene/SceneManager.h"
 
 using namespace Microsoft::WRL;
 
@@ -61,6 +61,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	////	ゲームで使う変数宣言	////
 	////////////////////////////////
 
+	SceneManager* sceneManager = SceneManager::GetInstace();
+	sceneManager->Initialize();
 
 	Sprite* sprite = new Sprite({50.0f,50.0f}, { 100.0f,100.0f });
 	sprite->Initialize();
@@ -103,6 +105,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		////	ゲーム部分	////
 		////////////////////////
 		
+		sceneManager->Update();
 
 		if (input->PushKey(DIK_D)) {
 			OutputDebugStringA("Hit D\n");
@@ -150,19 +153,21 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		/////////////////////
 
 
-
-		Sprite::preDraw(dxCommon->GetCommandList());
-
-		sprite->Draw();
-
-		Sprite::postDraw();
-
 		Object3d::preDraw();
+
+		sceneManager->DrawModel();
 
 		obj->Draw(worldTransform,viewProjection);
 		plane->Draw(worldTransformPlane,viewProjection);
 
 		Object3d::postDraw();
+
+		Sprite::preDraw(dxCommon->GetCommandList());
+
+		sceneManager->DrawUI();
+		sprite->Draw();
+
+		Sprite::postDraw();
 
 		/////////////////////////
 		////	描画部分終了	/////

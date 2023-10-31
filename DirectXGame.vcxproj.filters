@@ -11,6 +11,42 @@
     <Filter Include="Engine">
       <UniqueIdentifier>{64da1eb4-35aa-4e29-9a69-e2829f05c147}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Base">
+      <UniqueIdentifier>{bb57e053-d483-4b85-a146-c1476c765ea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\imgui">
+      <UniqueIdentifier>{2fb81565-7322-40f8-a0d4-1463de10d3a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math">
+      <UniqueIdentifier>{9c8cd552-7845-48e5-8cc0-bf52f866fd95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Object">
+      <UniqueIdentifier>{9b2ca9a3-90c6-4fb5-9568-b798f2a888cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Model">
+      <UniqueIdentifier>{ab995fba-732d-4c4a-aeda-bee7f9bdaa57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Sprite">
+      <UniqueIdentifier>{c45d77b8-38c3-4cea-9a81-c4984c1becc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Input">
+      <UniqueIdentifier>{a395c1b4-89da-4106-8665-ff1276ff62ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Game">
+      <UniqueIdentifier>{4b095b3f-b80f-43bb-8752-999ceb277eea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Game\Scene">
+      <UniqueIdentifier>{7676440b-ca30-4009-a259-db148a48da5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Game\Scene\user">
+      <UniqueIdentifier>{a5b239a4-68e3-4ab4-87da-55aaed65dfde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Game\Object">
+      <UniqueIdentifier>{6acb2adc-3e95-4546-8c54-d17239c68009}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Game\Math">
+      <UniqueIdentifier>{4e46fb8c-bebd-484c-9fce-c4974656b3e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -34,35 +70,44 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXCommon.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGuiManager.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Object3d.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Sprite.cpp">
-      <Filter>Engine</Filter>
+    <ClCompile Include="DirectXCommon.cpp">
+      <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="WinApp.cpp">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiManager.cpp">
+      <Filter>Engine\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Object3d.cpp">
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Engine\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="ViewProjection.cpp">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Object</Filter>
     </ClCompile>
     <ClCompile Include="WorldTransform.cpp">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\IScene.cpp">
+      <Filter>Engine\Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\user\TitleScene.cpp">
+      <Filter>Engine\Game\Scene\user</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\SceneManager.cpp">
+      <Filter>Engine\Game\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,43 +136,58 @@
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="DirectXCommon.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGuiManager.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Matrix44.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Object3d.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Vec2.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Vec3.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Vec4.h">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="WinApp.h">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiManager.h">
+      <Filter>Engine\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix44.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec2.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec3.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec4.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Object3d.h">
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Engine\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="ViewProjection.h">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Object</Filter>
     </ClInclude>
     <ClInclude Include="WorldTransform.h">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\IScene.h">
+      <Filter>Engine\Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SceneList.h">
+      <Filter>Engine\Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\user\TitleScene.h">
+      <Filter>Engine\Game\Scene\user</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SceneManager.h">
+      <Filter>Engine\Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\Math.h">
+      <Filter>Engine\Game\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
