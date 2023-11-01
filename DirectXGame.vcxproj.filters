@@ -64,6 +64,9 @@
     <ClCompile Include="WorldTransform.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -127,6 +130,9 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="WorldTransform.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
       <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
