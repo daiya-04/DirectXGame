@@ -4,6 +4,7 @@
 #include <string>
 #include <array>
 #include "externals/DirectXTex/d3dx12.h"
+#include "externals/DirectXTex/DirectXTex.h"
 
 class TextureManager{
 private:
@@ -26,7 +27,7 @@ private:
 	std::string directoryPath_ = "Resources/";
 	std::array<Texture, kNumTextures> textures_;
 	int32_t useTextureNum_ = 0;
-	ComPtr<ID3D12Resource> intermediateResource;
+	std::array<ComPtr<ID3D12Resource>,kNumTextures> intermediateResource_;
 
 public:
 
@@ -48,6 +49,9 @@ private:
 	uint32_t LoadInternal(const std::string& fileName);
 
 	uint32_t LoadUvInternal(const std::string& fileName, const std::string& filePath);
+
+	[[nodiscard]]
+	ComPtr<ID3D12Resource> UploadTextureData(const DirectX::ScratchImage& mipImage,const Texture& tex);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
 

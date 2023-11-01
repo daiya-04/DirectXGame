@@ -13,6 +13,7 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "TextureManager.h"
+#include <memory>
 
 
 #pragma comment(lib,"dxguid.lib")
@@ -55,19 +56,28 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	input->Initialize(win);
 
 	TextureManager::GetInstance()->Initialize();
+	//TextureManager::Load("uvChecker.png");
 
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
 
-	Sprite* sprite = new Sprite({50.0f,50.0f}, { 100.0f,100.0f });
+	uint32_t uv = TextureManager::Load("uvChecker.png");
+
+	Sprite* sprite = new Sprite(uv,{50.0f,50.0f}, { 100.0f,100.0f });
 	sprite->Initialize();
 	sprite->SetAnchorpoint({ 0.5f,0.5f });
 
 	float rotate = sprite->GetRotate();
 	Vector2 pos = sprite->GetPosition();
 
-	Object3d* obj = Object3d::Create("teapot");
-	Object3d* plane = Object3d::Create("Plane");
+	std::unique_ptr<Object3d> obj;
+	obj = std::make_unique<Object3d>();
+	obj.reset(Object3d::Create("teapot"));
+
+	std::unique_ptr<Object3d> plane;
+	plane = std::make_unique<Object3d>();
+	plane.reset(Object3d::Create("Plane"));
+	
 
 	//
 	//vertexDataCube[0].position = { -1.0f,1.0f,-1.0f,1.0f };    //左上前
@@ -146,6 +156,10 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		//更新
 
+		/*ImGui::Begin("window");
+		ImGui::DragFloat3("pos", &worldTransform.translation_.x, 0.01f);
+		ImGui::End();*/
+
         input->Update();
 
 		
@@ -166,7 +180,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		rotate += 0.02f;
 		pos.x += 1.0f;
 		pos.y += 1.0f;
-		worldTransform.translation_.x += 0.01f;
+		//worldTransform.translation_.x += 0.01f;
 		
 
 		sprite->SetRotate(rotate);
@@ -205,8 +219,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	imguiManager->Finalize();
 
 	//解放処理
-	delete plane;
-	delete obj;
 	delete sprite;
 	//Sprite::Finalize();
 	//Object3d::Finalize();

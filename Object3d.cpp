@@ -499,7 +499,7 @@ Object3d::ModelData Object3d::LoadObjFile(const std::string& modelname) {
 			s >> materialFilename;
 			//基本的にobjファイルと同一階層にmtlは存続させるので、ディレクトリ名とファイル名を渡す
 			modelData.material_ = LoadMaterialTemplateFile(materialFilename);
-			uvHandle_ = TextureManager::GetInstance()->LoadUv(materialFilename, modelData.material_.textureFilePath_);
+			
 		}
 	}
 
@@ -524,6 +524,7 @@ Object3d::MaterialData Object3d::LoadMaterialTemplateFile(const std::string& fil
 			s >> textureFilename;
 			//連結してファイルパスにする
 			materialData.textureFilePath_ = directoryPath_ + textureFilename;
+			uvHandle_ = TextureManager::GetInstance()->LoadUv(textureFilename, materialData.textureFilePath_);
 		}
 	}
 	return materialData;

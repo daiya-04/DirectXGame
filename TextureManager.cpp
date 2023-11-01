@@ -1,6 +1,6 @@
 #include "TextureManager.h"
 #include "DirectXCommon.h"
-#include "externals/DirectXTex/DirectXTex.h"
+
 #include <cassert>
 
 using namespace DirectX;
@@ -87,22 +87,18 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName){
 
 	HRESULT hr;
 
-	TexMetadata metadata{};
+	
 	ScratchImage image{};
 
 	//WICテクスチャのロード
-	hr = LoadFromWICFile(wFilePath, WIC_FLAGS_NONE, &metadata, image);
+	hr = LoadFromWICFile(wFilePath, WIC_FLAGS_FORCE_SRGB, nullptr, image);
 	assert(SUCCEEDED(hr));
 
 	ScratchImage mipImages{};
 	//みっぷマップ生成
-	hr= GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), TEX_FILTER_DEFAULT, 0, mipImages);
-	if (SUCCEEDED(hr)) {
-		image = std::move(mipImages);
-		metadata = image.GetMetadata();
-	}
-
-	metadata.format = MakeSRGB(metadata.format);
+	hr = GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), TEX_FILTER_SRGB, 0, mipImages);
+	assert(SUCCEEDED(hr));
+	const TexMetadata& metadata = mipImages.GetMetadata();
 
 	//metadataを基にResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
@@ -129,25 +125,20 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName){
 	);
 	assert(SUCCEEDED(hr));
 
-	std::vector<D3D12_SUBRESOURCE_DATA> subresource;
-	//読み込んだデータからDirectX12用のSubresouceの配列を作成する
-	PrepareUpload(device_, image.GetImages(), image.GetImageCount(), image.GetMetadata(), subresource);
-	//intermediateResourceに必要なサイズを計算する
-	uint64_t intermediateSize = GetRequiredIntermediateSize(texture.resource.Get(), 0, UINT(subresource.size()));
-	//計算したサイズでintermediateResourceを作る
-	intermediateResource = CreateBufferResource(device_, intermediateSize);
-	//データ転送をコマンドに積む
-	UpdateSubresources(DirectXCommon::GetInstance()->GetCommandList(), texture.resource.Get(), intermediateResource.Get(), 0, 0, UINT(subresource.size()), subresource.data());
+	intermediateResource_[useTextureNum_] = UploadTextureData(mipImages, texture);
 
-	//Textureへの転送後は利用できるよう、D3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResourceStateを変更する
-	D3D12_RESOURCE_BARRIER barrier{};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = texture.resource.Get();
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
-	DirectXCommon::GetInstance()->GetCommandList()->ResourceBarrier(1, &barrier);
+	// テクスチャバッファにデータ転送
+	/*for (size_t i = 0; i < metadata.mipLevels; i++) {
+		const Image* img = mipImages.GetImage(i, 0, 0);
+		hr = texture.resource->WriteToSubresource(
+			(UINT)i,
+			nullptr,
+			img->pixels,
+			(UINT)img->rowPitch,
+			(UINT)img->slicePitch
+		);
+		assert(SUCCEEDED(hr));
+	}*/
 
 	//シェーダーリソースビュー作成
 	texture.textureSrvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescriptorHandleSize_, DirectXCommon::GetInstance()->GetSrvHeapCount());
@@ -198,22 +189,17 @@ uint32_t TextureManager::LoadUvInternal(const std::string& fileName, const std::
 
 	HRESULT hr;
 
-	TexMetadata metadata{};
 	ScratchImage image{};
 
 	//WICテクスチャのロード
-	hr = LoadFromWICFile(wFilePath, WIC_FLAGS_NONE, &metadata, image);
+	hr = LoadFromWICFile(wFilePath, WIC_FLAGS_FORCE_SRGB, nullptr, image);
 	assert(SUCCEEDED(hr));
 
 	ScratchImage mipImages{};
 	//みっぷマップ生成
-	hr = GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), TEX_FILTER_DEFAULT, 0, mipImages);
-	if (SUCCEEDED(hr)) {
-		image = std::move(mipImages);
-		metadata = image.GetMetadata();
-	}
-
-	metadata.format = MakeSRGB(metadata.format);
+	hr = GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), TEX_FILTER_SRGB, 0, mipImages);
+	assert(SUCCEEDED(hr));
+	const TexMetadata& metadata = mipImages.GetMetadata();
 
 	//metadataを基にResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
@@ -240,25 +226,7 @@ uint32_t TextureManager::LoadUvInternal(const std::string& fileName, const std::
 	);
 	assert(SUCCEEDED(hr));
 
-	std::vector<D3D12_SUBRESOURCE_DATA> subresource;
-	//読み込んだデータからDirectX12用のSubresouceの配列を作成する
-	PrepareUpload(device_, image.GetImages(), image.GetImageCount(), image.GetMetadata(), subresource);
-	//intermediateResourceに必要なサイズを計算する
-	uint64_t intermediateSize = GetRequiredIntermediateSize(texture.resource.Get(), 0, UINT(subresource.size()));
-	//計算したサイズでintermediateResourceを作る
-	intermediateResource = CreateBufferResource(device_, intermediateSize);
-	//データ転送をコマンドに積む
-	UpdateSubresources(DirectXCommon::GetInstance()->GetCommandList(), texture.resource.Get(), intermediateResource.Get(), 0, 0, UINT(subresource.size()), subresource.data());
-
-	//Textureへの転送後は利用できるよう、D3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResourceStateを変更する
-	D3D12_RESOURCE_BARRIER barrier{};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = texture.resource.Get();
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
-	DirectXCommon::GetInstance()->GetCommandList()->ResourceBarrier(1, &barrier);
+	intermediateResource_[useTextureNum_] = UploadTextureData(mipImages, texture);
 
 	//シェーダーリソースビュー作成
 	texture.textureSrvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescriptorHandleSize_, DirectXCommon::GetInstance()->GetSrvHeapCount());
@@ -278,6 +246,32 @@ uint32_t TextureManager::LoadUvInternal(const std::string& fileName, const std::
 
 	useTextureNum_++;
 	return handle;
+}
+
+
+ComPtr<ID3D12Resource> TextureManager::UploadTextureData(const DirectX::ScratchImage& mipImage,const Texture& tex) {
+
+	std::vector<D3D12_SUBRESOURCE_DATA> subresource;
+	//読み込んだデータからDirectX12用のSubresouceの配列を作成する
+	PrepareUpload(device_, mipImage.GetImages(), mipImage.GetImageCount(), mipImage.GetMetadata(), subresource);
+	//intermediateResourceに必要なサイズを計算する
+	uint64_t intermediateSize = GetRequiredIntermediateSize(tex.resource.Get(), 0, UINT(subresource.size()));
+	//計算したサイズでintermediateResourceを作る
+	ComPtr<ID3D12Resource> intermediateResource = CreateBufferResource(device_, intermediateSize);
+	//データ転送をコマンドに積む
+	UpdateSubresources(DirectXCommon::GetInstance()->GetCommandList(), tex.resource.Get(), intermediateResource.Get(), 0, 0, UINT(subresource.size()), subresource.data());
+
+	//Textureへの転送後は利用できるよう、D3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResourceStateを変更する
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = tex.resource.Get();
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
+	DirectXCommon::GetInstance()->GetCommandList()->ResourceBarrier(1, &barrier);
+
+	return intermediateResource;
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index) {

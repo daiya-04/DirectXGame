@@ -1,7 +1,7 @@
 #pragma once
 #include "DirectXCommon.h"
 #include "WinApp.h"
-
+#include "externals/imgui/imgui.h"
 #include <wrl.h>
 
 
