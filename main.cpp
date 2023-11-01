@@ -156,9 +156,9 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		//更新
 
-		/*ImGui::Begin("window");
+		ImGui::Begin("window");
 		ImGui::DragFloat3("pos", &worldTransform.translation_.x, 0.01f);
-		ImGui::End();*/
+		ImGui::End();
 
         input->Update();
 
@@ -196,7 +196,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		dxCommon->preDraw();
 
-		imguiManager->Draw();
+		
 		
 		Sprite::preDraw(dxCommon->GetCommandList());
 
@@ -211,7 +211,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		Object3d::postDraw();
 
-		
+		imguiManager->Draw();
+
 		dxCommon->postDraw();
 
 	}
