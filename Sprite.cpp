@@ -2,6 +2,7 @@
 #include <cassert>
 #include <format>
 #include <Windows.h>
+#include "TextureManager.h"
 
 #pragma comment(lib,"dxcompiler.lib")
 
@@ -37,8 +38,27 @@ void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowH
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
+	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+	descriptorRange[0].BaseShaderRegister = 0; //0から始まる
+	descriptorRange[0].NumDescriptors = 1; //数は1つ
+	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
+	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+	//Samplerの設定
+	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
+	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; //バイリニアフィルタ
+	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; //0~1の範囲外をリピート
+	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;  //比較しない
+	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;  //ありったけのMipmapを使う
+	staticSamplers[0].ShaderRegister = 0;  //レジスタ番号0を使う
+	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
+	descriptionRootSignature.pStaticSamplers = staticSamplers;
+	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
+
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[2] = {};
+	D3D12_ROOT_PARAMETER rootParameters[3] = {};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;   //PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0;   //レジスタ番号0とバインド
@@ -46,6 +66,11 @@ void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowH
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;   //VertexShaderで使う
 	rootParameters[1].Descriptor.ShaderRegister = 0;   //レジスタ番号0を使う
+
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
+	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange; //Tableの中身の配列を指定
+	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); //Tableで利用する数
 
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
@@ -65,11 +90,16 @@ void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowH
 	assert(SUCCEEDED(hr));
 
 	//InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[1] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
 	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescs[1].SemanticName = "TEXCOORD";
+	inputElementDescs[1].SemanticIndex = 0;
+	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
@@ -180,14 +210,11 @@ void Sprite::Finalize() {
 	graphicsPipelineState_.Reset();
 }
 
-//uint32_t Sprite::LoadTexture(const std::string& fileName) {
-//
-//
-//	return 0;
-//}
+Sprite::Sprite(){}
 
-Sprite::Sprite(Vector2 position, Vector2 size, float rotate, Vector2 anchorpoint, Vector4 color) {
+Sprite::Sprite(uint32_t textureHandle, Vector2 position, Vector2 size, float rotate, Vector2 anchorpoint, Vector4 color) {
 
+	textureHandle_ = textureHandle;
 	position_ = position;
 	size_ = size;
 	rotate_ = rotate;
@@ -244,6 +271,7 @@ void Sprite::Draw(){
 
 	commandList_->SetGraphicsRootConstantBufferView(0, matrialResource_->GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, 2, textureHandle_);
 
 	commandList_->DrawInstanced(6, 1, 0, 0);
 
@@ -386,15 +414,15 @@ void Sprite::TransferVertex(){
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//1枚目の三角形
 	vertexData[0].pos_ = { left,bottom,0.0f,1.0f };//左下
-	//vertexData[0].uv_ = { 0.0f,1.0f };
+	vertexData[0].uv_ = { 0.0f,1.0f };
 	vertexData[1].pos_ = { left,top,0.0f,1.0f };//左上
-	//vertexData[1].uv_ = { 0.0f,0.0f };
+	vertexData[1].uv_ = { 0.0f,0.0f };
 	vertexData[2].pos_ = { right,bottom,0.0f,1.0f };//右下
-	//vertexData[2].uv_ = { 1.0f,1.0f };
+	vertexData[2].uv_ = { 1.0f,1.0f };
 	//2枚目の三角形
 	vertexData[3] = vertexData[1];//左上
 	vertexData[4].pos_ = { right,top,0.0f,1.0f };//右上
-	//vertexData[4].uv_ = { 1.0f,0.0f };
+	vertexData[4].uv_ = { 1.0f,0.0f };
 	vertexData[5] = vertexData[2];//右下
 	
 

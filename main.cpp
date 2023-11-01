@@ -14,6 +14,7 @@
 #include "ViewProjection.h"
 #include <memory>
 #include "externals/imgui/imgui.h"
+#include "TextureManager.h"
 
 #include "Skydome.h"
 #include "Ground.h"
@@ -43,7 +44,7 @@ struct D3DResourceLeakChecker {
 };
 
 int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
-	D3DResourceLeakChecker leakCheck;
+	//D3DResourceLeakChecker leakCheck;
 
 	WinApp* win = nullptr;
 	DirectXCommon* dxCommon = nullptr;
@@ -54,7 +55,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	win = WinApp::GetInstance();
 	win->CreateGameWindow(L"Ultimate1");
 
-	dxCommon = new DirectXCommon();
+	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(win);
 
 	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
@@ -63,9 +64,11 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	input = Input::GetInstance();
 	input->Initialize(win);
 
+	TextureManager::GetInstance()->Initialize();
+	//TextureManager::Load("uvChecker.png");
+
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
-
 	///オブジェクトの初期化
 
 	ViewProjection viewProjection_;
@@ -242,7 +245,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		dxCommon->preDraw();
 
-		imguiManager->Draw();
+		
 		
 		
 		Sprite::preDraw(dxCommon->GetCommandList());
@@ -269,6 +272,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		///
 		Object3d::postDraw();
 
+		imguiManager->Draw();
 		
 		dxCommon->postDraw();
 
@@ -278,7 +282,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	//解放処理
 	
-	delete dxCommon;
+	
 	Sprite::Finalize();
 	Object3d::Finalize();
 	win->TerminateGameWindow();

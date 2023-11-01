@@ -92,18 +92,13 @@ private: //メンバ変数
 
 	std::string filename_;
 	std::string directoryPath_;
-	ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
-	UINT srvDescriptorHandleSize_ = 0;
-	ComPtr<ID3D12Resource> textureResource_;
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_{};
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_{};
-	ComPtr<ID3D12Resource> intermediateResource_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
 	ComPtr<ID3D12Resource> vertexResource_;
 	ComPtr<ID3D12Resource> materialResource_;
 	ComPtr<ID3D12Resource> wvpResource_;
 	ComPtr<ID3D12Resource> directionalLightResource_;
 	UINT index_ = 0;
+	int32_t uvHandle_ = 0;
 
 	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 
@@ -123,16 +118,7 @@ private:
 	//objファイルの読み込み
 	ModelData LoadObjFile(const std::string& modelname);
 	//マテリアルの読み込み
-	MaterialData LoadMaterialTemplateFile(const std::string& modelname);
-	//テクスチャの読み込み
-	void LoadTexture(const std::string& filePath);
-
-	[[nodiscard]]
-	ComPtr<ID3D12Resource> UploadTextureData(const DirectX::ScratchImage& mipImage);
-
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
-
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
+	MaterialData LoadMaterialTemplateFile(const std::string& filename);
 
 };
 

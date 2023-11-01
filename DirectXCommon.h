@@ -14,6 +14,8 @@ private:
 
 private:
 
+	uint32_t kSrvHeapDescriptorNum = 512;
+
 	WinApp* win_ = nullptr;
 
 	ComPtr<ID3D12Device> device_;
@@ -23,15 +25,19 @@ private:
 	ComPtr<ID3D12GraphicsCommandList> commandList_;
 	ComPtr<IDXGISwapChain4> swapChain_;
 	std::vector<ComPtr<ID3D12Resource>> backBuffers_;
-	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 	ComPtr<ID3D12Resource> depthBuffer_;
-	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
 	ComPtr<ID3D12Fence> fence_;
 	uint64_t fenceValue = 0;
 
+	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
+	ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
+
+	int32_t srvHeapCount_ = 0;
+
 public:
 
-	//static DirectXCommon* GetInstance();
+	static DirectXCommon* GetInstance();
 
 	//初期化
 	void Initialize(WinApp* win);
@@ -57,6 +63,9 @@ public:
 	ID3D12Device* GetDevice() const { return device_.Get(); }
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
 	size_t GetBackBufferCount() const { return backBuffers_.size(); }
+	ID3D12DescriptorHeap* GetSrvHeap() { return srvDescriptorHeap_.Get(); }
+	int32_t GetSrvHeapCount() { return srvHeapCount_; }
+	void IncrementSrvHeapCount() { srvHeapCount_++; }
 
 private:
 
@@ -64,10 +73,10 @@ private:
 	std::chrono::steady_clock::time_point reference_;
 
 private:
-	/*DirectXCommon() = default;
+	DirectXCommon() = default;
 	~DirectXCommon() = default;
 	DirectXCommon(const DirectXCommon&) = delete;
-	DirectXCommon& operator=(const DirectXCommon&) = delete;*/
+	DirectXCommon& operator=(const DirectXCommon&) = delete;
 
 	//FPS固定初期化
 	void InitializeFixFPS();
