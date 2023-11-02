@@ -12,6 +12,8 @@
 #include "Object3d.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
+#include "TextureManager.h"
+#include <memory>
 
 
 #pragma comment(lib,"dxguid.lib")
@@ -45,7 +47,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	win = WinApp::GetInstance();
 	win->CreateGameWindow(L"Engine");
 
-	dxCommon = new DirectXCommon();
+	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(win);
 
 	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
@@ -54,9 +56,11 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	input = Input::GetInstance();
 	input->Initialize(win);
 
+	TextureManager::GetInstance()->Initialize();
+	//TextureManager::Load("uvChecker.png");
+
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
-
 
 	////////////////////////////////
 	////	ゲームで使う変数宣言	////
@@ -71,8 +75,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	////	ゲームで使う変数宣言終了	////
 	////////////////////////////////////
 
-
-
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (true) {
 		
@@ -83,6 +85,10 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		//更新
 
+		ImGui::Begin("window");
+		ImGui::DragFloat3("pos", &worldTransform.translation_.x, 0.01f);
+		ImGui::End();
+
         input->Update();
 
 		////////////////////////
@@ -90,8 +96,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		////////////////////////
 		
 		sceneManager->Update();
-
-
+    
 		////////////////////////////
 		////	ゲーム部分終了		////
 		////////////////////////////
@@ -104,7 +109,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		dxCommon->preDraw();
 
-		imguiManager->Draw();
+		
 		
 		/////////////////////
 		////	描画部分	/////
@@ -117,7 +122,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		Object3d::postDraw();
 
-		Sprite::preDraw(dxCommon->GetCommandList());
+		imguiManager->Draw();
 
 		sceneManager->DrawUI();
 

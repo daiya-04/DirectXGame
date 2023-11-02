@@ -121,6 +121,9 @@
     <ClCompile Include="Game\Object\IObject.cpp">
       <Filter>Engine\Game\Object</Filter>
     </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -212,6 +215,9 @@
     </ClInclude>
     <ClInclude Include="Game\Object\ObjectList.h">
       <Filter>Engine\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
