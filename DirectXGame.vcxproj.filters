@@ -50,6 +50,9 @@
     <Filter Include="Engine\Game\Object\Player">
       <UniqueIdentifier>{ae24d7f7-1d0c-4cd6-aa05-c79f3da74b73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Game\Object\Blcok">
+      <UniqueIdentifier>{ca724a2d-6aa7-47a5-bc61-0aac6ecc1de3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -123,6 +126,12 @@
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
       <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Block\BlockManager.cpp">
+      <Filter>Engine\Game\Object\Blcok</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\Block\BaseBlock.cpp">
+      <Filter>Engine\Game\Object\Blcok</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -218,6 +227,12 @@
     </ClInclude>
     <ClInclude Include="TextureManager.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Block\BlockManager.h">
+      <Filter>Engine\Game\Object\Blcok</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\Block\BaseBlock.h">
+      <Filter>Engine\Game\Object\Blcok</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -45,3 +45,11 @@ void IObject::UpdateMatrixs()
 		wt.UpdateMatrix();
 	}
 }
+
+void IObject::AddWorldTransform(WorldTransform& wt, bool setParent)
+{
+	if (setParent) {
+		wt.parent_ = &transformBase_;
+	}
+	transforms_.push_back(wt);
+}

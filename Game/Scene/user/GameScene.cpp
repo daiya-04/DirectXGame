@@ -10,7 +10,7 @@ void GameScene::Initialize()
 
 	player_.reset(new Player());
 	player_->Initialize();
-	IObject::SetViewProjection(viewProjection_.get());
+	IObject::StaticSetViewProjection(viewProjection_.get());
 }
 
 void GameScene::Update()

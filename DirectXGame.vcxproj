@@ -98,6 +98,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Game\Object\Block\BaseBlock.cpp" />
+    <ClCompile Include="Game\Object\Block\BlockManager.cpp" />
     <ClCompile Include="Game\Object\IObject.cpp" />
     <ClCompile Include="Game\Object\Player\Player.cpp" />
     <ClCompile Include="Game\Scene\IScene.cpp" />
@@ -126,6 +128,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="Game\Math\Math.h" />
+    <ClInclude Include="Game\Object\Block\BaseBlock.h" />
+    <ClInclude Include="Game\Object\Block\BlockManager.h" />
     <ClInclude Include="Game\Object\IObject.h" />
     <ClInclude Include="Game\Object\ObjectList.h" />
     <ClInclude Include="Game\Object\Player\Player.h" />

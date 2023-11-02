@@ -21,7 +21,7 @@ protected:
 public:
 
 	static void StaticInitialize(Input* input, ViewProjection* vp = nullptr);
-	static void SetViewProjection(ViewProjection* view) { viewProjection_ = view; }
+	static void StaticSetViewProjection(ViewProjection* view) { viewProjection_ = view; }
 
 
 	virtual void Initialize();
@@ -30,13 +30,16 @@ public:
 
 	virtual void Draw();
 
+	// 行列の更新
+	void UpdateMatrixs();
+public:
+
+	void AddWorldTransform(WorldTransform& wt, bool setParent = false);
 
 protected:
 
 	// 読み込んでいるすべてのモデルを描画
 	void DrawAllModel();
 
-	// 行列の更新
-	void UpdateMatrixs();
 
 };
