@@ -43,7 +43,7 @@ void Player::Update()
 	if (input_->PushKey(DIK_S)) {
 		transformBase_.translation_.z -= 0.1f;
 	}
-	
+
 	UpdateMatrixs();
 }
 
