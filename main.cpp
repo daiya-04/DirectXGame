@@ -157,7 +157,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		imguiManager->Begin();
 
 #ifdef _DEBUG
-		///ImGui
+		
 
 		/*ImGui::Begin("Camera");
 
@@ -166,7 +166,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		
 		ImGui::End();*/
 
-		///
+		
 #endif // _DEBUG
 
 		
