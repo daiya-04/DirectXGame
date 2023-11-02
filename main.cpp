@@ -83,12 +83,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		imguiManager->Begin();
 
-		//更新
-
-		ImGui::Begin("window");
-		ImGui::DragFloat3("pos", &worldTransform.translation_.x, 0.01f);
-		ImGui::End();
-
         input->Update();
 
 		////////////////////////
@@ -124,6 +118,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		imguiManager->Draw();
 
+		Sprite::preDraw(dxCommon->GetCommandList());
+
 		sceneManager->DrawUI();
 
 		Sprite::postDraw();
@@ -139,7 +135,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	// エンジンの解放
 	imguiManager->Finalize();
-	delete dxCommon;
 	Sprite::Finalize();
 	Object3d::Finalize();
 	win->TerminateGameWindow();

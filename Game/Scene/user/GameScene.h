@@ -17,9 +17,10 @@ public:
 	// UI の描画
 	void DrawUI() override;
 
-
 	// デストラクタ
 	~GameScene() override;
+
+	void DebugGUI() override;
 
 private: // プライベート関数
 

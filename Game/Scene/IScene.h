@@ -1,15 +1,16 @@
 #pragma once
 
 #include "../Math/Math.h"
+#include "../../TextureManager.h"
 #include "../../Sprite.h"
 #include "../../Object3d.h"
 #include "../../WorldTransform.h"
 #include "../../ViewProjection.h"
 #include "../../Input.h"
 
-class IScene 
+class IScene
 {
-public:	
+public:
 
 	// サブクラスシーン
 	enum SCENE : int
@@ -43,6 +44,8 @@ public:
 	// UI の描画
 	virtual void DrawUI() = 0;
 
+	// デバッグ表示
+	virtual void DebugGUI() = 0;
 
 	// デストラクタ
 	virtual ~IScene();

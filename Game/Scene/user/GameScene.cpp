@@ -33,3 +33,14 @@ void GameScene::DrawUI()
 }
 
 GameScene::~GameScene() {}
+
+void GameScene::DebugGUI()
+{
+#ifdef _DEBUG
+
+	
+
+
+#endif // _DEBUG
+
+}

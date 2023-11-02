@@ -43,3 +43,15 @@ void SceneManager::ChegeScene(int num)
 	currentSceneNo_ = num;
 	sceneArray_[currentSceneNo_]->Initialize();
 }
+
+void SceneManager::DebugGUI()
+{
+#ifdef _DEBUG
+
+
+
+
+
+#endif // _DEBUG
+
+}
