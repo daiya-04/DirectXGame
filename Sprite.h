@@ -26,8 +26,6 @@ public:
 	};
 
 private:  //静的メンバ変数
-	
-	static const size_t kMaxSRVCount_ = 128;
 
 	//共通部分の変数
 	static ID3D12Device* device_ ;
@@ -35,7 +33,6 @@ private:  //静的メンバ変数
 	static ComPtr<ID3D12RootSignature> rootSignature_;
 	static ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 	static Matrix4x4 projectionMatrix_;
-	static std::array<ComPtr<ID3D12Resource>, kMaxSRVCount_> textureResources_;
 
 public: //静的メンバ関数
 
@@ -89,12 +86,13 @@ private: //メンバ変数
 	Vector2 anchorpoint_{};
 	//色(RGBA)
 	Vector4 color_{ 1.0f,1.0f,1.0f,1.0f };
-
-	uint32_t textureNum_ = 0;
+	//テクスチャハンドル
+	uint32_t textureHandle_ = 0;
 
 public: //メンバ関数
-
-	Sprite(Vector2 position, Vector2 size, float rotate = 0.0f, Vector2 anchorpoint = { 0.0f,0.0f }, Vector4 color = { 1.0f,1.0f,1.0f,1.0f });
+	
+	Sprite();
+	Sprite(uint32_t textureHandle,Vector2 position, Vector2 size, float rotate = 0.0f, Vector2 anchorpoint = { 0.0f,0.0f }, Vector4 color = { 1.0f,1.0f,1.0f,1.0f });
 
 	void Initialize();
 

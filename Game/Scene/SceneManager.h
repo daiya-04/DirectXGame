@@ -28,6 +28,8 @@ public: // パブリック関数
 
 	void ChegeScene(int num);
 
+	void DebugGUI();
+
 private:
 
 	SceneManager() = default;

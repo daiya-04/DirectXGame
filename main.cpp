@@ -12,11 +12,14 @@
 #include "Object3d.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
+#include "TextureManager.h"
+#include <memory>
 
 
 #pragma comment(lib,"dxguid.lib")
 
 #include "Game/Scene/SceneManager.h"
+#include "Game/Object/IObject.h"
 
 using namespace Microsoft::WRL;
 
@@ -44,7 +47,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	win = WinApp::GetInstance();
 	win->CreateGameWindow(L"Engine");
 
-	dxCommon = new DirectXCommon();
+	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(win);
 
 	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
@@ -53,13 +56,17 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	input = Input::GetInstance();
 	input->Initialize(win);
 
+	TextureManager::GetInstance()->Initialize();
+	//TextureManager::Load("uvChecker.png");
+
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
-
 
 	////////////////////////////////
 	////	ゲームで使う変数宣言	////
 	////////////////////////////////
+	IScene::StaticInitialize(input);
+	IObject::StaticInitialize(input);
 
 	SceneManager* sceneManager = SceneManager::GetInstace();
 	sceneManager->Initialize();
@@ -67,8 +74,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	////////////////////////////////////
 	////	ゲームで使う変数宣言終了	////
 	////////////////////////////////////
-
-
 
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (true) {
@@ -78,8 +83,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		imguiManager->Begin();
 
-		//更新
-
         input->Update();
 
 		////////////////////////
@@ -87,8 +90,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		////////////////////////
 		
 		sceneManager->Update();
-
-
+    
 		////////////////////////////
 		////	ゲーム部分終了		////
 		////////////////////////////
@@ -101,7 +103,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		dxCommon->preDraw();
 
-		imguiManager->Draw();
+		
 		
 		/////////////////////
 		////	描画部分	/////
@@ -113,6 +115,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		sceneManager->DrawModel();
 
 		Object3d::postDraw();
+
+		imguiManager->Draw();
 
 		Sprite::preDraw(dxCommon->GetCommandList());
 
@@ -131,7 +135,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	// エンジンの解放
 	imguiManager->Finalize();
-	delete dxCommon;
 	Sprite::Finalize();
 	Object3d::Finalize();
 	win->TerminateGameWindow();

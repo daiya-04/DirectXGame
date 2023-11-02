@@ -1,9 +1,11 @@
 #include "TitleScene.h"
 
+#include "../SceneManager.h"
+
 void TitleScene::Initialize()
 {
-
-	sprite_.reset(new Sprite({ 50.0f,50.0f }, { 100.0f,100.0f }));
+	uint32_t texture = TextureManager::Load("uvChecker.png");
+	sprite_.reset(new Sprite(texture, { 50.0f,50.0f }, { 100.0f,100.0f }));
 	sprite_->Initialize();
 	sprite_->SetAnchorpoint({ 0.5f,0.5f });
 
@@ -27,7 +29,7 @@ void TitleScene::Update()
 		OutputDebugStringA("Hit D\n");
 	}
 	if (input_->TriggerKey(DIK_SPACE)) {
-		OutputDebugStringA("Shot!\n");
+		SceneManager::GetInstace()->ChegeScene(kGAME);
 	}
 
 	XINPUT_STATE joyState{};
@@ -56,7 +58,6 @@ void TitleScene::DrawModel()
 	pot_->Draw(wt_, *viewProjection_.get());
 	plane_->Draw(wtPlane_, *viewProjection_.get());
 
-
 }
 
 void TitleScene::DrawUI()
@@ -65,3 +66,13 @@ void TitleScene::DrawUI()
 }
 
 TitleScene::~TitleScene() {}
+
+void TitleScene::DebugGUI()
+{
+#ifdef _DEBUG
+
+
+
+#endif // _DEBUG
+
+}

@@ -1,7 +1,7 @@
 #pragma once
 #include "DirectXCommon.h"
 #include "WinApp.h"
-
+#include "externals/imgui/imgui.h"
 #include <wrl.h>
 
 
@@ -9,7 +9,6 @@ class ImGuiManager{
 private:
 
 	DirectXCommon* dxCommon_ = nullptr;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
 
 public:
 

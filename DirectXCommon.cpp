@@ -5,11 +5,11 @@
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 
-//DirectXCommon* DirectXCommon::GetInstance() {
-//	static DirectXCommon instance;
-//
-//	return &instance;
-//}
+DirectXCommon* DirectXCommon::GetInstance() {
+	static DirectXCommon instance;
+
+	return &instance;
+}
 
 void DirectXCommon::Initialize(WinApp* win) {
 
@@ -29,6 +29,13 @@ void DirectXCommon::Initialize(WinApp* win) {
 	InitializeDepthBuffer();
 
 	InitializeFence();
+
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
+	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	descriptorHeapDesc.NumDescriptors = kSrvHeapDescriptorNum;
+	descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	HRESULT hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&srvDescriptorHeap_));
+	assert(SUCCEEDED(hr));
 
 }
 
@@ -297,6 +304,10 @@ void DirectXCommon::preDraw() {
 
 	commandList_->RSSetViewports(1, &viewport);  //Viewportを設定
 	commandList_->RSSetScissorRects(1, &scissorRect);  //Scissorを設定
+
+	//描画用のDescriptorHeapの設定
+	ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap_.Get() };
+	commandList_->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 }
 
