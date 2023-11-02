@@ -1,6 +1,7 @@
 #include "GameScene.h"
 
 #include "../SceneManager.h"
+#include "../../../ImGuiManager.h"
 
 void GameScene::Initialize()
 {
@@ -15,6 +16,8 @@ void GameScene::Initialize()
 void GameScene::Update()
 {
 	player_->Update();
+
+	DebugGUI();
 
 	if (input_->TriggerKey(DIK_SPACE)) {
 		SceneManager::GetInstace()->ChegeScene(kTITLE);
@@ -38,8 +41,14 @@ void GameScene::DebugGUI()
 {
 #ifdef _DEBUG
 
+	ImGui::Begin("StageManager");
 	
+	ImGui::DragFloat3("Rotate", &viewProjection_->rotation_.x, 0.01f);
+	ImGui::DragFloat3("Translate", &viewProjection_->translation_.x, 0.1f);
 
+	viewProjection_->UpdateMatrix();
+
+	ImGui::End();
 
 #endif // _DEBUG
 
