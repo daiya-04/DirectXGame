@@ -14,6 +14,7 @@
 #include "ViewProjection.h"
 #include "TextureManager.h"
 #include <memory>
+#include "Particle.h"
 
 
 #pragma comment(lib,"dxguid.lib")
@@ -60,6 +61,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
+	Particle::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
 
 	uint32_t uv = TextureManager::Load("uvChecker.png");
 
@@ -77,6 +79,10 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	std::unique_ptr<Object3d> plane;
 	plane = std::make_unique<Object3d>();
 	plane.reset(Object3d::Create("Plane"));
+
+	std::unique_ptr<Particle> particle;
+	particle = std::make_unique<Particle>();
+	particle.reset(Particle::Create(uv, 10));
 	
 
 	//
@@ -145,6 +151,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	WorldTransform worldTransform;
 	WorldTransform worldTransformPlane;
 	worldTransformPlane.parent_ = &worldTransform;
+	std::vector<WorldTransform> particleWorldTransform(particle->particleNum_);
 	
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (true) {
@@ -185,10 +192,20 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		sprite->SetRotate(rotate);
 		sprite->SetPosition(pos);
+
+		for (size_t index = 0; index < particleWorldTransform.size(); index++) {
+			particleWorldTransform[index].translation_.x += index;
+			particleWorldTransform[index].translation_.z += index;
+		}
+
+		
 		
 
 		worldTransform.UpdateMatrix();
 		worldTransformPlane.UpdateMatrix();
+		for (size_t index = 0; index < particleWorldTransform.size(); index++) {
+			particleWorldTransform[index].UpdateMatrix();
+		}
 
 		imguiManager->End();
 
@@ -206,8 +223,9 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		Object3d::preDraw();
 
-		obj->Draw(worldTransform,viewProjection);
+		//obj->Draw(worldTransform,viewProjection);
 		plane->Draw(worldTransformPlane,viewProjection);
+		particle->Draw(particleWorldTransform, viewProjection);
 
 		Object3d::postDraw();
 
@@ -221,7 +239,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//解放処理
 	delete sprite;
 	//Sprite::Finalize();
-	//Object3d::Finalize();
 	win->TerminateGameWindow();
 
 	return 0;
