@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Math/Math.h"
+#include "../../TextureManager.h"
 #include "../../Sprite.h"
 #include "../../Object3d.h"
 #include "../../WorldTransform.h"

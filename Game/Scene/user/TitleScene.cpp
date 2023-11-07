@@ -4,8 +4,8 @@
 
 void TitleScene::Initialize()
 {
-
-	sprite_.reset(new Sprite({ 50.0f,50.0f }, { 100.0f,100.0f }));
+	uint32_t texture = TextureManager::Load("uvChecker.png");
+	sprite_.reset(new Sprite(texture,{ 50.0f,50.0f }, { 100.0f,100.0f }));
 	sprite_->Initialize();
 	sprite_->SetAnchorpoint({ 0.5f,0.5f });
 

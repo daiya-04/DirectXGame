@@ -14,6 +14,7 @@
 #include "ViewProjection.h"
 #include "TextureManager.h"
 #include <memory>
+#include "GlobalVariables.h"
 
 
 #pragma comment(lib,"dxguid.lib")
@@ -85,11 +86,9 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		//更新
 
-		ImGui::Begin("window");
-		ImGui::DragFloat3("pos", &worldTransform.translation_.x, 0.01f);
-		ImGui::End();
-
         input->Update();
+
+		GlobalVariables::GetInstance()->Update();
 
 		////////////////////////
 		////	ゲーム部分	////
@@ -114,15 +113,23 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		/////////////////////
 		////	描画部分	/////
 		/////////////////////
+		
+		//背景
+		Sprite::preDraw(dxCommon->GetCommandList());
 
 
+		
+		Sprite::postDraw();
+
+		//3dオブジェクト
 		Object3d::preDraw();
 
 		sceneManager->DrawModel();
 
 		Object3d::postDraw();
 
-		imguiManager->Draw();
+		//前景スプライト
+		Sprite::preDraw(dxCommon->GetCommandList());
 
 		sceneManager->DrawUI();
 
@@ -132,6 +139,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		////	描画部分終了	/////
 		/////////////////////////
 		
+		imguiManager->Draw();
+
 		dxCommon->postDraw();
 
 	}
@@ -139,7 +148,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	// エンジンの解放
 	imguiManager->Finalize();
-	delete dxCommon;
 	Sprite::Finalize();
 	Object3d::Finalize();
 	win->TerminateGameWindow();
