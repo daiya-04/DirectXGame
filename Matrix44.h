@@ -261,3 +261,23 @@ public:
 
 		return result;
 	}
+
+	inline Matrix4x4 DirectionToDirection(const Vector3& from,const Vector3& to) {
+
+		Vector3 normal = Cross(from, to).Normalize();
+		float cos = Dot(from, to);
+		float sin = Cross(from, to).Length();
+
+		Matrix4x4 result = MakeIdentity44();
+		result.m[0][0] = std::powf(normal.x, 2) * (1.0f - cos) + cos;
+		result.m[0][1] = normal.x * normal.y * (1.0f - cos) + normal.z * sin;
+		result.m[0][2] = normal.x * normal.z * (1.0f - cos) - normal.y * sin;
+		result.m[1][0] = normal.x * normal.y * (1.0f - cos) - normal.z * sin;
+		result.m[1][1] = std::powf(normal.y, 2) * (1.0f - cos) + cos;
+		result.m[1][2] = normal.y * normal.z * (1.0f - cos) + normal.x * sin;
+		result.m[2][0] = normal.x * normal.z * (1.0f - cos) + normal.y * sin;
+		result.m[2][1] = normal.y * normal.z * (1.0f - cos) - normal.x * sin;
+		result.m[2][2] = std::powf(normal.z, 2) * (1.0f - cos) + cos;
+
+		return result;
+	}
