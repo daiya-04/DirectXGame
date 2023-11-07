@@ -310,16 +310,16 @@ void Particle::Initialize(uint32_t textureHandle, uint32_t particleNum) {
 
 void Particle::Draw(const std::vector<WorldTransform>& worldTransform,const ViewProjection& viewProjection) {
 
-	for (size_t index = 0; index < worldTransform.size(); index++) {
-		Matrix4x4 worldMatrix = worldTransform[index].matWorld_ * (viewProjection.matView_ * viewProjection.matProjection_);
-		TransformationMatrix* wvpData = nullptr;
-		wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-		wvpData[index].WVP = worldMatrix;
+	TransformationMatrix* instancingData = nullptr;
+	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
+	for (size_t index = 0; index < worldTransform.size(); ++index) {
+		Matrix4x4 wvpMatrix = worldTransform[index].matWorld_ * (viewProjection.matView_ * viewProjection.matProjection_);
+		instancingData[index].WVP = wvpMatrix;
 	}
 
 	//VBVを設定
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
-	commandList_->IASetIndexBuffer(&indexBufferView_);
+	//commandList_->IASetIndexBuffer(&indexBufferView_);
 	//マテリアルCBufferの場所を設定
 	commandList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//wvp用のCBufferの場所の設定
@@ -328,16 +328,16 @@ void Particle::Draw(const std::vector<WorldTransform>& worldTransform,const View
 	//SRVのDescriptorTableの先頭を設定。
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, 2, uvHandle_);
 
-	commandList_->DrawIndexedInstanced(4, (UINT)worldTransform.size(), 0, 0, 0);
+	commandList_->DrawInstanced(6, (UINT)worldTransform.size(), 0, 0);
 
 }
 
 void Particle::CreateMesh() {
 	
-	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * 4);
+	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * 6);
 
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
+	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 6;
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	VertexData* vertices = nullptr;
@@ -352,11 +352,16 @@ void Particle::CreateMesh() {
 	//右下
 	vertices[2].pos_ = { 0.5f,-0.5f,0.0f };
 	vertices[2].uv_ = { 1.0f,1.0f };
-	//右上
-	vertices[3].pos_ = { 0.5f,0.5f,0.0f };
-	vertices[3].uv_ = { 1.0f,0.0f };
 
-	indexResource_ = CreateBufferResource(device_, sizeof(uint32_t) * 6);
+	//左上
+	vertices[3] = vertices[1];
+	//右上
+	vertices[4].pos_ = { 0.5f,0.5f,0.0f };
+	vertices[4].uv_ = { 1.0f,0.0f };
+	//右下
+	vertices[5] = vertices[2];
+
+	/*indexResource_ = CreateBufferResource(device_, sizeof(uint32_t) * 6);
 
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
@@ -366,7 +371,7 @@ void Particle::CreateMesh() {
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indices));
 
 	indices[0] = 0;  indices[1] = 1;  indices[2] = 2;
-	indices[3] = 1;  indices[4] = 3;  indices[5] = 2;
+	indices[3] = 1;  indices[4] = 3;  indices[5] = 2;*/
 
 
 	materialResource_ = CreateBufferResource(device_, sizeof(Material));
@@ -375,11 +380,11 @@ void Particle::CreateMesh() {
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&material));
 	material->color_ = color_;
 
-	wvpResource_ = CreateBufferResource(device_, sizeof(TransformationMatrix));
+	//wvpResource_ = CreateBufferResource(device_, sizeof(TransformationMatrix));
 
-	TransformationMatrix* wvpData = nullptr;
+	/*TransformationMatrix* wvpData = nullptr;
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	wvpData->WVP = MakeIdentity44();
+	wvpData->WVP = MakeIdentity44();*/
 
 	instancingResource_ = CreateBufferResource(device_, sizeof(TransformationMatrix) * particleNum_);
 

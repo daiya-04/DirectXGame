@@ -82,7 +82,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	std::unique_ptr<Particle> particle;
 	particle = std::make_unique<Particle>();
-	particle.reset(Particle::Create(uv, 10));
+	particle.reset(Particle::Create(uv, 1));
 	
 
 	//
@@ -152,6 +152,11 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	WorldTransform worldTransformPlane;
 	worldTransformPlane.parent_ = &worldTransform;
 	std::vector<WorldTransform> particleWorldTransform(particle->particleNum_);
+
+	for (size_t index = 0; index < particleWorldTransform.size(); index++) {
+		particleWorldTransform[index].translation_.x += index;
+		particleWorldTransform[index].translation_.z += index;
+	}
 	
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (true) {
@@ -163,9 +168,18 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		//更新
 
-		/*ImGui::Begin("window");
-		ImGui::DragFloat3("pos", &worldTransform.translation_.x, 0.01f);
-		ImGui::End();*/
+		ImGui::Begin("window");
+		ImGui::DragFloat3("0", &particleWorldTransform[0].translation_.x, 0.01f);
+		/*ImGui::DragFloat3("1", &particleWorldTransform[1].translation_.x, 0.01f);
+		ImGui::DragFloat3("2", &particleWorldTransform[2].translation_.x, 0.01f);
+		ImGui::DragFloat3("3", &particleWorldTransform[3].translation_.x, 0.01f);
+		ImGui::DragFloat3("4", &particleWorldTransform[4].translation_.x, 0.01f);
+		ImGui::DragFloat3("5", &particleWorldTransform[5].translation_.x, 0.01f);
+		ImGui::DragFloat3("6", &particleWorldTransform[6].translation_.x, 0.01f);
+		ImGui::DragFloat3("7", &particleWorldTransform[7].translation_.x, 0.01f);
+		ImGui::DragFloat3("8", &particleWorldTransform[8].translation_.x, 0.01f);
+		ImGui::DragFloat3("9", &particleWorldTransform[9].translation_.x, 0.01f);*/
+		ImGui::End();
 
         input->Update();
 
@@ -193,10 +207,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		sprite->SetRotate(rotate);
 		sprite->SetPosition(pos);
 
-		for (size_t index = 0; index < particleWorldTransform.size(); index++) {
-			particleWorldTransform[index].translation_.x += index;
-			particleWorldTransform[index].translation_.z += index;
-		}
+		
 
 		
 		
@@ -206,6 +217,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		for (size_t index = 0; index < particleWorldTransform.size(); index++) {
 			particleWorldTransform[index].UpdateMatrix();
 		}
+		viewProjection.UpdateMatrix();
 
 		imguiManager->End();
 
@@ -213,23 +225,30 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		dxCommon->preDraw();
 
-		imguiManager->Draw();
+		
 		
 		Sprite::preDraw(dxCommon->GetCommandList());
 
-		sprite->Draw();
+		//sprite->Draw();
 
 		Sprite::postDraw();
 
 		Object3d::preDraw();
 
 		//obj->Draw(worldTransform,viewProjection);
-		plane->Draw(worldTransformPlane,viewProjection);
-		particle->Draw(particleWorldTransform, viewProjection);
+		//plane->Draw(worldTransformPlane,viewProjection);
+		
 
 		Object3d::postDraw();
 
-		
+		Particle::preDraw();
+
+		particle->Draw(particleWorldTransform, viewProjection);
+
+		Particle::postDraw();
+
+		imguiManager->Draw();
+
 		dxCommon->postDraw();
 
 	}

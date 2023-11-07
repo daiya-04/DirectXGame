@@ -60,9 +60,9 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
 	ComPtr<ID3D12Resource> vertexResource_;
 	ComPtr<ID3D12Resource> materialResource_;
-	ComPtr<ID3D12Resource> wvpResource_;
-	ComPtr<ID3D12Resource> indexResource_;
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
+	//ComPtr<ID3D12Resource> wvpResource_;
+	//ComPtr<ID3D12Resource> indexResource_;
+	//D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
 	ComPtr<ID3D12Resource> instancingResource_;
 	D3D12_CPU_DESCRIPTOR_HANDLE particleSrvHandleCPU_{};
 	D3D12_GPU_DESCRIPTOR_HANDLE particleSrvHandleGPU_{};
