@@ -62,6 +62,9 @@
     <ClCompile Include="WorldTransform.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="GlobalVariables.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enemy.h" />
@@ -135,6 +138,9 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="WorldTransform.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalVariables.h">
       <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>

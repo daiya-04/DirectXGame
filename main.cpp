@@ -13,8 +13,8 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include <memory>
-#include "externals/imgui/imgui.h"
 #include "TextureManager.h"
+#include "GlobalVariables.h"
 
 #include "Skydome.h"
 #include "Ground.h"
@@ -174,6 +174,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		//更新
 
         input->Update();
+
+		GlobalVariables::GetInstance()->Update();
 
 		///オブジェクトの更新
 		skydome_->Update();
