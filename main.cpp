@@ -187,6 +187,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		goal_->Update();
 		followCemra_->Update();
 
+
+
 		///
 
 		///衝突判定

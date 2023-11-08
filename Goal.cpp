@@ -1,17 +1,24 @@
 #include "Goal.h"
 #include <cassert>
+#include "GlobalVariables.h"
 
 void Goal::Initialize(Object3d* model, const Vector3& position) {
 	assert(model);
 	model_ = model;
 
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	const char* groupName = "Goal";
+	GlobalVariables::GetInstance()->CreateGroup(groupName);
+
 	worldTransform_.translation_ = position;
 	worldTransform_.translation_.y += worldTransform_.scale_.y;
+
+	globalVariables->AddItem(groupName, "Goal Translation", worldTransform_.translation_);
 
 }
 
 void Goal::Update() {
-
+	ApplyGlobalVariables();
 
 	worldTransform_.UpdateMatrix();
 }
@@ -20,6 +27,14 @@ void Goal::Draw(const ViewProjection& viewProjection) {
 
 	model_->Draw(worldTransform_, viewProjection);
 
+}
+
+void Goal::ApplyGlobalVariables(){
+
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	const char* groupName = "Goal";
+
+	worldTransform_.translation_ = globalVariables->GetVec3Value(groupName, "Goal Translation");
 }
 
 Vector3 Goal::GetWorldPos() const {

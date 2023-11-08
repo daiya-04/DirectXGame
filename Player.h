@@ -6,9 +6,43 @@
 #include "Input.h"
 #include <vector>
 #include <array>
+#include <optional>
 
 
 class Player{
+private: //振る舞い用メンバ変数
+
+	enum class Behavior {
+		kRoot,
+		kAttack,
+		kJamp,
+		kDash,
+	};
+
+	Behavior behavior_ = Behavior::kRoot;
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+	static void(Player:: *BehaviorTable[])();
+
+public: //振る舞い用メンバ関数
+
+	//通常行動初期化
+	void RootInitialize();
+	//通常行動更新
+	void RootUpdate();
+	//攻撃行動初期化
+	void AttackInitialize();
+	//攻撃行動更新
+	void AttackUpdate();
+	//ジャンプ初期化
+	void JampInitialize();
+	//ジャンプ更新
+	void JampUpdate();
+	//ダッシュ初期化
+	void DashInitialize();
+	//ダッシュ更新
+	void DashUpdate();
+
 private:
 
 	enum Parts {

@@ -18,6 +18,8 @@ public:
 
 	void Draw(const ViewProjection& viewProjection);
 
+	void ApplyGlobalVariables();
+
 	Vector3 GetSize() const { return worldTransform_.scale_; }
 	Vector3 GetWorldPos() const;
 

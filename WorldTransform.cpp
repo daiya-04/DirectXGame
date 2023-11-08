@@ -2,6 +2,14 @@
 
 void WorldTransform::UpdateMatrix() {
 
+	matWorld_ = MakeIdentity44();
+
+	/*Matrix4x4 scaleMatrix = MakeScaleMatrix(scale_);
+	Matrix4x4 rotateMatrix = DirectionToDirection({ 1.0f,0.0f,0.0f }, rotation_);
+	Matrix4x4 transformMatrix = MakeTranslateMatrix(translation_);
+
+	matWorld_ = scaleMatrix * rotateMatrix * transformMatrix;*/
+
 	matWorld_ = MakeAffineMatrix(scale_, rotation_, translation_);
 
 	if (parent_) {

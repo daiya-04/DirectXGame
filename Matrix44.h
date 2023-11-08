@@ -264,11 +264,18 @@ public:
 
 	inline Matrix4x4 DirectionToDirection(const Vector3& from,const Vector3& to) {
 
+		Vector3 zeroVector = {};
+		Matrix4x4 result = MakeIdentity44();
+
+		if (from == zeroVector || to == zeroVector) {
+			return result;
+		}
+
 		Vector3 normal = Cross(from, to).Normalize();
 		float cos = Dot(from, to);
 		float sin = Cross(from, to).Length();
 
-		Matrix4x4 result = MakeIdentity44();
+		
 		result.m[0][0] = std::powf(normal.x, 2) * (1.0f - cos) + cos;
 		result.m[0][1] = normal.x * normal.y * (1.0f - cos) + normal.z * sin;
 		result.m[0][2] = normal.x * normal.z * (1.0f - cos) - normal.y * sin;

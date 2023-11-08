@@ -1,6 +1,13 @@
 #include "Player.h"
 #include "externals/imgui/imgui.h"
 
+void (Player::* Player::BehaviorTable[])() = {
+	&Player::RootUpdate,
+	&Player::AttackUpdate,
+	&Player::JampUpdate,
+	&Player::DashUpdate,
+};
+
 void Player::Initialize(const std::vector<Object3d*>& models) {
 
 	models_ = models;
@@ -18,39 +25,39 @@ void Player::Initialize(const std::vector<Object3d*>& models) {
 
 void Player::Update() {
 
-	//XINPUT_STATE joyState;
-	Vector3 move{};
-	Vector3 zeroVector{};
+	
 
-	if (Input::GetInstance()->GetJoystickState()) {
+	if (behaviorRequest_) {
 
-		
-		move = Input::GetInstance()->GetMoveXZ();
-		move = move / SHRT_MAX * speed;
+		behavior_ = behaviorRequest_.value();
 
-		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A) && isJamp_ == false) {
-			isJamp_ = true;
-			velocity_.y = 1.0f;
-		}
-		velocity_.y += -0.05f;
-		
-		move = TransformNormal(move, MakeRotateYMatrix(viewProjection_->rotation_.y));
+		switch (behavior_) {
+		    case Behavior::kRoot:
+			default:
+				RootInitialize();
+				break;
+			case Behavior::kAttack:
+				AttackInitialize();
+				break;
+			case Behavior::kJamp:
+				JampInitialize();
+				break;
+			case Behavior::kDash:
 
-		worldTransform_.translation_ += move + velocity_;
-
-		if (move != zeroVector) {
-			rotate_ = move;
+				break;
 		}
 
-		worldTransform_.rotation_.y = std::atan2(rotate_.x, rotate_.z);
-
+		behaviorRequest_ = std::nullopt;
 	}
+	
+	(this->*BehaviorTable[static_cast<size_t>(behavior_)])();
+	
+	velocity_.y += -0.05f;
+	
 
-	if (worldTransform_.translation_.y<= -20.0f) {
+	if (worldTransform_.translation_.y <= -20.0f) {
 		worldTransform_.translation_ = { 0.0f,0.0f,0.0f };
 	}
-
-
 
 
 	//行列更新
@@ -68,9 +75,11 @@ void Player::Draw(const ViewProjection& viewProjection) {
 
 }
 void Player::OnGround() {
-	velocity_ = {};
+	//velocity_ = {};
 	worldTransform_.translation_.y = 0.0f;
-	isJamp_ = false;
+	if (behavior_ == Behavior::kJamp) {
+		behaviorRequest_ = Behavior::kRoot;
+	}
 
 }
 
@@ -78,6 +87,81 @@ void Player::ReStart() {
 	worldTransform_.translation_ = {};
 	worldTransform_.translation_ = {};
 }
+
+void Player::RootInitialize() {
+
+
+
+}
+
+void Player::RootUpdate() {
+
+	Vector3 move{};
+	Vector3 zeroVector{};
+
+	velocity_ = Input::GetInstance()->GetMoveXZ();
+	velocity_ = velocity_ / SHRT_MAX * speed;
+
+	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A)) {
+		behaviorRequest_ = Behavior::kJamp;
+	}
+	
+
+	velocity_ = TransformNormal(velocity_, MakeRotateYMatrix(viewProjection_->rotation_.y));
+
+	//velocity_ = move;
+
+	worldTransform_.translation_ += velocity_;
+
+	if (velocity_ != zeroVector) {
+		//worldTransform_.rotation_ = move;
+		rotate_ = velocity_;
+	}
+
+	worldTransform_.rotation_.y = std::atan2(rotate_.x, rotate_.z);
+
+	
+
+}
+
+void Player::AttackInitialize() {
+
+
+
+}
+
+void Player::AttackUpdate() {
+
+
+
+}
+
+void Player::JampInitialize() {
+
+	worldTransform_.translation_.y = 0.0f;
+
+	velocity_.y = 1.0f;
+
+}
+
+void Player::JampUpdate() {
+
+	worldTransform_.translation_ += velocity_;
+
+}
+
+void Player::DashInitialize() {
+
+
+
+}
+
+void Player::DashUpdate() {
+
+
+
+}
+
 
 Vector3 Player::GetWorldPos() const{
 	Vector3 worldPos;
