@@ -82,7 +82,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	std::unique_ptr<Particle> particle;
 	particle = std::make_unique<Particle>();
-	particle.reset(Particle::Create(uv, 1));
+	particle.reset(Particle::Create(uv, 10));
 	
 
 	//
@@ -170,7 +170,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		ImGui::Begin("window");
 		ImGui::DragFloat3("0", &particleWorldTransform[0].translation_.x, 0.01f);
-		/*ImGui::DragFloat3("1", &particleWorldTransform[1].translation_.x, 0.01f);
+		ImGui::DragFloat3("1", &particleWorldTransform[1].translation_.x, 0.01f);
 		ImGui::DragFloat3("2", &particleWorldTransform[2].translation_.x, 0.01f);
 		ImGui::DragFloat3("3", &particleWorldTransform[3].translation_.x, 0.01f);
 		ImGui::DragFloat3("4", &particleWorldTransform[4].translation_.x, 0.01f);
@@ -178,7 +178,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		ImGui::DragFloat3("6", &particleWorldTransform[6].translation_.x, 0.01f);
 		ImGui::DragFloat3("7", &particleWorldTransform[7].translation_.x, 0.01f);
 		ImGui::DragFloat3("8", &particleWorldTransform[8].translation_.x, 0.01f);
-		ImGui::DragFloat3("9", &particleWorldTransform[9].translation_.x, 0.01f);*/
+		ImGui::DragFloat3("9", &particleWorldTransform[9].translation_.x, 0.01f);
 		ImGui::End();
 
         input->Update();

@@ -344,19 +344,19 @@ void Particle::CreateMesh() {
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertices));
 
 	//左下
-	vertices[0].pos_ = { -0.5f,-0.5f,0.0f };
+	vertices[0].pos_ = { -1.0f,-1.0f,0.0f,1.0f };
 	vertices[0].uv_ = { 0.0f,1.0f };
 	//左上
-	vertices[1].pos_ = { -0.5f,0.5f,0.0f };
+	vertices[1].pos_ = { -1.0f,1.0f,0.0f,1.0f };
 	vertices[1].uv_ = { 0.0f,0.0f };
 	//右下
-	vertices[2].pos_ = { 0.5f,-0.5f,0.0f };
+	vertices[2].pos_ = { 1.0f,-1.0f,0.0f,1.0f };
 	vertices[2].uv_ = { 1.0f,1.0f };
 
 	//左上
 	vertices[3] = vertices[1];
 	//右上
-	vertices[4].pos_ = { 0.5f,0.5f,0.0f };
+	vertices[4].pos_ = { 1.0f,1.0f,0.0f,1.0f };
 	vertices[4].uv_ = { 1.0f,0.0f };
 	//右下
 	vertices[5] = vertices[2];

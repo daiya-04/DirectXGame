@@ -18,7 +18,7 @@ private:
 private:
 
 	struct VertexData {
-		Vector3 pos_;
+		Vector4 pos_;
 		Vector2 uv_;
 	};
 
