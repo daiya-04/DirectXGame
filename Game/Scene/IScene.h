@@ -35,6 +35,8 @@ public:
 
 	// 初期化
 	virtual void Initialize() = 0;
+	// シーンリセット
+	virtual void Reset() = 0;
 
 	// 更新
 	virtual void Update() = 0;

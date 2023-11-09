@@ -22,6 +22,25 @@ void TitleScene::Initialize()
 
 }
 
+void TitleScene::Reset()
+{
+	//uint32_t texture = TextureManager::Load("uvChecker.png");
+	//sprite_.reset(new Sprite(texture, { 50.0f,50.0f }, { 100.0f,100.0f }));
+	sprite_->Initialize();
+	sprite_->SetAnchorpoint({ 0.5f,0.5f });
+
+	rotate_ = sprite_->GetRotate();
+	pos_ = sprite_->GetPosition();
+
+	//pot_.reset(Object3d::Create("teapot"));
+	//plane_.reset(Object3d::Create("Plane"));
+
+	//viewProjection_.reset(new ViewProjection());
+	viewProjection_->Initialize();
+
+	wtPlane_.parent_ = &wt_;
+}
+
 void TitleScene::Update()
 {
 

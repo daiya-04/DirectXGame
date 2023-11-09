@@ -17,7 +17,13 @@ void SceneManager::Initialize()
 
 	currentSceneNo_ = kTITLE;
 	preSceneNo_ = kTITLE;
-	sceneArray_[kTITLE]->Initialize();
+
+	for (size_t i = 0; i < IScene::kCountScene; i++)
+	{
+		sceneArray_[i]->Initialize();
+	}
+
+	//sceneArray_[kTITLE]->Initialize();
 }
 
 void SceneManager::Update()
@@ -41,7 +47,7 @@ void SceneManager::ChegeScene(int num)
 
 	preSceneNo_ = currentSceneNo_;
 	currentSceneNo_ = num;
-	sceneArray_[currentSceneNo_]->Initialize();
+	sceneArray_[currentSceneNo_]->Reset();
 }
 
 void SceneManager::DebugGUI()

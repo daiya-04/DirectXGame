@@ -1,13 +1,15 @@
 #pragma once
 
 #include "../IScene.h"
-#include "../../Object/ObjectList.h"
+#include "../../Stage/DebugStage.h"
 
 class GameScene final : public IScene
 {
 public:
 	// 初期化
 	void Initialize() override;
+	// シーン切り替え時の処理
+	void Reset() override;
 
 	// 更新
 	void Update() override;
@@ -28,7 +30,11 @@ private: // プライベート関数
 
 private: // プライベート変数
 
-	std::unique_ptr<Player> player_;
+
+	// ゲームシーン内でデータを保存する
 	std::unique_ptr<ViewProjection> viewProjection_;
+
+	// ステージを持たせる
+	std::unique_ptr<DebugStage> debugStage_;
 
 };

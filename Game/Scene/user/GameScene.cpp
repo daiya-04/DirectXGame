@@ -6,17 +6,29 @@
 void GameScene::Initialize()
 {
 	viewProjection_.reset(new ViewProjection());
-	viewProjection_->Initialize();
 
-	player_.reset(new Player());
-	player_->Initialize();
-	IObject::StaticSetViewProjection(viewProjection_.get());
+
+
+	debugStage_.reset(new DebugStage);
+	debugStage_->Initialize();
+
+	Reset();
+
+}
+
+void GameScene::Reset()
+{
+	//viewProjection_.reset(new ViewProjection());
+	viewProjection_->Initialize();
+	viewProjection_->translation_ = { 0.0f,17.0f,-10.0f };
+	viewProjection_->rotation_ = { 1.0f,0.0f,0.0f, };
+
+
+
 }
 
 void GameScene::Update()
 {
-	player_->Update();
-
 	DebugGUI();
 
 	if (input_->TriggerKey(DIK_SPACE)) {
@@ -27,7 +39,6 @@ void GameScene::Update()
 
 void GameScene::DrawModel()
 {
-	player_->Draw();
 }
 
 void GameScene::DrawUI()
@@ -42,7 +53,7 @@ void GameScene::DebugGUI()
 #ifdef _DEBUG
 
 	ImGui::Begin("StageManager");
-	
+
 	ImGui::DragFloat3("Rotate", &viewProjection_->rotation_.x, 0.01f);
 	ImGui::DragFloat3("Translate", &viewProjection_->translation_.x, 0.1f);
 

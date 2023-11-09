@@ -8,6 +8,8 @@ public:
 	// 初期化
 	void Initialize() override;
 
+	void Reset() override;
+
 	// 更新
 	void Update() override;
 
