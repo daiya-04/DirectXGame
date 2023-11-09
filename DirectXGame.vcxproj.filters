@@ -65,6 +65,9 @@
     <ClCompile Include="GlobalVariables.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Easing.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enemy.h" />
@@ -141,6 +144,9 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="GlobalVariables.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Easing.h">
       <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>

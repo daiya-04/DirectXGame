@@ -15,7 +15,6 @@ private: //振る舞い用メンバ変数
 	enum class Behavior {
 		kRoot,
 		kAttack,
-		kJamp,
 		kDash,
 	};
 
@@ -34,16 +33,23 @@ public: //振る舞い用メンバ関数
 	void AttackInitialize();
 	//攻撃行動更新
 	void AttackUpdate();
-	//ジャンプ初期化
-	void JampInitialize();
-	//ジャンプ更新
-	void JampUpdate();
 	//ダッシュ初期化
 	void DashInitialize();
 	//ダッシュ更新
 	void DashUpdate();
 
 private:
+
+	struct WorkDash {
+		//ダッシュ用の媒介変数
+		uint32_t dashParameter_ = 0;
+		Vector3 dashDirection_{};
+	};
+
+	struct WorkAttack {
+		uint32_t coolTime_ = 0;
+		float attackParameter_ = 0.0f;
+	};
 
 	enum Parts {
 		Body,
@@ -55,6 +61,7 @@ private:
 	std::vector<Object3d*> models_;
 	WorldTransform worldTransform_;
 	std::array<WorldTransform, partsNum> partsWorldTransform_;
+	WorldTransform weaponWorldTransform_;
 	Vector3 size_ = { 1.0f,2.0f,1.0f };
 
 	float speed = 0.5f;
@@ -63,6 +70,9 @@ private:
 
 	bool isJamp_ = false;
 	bool onGround_ = false;
+
+	WorkDash workDash_;
+	WorkAttack workAttack_;
 
 	const ViewProjection* viewProjection_;
 
@@ -84,6 +94,7 @@ public:
 	void AddTransform(const Vector3& velocity) { worldTransform_.translation_ += velocity; }
 
 	Vector3 GetWorldPos() const;
+	Vector3 GetWeaponWorldPos() const;
 	Vector3 GetSize() const { return size_; }
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 

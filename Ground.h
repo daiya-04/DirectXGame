@@ -26,17 +26,23 @@ private:
 
 public:
 
-	void Initialize(Object3d* model, Type type, const Vector3& position);
+	void Initialize(Object3d* model, Type type, const Vector3& position,const Vector3& scale = {1.0f,1.0f,1.0f});
 
 	void Update();
 
 	void Draw(const ViewProjection& viewProjection);
+
+	void SetPosition(const Vector3& position) { worldTransform_.translation_ = position; }
+	void SetScale(const Vector3& scale) { worldTransform_.scale_ = scale; }
 
 	Vector3 GetWorldPos() const;
 	Vector3 GetSize()const { return size_; }
 	Type GetType() { return type_;}
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 	Vector3 GetVelocity() const { return velocity_; }
+
+	Vector3 GetPos() const { return worldTransform_.translation_; }
+	Vector3 GetScale() const { return worldTransform_.scale_; }
 
 };
 

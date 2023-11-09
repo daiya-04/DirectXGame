@@ -9,6 +9,10 @@ private:
 
 	ViewProjection viewProjection_;
 	const WorldTransform* target_ = nullptr;
+	//追従対象の残像座標
+	Vector3 interTarget_ = {};
+
+	float num = 0.0f;
 
 public:
 
@@ -16,7 +20,11 @@ public:
 
 	void Update();
 
-	void SetTarget(const WorldTransform* target) { target_ = target; }
+	void Reset();
+
+	Vector3 OffsetCalc() const;
+
+	void SetTarget(const WorldTransform* target);
 	ViewProjection& GetViewProjection() { return viewProjection_; }
 
 };

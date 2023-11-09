@@ -2,15 +2,17 @@
 #include <cassert>
 #include <cmath>
 #include <numbers>
+#include "ImGuiManager.h"
 
-void Ground::Initialize(Object3d* model, Type type, const Vector3& position) {
+void Ground::Initialize(Object3d* model, Type type, const Vector3& position, const Vector3& scale) {
 
 	assert(model);
 	model_ = model;
 	type_ = type;
 	worldTransform_.translation_ = position;
-	worldTransform_.scale_ = { 1.5f,1.0f,1.5f };
+	worldTransform_.scale_ = scale;
 	size_ = { worldTransform_.scale_.x * 6.0f,0.0f,worldTransform_.scale_.z * 6.0f };
+
 	worldTransform_.UpdateMatrix();
 }
 
@@ -27,8 +29,12 @@ void Ground::Update() {
 				
 		worldTransform_.translation_ += velocity_;
 
+		
+
 	}
 
+
+	size_ = { worldTransform_.scale_.x * 6.0f,0.0f,worldTransform_.scale_.z * 6.0f };
 	worldTransform_.UpdateMatrix();
 }
 
@@ -37,8 +43,6 @@ void Ground::Draw(const ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_,viewProjection);
 
 }
-
-
 
 Vector3 Ground::GetWorldPos() const {
 	Vector3 worldPos;

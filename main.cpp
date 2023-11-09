@@ -94,20 +94,22 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	for (size_t index = 0; index < 3; index++) {
 		grounds_.push_back(std::make_unique<Ground>());
 	}
-	grounds_[0]->Initialize(groundModel1_.get(), Type::Static, { 0.0f,0.0f,0.0f });
-	grounds_[1]->Initialize(groundModel2_.get(), Type::Dynamic, { 0.0f,0.0f,grounds_[0]->GetWorldPos().z + grounds_[0]->GetSize().z * 3.0f});
-	grounds_[2]->Initialize(groundModel3_.get(), Type::Static, { 0.0f,0.0f,grounds_[1]->GetWorldPos().z + grounds_[1]->GetSize().z * 3.0f});
-	
+	grounds_[0]->Initialize(groundModel1_.get(), Type::Static, { 0.0f,0.0f,0.0f }, { 1.5f,1.0f,1.5f });
+	grounds_[1]->Initialize(groundModel2_.get(), Type::Dynamic, { 0.0f,0.0f,grounds_[0]->GetWorldPos().z + grounds_[0]->GetSize().z * 3.0f}, { 1.5f,1.0f,1.5f });
+	grounds_[2]->Initialize(groundModel3_.get(), Type::Static, { 0.0f,0.0f,80.0f},{10.0f,1.0f,6.0f});
 
 	//プレイヤー
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Object3d> playerHaedModel_;
 	std::unique_ptr<Object3d> playerBodyModel_;
 
+	std::unique_ptr<Object3d> weaponModel_;
+
 	playerHaedModel_.reset(Object3d::Create("float_Head"));
 	playerBodyModel_.reset(Object3d::Create("float_Body"));
+	weaponModel_.reset(Object3d::Create("Stamp"));
 	std::vector<Object3d*> playerModels = {
-		playerBodyModel_.get(),playerHaedModel_.get()
+		playerBodyModel_.get(),playerHaedModel_.get(),weaponModel_.get()
 	};
 	player_ = std::make_unique<Player>();
 	player_->Initialize(playerModels);
@@ -167,6 +169,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		ImGui::End();*/
 
 		
+
+		
 #endif // _DEBUG
 
 		
@@ -178,6 +182,9 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		GlobalVariables::GetInstance()->Update();
 
 		///オブジェクトの更新
+
+		
+
 		skydome_->Update();
 		for (const auto& ground : grounds_) {
 			ground->Update();
@@ -208,6 +215,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 			enemy_->GetWorldPos() + enemy_->GetSize()
 		};
 
+		Sphere stamp = { player_->GetWeaponWorldPos(),1.0f };
+
 		for (const auto& ground : grounds_) {
 			AABB aabbGround = {
 				ground->GetWorldPos() - ground->GetSize(),
@@ -235,13 +244,16 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 			player_->ReStart();
 		}
 
+		if (IsCollision(enemy, stamp)) {
+			player_->ReStart();
+		}
 
 		///
 
 		viewProjection_.matView_ = followCemra_->GetViewProjection().matView_;
 
 		
-
+		
 		
 		imguiManager->End();
 

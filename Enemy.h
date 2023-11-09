@@ -22,7 +22,7 @@ private:
 	std::array<WorldTransform, partsNum> partsWorldTransform_;
 
 	Vector3 center_;
-	float radius_ = 5.0f;
+	float radius_ = 10.0f;
 	float theta_ = 0.0f;
 
 	Vector3 size_ = { 1.0f,1.5f,2.0f };
