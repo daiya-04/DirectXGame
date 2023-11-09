@@ -12,6 +12,8 @@
 #include "ViewProjection.h"
 #include "Log.h"
 
+
+
 class Particle{
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -26,8 +28,9 @@ private:
 		Vector4 color_;
 	};
 
-	struct TransformationMatrix {
+	struct ParticleGPU {
 		Matrix4x4 WVP;
+		Vector4 color;
 	};
 
 private:
@@ -60,9 +63,9 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
 	ComPtr<ID3D12Resource> vertexResource_;
 	ComPtr<ID3D12Resource> materialResource_;
-	//ComPtr<ID3D12Resource> wvpResource_;
-	//ComPtr<ID3D12Resource> indexResource_;
-	//D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
+	ComPtr<ID3D12Resource> wvpResource_;
+	ComPtr<ID3D12Resource> indexResource_;
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
 	ComPtr<ID3D12Resource> instancingResource_;
 	D3D12_CPU_DESCRIPTOR_HANDLE particleSrvHandleCPU_{};
 	D3D12_GPU_DESCRIPTOR_HANDLE particleSrvHandleGPU_{};
@@ -72,6 +75,15 @@ private:
 
 public:
 
+	struct ParticleData {
+		WorldTransform worldTransform_;
+		Vector3 velocity_;
+		Vector4 color_;
+		float lifeTime_;
+		float currentTime_;
+	};
+
+	uint32_t particleMaxNum_ = 0;
 	uint32_t particleNum_ = 0;
 	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 
@@ -79,7 +91,7 @@ public:
 
 	void Initialize(uint32_t textureHandle, uint32_t particleNum);
 
-	void Draw(const std::vector<WorldTransform>& worldTransform,const ViewProjection& viewProjection);
+	void Draw(const std::vector<ParticleData>& particleData,const ViewProjection& viewProjection);
 
 private:
 

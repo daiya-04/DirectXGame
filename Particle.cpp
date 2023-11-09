@@ -163,7 +163,7 @@ void Particle::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	//Depthの機能を有効化する
 	depthStencilDesc.DepthEnable = true;
 	//書き込みします
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	//比較関数はLessEqual。つまり、近ければ描画される
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
@@ -304,22 +304,44 @@ ComPtr<ID3D12Resource> Particle::CreateBufferResource(ComPtr<ID3D12Device> devic
 void Particle::Initialize(uint32_t textureHandle, uint32_t particleNum) {
 
 	uvHandle_ = textureHandle;
-	particleNum_ = particleNum;
+	particleMaxNum_ = particleNum;
 	CreateMesh();
 }
 
-void Particle::Draw(const std::vector<WorldTransform>& worldTransform,const ViewProjection& viewProjection) {
+void Particle::Draw(const std::vector<ParticleData>& particleData,const ViewProjection& viewProjection) {
 
-	TransformationMatrix* instancingData = nullptr;
+	ParticleGPU* instancingData = nullptr;
 	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
-	for (size_t index = 0; index < worldTransform.size(); ++index) {
-		Matrix4x4 wvpMatrix = worldTransform[index].matWorld_ * (viewProjection.matView_ * viewProjection.matProjection_);
-		instancingData[index].WVP = wvpMatrix;
+	particleNum_ = 0;
+	for (size_t index = 0; index < particleData.size(); ++index) {
+		if (particleData[index].currentTime_ >= particleData[index].lifeTime_) {
+			continue;
+		}
+
+		Matrix4x4 billboardMat = viewProjection.matView_;
+		billboardMat = billboardMat.Inverse();
+		billboardMat.m[3][0] = 0.0f;
+		billboardMat.m[3][1] = 0.0f;
+		billboardMat.m[3][2] = 0.0f;
+
+		Matrix4x4 worldMatrix = MakeScaleMatrix({ 1.0f,1.0f,1.0f }) * billboardMat * MakeTranslateMatrix(particleData[index].worldTransform_.translation_);
+
+		Matrix4x4 wvpMatrix = worldMatrix * (viewProjection.matView_ * viewProjection.matProjection_);
+		//float alpha = 1.0f - (particleData[index].currentTime_ / particleData[index].lifeTime_);
+
+		instancingData[particleNum_].WVP = wvpMatrix;
+		instancingData[particleNum_].color = particleData[index].color_;
+		//instancingData[particleNum_].color.w = alpha;
+		particleNum_++;
 	}
+
+	Material* material = nullptr;
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&material));
+	material->color_ = color_;
 
 	//VBVを設定
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
-	//commandList_->IASetIndexBuffer(&indexBufferView_);
+	commandList_->IASetIndexBuffer(&indexBufferView_);
 	//マテリアルCBufferの場所を設定
 	commandList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//wvp用のCBufferの場所の設定
@@ -328,16 +350,16 @@ void Particle::Draw(const std::vector<WorldTransform>& worldTransform,const View
 	//SRVのDescriptorTableの先頭を設定。
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, 2, uvHandle_);
 
-	commandList_->DrawInstanced(6, (UINT)worldTransform.size(), 0, 0);
+	commandList_->DrawIndexedInstanced(6, (UINT)particleNum_, 0, 0, 0);
 
 }
 
 void Particle::CreateMesh() {
 	
-	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * 6);
+	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * 4);
 
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 6;
+	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	VertexData* vertices = nullptr;
@@ -354,14 +376,14 @@ void Particle::CreateMesh() {
 	vertices[2].uv_ = { 1.0f,1.0f };
 
 	//左上
-	vertices[3] = vertices[1];
+	//vertices[3] = vertices[1];
 	//右上
-	vertices[4].pos_ = { 1.0f,1.0f,0.0f,1.0f };
-	vertices[4].uv_ = { 1.0f,0.0f };
+	vertices[3].pos_ = { 1.0f,1.0f,0.0f,1.0f };
+	vertices[3].uv_ = { 1.0f,0.0f };
 	//右下
-	vertices[5] = vertices[2];
+	//vertices[5] = vertices[2];
 
-	/*indexResource_ = CreateBufferResource(device_, sizeof(uint32_t) * 6);
+	indexResource_ = CreateBufferResource(device_, sizeof(uint32_t) * 6);
 
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
@@ -371,7 +393,7 @@ void Particle::CreateMesh() {
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indices));
 
 	indices[0] = 0;  indices[1] = 1;  indices[2] = 2;
-	indices[3] = 1;  indices[4] = 3;  indices[5] = 2;*/
+	indices[3] = 1;  indices[4] = 3;  indices[5] = 2;
 
 
 	materialResource_ = CreateBufferResource(device_, sizeof(Material));
@@ -386,13 +408,14 @@ void Particle::CreateMesh() {
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	wvpData->WVP = MakeIdentity44();*/
 
-	instancingResource_ = CreateBufferResource(device_, sizeof(TransformationMatrix) * particleNum_);
+	instancingResource_ = CreateBufferResource(device_, sizeof(ParticleGPU) * particleMaxNum_);
 
-	TransformationMatrix* instancingData = nullptr;
+	/*ParticleGPU* instancingData = nullptr;
 	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
-	for (uint32_t index = 0; index < particleNum_; ++index) {
+	for (size_t index = 0; index < particleMaxNum_; ++index) {
 		instancingData[index].WVP = MakeIdentity44();
-	}
+		instancingData[index].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	}*/
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc{};
 	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
@@ -400,8 +423,8 @@ void Particle::CreateMesh() {
 	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	instancingSrvDesc.Buffer.FirstElement = 0;
 	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	instancingSrvDesc.Buffer.NumElements = particleNum_;
-	instancingSrvDesc.Buffer.StructureByteStride = sizeof(TransformationMatrix);
+	instancingSrvDesc.Buffer.NumElements = particleMaxNum_;
+	instancingSrvDesc.Buffer.StructureByteStride = sizeof(ParticleGPU);
 	UINT handleSize = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	particleSrvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), handleSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
 	particleSrvHandleGPU_ = GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), handleSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
