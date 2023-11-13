@@ -69,6 +69,9 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
+
+	GlobalVariables::GetInstance()->LoadFiles();
+
 	///オブジェクトの初期化
 
 	ViewProjection viewProjection_;
@@ -127,7 +130,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	};
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize(enemyModels);
-	enemy_->SetCenter(grounds_[2]->GetWorldPos());
+	
 
 	//ゴール
 	std::unique_ptr<Goal> goal_;
@@ -135,13 +138,16 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	goalModel_.reset(Object3d::Create("goal"));
 	goal_ = std::make_unique<Goal>();
-	goal_->Initialize(goalModel_.get(), grounds_[2]->GetWorldPos());
+	goal_->Initialize(goalModel_.get());
+
+	
 
 	//追従カメラ
 	std::unique_ptr<FollowCamera> followCemra_;
 	followCemra_ = std::make_unique<FollowCamera>();
 	followCemra_->Initialize();
 	followCemra_->SetTarget(&player_->GetWorldTransform());
+	player_->SetFollowCamera(followCemra_.get());
 	player_->SetViewProjection(&followCemra_->GetViewProjection());
 
 	///
@@ -190,10 +196,11 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 			ground->Update();
 		}
 		player_->Update();
-		enemy_->Update();
 		goal_->Update();
+		enemy_->SetCenter(goal_->GetWorldPos());
+		enemy_->Update();
 		followCemra_->Update();
-
+		
 
 
 		///
@@ -215,7 +222,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 			enemy_->GetWorldPos() + enemy_->GetSize()
 		};
 
-		Sphere stamp = { player_->GetWeaponWorldPos(),1.0f };
+		Sphere stamp = { player_->GetWeaponWorldPos(),2.0f };
 
 		for (const auto& ground : grounds_) {
 			AABB aabbGround = {
@@ -245,7 +252,10 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		}
 
 		if (IsCollision(enemy, stamp)) {
-			player_->ReStart();
+			if (player_->IsAttack()) {
+				enemy_->OnCollision();
+			}
+			
 		}
 
 		///

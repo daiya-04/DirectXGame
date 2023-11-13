@@ -14,6 +14,8 @@ private:
 
 	float num = 0.0f;
 
+	uint32_t delayTime_ = 0;
+
 public:
 
 	void Initialize();
@@ -21,6 +23,8 @@ public:
 	void Update();
 
 	void Reset();
+
+	void ApplyGlobalVariables();
 
 	Vector3 OffsetCalc() const;
 

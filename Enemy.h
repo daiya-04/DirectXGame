@@ -33,6 +33,10 @@ private:
 	// 浮遊移動のサイクル<frame>
 	int cycle = 60;
 
+	bool isDead_ = false;
+	int rePopTime = 60;
+	int rePopCount_ = 0;
+
 public:
 
 	void Initialize(const std::vector<Object3d*>& models);
@@ -44,6 +48,8 @@ public:
 	void InitializeFloatingGimmick();
 
 	void UpdateFloatingGimmick();
+
+	void OnCollision();
 
 	void SetCenter(const Vector3& center) { center_ = center; }
 

@@ -2,7 +2,7 @@
 #include <cassert>
 #include "GlobalVariables.h"
 
-void Goal::Initialize(Object3d* model, const Vector3& position) {
+void Goal::Initialize(Object3d* model) {
 	assert(model);
 	model_ = model;
 
@@ -10,11 +10,12 @@ void Goal::Initialize(Object3d* model, const Vector3& position) {
 	const char* groupName = "Goal";
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
 
-	worldTransform_.translation_ = position;
+	
 	worldTransform_.translation_.y += worldTransform_.scale_.y;
 
 	globalVariables->AddItem(groupName, "Goal Translation", worldTransform_.translation_);
 
+	worldTransform_.UpdateMatrix();
 }
 
 void Goal::Update() {

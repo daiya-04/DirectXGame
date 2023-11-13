@@ -12,7 +12,7 @@ private:
 
 public:
 	
-	void Initialize(Object3d* model,const Vector3& position);
+	void Initialize(Object3d* model);
 
 	void Update();
 
