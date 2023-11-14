@@ -237,3 +237,21 @@ public:
 	        vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1],
 	        vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2]};
     }
+
+	inline Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
+		Matrix4x4 result = MakeIdentity44();
+
+		result.m[0][0] = std::powf(axis.x, 2.0f) * (1.0f - std::cosf(angle)) + cos(angle);
+		result.m[0][1] = axis.x * axis.y * (1.0f - std::cosf(angle)) + axis.z * std::sinf(angle);
+		result.m[0][2] = axis.x * axis.z * (1.0f - std::cosf(angle)) - axis.y * std::sinf(angle);
+
+		result.m[1][0] = axis.x * axis.y * (1.0f - std::cosf(angle)) - axis.z * std::sinf(angle);
+		result.m[1][1] = std::powf(axis.y, 2.0f) * (1.0f - std::cosf(angle)) + cos(angle);
+		result.m[1][2] = axis.y * axis.z * (1.0f - std::cosf(angle)) + axis.x * std::sinf(angle);
+
+		result.m[2][0] = axis.x * axis.z * (1.0f - std::cosf(angle)) + axis.y * std::sinf(angle);
+		result.m[2][1] = axis.y * axis.z * (1.0f - std::cosf(angle)) - axis.x * std::sinf(angle);
+		result.m[2][2] = std::powf(axis.z, 2.0f) * (1.0f - std::cosf(angle)) + cos(angle);
+
+		return result;
+	}
