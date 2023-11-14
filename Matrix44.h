@@ -255,3 +255,31 @@ public:
 
 		return result;
 	}
+
+	inline Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
+		Matrix4x4 result = MakeIdentity44();
+
+		/*if (from == to || from == -to) {
+			return result;
+		}*/
+		
+
+		Vector3 axis = Cross(from, to).Normalize();
+		float cos = Dot(from, to);
+		float sin = Cross(from, to).Length();
+
+
+		result.m[0][0] = std::powf(axis.x, 2) * (1.0f - cos) + cos;
+		result.m[0][1] = axis.x * axis.y * (1.0f - cos) + axis.z * sin;
+		result.m[0][2] = axis.x * axis.z * (1.0f - cos) - axis.y * sin;
+
+		result.m[1][0] = axis.x * axis.y * (1.0f - cos) - axis.z * sin;
+		result.m[1][1] = std::powf(axis.y, 2) * (1.0f - cos) + cos;
+		result.m[1][2] = axis.y * axis.z * (1.0f - cos) + axis.x * sin;
+
+		result.m[2][0] = axis.x * axis.z * (1.0f - cos) + axis.y * sin;
+		result.m[2][1] = axis.y * axis.z * (1.0f - cos) - axis.x * sin;
+		result.m[2][2] = std::powf(axis.z, 2) * (1.0f - cos) + cos;
+
+		return result;
+	}
