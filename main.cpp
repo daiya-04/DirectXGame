@@ -17,6 +17,7 @@
 #include "Particle.h"
 #include <random>
 #include <numbers>
+#include <list>
 
 
 #pragma comment(lib,"dxguid.lib")
@@ -38,8 +39,6 @@ struct D3DResourceLeakChecker {
 		}
 	}
 };
-
-Particle::ParticleData MakeNewParticle(std::mt19937& randomEngine);
 
 int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//D3DResourceLeakChecker leakCheck;
@@ -89,7 +88,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	std::unique_ptr<Particle> particle_;
 	particle_ = std::make_unique<Particle>();
-	particle_.reset(Particle::Create(circle, 10000));
+	particle_.reset(Particle::Create(circle, 1000));
 	
 
 	//
@@ -165,14 +164,17 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	WorldTransform worldTransform;
 	WorldTransform worldTransformPlane;
 	worldTransformPlane.parent_ = &worldTransform;
-	std::vector<Particle::ParticleData> particles(particle_->particleMaxNum_);
+	std::list<Particle::ParticleData> particles;
+	Particle::Emitter emitter{};
+	emitter.count_ = 5;
+	emitter.frequency_ = 0.5f;
 	//Matrix4x4 backToFrontMat = MakeRotateYMatrix(std::numbers::pi_v<float>);
 
 	
-	for (size_t index = 0; index < particles.size(); index++) {
-		particles[index] = MakeNewParticle(randomEngine);
-		particles[index].currentTime_ = particles[index].lifeTime_;
-	}
+	/*for (size_t index = 0; index < 100;index++) {
+		particles.push_back(MakeNewParticle(randomEngine));
+	}*/
+	
 
 	uint32_t count = 0;
 	bool particleStop = false;
@@ -190,13 +192,13 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		ImGui::Begin("window");
 		ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
 
-		if (ImGui::Button("Reset")) {
-			for (size_t index = 0; index < particles.size(); index++) {
-				particles[index] = MakeNewParticle(randomEngine);
-			}
+		if (ImGui::Button("Add Particle")) {
+			particles.splice(particles.end(), Particle::Emit(emitter, randomEngine));
 		}
 
 		ImGui::Checkbox("Particle Stop", &particleStop);
+
+		ImGui::DragFloat3("Emitter Translate", &emitter.translate_.x, 0.05f);
 
 
 		ImGui::End();
@@ -234,25 +236,19 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		sprite->SetRotate(rotate);
 		sprite->SetPosition(pos);
 		
-		for (size_t index = 0; index < particles.size(); index++) {
-			particles[index].worldTransform_.translation_ += particles[index].velocity_ * kDeltaTime;
-			particles[index].currentTime_ += kDeltaTime;
+		
+		emitter.frequencyTime_ += kDeltaTime;
+		if (emitter.frequencyTime_ >= emitter.frequency_) {
+			particles.splice(particles.end(), Particle::Emit(emitter, randomEngine));
+			emitter.frequencyTime_ -= emitter.frequency_;
 		}
-
-		for (size_t index = 0; index < particles.size(); index++) {
-			if (particleStop == true) { break; }
-			if (particles[index].currentTime_ >= particles[index].lifeTime_) {
-				if (count <= 10) {
-					particles[index] = MakeNewParticle(randomEngine);
-					count = 0;
-					break;
-				}
-				count++;
-			}
-		}
+		
 
 		
-		
+		for (std::list<Particle::ParticleData>::iterator itParticle = particles.begin(); itParticle != particles.end(); itParticle++) {
+			(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_ * kDeltaTime;
+			(*itParticle).currentTime_ += kDeltaTime;
+		}
 
 		worldTransform.UpdateMatrix();
 		worldTransformPlane.UpdateMatrix();
@@ -274,7 +270,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		Object3d::preDraw();
 
-		obj->Draw(worldTransform,viewProjection);
+		//obj->Draw(worldTransform,viewProjection);
 		//plane->Draw(worldTransformPlane,viewProjection);
 
 		Object3d::postDraw();
@@ -299,23 +295,4 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	win->TerminateGameWindow();
 
 	return 0;
-}
-
-Particle::ParticleData MakeNewParticle(std::mt19937& randomEngine) {
-
-	std::uniform_real_distribution<float> distPos(-5.0f, 5.0f);
-	std::uniform_real_distribution<float> distVelocity(-1.0f, 1.0f);
-	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
-	std::uniform_real_distribution<float> distTime(1.0f, 6.0f);
-	Particle::ParticleData particle;
-
-	particle.worldTransform_.translation_ = { distPos(randomEngine),distPos(randomEngine) ,distPos(randomEngine) };
-	particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine) ,distVelocity(randomEngine) };
-	particle.color_ = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine),1.0 };
-	//particle.lifeTime_ = 10.0f;
-	particle.lifeTime_ = distTime(randomEngine);
-	particle.currentTime_ = 0.0f;
-
-
-	return particle;
 }

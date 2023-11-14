@@ -213,11 +213,38 @@ void Particle::preDraw() {
 
 }
 
-void Particle::postDraw() {
+void Particle::postDraw() {}
+
+Particle::ParticleData Particle::MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate){
+
+	std::uniform_real_distribution<float> distPos(-5.0f, 5.0f);
+	std::uniform_real_distribution<float> distVelocity(-1.0f, 1.0f);
+	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+	std::uniform_real_distribution<float> distTime(1.0f, 6.0f);
+	ParticleData particle;
+
+	//particle.worldTransform_.translation_ = { /*distPos(randomEngine),distPos(randomEngine) ,distPos(randomEngine)*/ };
+	particle.worldTransform_.translation_ = translate;
+	particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine) ,0.0f };
+	particle.color_ = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine),1.0 };
+	particle.lifeTime_ = 5.0f;
+	//particle.lifeTime_ = distTime(randomEngine);
+	particle.currentTime_ = 0.0f;
 
 
-
+	return particle;
 }
+
+std::list<Particle::ParticleData> Particle::Emit(const Particle::Emitter& emitter, std::mt19937& randomEngine){
+	std::list<Particle::ParticleData> particles;
+	for (uint32_t count = 0; count < emitter.count_; count++) {
+		particles.push_back(MakeNewParticle(randomEngine, emitter.translate_));
+	}
+
+	return particles;
+}
+
+
 
 ComPtr<IDxcBlob> Particle::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer) {
 
@@ -308,13 +335,14 @@ void Particle::Initialize(uint32_t textureHandle, uint32_t particleNum) {
 	CreateMesh();
 }
 
-void Particle::Draw(const std::vector<ParticleData>& particleData,const ViewProjection& viewProjection) {
+void Particle::Draw(std::list<ParticleData>& particleData,const ViewProjection& viewProjection) {
 
 	ParticleGPU* instancingData = nullptr;
 	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
 	particleNum_ = 0;
-	for (size_t index = 0; index < particleData.size(); ++index) {
-		if (particleData[index].currentTime_ >= particleData[index].lifeTime_) {
+	for (std::list<ParticleData>::iterator itParticle = particleData.begin(); itParticle != particleData.end();) {
+		if ((*itParticle).currentTime_ >= (*itParticle).lifeTime_) {
+			itParticle = particleData.erase(itParticle);
 			continue;
 		}
 
@@ -324,15 +352,21 @@ void Particle::Draw(const std::vector<ParticleData>& particleData,const ViewProj
 		billboardMat.m[3][1] = 0.0f;
 		billboardMat.m[3][2] = 0.0f;
 
-		Matrix4x4 worldMatrix = MakeScaleMatrix({ 1.0f,1.0f,1.0f }) * billboardMat * MakeTranslateMatrix(particleData[index].worldTransform_.translation_);
+		Matrix4x4 worldMatrix = MakeScaleMatrix({ 1.0f,1.0f,1.0f }) * billboardMat * MakeTranslateMatrix((*itParticle).worldTransform_.translation_);
 
 		Matrix4x4 wvpMatrix = worldMatrix * (viewProjection.matView_ * viewProjection.matProjection_);
-		//float alpha = 1.0f - (particleData[index].currentTime_ / particleData[index].lifeTime_);
+		float alpha = 1.0f - ((*itParticle).currentTime_ / (*itParticle).lifeTime_);
 
-		instancingData[particleNum_].WVP = wvpMatrix;
-		instancingData[particleNum_].color = particleData[index].color_;
-		//instancingData[particleNum_].color.w = alpha;
-		particleNum_++;
+		if (particleNum_ < particleMaxNum_) {
+			instancingData[particleNum_].WVP = wvpMatrix;
+			instancingData[particleNum_].color = (*itParticle).color_;
+			instancingData[particleNum_].color.w = alpha;
+			particleNum_++;
+		}
+		
+		
+		
+		itParticle++;
 	}
 
 	Material* material = nullptr;

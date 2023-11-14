@@ -8,6 +8,8 @@
 #include "Vec4.h"
 #include "Matrix44.h"
 #include <vector>
+#include <list>
+#include <random>
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Log.h"
@@ -33,6 +35,23 @@ private:
 		Vector4 color;
 	};
 
+public:
+
+	struct ParticleData {
+		WorldTransform worldTransform_;
+		Vector3 velocity_;
+		Vector4 color_;
+		float lifeTime_;
+		float currentTime_;
+	};
+
+	struct Emitter {
+		Vector3 translate_;
+		uint32_t count_;
+		float frequency_;
+		float frequencyTime_;
+	};
+
 private:
 
 	static ID3D12Device* device_;
@@ -50,6 +69,10 @@ public:
 	static void preDraw();
 	//描画後処理
 	static void postDraw();
+
+	static ParticleData MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate);
+
+	static std::list<ParticleData> Emit(const Particle::Emitter& emitter, std::mt19937& randomEngine);
 
 private:
 
@@ -75,13 +98,7 @@ private:
 
 public:
 
-	struct ParticleData {
-		WorldTransform worldTransform_;
-		Vector3 velocity_;
-		Vector4 color_;
-		float lifeTime_;
-		float currentTime_;
-	};
+	
 
 	uint32_t particleMaxNum_ = 0;
 	uint32_t particleNum_ = 0;
@@ -91,7 +108,7 @@ public:
 
 	void Initialize(uint32_t textureHandle, uint32_t particleNum);
 
-	void Draw(const std::vector<ParticleData>& particleData,const ViewProjection& viewProjection);
+	void Draw(std::list<ParticleData>& particleData,const ViewProjection& viewProjection);
 
 private:
 
