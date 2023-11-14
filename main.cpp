@@ -70,22 +70,31 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		imguiManager->Begin();
 
 		//更新
-#ifdef _DEBUG
 
-		ImGui::Begin("window");
-		
-
-
-		ImGui::End();
-
-#endif // _DEBUG
 
 		
 
         input->Update();
 
+		Vector3 axis = { 1.0f,1.0f,1.0f };
+		axis = axis.Normalize();
+		float angle = 0.44f;
+		Matrix4x4 rotateMatrix = MakeRotateAxisAngle(axis, angle);
 		
+#ifdef _DEBUG
 
+		ImGui::Begin("window");
+
+		Matrix4x4 textMatrix = rotateMatrix;
+
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[0][0], textMatrix.m[0][1], textMatrix.m[0][2], textMatrix.m[0][3]);
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[1][0], textMatrix.m[1][1], textMatrix.m[1][2], textMatrix.m[1][3]);
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[2][0], textMatrix.m[2][1], textMatrix.m[2][2], textMatrix.m[2][3]);
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[3][0], textMatrix.m[3][1], textMatrix.m[3][2], textMatrix.m[3][3]);
+
+		ImGui::End();
+
+#endif // _DEBUG
 		
 
 		imguiManager->End();
