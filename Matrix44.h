@@ -258,15 +258,22 @@ public:
 
 	inline Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
 		Matrix4x4 result = MakeIdentity44();
-
-		/*if (from == to || from == -to) {
-			return result;
-		}*/
+		Vector3 axis{};
 		
+		if (from == -to) {
+			if (from.x != 0 || from.y != 0) {
+				axis = { from.Normalize().y,-from.Normalize().x,0.0f };
+			}
+			else if (from.x != 0 || from.z != 0) {
+				axis = { from.Normalize().z,0.0f,-from.Normalize().x };
+			}
+		}else {
+			axis = Cross(from.Normalize(), to.Normalize()).Normalize();
+		}
 
-		Vector3 axis = Cross(from, to).Normalize();
-		float cos = Dot(from, to);
-		float sin = Cross(from, to).Length();
+		
+		float cos = Dot(from.Normalize(), to.Normalize());
+		float sin = Cross(from.Normalize(), to.Normalize()).Length();
 
 
 		result.m[0][0] = std::powf(axis.x, 2) * (1.0f - cos) + cos;
