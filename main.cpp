@@ -50,7 +50,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	
 
 	win = WinApp::GetInstance();
-	win->CreateGameWindow(L"Engine");
+	win->CreateGameWindow(L"LE2A_12_セト_ダイヤ");
 
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(win);
@@ -66,6 +66,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
+
 	Particle::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
 
 	uint32_t uv = TextureManager::Load("uvChecker.png");
@@ -170,6 +171,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	emitter.frequency_ = 0.5f;
 	
 	bool particleStop = false;
+
+
 	
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (true) {
@@ -184,11 +187,13 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		ImGui::Begin("window");
 		ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
 
+
 		if (ImGui::Button("Add Particle")) {
 			particles.splice(particles.end(), Particle::Emit(emitter, randomEngine));
 		}
 
 		ImGui::Checkbox("Particle Stop", &particleStop);
+
 
 		ImGui::DragFloat3("Emitter Translate", &emitter.translate_.x, 0.05f);
 
@@ -234,6 +239,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		worldTransformPlane.UpdateMatrix();
 		viewProjection.UpdateMatrix();
 
+
 		imguiManager->End();
 
 		//描画
@@ -244,11 +250,13 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		
 		Sprite::preDraw(dxCommon->GetCommandList());
 
+
 		//sprite->Draw();
 
 		Sprite::postDraw();
 
 		Object3d::preDraw();
+
 
 		//obj->Draw(worldTransform,viewProjection);
 		//plane->Draw(worldTransformPlane,viewProjection);
@@ -260,7 +268,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		particle_->Draw(particles, viewProjection);
 
 		Particle::postDraw();
-
+		
 		imguiManager->Draw();
 
 		dxCommon->postDraw();
@@ -270,8 +278,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	imguiManager->Finalize();
 
 	//解放処理
+
 	delete sprite;
-	//Sprite::Finalize();
 	win->TerminateGameWindow();
 
 	return 0;
