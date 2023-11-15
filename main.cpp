@@ -168,15 +168,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	Particle::Emitter emitter{};
 	emitter.count_ = 5;
 	emitter.frequency_ = 0.5f;
-	//Matrix4x4 backToFrontMat = MakeRotateYMatrix(std::numbers::pi_v<float>);
-
 	
-	/*for (size_t index = 0; index < 100;index++) {
-		particles.push_back(MakeNewParticle(randomEngine));
-	}*/
-	
-
-	uint32_t count = 0;
 	bool particleStop = false;
 	
 	//ウィンドウの✕ボタンが押されるまでループ
@@ -188,7 +180,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		imguiManager->Begin();
 
 		//更新
-
+#ifdef _DEBUG
 		ImGui::Begin("window");
 		ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
 
@@ -204,28 +196,16 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		ImGui::End();
 
 		ImGui::Begin("Camera");
-		
+
 		ImGui::DragFloat3("Postion", &viewProjection.translation_.x, 0.01f);
 		ImGui::DragFloat3("Rotation", &viewProjection.rotation_.x, 0.01f);
 
 		ImGui::End();
-
-        input->Update();
+#endif // _DEBUG
 
 		
 
-		if (input->PushKey(DIK_D)) {
-			OutputDebugStringA("Hit D\n");
-		}
-		if (input->TriggerKey(DIK_SPACE)) {
-			OutputDebugStringA("Shot!\n");
-		}
-
-		XINPUT_STATE joyState{};
-
-		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A)) {
-			
-		}
+        input->Update();
 		
 		rotate += 0.02f;
 		pos.x += 1.0f;
