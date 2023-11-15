@@ -44,7 +44,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	
 
 	win = WinApp::GetInstance();
-	win->CreateGameWindow(L"Engine");
+	win->CreateGameWindow(L"LE2A_12_セト_ダイヤ");
 
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(win);
@@ -60,91 +60,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
-
-	uint32_t uv = TextureManager::Load("uvChecker.png");
-
-	Sprite* sprite = new Sprite(uv,{50.0f,50.0f}, { 100.0f,100.0f });
-	sprite->Initialize();
-	sprite->SetAnchorpoint({ 0.5f,0.5f });
-
-	float rotate = sprite->GetRotate();
-	Vector2 pos = sprite->GetPosition();
-
-	std::unique_ptr<Object3d> obj;
-	obj = std::make_unique<Object3d>();
-	obj.reset(Object3d::Create("teapot"));
-
-	std::unique_ptr<Object3d> plane;
-	plane = std::make_unique<Object3d>();
-	plane.reset(Object3d::Create("Plane"));
-	
-
-	//
-	//vertexDataCube[0].position = { -1.0f,1.0f,-1.0f,1.0f };    //左上前
-	//vertexDataCube[0].texcoord = { 0.0f,0.0f };				   
-	//vertexDataCube[1].position = { 1.0f,1.0f,-1.0f,1.0f };     //右上前
-	//vertexDataCube[1].texcoord = { 1.0f,0.0f };				   
-	//vertexDataCube[2].position = { -1.0f,-1.0f,-1.0f,1.0f };   //左下前
-	//vertexDataCube[2].texcoord = { 0.0f,1.0f };				   
-	//vertexDataCube[3] = vertexDataCube[1];                     //右上前
-	//vertexDataCube[4].position = { 1.0f,-1.0f,-1.0f,1.0f };    //右下前
-	//vertexDataCube[4].texcoord = { 1.0f,1.0f };				   
-	//vertexDataCube[5] = vertexDataCube[2];                     //左下前
-	//vertexDataCube[6].position = { -1.0f,1.0f,1.0f,1.0f };     //左上奥
-	//vertexDataCube[6].texcoord = {0.0f,0.0f};				   
-	//vertexDataCube[7].position = vertexDataCube[0].position;   //左上前
-	//vertexDataCube[7].texcoord = { 1.0f,0.0f };				   
-	//vertexDataCube[8].position = { -1.0f,-1.0f,1.0f,1.0f };    //左下奥
-	//vertexDataCube[8].texcoord = { 0.0f,1.0f };				   
-	//vertexDataCube[9] = vertexDataCube[7];                     //左上前
-	//vertexDataCube[10].position = vertexDataCube[2].position;  //左下前
-	//vertexDataCube[10].texcoord = { 1.0f,1.0f };			   
-	//vertexDataCube[11] = vertexDataCube[8];                    //左下奥
-	//vertexDataCube[12].position = { 1.0f,1.0f,1.0f,1.0f };     //右上奥
-	//vertexDataCube[12].texcoord = { 0.0f,0.0f };			   
-	//vertexDataCube[13].position = vertexDataCube[6].position;  //左上奥
-	//vertexDataCube[13].texcoord = { 1.0f,0.0f };			   
-	//vertexDataCube[14].position = { 1.0f,-1.0f,1.0f,1.0f };    //右下奥
-	//vertexDataCube[14].texcoord = { 0.0f,1.0f };			   
-	//vertexDataCube[15] = vertexDataCube[13];                   //左上奥
-	//vertexDataCube[16].position = vertexDataCube[8].position;  //左下奥
-	//vertexDataCube[16].texcoord = { 1.0f,1.0f };			   
-	//vertexDataCube[17] = vertexDataCube[14];                   //右下奥
-	//vertexDataCube[18].position = vertexDataCube[1].position;  //右上前
-	//vertexDataCube[18].texcoord = { 0.0f,0.0f };			   
-	//vertexDataCube[19].position = vertexDataCube[12].position; //右上奥
-	//vertexDataCube[19].texcoord = { 1.0f,0.0f };
-	//vertexDataCube[20].position = vertexDataCube[4].position;  //右下前
-	//vertexDataCube[20].texcoord = { 0.0f,1.0f };
-	//vertexDataCube[21] = vertexDataCube[19];                   //右上奥
-	//vertexDataCube[22].position = vertexDataCube[14].position; //右下奥
-	//vertexDataCube[22].texcoord = { 1.0f,1.0f };
-	//vertexDataCube[23] = vertexDataCube[20];                   //右下前
-	//vertexDataCube[24] = vertexDataCube[0];                    //左上前
-	//vertexDataCube[25] = vertexDataCube[13];                   //左上奥
-	//vertexDataCube[26].position = vertexDataCube[18].position; //右上前
-	//vertexDataCube[26].texcoord = { 0.0f,1.0f };
-	//vertexDataCube[27] = vertexDataCube[25];                   //左上前
-	//vertexDataCube[28].position = vertexDataCube[19].position; //右上奥
-	//vertexDataCube[28].texcoord = { 1.0f,1.0f };
-	//vertexDataCube[29] = vertexDataCube[26];                   //右上前
-	//vertexDataCube[30].position = vertexDataCube[8].position;  //左下奥
-	//vertexDataCube[30].texcoord = { 0.0f,0.0f };
-	//vertexDataCube[31].position = vertexDataCube[2].position;  //左下前
-	//vertexDataCube[31].texcoord = { 1.0f,0.0f };
-	//vertexDataCube[32].position = vertexDataCube[14].position; //右下奥
-	//vertexDataCube[32].texcoord = { 0.0f,1.0f };
-	//vertexDataCube[33] = vertexDataCube[31];                   //左下前
-	//vertexDataCube[34].position = vertexDataCube[4].position;  //右下前
-	//vertexDataCube[34].texcoord = { 1.0f,1.0f };
-	//vertexDataCube[35] = vertexDataCube[32];                   //右下奥
-
-	ViewProjection viewProjection;
-	viewProjection.Initialize();
-	
-	WorldTransform worldTransform;
-	WorldTransform worldTransformPlane;
-	worldTransformPlane.parent_ = &worldTransform;
 	
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (true) {
@@ -156,39 +71,52 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		//更新
 
-		ImGui::Begin("window");
-		ImGui::DragFloat3("pos", &worldTransform.translation_.x, 0.01f);
-		ImGui::End();
+
+		
 
         input->Update();
 
+		Vector3 from0 = Vector3(1.0f, 0.7f, 0.5f);
+		Vector3 to0 = -from0;
+		Vector3 from1 = Vector3(-0.6f, 0.9f, 0.2f);
+		Vector3 to1 = Vector3(0.4f, 0.7f, -0.5f);
+
+		Matrix4x4 rotateMatrix0 = DirectionToDirection(Vector3(1.0f, 0.0f, 0.0f), Vector3(-1.0f, 0.0f, 0.0f));
+		Matrix4x4 rotateMatrix1 = DirectionToDirection(from0, to0);
+		Matrix4x4 rotateMatrix2 = DirectionToDirection(from1, to1);
 		
+#ifdef _DEBUG
 
-		if (input->PushKey(DIK_D)) {
-			OutputDebugStringA("Hit D\n");
-		}
-		if (input->TriggerKey(DIK_SPACE)) {
-			OutputDebugStringA("Shot!\n");
-		}
+		ImGui::Begin("window");
 
-		XINPUT_STATE joyState{};
+		Matrix4x4 textMatrix = rotateMatrix0;
 
-		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A)) {
-			
-		}
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[0][0], textMatrix.m[0][1], textMatrix.m[0][2], textMatrix.m[0][3]);
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[1][0], textMatrix.m[1][1], textMatrix.m[1][2], textMatrix.m[1][3]);
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[2][0], textMatrix.m[2][1], textMatrix.m[2][2], textMatrix.m[2][3]);
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[3][0], textMatrix.m[3][1], textMatrix.m[3][2], textMatrix.m[3][3]);
+		ImGui::NewLine();
+
+		textMatrix = rotateMatrix1;
+
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[0][0], textMatrix.m[0][1], textMatrix.m[0][2], textMatrix.m[0][3]);
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[1][0], textMatrix.m[1][1], textMatrix.m[1][2], textMatrix.m[1][3]);
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[2][0], textMatrix.m[2][1], textMatrix.m[2][2], textMatrix.m[2][3]);
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[3][0], textMatrix.m[3][1], textMatrix.m[3][2], textMatrix.m[3][3]);
+		ImGui::NewLine();
+
+		textMatrix = rotateMatrix2;
+
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[0][0], textMatrix.m[0][1], textMatrix.m[0][2], textMatrix.m[0][3]);
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[1][0], textMatrix.m[1][1], textMatrix.m[1][2], textMatrix.m[1][3]);
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[2][0], textMatrix.m[2][1], textMatrix.m[2][2], textMatrix.m[2][3]);
+		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[3][0], textMatrix.m[3][1], textMatrix.m[3][2], textMatrix.m[3][3]);
+
+
+		ImGui::End();
+
+#endif // _DEBUG
 		
-		rotate += 0.02f;
-		pos.x += 1.0f;
-		pos.y += 1.0f;
-		//worldTransform.translation_.x += 0.01f;
-		
-
-		sprite->SetRotate(rotate);
-		sprite->SetPosition(pos);
-		
-
-		worldTransform.UpdateMatrix();
-		worldTransformPlane.UpdateMatrix();
 
 		imguiManager->End();
 
@@ -200,14 +128,13 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		
 		Sprite::preDraw(dxCommon->GetCommandList());
 
-		sprite->Draw();
+		
 
 		Sprite::postDraw();
 
 		Object3d::preDraw();
 
-		obj->Draw(worldTransform,viewProjection);
-		plane->Draw(worldTransformPlane,viewProjection);
+		
 
 		Object3d::postDraw();
 
@@ -220,9 +147,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	imguiManager->Finalize();
 
 	//解放処理
-	delete sprite;
-	//Sprite::Finalize();
-	//Object3d::Finalize();
+	
 	win->TerminateGameWindow();
 
 	return 0;
