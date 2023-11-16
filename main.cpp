@@ -137,8 +137,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	}
 
-	imguiManager->Finalize();
-
 	//解放処理
 	// エンジンの解放
 	imguiManager->Finalize();

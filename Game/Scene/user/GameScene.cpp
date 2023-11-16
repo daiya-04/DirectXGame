@@ -52,10 +52,10 @@ void GameScene::DebugGUI()
 {
 #ifdef _DEBUG
 
-	ImGui::Begin("StageManager");
+	ImGui::Begin("DebugStage");
 
-	ImGui::DragFloat3("Rotate", &viewProjection_->rotation_.x, 0.01f);
-	ImGui::DragFloat3("Translate", &viewProjection_->translation_.x, 0.1f);
+	ImGui::DragFloat3("ViewRotate", &viewProjection_->rotation_.x, 0.01f);
+	ImGui::DragFloat3("ViewTranslate", &viewProjection_->translation_.x, 0.1f);
 
 	viewProjection_->UpdateMatrix();
 
