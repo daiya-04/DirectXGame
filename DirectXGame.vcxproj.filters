@@ -135,6 +135,7 @@
     <ClInclude Include="TextureManager.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Quaternion.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

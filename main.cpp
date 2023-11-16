@@ -6,6 +6,7 @@
 #include "Vec3.h"
 #include "Vec2.h"
 #include "Vec4.h"
+#include "Quaternion.h"
 #include <wrl.h>
 #include "Input.h"
 #include "Sprite.h"
@@ -71,47 +72,35 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		//更新
 
-
-		
-
         input->Update();
 
-		Vector3 from0 = Vector3(1.0f, 0.7f, 0.5f);
-		Vector3 to0 = -from0;
-		Vector3 from1 = Vector3(-0.6f, 0.9f, 0.2f);
-		Vector3 to1 = Vector3(0.4f, 0.7f, -0.5f);
+		
+		Quaternion q1 = { 2.0f,3.0f,4.0f,1.0f };
+		Quaternion q2 = { 1.0f,3.0f,5.0f,2.0f };
 
-		Matrix4x4 rotateMatrix0 = DirectionToDirection(Vector3(1.0f, 0.0f, 0.0f), Vector3(-1.0f, 0.0f, 0.0f));
-		Matrix4x4 rotateMatrix1 = DirectionToDirection(from0, to0);
-		Matrix4x4 rotateMatrix2 = DirectionToDirection(from1, to1);
+		Quaternion identity = IdentityQuaternion();
+
+		Quaternion mul1 = q1 * q2;
+		Quaternion mul2 = q2 * q1;
+
 		
 #ifdef _DEBUG
 
 		ImGui::Begin("window");
 
-		Matrix4x4 textMatrix = rotateMatrix0;
+		ImGui::Text("%.02f %.02f %.02f %.02f : Identity", identity.x, identity.y, identity.z, identity.w);
 
-		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[0][0], textMatrix.m[0][1], textMatrix.m[0][2], textMatrix.m[0][3]);
-		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[1][0], textMatrix.m[1][1], textMatrix.m[1][2], textMatrix.m[1][3]);
-		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[2][0], textMatrix.m[2][1], textMatrix.m[2][2], textMatrix.m[2][3]);
-		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[3][0], textMatrix.m[3][1], textMatrix.m[3][2], textMatrix.m[3][3]);
-		ImGui::NewLine();
+		ImGui::Text("%.02f %.02f %.02f %.02f : Conjugation", q1.Conjugation().x, q1.Conjugation().y, q1.Conjugation().z, q1.Conjugation().w);
 
-		textMatrix = rotateMatrix1;
+		ImGui::Text("%.02f %.02f %.02f %.02f : Inverse", q1.Inverse().x, q1.Inverse().y, q1.Inverse().z, q1.Inverse().w);
 
-		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[0][0], textMatrix.m[0][1], textMatrix.m[0][2], textMatrix.m[0][3]);
-		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[1][0], textMatrix.m[1][1], textMatrix.m[1][2], textMatrix.m[1][3]);
-		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[2][0], textMatrix.m[2][1], textMatrix.m[2][2], textMatrix.m[2][3]);
-		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[3][0], textMatrix.m[3][1], textMatrix.m[3][2], textMatrix.m[3][3]);
-		ImGui::NewLine();
+		ImGui::Text("%.02f %.02f %.02f %.02f : Normalize", q1.Normalize().x, q1.Normalize().y, q1.Normalize().z, q1.Normalize().w);
 
-		textMatrix = rotateMatrix2;
+		ImGui::Text("%.02f %.02f %.02f %.02f : Multiply q1 * q2", mul1.x, mul1.y, mul1.z, mul1.w);
 
-		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[0][0], textMatrix.m[0][1], textMatrix.m[0][2], textMatrix.m[0][3]);
-		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[1][0], textMatrix.m[1][1], textMatrix.m[1][2], textMatrix.m[1][3]);
-		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[2][0], textMatrix.m[2][1], textMatrix.m[2][2], textMatrix.m[2][3]);
-		ImGui::Text("%.03f %.03f %.03f %.03f", textMatrix.m[3][0], textMatrix.m[3][1], textMatrix.m[3][2], textMatrix.m[3][3]);
+		ImGui::Text("%.02f %.02f %.02f %.02f : Multiply q2 * q1", mul2.x, mul2.y, mul2.z, mul2.w);
 
+		ImGui::Text("%.02f : Norm", q1.Length());
 
 		ImGui::End();
 
