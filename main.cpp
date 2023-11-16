@@ -111,26 +111,19 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		////	描画部分	/////
 		/////////////////////
 		
-		Sprite::preDraw(dxCommon->GetCommandList());
-
-
-		//sprite->Draw();
-
-		Sprite::postDraw();
-
 		Object3d::preDraw();
 
-
-		//obj->Draw(worldTransform,viewProjection);
-		//plane->Draw(worldTransformPlane,viewProjection);
+		sceneManager->DrawModel();
 
 		Object3d::postDraw();
 
-		Particle::preDraw();
 		Sprite::preDraw(dxCommon->GetCommandList());
+		
+		sceneManager->DrawUI();
 
-		sceneManager->DrawUI();
-		sceneManager->DrawUI();
+		Sprite::postDraw();
+
+		Particle::preDraw();
 
 		Particle::postDraw();
 		
