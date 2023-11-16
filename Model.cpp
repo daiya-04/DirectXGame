@@ -2,36 +2,72 @@
 #include <fstream>
 #include <sstream>
 #include <cassert>
+#include "TextureManager.h"
 
 using namespace Microsoft::WRL;
 
-ComPtr<ID3D12Resource> Model::vertexResource_;
+ID3D12Device* Model::device_ = nullptr;
 
-Model* Model::LoadOBJ(const std::string& fileName) {
+Model* Model::LoadOBJ(const std::string& modelName) {
 
 	Model* model = new Model();
 
-	ModelData modelData = model->LoadObjFile(fileName);
+	model->LoadObjFile(modelName);
 
+	model->CreateBuffer();
 	
 	return model;
 }
 
+ComPtr<ID3D12Resource> Model::CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes) {
+	//リソース用のヒープの設定
+	D3D12_HEAP_PROPERTIES uploadHeapproperties{};
+	uploadHeapproperties.Type = D3D12_HEAP_TYPE_UPLOAD;//UploadHeapを使う
+	//リソースの設定
+	D3D12_RESOURCE_DESC ResourceDesc{};
+	//バッファリソース。テクスチャの場合はまた別の設定をする
+	ResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	ResourceDesc.Width = sizeInBytes; //リソースのサイズ。
+	//バッファの場合はこれにする決まり
+	ResourceDesc.Height = 1;
+	ResourceDesc.DepthOrArraySize = 1;
+	ResourceDesc.MipLevels = 1;
+	ResourceDesc.SampleDesc.Count = 1;
+	//バッファの場合はこれらにする決まり
+	ResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	//実際に頂点リソースを作る
+	ComPtr<ID3D12Resource> Resource = nullptr;
+	HRESULT hr = device->CreateCommittedResource(&uploadHeapproperties, D3D12_HEAP_FLAG_NONE, &ResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&Resource));
+	assert(SUCCEEDED(hr));
+
+	return Resource;
+}
+
 void Model::Draw(ID3D12GraphicsCommandList* commandList, UINT rootParamIndexMaterial) {
 
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
+	//マテリアルCBufferの場所を設定
+	commandList->SetGraphicsRootConstantBufferView(rootParamIndexMaterial, materialResource_->GetGPUVirtualAddress());
+
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList, 2, uvHandle_);
+
+	commandList->DrawInstanced(index_, 1, 0, 0);
 
 }
 
-Model::ModelData Model::LoadObjFile(const std::string& filename) {
+void Model::LoadObjFile(const std::string& modelName) {
 
-	ModelData modelData; //構築するModelData
+	
 	std::vector<Vector4> positions;  //位置
 	std::vector<Vector3> normals;  //法線
 	std::vector<Vector2> texcoords;  //テクスチャ座標
 	std::string line;  //ファイルから呼んだ1行を格納するもの
 
-	std::ifstream file(directoryPath + "/" + filename); //ファイルと開く
+	filename_ = modelName + ".obj";
+	directoryPath_ = "Resources/" + modelName + "/";
+
+	std::ifstream file(directoryPath_ + filename_); //ファイルと開く
 	assert(file.is_open());  //とりあえず開けなかったら止める
 
 	while (std::getline(file, line)) {
@@ -87,27 +123,26 @@ Model::ModelData Model::LoadObjFile(const std::string& filename) {
 				triangle[faceVertex] = { position,texcoord,normal };
 			}
 			//頂点を逆順で登録することで、周り順を逆にする
-			modelData.vertices.push_back(triangle[2]);
-			modelData.vertices.push_back(triangle[1]);
-			modelData.vertices.push_back(triangle[0]);
+			vertices_.push_back(triangle[2]);
+			vertices_.push_back(triangle[1]);
+			vertices_.push_back(triangle[0]);
 		}
 		else if (identifier == "mtllib") {
 			//materialTemplateLibraryファイルの名前を取得する
 			std::string materialFilename;
 			s >> materialFilename;
 			//基本的にobjファイルと同一階層にmtlは存続させるので、ディレクトリ名とファイル名を渡す
-			modelData.material = LoadMaterialTemplateFile(materialFilename);
+			LoadMaterialTemplateFile(materialFilename);
+
 		}
 	}
-
-	return modelData;
 }
 
-Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& filename) {
+void Model::LoadMaterialTemplateFile(const std::string& fileName) {
 
-	MaterialData materialData; //構築するMatrialData
+	std::string textureFilePath;
 	std::string line; //ファイルから読んだ1行を格納するもの
-	std::ifstream file(directoryPath + "/" + filename); //ファイルを開く
+	std::ifstream file(directoryPath_ + fileName); //ファイルを開く
 	assert(file.is_open()); //開かなかったら止める
 
 	while (std::getline(file, line)) {
@@ -120,10 +155,35 @@ Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& filename)
 			std::string textureFilename;
 			s >> textureFilename;
 			//連結してファイルパスにする
-			materialData.textureFilePath = directoryPath + "/" + textureFilename;
+			textureFilePath = directoryPath_ + textureFilename;
+			uvHandle_ = TextureManager::GetInstance()->LoadUv(textureFilename, textureFilePath);
 		}
 	}
-	return materialData;
 }
+void Model::CreateBuffer() {
 
+	//頂点リソースを作る
+	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * vertices_.size());
+	//頂点バッファビューを作成する
+	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();  //リソースの先頭のアドレスから使う
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * vertices_.size()); //使用するリソースのサイズは頂点のサイズ
+	vertexBufferView_.StrideInBytes = sizeof(VertexData);  //1頂点当たりのサイズ
 
+	//頂点リソースにデータを書き込む
+	VertexData* vertexData = nullptr;
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));  //書き込むためのアドレスを取得
+	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * vertices_.size());  //頂点データをリソースにコピー
+
+	index_ = UINT(vertices_.size());
+
+	//マテリアル用のリソースを作る。
+	materialResource_ = CreateBufferResource(device_, sizeof(Material));
+	//マテリアルにデータを書き込む
+	Material* materialData = nullptr;
+	//書き込むためのアドレスを取得
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+	materialData->color_ = color_;
+	materialData->enableLightnig_ = true;
+	materialData->uvtransform_ = MakeIdentity44();
+
+}
