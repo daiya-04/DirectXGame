@@ -14,13 +14,21 @@
 #include "ViewProjection.h"
 #include "TextureManager.h"
 #include <memory>
+#include "Particle.h"
+#include <random>
+#include <numbers>
+#include <list>
 
 
 #pragma comment(lib,"dxguid.lib")
 
 #include "Game/Scene/SceneManager.h"
+#include "Game/Object/IObject.h"
+
 
 using namespace Microsoft::WRL;
+
+
 
 struct D3DResourceLeakChecker {
 	~D3DResourceLeakChecker() {
@@ -44,7 +52,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	
 
 	win = WinApp::GetInstance();
-	win->CreateGameWindow(L"Engine");
+	win->CreateGameWindow(L"LE2A_12_セト_ダイヤ");
 
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(win);
@@ -61,18 +69,15 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
 
+	Particle::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
 	////////////////////////////////
 	////	ゲームで使う変数宣言	////
 	////////////////////////////////
 	IScene::StaticInitialize(input);
+	IObject::StaticInitialize(input);
 
-	SceneManager* sceneManager = SceneManager::GetInstace();
-	sceneManager->Initialize();
 
-	////////////////////////////////////
-	////	ゲームで使う変数宣言終了	////
-	////////////////////////////////////
-
+	
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (true) {
 		
@@ -86,13 +91,13 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		////////////////////////
 		////	ゲーム部分	////
 		////////////////////////
-		
+
 		sceneManager->Update();
-    
+
 		////////////////////////////
 		////	ゲーム部分終了		////
 		////////////////////////////
-
+		
 
 
 		imguiManager->End();
@@ -101,36 +106,47 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		dxCommon->preDraw();
 
-		
-		
+
 		/////////////////////
 		////	描画部分	/////
 		/////////////////////
+		
+		Sprite::preDraw(dxCommon->GetCommandList());
 
+
+		//sprite->Draw();
+
+		Sprite::postDraw();
 
 		Object3d::preDraw();
 
-		sceneManager->DrawModel();
+
+		//obj->Draw(worldTransform,viewProjection);
+		//plane->Draw(worldTransformPlane,viewProjection);
 
 		Object3d::postDraw();
 
-		imguiManager->Draw();
-
+		Particle::preDraw();
 		Sprite::preDraw(dxCommon->GetCommandList());
 
 		sceneManager->DrawUI();
+		sceneManager->DrawUI();
 
-		Sprite::postDraw();
+		Particle::postDraw();
+		
+		imguiManager->Draw();
 
 		/////////////////////////
 		////	描画部分終了	/////
 		/////////////////////////
-		
+
 		dxCommon->postDraw();
 
 	}
 
+	imguiManager->Finalize();
 
+	//解放処理
 	// エンジンの解放
 	imguiManager->Finalize();
 	Sprite::Finalize();
