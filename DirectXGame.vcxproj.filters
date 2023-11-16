@@ -100,9 +100,6 @@
     <ClCompile Include="Game\Stage\DebugStage.cpp">
       <Filter>Engine\Game\Stage</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Object\BaseBlock.cpp">
-      <Filter>Engine\Game\Object</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXCommon.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
@@ -136,6 +133,12 @@
     <ClCompile Include="Game\Object\user\Player.cpp">
       <Filter>Engine\Game\Object\user</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Object\BaseBlock.cpp">
+      <Filter>Engine\Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\BlockManager.cpp">
+      <Filter>Engine\Game\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -164,9 +167,6 @@
     </ClInclude>
     <ClInclude Include="Game\Stage\DebugStage.h">
       <Filter>Engine\Game\Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Object\BaseBlock.h">
-      <Filter>Engine\Game\Object</Filter>
     </ClInclude>
     <ClInclude Include="DirectXCommon.h">
       <Filter>Engine\Base</Filter>
@@ -238,6 +238,12 @@
       <Filter>Engine\Game\Object\user</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\IObject.h">
+      <Filter>Engine\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\BaseBlock.h">
+      <Filter>Engine\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\BlockManager.h">
       <Filter>Engine\Game\Object</Filter>
     </ClInclude>
   </ItemGroup>

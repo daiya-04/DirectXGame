@@ -29,4 +29,8 @@ private:
 	void StagingStop() override;
 	void StagingLoad() override;
 
+private:
+
+	void GetOparate();
+
 };

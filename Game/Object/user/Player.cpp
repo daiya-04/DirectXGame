@@ -3,7 +3,7 @@
 void PlayerBlock::Initialize()
 {
 	BaseBlock::Initialize();
-	;
+	input_ = Input::GetInstance();
 }
 
 void PlayerBlock::Update()
@@ -74,20 +74,58 @@ void PlayerBlock::StorageVariables(const char* groupName)
 
 void PlayerBlock::StagingInitialize()
 {
+	BaseBlock::StagingInitialize();
 }
 
 void PlayerBlock::StagingRoot()
 {
+	stagingFrame_++;
+
+	// 操作を受け付ける
+	GetOparate();
+
+
+	// ループさせる
+	if (cStagingFrames_[kSROOT] <= stagingFrame_) {
+		stagingRequest_ = kSROOT;
+	}
+
 }
 
 void PlayerBlock::StagingMove()
 {
+	stagingFrame_++;
+
+
+	// 体に当たっている場合は積込をしたい
+	if (cStagingFrames_[kSMOVE] <= stagingFrame_) {
+		stagingRequest_ = kSROOT;
+	}
 }
 
 void PlayerBlock::StagingStop()
 {
+	stagingFrame_++;
+
+
+
+	if (cStagingFrames_[kSSTOP] <= stagingFrame_) {
+		stagingRequest_ = kSROOT;
+	}
 }
 
 void PlayerBlock::StagingLoad()
 {
+	stagingFrame_++;
+
+
+
+	if (cStagingFrames_[kSLOAD] <= stagingFrame_) {
+		stagingRequest_ = kSROOT;
+	}
+}
+
+void PlayerBlock::GetOparate()
+{
+
 }
