@@ -50,6 +50,12 @@
     <Filter Include="Engine\Game\Object">
       <UniqueIdentifier>{ae94601e-d940-444a-a7f6-fa8440f24566}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Game\Object\user">
+      <UniqueIdentifier>{63ac4fe9-4da0-46e1-be78-6972ba3dc317}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\GlobalVariable">
+      <UniqueIdentifier>{2507a18b-ca0b-4aee-a5e5-cc50b8d5ea00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -126,6 +132,9 @@
     </ClCompile>
     <ClCompile Include="Particle.cpp">
       <Filter>Engine\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\user\Player.cpp">
+      <Filter>Engine\Game\Object\user</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -216,14 +225,20 @@
     <ClInclude Include="Game\Scene\user\TitleScene.h">
       <Filter>Engine\Game\Scene\user</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\SceneManager.h">
-      <Filter>Engine\Game\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Scene\SceneList.h">
       <Filter>Engine\Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Particle.h">
       <Filter>Engine\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SceneManager.h">
+      <Filter>Engine\Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\user\Player.h">
+      <Filter>Engine\Game\Object\user</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\IObject.h">
+      <Filter>Engine\Game\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

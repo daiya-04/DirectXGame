@@ -48,12 +48,12 @@ void DebugStage::LoadStageData()
 			kStageData_.data_[i][j].resize(kStageSize_[2]);
 			for (size_t k = 0; k < kStageSize_[2]; k++)
 			{
-				kStageData_.data_[i][j][k] = StageObject::Element::kNone;
+				//kStageData_.data_[i][j][k] = BaseBlock::Element::kNone;
 			}
 		}
 	}
 
-	SetElement(2, 1, 0, StageObject::Element::kPlayer);
+	SetElement(2, 1, 0, BaseBlock::Element::kPlayer);
 
 }
 
@@ -66,14 +66,14 @@ void DebugStage::ApplyStageData()
 {
 }
 
-void DebugStage::SetElement(const Vector3& position, StageObject::Element element)
+void DebugStage::SetElement(const Vector3& position, BaseBlock::Element element)
 {
-	kStageData_.data_[(int)position.x][(int)position.y][(int)position.z] = element;
+	//kStageData_.data_[(int)position.x][(int)position.y][(int)position.z] = element;
 }
 
-void DebugStage::SetElement(size_t x, size_t y, size_t z, StageObject::Element element)
+void DebugStage::SetElement(size_t x, size_t y, size_t z, BaseBlock::Element element)
 {
-	kStageData_.data_[x][y][z] = element;
+	//kStageData_.data_[x][y][z] = element;
 }
 
 void DebugStage::OparationUpdate()
@@ -154,9 +154,10 @@ bool DebugStage::ScanDirectionZ(Vector3* position, Vector3* direct)
 	return false;
 }
 
-StageObject::Element DebugStage::GetElementPosition(const Vector3& position)
+BaseBlock::Element DebugStage::GetElementPosition(const Vector3& position)
 {
-	return currentData_.data_[(size_t)position.x][(size_t)position.y][(size_t)position.z];
+	//return currentData_.data_[(size_t)position.x][(size_t)position.y][(size_t)position.z];
+	return BaseBlock::Element::kNone;
 }
 
 void DebugStage::GetPlayerPosition()
@@ -167,10 +168,11 @@ void DebugStage::GetPlayerPosition()
 		{
 			for (size_t k = 0; k < kStageSize_[2]; k++)
 			{
-				if (currentData_.data_[i][j][k] == StageObject::Element::kPlayer) {
+				/*
+				if (currentData_.data_[i][j][k] == BaseBlock::Element::kPlayer) {
 					playerPosition_ = { (float)i,(float)j,(float)k };
 					return;
-				}
+				}*/
 			}
 		}
 	}
