@@ -6,7 +6,7 @@
 #include "../Math/Math.h"
 #include "../../Input.h"
 
-#include "../Object/StageObject.h"
+#include "../Object/BaseBlock.h"
 
 class DebugStage
 {
@@ -27,11 +27,6 @@ private:
 
 	Input* input_ = nullptr;
 	
-	// 基本的に同時に座標は動かす
-	Vector3 playerPosition_ = { 0.0f,0.0f,0.0f };
-	Vector3 playerMoveDirect_ = { 0.0f,0.0f,0.0f };
-
-
 public:
 
 	DebugStage();
@@ -56,26 +51,5 @@ private:
 
 	// ステージの情報を反映
 	void ApplyStageData();
-
-	void SetElement(const Vector3& position, BaseBlock::Element element);
-	void SetElement(size_t x, size_t y, size_t z, BaseBlock::Element element);
-
-	// 移動を検知する
-	void OparationUpdate();
-
-	// 移動方向を計算する
-	// 移動しない時はゼロベクトル
-	Vector3 CalcMove(Vector3* position, Vector3* direct);
-
-	// 一方向を走査する
-	bool ScanDirectionX(Vector3* position, Vector3* direct);
-	bool ScanDirectionY(Vector3* position, Vector3* direct);
-	bool ScanDirectionZ(Vector3* position, Vector3* direct);
-
-	BaseBlock::Element GetElementPosition(const Vector3& position);
-
-	// ポジションを取得
-	// 重いと思うので極力つかわない
-	void GetPlayerPosition();
 
 };

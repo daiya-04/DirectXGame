@@ -100,7 +100,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Game\Object\StageObject.cpp" />
+    <ClCompile Include="Game\Object\BaseBlock.cpp" />
     <ClCompile Include="Game\Object\user\Player.cpp" />
     <ClCompile Include="Game\Scene\IScene.cpp" />
     <ClCompile Include="Game\Scene\SceneManager.cpp" />
@@ -131,7 +131,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="Game\Math\Math.h" />
     <ClInclude Include="Game\Object\IObject.h" />
-    <ClInclude Include="Game\Object\StageObject.h" />
+    <ClInclude Include="Game\Object\BaseBlock.h" />
     <ClInclude Include="Game\Object\user\Player.h" />
     <ClInclude Include="Game\Scene\IScene.h" />
     <ClInclude Include="Game\Scene\SceneList.h" />

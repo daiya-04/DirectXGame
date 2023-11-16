@@ -17,7 +17,7 @@ public:
 		kBody,
 		kBlock,
 
-		kCount = _countof(Element::kCount),
+		kCount,
 	};
 
 protected:
@@ -49,6 +49,9 @@ protected:
 	std::optional<Staging> stagingRequest_ = std::nullopt;
 
 	// 演出詰め合わせセット
+	// 基底クラスで宣言しているメンバ関数ポインタには派生クラスの関数は入れられない
+	// 厳密には仮想関数のアドレスを入れているので、派生先の関数とはアドレスが違うので
+	// そもそも実行することが出来ない
 	void (BaseBlock::*pStaging[(size_t)Staging::kSCOUNT])();
 
 	// フレーム管理

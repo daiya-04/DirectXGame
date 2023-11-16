@@ -100,7 +100,7 @@
     <ClCompile Include="Game\Stage\DebugStage.cpp">
       <Filter>Engine\Game\Stage</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Object\StageObject.cpp">
+    <ClCompile Include="Game\Object\BaseBlock.cpp">
       <Filter>Engine\Game\Object</Filter>
     </ClCompile>
     <ClCompile Include="DirectXCommon.cpp">
@@ -165,7 +165,7 @@
     <ClInclude Include="Game\Stage\DebugStage.h">
       <Filter>Engine\Game\Stage</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Object\StageObject.h">
+    <ClInclude Include="Game\Object\BaseBlock.h">
       <Filter>Engine\Game\Object</Filter>
     </ClInclude>
     <ClInclude Include="DirectXCommon.h">

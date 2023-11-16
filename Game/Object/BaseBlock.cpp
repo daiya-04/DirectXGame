@@ -1,4 +1,4 @@
-#include "StageObject.h"
+#include "BaseBlock.h"
 
 void BaseBlock::Initialize()
 {
@@ -41,7 +41,29 @@ void BaseBlock::Update()
 		stagingRequest_ = std::nullopt;
 	}
 	// 演出を更新
-	(this->*pStaging[staging_])();
+	//(this->*pStaging[staging_])();
+
+	switch (staging_
+)
+	{
+	case BaseBlock::kSROOT:
+		StagingRoot();
+		break;
+	case BaseBlock::kSMOVE:
+		StagingMove();
+		break;
+	case BaseBlock::kSSTOP:
+		StagingStop();
+		break;
+	case BaseBlock::kSLOAD:
+		StagingLoad();
+		break;
+	case BaseBlock::kSCOUNT:
+		// 呼び出されてはいけない
+		assert(false);
+	default:
+		break;
+	}
 }
 
 void BaseBlock::ApplyVariables(const char* groupName)

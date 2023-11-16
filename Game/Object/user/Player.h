@@ -1,9 +1,14 @@
 #pragma once
 
-#include "../StageObject.h"
+#include "../BaseBlock.h"
+#include "../../../Input.h"
 
 class PlayerBlock : public BaseBlock
 {
+private:
+
+	Input* input_ = nullptr;
+
 public:
 
 	void Initialize() override;
@@ -14,4 +19,14 @@ public:
 
 	void ApplyVariables(const char* groupName);
 	void StorageVariables(const char* groupName);
+
+private:
+
+	void StagingInitialize() override;
+
+	void StagingRoot() override;
+	void StagingMove() override;
+	void StagingStop() override;
+	void StagingLoad() override;
+
 };
