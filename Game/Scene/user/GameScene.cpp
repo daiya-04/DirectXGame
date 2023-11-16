@@ -23,7 +23,7 @@ void GameScene::Reset()
 	viewProjection_->translation_ = { 0.0f,17.0f,-10.0f };
 	viewProjection_->rotation_ = { 1.0f,0.0f,0.0f, };
 
-
+	debugStage_->Reset();
 
 }
 

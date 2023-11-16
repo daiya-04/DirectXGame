@@ -47,6 +47,9 @@
     <Filter Include="Engine\Game\Stage">
       <UniqueIdentifier>{0bebe23d-a269-479d-a955-0d2208bc093f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Game\Object">
+      <UniqueIdentifier>{ae94601e-d940-444a-a7f6-fa8440f24566}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -117,6 +120,9 @@
     </ClCompile>
     <ClCompile Include="Game\Stage\DebugStage.cpp">
       <Filter>Engine\Game\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\StageObject.cpp">
+      <Filter>Engine\Game\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -206,6 +212,9 @@
     </ClInclude>
     <ClInclude Include="Game\Stage\DebugStage.h">
       <Filter>Engine\Game\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\StageObject.h">
+      <Filter>Engine\Game\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -43,10 +43,6 @@ void TitleScene::Reset()
 
 void TitleScene::Update()
 {
-
-	if (input_->PushKey(DIK_D)) {
-		OutputDebugStringA("Hit D\n");
-	}
 	if (input_->TriggerKey(DIK_SPACE)) {
 		SceneManager::GetInstace()->ChegeScene(kGAME);
 	}
