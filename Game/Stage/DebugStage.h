@@ -4,29 +4,21 @@
 #include <memory>
 
 #include "../Math/Math.h"
-#include "../../Input.h"
 
 #include "../Object/BaseBlock.h"
+#include "../Object/MapManager.h"
+
 
 class DebugStage
 {
 private:
 
-
-	struct StageData
-	{
-		std::vector<std::vector<std::vector< BaseBlock*>>> data_;
-	};
-	// 外部ファイル、または読み込み時に決定
-	size_t kStageSize_[3];
-
 	// 変わらないステージの情報
-	StageData kStageData_;
-	// 現在のステージの情報
-	StageData currentData_;
-
-	Input* input_ = nullptr;
+	MapManager::StageData kStageData_;
 	
+	// マップの管理マネージャー
+	MapManager* mapManager_ = nullptr;
+
 public:
 
 	DebugStage();
@@ -40,6 +32,8 @@ public:
 	void Update();
 
 	void Draw();
+
+	void DebugGUI();
 
 private:
 

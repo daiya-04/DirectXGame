@@ -2,9 +2,10 @@
 
 #include "../BaseBlock.h"
 
-class PlayerBlock : public BaseBlock
+class NormalBlock : public BaseBlock
 {
 private:
+
 
 
 public:

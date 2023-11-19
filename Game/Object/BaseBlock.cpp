@@ -8,10 +8,16 @@ void BaseBlock::Initialize()
 
 
 	// 関数を取得
-	pStaging[kSROOT] = &BaseBlock::StagingRoot;
-	pStaging[kSMOVE] = &BaseBlock::StagingMove;
-	pStaging[kSSTOP] = &BaseBlock::StagingStop;
-	pStaging[kSLOAD] = &BaseBlock::StagingLoad;
+	//pStaging[kSROOT] = &BaseBlock::StagingRoot;
+	//pStaging[kSMOVE] = &BaseBlock::StagingMove;
+	//pStaging[kSSTOP] = &BaseBlock::StagingStop;
+	//pStaging[kSLOAD] = &BaseBlock::StagingLoad;
+}
+
+void BaseBlock::Initialize(const StageVector& pos)
+{
+	mapPosition_ = pos;
+	Initialize();
 }
 
 void BaseBlock::Update()

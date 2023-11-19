@@ -1,5 +1,11 @@
 #include "DebugStage.h"
 
+#include "../../ImGuiManager.h"
+
+using Element = BaseBlock::Element;
+template<typename Ty>
+using StageArray = MapManager::StageArray<Ty>;
+
 DebugStage::DebugStage()
 {
 }
@@ -10,7 +16,8 @@ DebugStage::~DebugStage()
 
 void DebugStage::Initialize()
 {
-	input_ = Input::GetInstance();
+	mapManager_ = new MapManager;
+	mapManager_->Initialize();
 
 	LoadStageData();
 	ApplyStageData();
@@ -18,22 +25,52 @@ void DebugStage::Initialize()
 
 void DebugStage::Reset()
 {
-	//LoadStageData();
-	currentData_ = kStageData_;
 	// ステージの情報を反映
 	ApplyStageData();
 }
 
 void DebugStage::Update()
 {
+	DebugGUI();
+
+	mapManager_->Update();
 }
 
 void DebugStage::Draw()
 {
 }
 
+void DebugStage::DebugGUI()
+{
+#ifdef _DEBUG
+
+	ImGui::Begin("DebugStage");
+
+	if (ImGui::Button("Load")) {
+		ApplyStageData();
+	}
+
+	ImGui::End();
+
+#endif // _DEBUG
+}
+
 void DebugStage::LoadStageData()
 {
+	StageArray<Element>& data = kStageData_.array_;
+	data.resize(5);
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		data[i].resize(5);
+		for (size_t j = 0; j < data[i].size(); j++)
+		{
+			data[i][j].resize(5);
+			for (size_t k = 0; k < data[i][j].size(); k++)
+			{
+				data[i][j][k] = Element::kNone;
+			}
+		}
+	}
 }
 
 void DebugStage::SaveStageData()
@@ -42,4 +79,25 @@ void DebugStage::SaveStageData()
 
 void DebugStage::ApplyStageData()
 {
+	StageArray<Element>& data = kStageData_.array_;
+	// 地面の位置を設定
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		for (size_t j = 0; j < data[i][4].size(); j++)
+		{
+			data[i][4][j] = Element::kBlock;
+		}
+	}
+	data[1][3][4] = Element::kBlock;
+	data[0][3][3] = Element::kBlock;
+	data[0][3][1] = Element::kBlock;
+	data[1][3][0] = Element::kBlock;
+	data[4][3][3] = Element::kBlock;
+	data[3][3][4] = Element::kBlock;
+	data[3][3][0] = Element::kBlock;
+	data[4][3][1] = Element::kBlock;
+	// プレイヤーの位置を設定
+	data[1][3][1] = Element::kPlayer;
+
+	mapManager_->SetStageData(kStageData_.array_);
 }

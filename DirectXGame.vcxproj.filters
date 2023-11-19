@@ -118,9 +118,6 @@
     <ClCompile Include="ViewProjection.cpp">
       <Filter>Engine\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Engine\Model</Filter>
-    </ClCompile>
     <ClCompile Include="Sprite.cpp">
       <Filter>Engine\Sprite</Filter>
     </ClCompile>
@@ -137,6 +134,12 @@
       <Filter>Engine\Game\Object</Filter>
     </ClCompile>
     <ClCompile Include="Game\Object\BlockManager.cpp">
+      <Filter>Engine\Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\user\Block.cpp">
+      <Filter>Engine\Game\Object\user</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Object\MapManager.cpp">
       <Filter>Engine\Game\Object</Filter>
     </ClCompile>
   </ItemGroup>
@@ -201,9 +204,6 @@
     <ClInclude Include="ViewProjection.h">
       <Filter>Engine\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Engine\Model</Filter>
-    </ClInclude>
     <ClInclude Include="Sprite.h">
       <Filter>Engine\Sprite</Filter>
     </ClInclude>
@@ -244,6 +244,12 @@
       <Filter>Engine\Game\Object</Filter>
     </ClInclude>
     <ClInclude Include="Game\Object\BlockManager.h">
+      <Filter>Engine\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\user\Block.h">
+      <Filter>Engine\Game\Object\user</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\MapManager.h">
       <Filter>Engine\Game\Object</Filter>
     </ClInclude>
   </ItemGroup>

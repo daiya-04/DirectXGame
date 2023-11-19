@@ -1,11 +1,11 @@
-#include "Player.h"
+#include "Block.h"
 
-void PlayerBlock::Initialize()
+void NormalBlock::Initialize()
 {
 	BaseBlock::Initialize();
 }
 
-void PlayerBlock::Update()
+void NormalBlock::Update()
 {
 	//BaseBlock::Update();
 	if (stagingRequest_) {
@@ -55,32 +55,31 @@ void PlayerBlock::Update()
 	}
 }
 
-void PlayerBlock::Draw()
+void NormalBlock::Draw()
 {
+	model_->Draw(modelPosition_, *viewProjection_);
 }
 
-void PlayerBlock::ApplyVariables(const char* groupName)
+void NormalBlock::ApplyVariables(const char* groupName)
 {
 	BaseBlock::ApplyVariables(groupName);
 	groupName;
 }
 
-void PlayerBlock::StorageVariables(const char* groupName)
+void NormalBlock::StorageVariables(const char* groupName)
 {
 	BaseBlock::StorageVariables(groupName);
 	groupName;
 }
 
-void PlayerBlock::StagingInitialize()
+void NormalBlock::StagingInitialize()
 {
 	BaseBlock::StagingInitialize();
 }
 
-void PlayerBlock::StagingRoot()
+void NormalBlock::StagingRoot()
 {
 	stagingFrame_++;
-
-	// 操作を受け付ける
 
 
 	// ループさせる
@@ -90,7 +89,7 @@ void PlayerBlock::StagingRoot()
 
 }
 
-void PlayerBlock::StagingMove()
+void NormalBlock::StagingMove()
 {
 	stagingFrame_++;
 
@@ -101,7 +100,7 @@ void PlayerBlock::StagingMove()
 	}
 }
 
-void PlayerBlock::StagingStop()
+void NormalBlock::StagingStop()
 {
 	stagingFrame_++;
 
@@ -112,7 +111,7 @@ void PlayerBlock::StagingStop()
 	}
 }
 
-void PlayerBlock::StagingLoad()
+void NormalBlock::StagingLoad()
 {
 	stagingFrame_++;
 

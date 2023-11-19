@@ -31,6 +31,8 @@ void GameScene::Update()
 {
 	DebugGUI();
 
+	debugStage_->Update();
+
 	if (input_->TriggerKey(DIK_SPACE)) {
 		SceneManager::GetInstace()->ChegeScene(kTITLE);
 	}
@@ -52,7 +54,7 @@ void GameScene::DebugGUI()
 {
 #ifdef _DEBUG
 
-	ImGui::Begin("DebugStage");
+	ImGui::Begin("GameScene");
 
 	ImGui::DragFloat3("ViewRotate", &viewProjection_->rotation_.x, 0.01f);
 	ImGui::DragFloat3("ViewTranslate", &viewProjection_->translation_.x, 0.1f);
