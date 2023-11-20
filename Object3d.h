@@ -3,7 +3,6 @@
 #include <dxcapi.h>
 #include <wrl.h>
 #include <string>
-#include "Model.h"
 #include "Vec2.h"
 #include "Vec3.h"
 #include "Vec4.h"
@@ -40,7 +39,7 @@ public: //静的メンバ関数
 	//静的初期化
 	static void StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 	//モデルの生成
-	static Object3d* Create(Model* model);
+	static Object3d* Create(uint32_t modelHandle);
 	//描画前処理
 	static void preDraw();
 	//描画後処理
@@ -61,16 +60,16 @@ private: //メンバ変数
 	ComPtr<ID3D12Resource> wvpResource_;
 	ComPtr<ID3D12Resource> directionalLightResource_;
 
-	Model* model_ = nullptr;
+	uint32_t modelHandle_ = 0;
 
 public: //メンバ関数
 
 	//初期化
-	void Initialize(Model* model);
+	void Initialize(uint32_t modelHandle);
 	//描画
 	void Draw(const WorldTransform& worldTransform,const ViewProjection& viewProjwction);
 	
-	void SetModel(Model* model) { model_ = model; }
+	void SetModelHandle(uint32_t modelHandle) { modelHandle_ = modelHandle; }
 
 private:
 	

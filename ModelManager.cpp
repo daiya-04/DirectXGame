@@ -1,4 +1,5 @@
-#include "Model.h"
+#include "ModelManager.h"
+#include "DirectXCommon.h"
 #include <fstream>
 #include <sstream>
 #include <cassert>
@@ -6,20 +7,17 @@
 
 using namespace Microsoft::WRL;
 
-ID3D12Device* Model::device_ = nullptr;
+ModelManager* ModelManager::GetInstance() {
+	static ModelManager instance;
 
-Model* Model::LoadOBJ(const std::string& modelName) {
-
-	Model* model = new Model();
-
-	model->LoadObjFile(modelName);
-
-	model->CreateBuffer();
-	
-	return model;
+	return &instance;
 }
 
-ComPtr<ID3D12Resource> Model::CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes) {
+uint32_t ModelManager::Load(const std::string& modelName) {
+	return ModelManager::GetInstance()->LoadInternal(modelName);
+}
+
+ComPtr<ID3D12Resource> ModelManager::CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes) {
 	//リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapproperties{};
 	uploadHeapproperties.Type = D3D12_HEAP_TYPE_UPLOAD;//UploadHeapを使う
@@ -43,22 +41,48 @@ ComPtr<ID3D12Resource> Model::CreateBufferResource(ComPtr<ID3D12Device> device, 
 	return Resource;
 }
 
-void Model::Draw(ID3D12GraphicsCommandList* commandList, UINT rootParamIndexMaterial) {
+void ModelManager::Initialize() {
 
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
-
-	//マテリアルCBufferの場所を設定
-	commandList->SetGraphicsRootConstantBufferView(rootParamIndexMaterial, materialResource_->GetGPUVirtualAddress());
-
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList, 2, uvHandle_);
-
-	commandList->DrawInstanced(index_, 1, 0, 0);
+	device_ = DirectXCommon::GetInstance()->GetDevice();
 
 }
 
-void Model::LoadObjFile(const std::string& modelName) {
+void ModelManager::SetVertexBuffers(ID3D12GraphicsCommandList* commandList, uint32_t modelHandle) {
+	assert(modelHandle < kNumModel);
 
-	
+	commandList->IASetVertexBuffers(0, 1, &models_[modelHandle].vertexBufferView_);
+}
+
+void ModelManager::SetGraphicsRootConstantBufferView(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex, uint32_t modelHandle) {
+	assert(modelHandle < kNumModel);
+
+	commandList->SetGraphicsRootConstantBufferView(rootParamIndex, models_[modelHandle].materialResource_->GetGPUVirtualAddress());
+}
+
+uint32_t ModelManager::LoadInternal(const std::string& modelName) {
+
+	assert(useModelNum_ < kNumModel);
+	uint32_t handle = useModelNum_;
+
+	auto it = std::find_if(models_.begin(), models_.end(), [&](const auto& model) {return model.name_ == modelName; });
+
+	if (it != models_.end()) {
+		handle = static_cast<uint32_t>(std::distance(models_.begin(), it));
+		return handle;
+	}
+
+	models_[useModelNum_].name_ = modelName;
+
+	LoadObjFile(modelName);
+
+	CreateBuffer();
+
+	useModelNum_++;
+	return handle;
+}
+
+void ModelManager::LoadObjFile(const std::string& modelName) {
+
 	std::vector<Vector4> positions;  //位置
 	std::vector<Vector3> normals;  //法線
 	std::vector<Vector2> texcoords;  //テクスチャ座標
@@ -123,9 +147,9 @@ void Model::LoadObjFile(const std::string& modelName) {
 				triangle[faceVertex] = { position,texcoord,normal };
 			}
 			//頂点を逆順で登録することで、周り順を逆にする
-			vertices_.push_back(triangle[2]);
-			vertices_.push_back(triangle[1]);
-			vertices_.push_back(triangle[0]);
+			models_[useModelNum_].vertices_.push_back(triangle[2]);
+			models_[useModelNum_].vertices_.push_back(triangle[1]);
+			models_[useModelNum_].vertices_.push_back(triangle[0]);
 		}
 		else if (identifier == "mtllib") {
 			//materialTemplateLibraryファイルの名前を取得する
@@ -136,9 +160,10 @@ void Model::LoadObjFile(const std::string& modelName) {
 
 		}
 	}
+
 }
 
-void Model::LoadMaterialTemplateFile(const std::string& fileName) {
+void ModelManager::LoadMaterialTemplateFile(const std::string& fileName) {
 
 	std::string textureFilePath;
 	std::string line; //ファイルから読んだ1行を格納するもの
@@ -156,33 +181,35 @@ void Model::LoadMaterialTemplateFile(const std::string& fileName) {
 			s >> textureFilename;
 			//連結してファイルパスにする
 			textureFilePath = directoryPath_ + textureFilename;
-			uvHandle_ = TextureManager::GetInstance()->LoadUv(textureFilename, textureFilePath);
+			models_[useModelNum_].uvHandle_ = TextureManager::GetInstance()->LoadUv(textureFilename, textureFilePath);
 		}
 	}
+
 }
-void Model::CreateBuffer() {
+
+void ModelManager::CreateBuffer() {
 
 	//頂点リソースを作る
-	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * vertices_.size());
+	models_[useModelNum_].vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * models_[useModelNum_].vertices_.size());
 	//頂点バッファビューを作成する
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();  //リソースの先頭のアドレスから使う
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * vertices_.size()); //使用するリソースのサイズは頂点のサイズ
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);  //1頂点当たりのサイズ
+	models_[useModelNum_].vertexBufferView_.BufferLocation = models_[useModelNum_].vertexResource_->GetGPUVirtualAddress();  //リソースの先頭のアドレスから使う
+	models_[useModelNum_].vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * models_[useModelNum_].vertices_.size()); //使用するリソースのサイズは頂点のサイズ
+	models_[useModelNum_].vertexBufferView_.StrideInBytes = sizeof(VertexData);  //1頂点当たりのサイズ
 
 	//頂点リソースにデータを書き込む
 	VertexData* vertexData = nullptr;
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));  //書き込むためのアドレスを取得
-	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * vertices_.size());  //頂点データをリソースにコピー
+	models_[useModelNum_].vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));  //書き込むためのアドレスを取得
+	std::memcpy(vertexData, models_[useModelNum_].vertices_.data(), sizeof(VertexData) * models_[useModelNum_].vertices_.size());  //頂点データをリソースにコピー
 
-	index_ = UINT(vertices_.size());
+	models_[useModelNum_].index_ = UINT(models_[useModelNum_].vertices_.size());
 
 	//マテリアル用のリソースを作る。
-	materialResource_ = CreateBufferResource(device_, sizeof(Material));
+	models_[useModelNum_].materialResource_ = CreateBufferResource(device_, sizeof(Material));
 	//マテリアルにデータを書き込む
 	Material* materialData = nullptr;
 	//書き込むためのアドレスを取得
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	materialData->color_ = color_;
+	models_[useModelNum_].materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+	materialData->color_ = Vector4(1.0f,1.0f,1.0f,1.0f);
 	materialData->enableLightnig_ = true;
 	materialData->uvtransform_ = MakeIdentity44();
 

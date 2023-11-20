@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include "TextureManager.h"
+#include "ModelManager.h"
 #include "Log.h"
 
 #pragma comment(lib,"dxcompiler.lib")
@@ -21,7 +22,6 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	assert(device);
 	assert(commandList);
 	device_ = device;
-	Model::SetDevice(device);
 	commandList_ = commandList;
 
 	
@@ -201,11 +201,11 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 }
 
-Object3d* Object3d::Create(Model* model) {
+Object3d* Object3d::Create(uint32_t modelHandle) {
 	
 
 	Object3d* obj = new Object3d();
-	obj->Initialize(model);
+	obj->Initialize(modelHandle);
 
 	return obj;
 
@@ -309,9 +309,9 @@ ComPtr<ID3D12Resource> Object3d::CreateBufferResource(ComPtr<ID3D12Device> devic
 	return Resource;
 }
 
-void Object3d::Initialize(Model* model) {
+void Object3d::Initialize(uint32_t modelHandle) {
 
-	model_ = model;
+	modelHandle_ = modelHandle;
 
 	//WVP用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
 	wvpResource_ = CreateBufferResource(device_, sizeof(TransformationMatrix));
@@ -339,8 +339,6 @@ void Object3d::Initialize(Model* model) {
 }
 
 void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjwction) {
-
-	if (model_ == nullptr) { return; }
 	
 	Matrix4x4 wvpMat = worldTransform.matWorld_ * (viewProjwction.matView_ * viewProjwction.matProjection_);
 	TransformationMatrix* wvpData = nullptr;
@@ -348,13 +346,16 @@ void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& 
 	wvpData->WVP = wvpMat;
 
 	
-	
+	ModelManager::GetInstance()->SetVertexBuffers(commandList_,modelHandle_);
+	ModelManager::GetInstance()->SetGraphicsRootConstantBufferView(commandList_, 0, modelHandle_);
 	//wvp用のCBufferの場所の設定
 	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, 2, ModelManager::GetInstance()->GetUvHandle(modelHandle_));
+
 	commandList_->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 
-	model_->Draw(commandList_,0);
+	commandList_->DrawInstanced(ModelManager::GetInstance()->GetIndex(modelHandle_), 1, 0, 0);
 
 }
 

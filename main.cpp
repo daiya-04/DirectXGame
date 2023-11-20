@@ -9,11 +9,11 @@
 #include <wrl.h>
 #include "Input.h"
 #include "Sprite.h"
-#include "Model.h"
 #include "Object3d.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "TextureManager.h"
+#include "ModelManager.h"
 #include <memory>
 #include "Particle.h"
 #include <random>
@@ -63,6 +63,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	input->Initialize(win);
 
 	TextureManager::GetInstance()->Initialize();
+	ModelManager::GetInstance()->Initialize();
 	//TextureManager::Load("uvChecker.png");
 
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
@@ -80,23 +81,27 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	float rotate = sprite->GetRotate();
 	Vector2 pos = sprite->GetPosition();
 
-	std::unique_ptr<Model> teapot = std::make_unique<Model>();
-	teapot.reset(Model::LoadOBJ("teapot"));
+	/*std::unique_ptr<Model> teapot = std::make_unique<Model>();
+	teapot.reset(Model::LoadOBJ("teapot"));*/
+	uint32_t teapot = ModelManager::Load("teapot");
 	
-	std::unique_ptr<Model> plane = std::make_unique<Model>();
-	plane.reset(Model::LoadOBJ("Plane"));
+	/*std::unique_ptr<Model> plane = std::make_unique<Model>();
+	plane.reset(Model::LoadOBJ("Plane"));*/
+	uint32_t plane = ModelManager::Load("Plane");
 
 	std::unique_ptr<Object3d> obj;
 	obj = std::make_unique<Object3d>();
-	obj.reset(Object3d::Create(teapot.get()));
+	obj.reset(Object3d::Create(teapot));
 
 	std::unique_ptr<Object3d> obj2;
 	obj2 = std::make_unique<Object3d>();
-	obj2.reset(Object3d::Create(plane.get()));
+	obj2.reset(Object3d::Create(plane));
 
 	std::unique_ptr<Object3d> obj3;
 	obj3 = std::make_unique<Object3d>();
-	obj3.reset(Object3d::Create(plane.get()));
+	obj3.reset(Object3d::Create(plane));
+
+	
 
 	
 	
@@ -173,6 +178,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	WorldTransform worldTransform;
 	WorldTransform worldTransform2;
 	WorldTransform worldTransform3;
+	
 
 	
 	//ウィンドウの✕ボタンが押されるまでループ
@@ -210,12 +216,12 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		
 		if (input->PushKey(DIK_SPACE)) {
-			obj2->SetModel(teapot.get());
-			obj3->SetModel(teapot.get());
+			obj2->SetModelHandle(teapot);
+			obj3->SetModelHandle(teapot);
 		}
 		else {
-			obj2->SetModel(plane.get());
-			obj3->SetModel(plane.get());
+			obj2->SetModelHandle(plane);
+			obj3->SetModelHandle(plane);
 		}
         
 		
@@ -223,6 +229,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		pos.x += 1.0f;
 		pos.y += 1.0f;
 		//worldTransform.translation_.x += 0.01f;
+
+		
 		
 
 		sprite->SetRotate(rotate);

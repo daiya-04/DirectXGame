@@ -46,9 +46,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Object3d.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -70,6 +67,7 @@
     <ClCompile Include="Particle.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="ModelManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -108,9 +106,6 @@
     <ClInclude Include="Matrix44.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Object3d.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -144,6 +139,7 @@
     <ClInclude Include="Particle.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="ModelManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
