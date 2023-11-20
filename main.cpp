@@ -12,8 +12,11 @@
 #include "Object3d.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
-#include <memory>
 #include "TextureManager.h"
+#include "ModelManager.h"
+#include <memory>
+#include <list>
+#include "Particle.h"
 #include "GlobalVariables.h"
 
 #include "Skydome.h"
@@ -25,11 +28,14 @@
 #include "FollowCamera.h"
 
 
+
 #pragma comment(lib,"dxguid.lib")
 
 
 
 using namespace Microsoft::WRL;
+
+
 
 struct D3DResourceLeakChecker {
 	~D3DResourceLeakChecker() {
@@ -65,10 +71,12 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	input->Initialize(win);
 
 	TextureManager::GetInstance()->Initialize();
+	ModelManager::GetInstance()->Initialize();
 	//TextureManager::Load("uvChecker.png");
 
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
+　Particle::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
 
 	GlobalVariables::GetInstance()->LoadFiles();
 
@@ -80,7 +88,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//天球
 	std::unique_ptr<Skydome> skydome_;
 	std::unique_ptr<Object3d> skydomeModel_;
-
 	skydomeModel_.reset(Object3d::Create("skydome"));
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize(skydomeModel_.get());
@@ -154,8 +161,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 
 	
-
-	
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (true) {
 		
@@ -163,6 +168,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		
 
 		imguiManager->Begin();
+
 
 #ifdef _DEBUG
 		
@@ -272,12 +278,9 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		dxCommon->preDraw();
 
 		
-		
-		
 		Sprite::preDraw(dxCommon->GetCommandList());
 		///スプライト描画
 		
-
 
 		///
 		Sprite::postDraw();
@@ -298,8 +301,15 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		///
 		Object3d::postDraw();
 
-		imguiManager->Draw();
+
+		Particle::preDraw();
+
 		
+
+		Particle::postDraw();
+		
+		imguiManager->Draw();
+
 		dxCommon->postDraw();
 
 	}
@@ -307,10 +317,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	imguiManager->Finalize();
 
 	//解放処理
-	
-	
-	Sprite::Finalize();
-	Object3d::Finalize();
+
 	win->TerminateGameWindow();
 
 	return 0;

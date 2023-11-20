@@ -238,6 +238,7 @@ public:
 	        vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2]};
     }
 
+
 	inline Vector3 MakeScale(const Matrix4x4& matrix) {
 
 		Vector3 scaleX = { matrix.m[0][0],matrix.m[0][1] ,matrix.m[0][2] };
@@ -252,7 +253,7 @@ public:
 		return result;
 	}
 
-	inline Vector3 MakeTranslation(const Matrix4x4& matrix) {
+　inline Vector3 MakeTranslation(const Matrix4x4& matrix) {
 		Vector3 result;
 
 		result.x = matrix.m[3][0];
@@ -261,30 +262,58 @@ public:
 
 		return result;
 	}
-
-	inline Matrix4x4 DirectionToDirection(const Vector3& from,const Vector3& to) {
-
-		Vector3 zeroVector = {};
+  
+  inline Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
 		Matrix4x4 result = MakeIdentity44();
 
-		if (from == zeroVector || to == zeroVector) {
-			return result;
+		result.m[0][0] = std::powf(axis.x, 2.0f) * (1.0f - std::cosf(angle)) + cos(angle);
+		result.m[0][1] = axis.x * axis.y * (1.0f - std::cosf(angle)) + axis.z * std::sinf(angle);
+		result.m[0][2] = axis.x * axis.z * (1.0f - std::cosf(angle)) - axis.y * std::sinf(angle);
+
+		result.m[1][0] = axis.x * axis.y * (1.0f - std::cosf(angle)) - axis.z * std::sinf(angle);
+		result.m[1][1] = std::powf(axis.y, 2.0f) * (1.0f - std::cosf(angle)) + cos(angle);
+		result.m[1][2] = axis.y * axis.z * (1.0f - std::cosf(angle)) + axis.x * std::sinf(angle);
+
+		result.m[2][0] = axis.x * axis.z * (1.0f - std::cosf(angle)) + axis.y * std::sinf(angle);
+		result.m[2][1] = axis.y * axis.z * (1.0f - std::cosf(angle)) - axis.x * std::sinf(angle);
+		result.m[2][2] = std::powf(axis.z, 2.0f) * (1.0f - std::cosf(angle)) + cos(angle);
+
+		return result;
+	}
+
+
+	inline Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
+		Matrix4x4 result = MakeIdentity44();
+		Vector3 axis{};
+		
+		if (from == -to) {
+			if (from.x != 0 || from.y != 0) {
+				axis = { from.Normalize().y,-from.Normalize().x,0.0f };
+			}
+			else if (from.x != 0 || from.z != 0) {
+				axis = { from.Normalize().z,0.0f,-from.Normalize().x };
+			}
+		}else {
+			axis = Cross(from.Normalize(), to.Normalize()).Normalize();
 		}
 
-		Vector3 normal = Cross(from, to).Normalize();
-		float cos = Dot(from, to);
-		float sin = Cross(from, to).Length();
-
 		
-		result.m[0][0] = std::powf(normal.x, 2) * (1.0f - cos) + cos;
-		result.m[0][1] = normal.x * normal.y * (1.0f - cos) + normal.z * sin;
-		result.m[0][2] = normal.x * normal.z * (1.0f - cos) - normal.y * sin;
-		result.m[1][0] = normal.x * normal.y * (1.0f - cos) - normal.z * sin;
-		result.m[1][1] = std::powf(normal.y, 2) * (1.0f - cos) + cos;
-		result.m[1][2] = normal.y * normal.z * (1.0f - cos) + normal.x * sin;
-		result.m[2][0] = normal.x * normal.z * (1.0f - cos) + normal.y * sin;
-		result.m[2][1] = normal.y * normal.z * (1.0f - cos) - normal.x * sin;
-		result.m[2][2] = std::powf(normal.z, 2) * (1.0f - cos) + cos;
+		float cos = Dot(from.Normalize(), to.Normalize());
+		float sin = Cross(from.Normalize(), to.Normalize()).Length();
+
+
+		result.m[0][0] = std::powf(axis.x, 2) * (1.0f - cos) + cos;
+		result.m[0][1] = axis.x * axis.y * (1.0f - cos) + axis.z * sin;
+		result.m[0][2] = axis.x * axis.z * (1.0f - cos) - axis.y * sin;
+
+		result.m[1][0] = axis.x * axis.y * (1.0f - cos) - axis.z * sin;
+		result.m[1][1] = std::powf(axis.y, 2) * (1.0f - cos) + cos;
+		result.m[1][2] = axis.y * axis.z * (1.0f - cos) + axis.x * sin;
+
+		result.m[2][0] = axis.x * axis.z * (1.0f - cos) + axis.y * sin;
+		result.m[2][1] = axis.y * axis.z * (1.0f - cos) - axis.x * sin;
+		result.m[2][2] = std::powf(axis.z, 2) * (1.0f - cos) + cos;
+
 
 		return result;
 	}

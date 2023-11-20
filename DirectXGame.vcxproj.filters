@@ -41,9 +41,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Object3d.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -68,6 +65,10 @@
     <ClCompile Include="Easing.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enemy.h" />
@@ -113,9 +114,6 @@
     <ClInclude Include="Matrix44.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Object3d.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -146,6 +144,13 @@
     <ClInclude Include="GlobalVariables.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelManager.h" />
     <ClInclude Include="Easing.h">
       <Filter>Engine</Filter>
     </ClInclude>

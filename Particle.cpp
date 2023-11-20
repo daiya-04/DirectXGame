@@ -1,30 +1,27 @@
-#include "Object3d.h"
+#include "Particle.h"
 #include <cassert>
 #include <format>
 #include <Windows.h>
 #include <fstream>
 #include <sstream>
 #include "TextureManager.h"
-#include "ModelManager.h"
-#include "Log.h"
+#include "DirectXCommon.h"
 
 #pragma comment(lib,"dxcompiler.lib")
 
 using namespace Microsoft::WRL;
 
-ID3D12Device* Object3d::device_ = nullptr;
-ID3D12GraphicsCommandList* Object3d::commandList_ = nullptr;
-ComPtr<ID3D12RootSignature> Object3d::rootSignature_;
-ComPtr<ID3D12PipelineState> Object3d::graphicsPipelineState_;
+ID3D12Device* Particle::device_ = nullptr;
+ID3D12GraphicsCommandList* Particle::commandList_ = nullptr;
+ComPtr<ID3D12RootSignature> Particle::rootSignature_;
+ComPtr<ID3D12PipelineState> Particle::graphicsPipelineState_;
 
-void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
+void Particle::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
 
 	assert(device);
 	assert(commandList);
 	device_ = device;
 	commandList_ = commandList;
-
-	
 
 	IDxcUtils* dxcUtils = nullptr;
 	IDxcCompiler3* dxcCompiler = nullptr;
@@ -37,16 +34,21 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	IDxcIncludeHandler* includeHandler = nullptr;
 	hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
 	assert(SUCCEEDED(hr));
-
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
 	descriptorRange[0].BaseShaderRegister = 0; //0から始まる
-	descriptorRange[0].NumDescriptors =	1; //数は1つ
+	descriptorRange[0].NumDescriptors = 1; //数は1つ
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+	D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
+	descriptorRangeForInstancing[0].BaseShaderRegister = 0; //0から始まる
+	descriptorRangeForInstancing[0].NumDescriptors = 1; //数は1つ
+	descriptorRangeForInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
+	descriptorRangeForInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
 
 	//Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
@@ -62,23 +64,20 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
+	D3D12_ROOT_PARAMETER rootParameters[3] = {};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;   //PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0;   //レジスタ番号0とバインド
-
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;   //VertexShaderで使う
-	rootParameters[1].Descriptor.ShaderRegister = 0;   //レジスタ番号0を使う
+	
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; //VertexShaderで使う
+	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing; //Tableの中身の配列を指定
+	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing); //Tableで利用する数
 
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange; //Tableの中身の配列を指定
 	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); //Tableで利用する数
-
-	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  //CBVを使う
-	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;  //PixelShaderで使う
-	rootParameters[3].Descriptor.ShaderRegister = 1;  //レジスタ番号1を使う
 
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
@@ -93,12 +92,11 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	}
 
 	//バイナリを元に生成
-
 	hr = device_->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
 	assert(SUCCEEDED(hr));
 
 	//InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
 	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -109,11 +107,6 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
-	inputElementDescs[2].SemanticName = "NORMAL";
-	inputElementDescs[2].SemanticIndex = 0;
-	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
@@ -122,7 +115,7 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	D3D12_BLEND_DESC blendDesc{};
 	//すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	//blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 
 	//ここをいじるといろいろなブレンドモードを設定できる
 	//ノーマルブレンド
@@ -130,9 +123,9 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;*/
 	//加算
-	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;*/
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
 	//減算
 	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
@@ -147,9 +140,9 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;*/
 	//
 	//α値のブレンド設定で基本的に使わないからいじらない
-	/*blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;*/
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 
 	//RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
@@ -159,10 +152,10 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	//Shaderをコンパイルする
-	ComPtr<IDxcBlob> verterShaderBlob = CompileShader(L"Resources/shaders/Object3d.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+	ComPtr<IDxcBlob> verterShaderBlob = CompileShader(L"Resources/shaders/Particle.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(verterShaderBlob != nullptr);
 
-	ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Resources/shaders/Object3d.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+	ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Resources/shaders/Particle.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(pixelShaderBlob != nullptr);
 
 	//DepthStencilStateの設定
@@ -170,7 +163,7 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	//Depthの機能を有効化する
 	depthStencilDesc.DepthEnable = true;
 	//書き込みします
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	//比較関数はLessEqual。つまり、近ければ描画される
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
@@ -201,17 +194,16 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 }
 
-Object3d* Object3d::Create(uint32_t modelHandle) {
-	
+Particle* Particle::Create(uint32_t textureHandle, uint32_t particleNum) {
 
-	Object3d* obj = new Object3d();
-	obj->Initialize(modelHandle);
+	Particle* particle = new Particle();
 
-	return obj;
+	particle->Initialize(textureHandle, particleNum);
 
+	return particle;
 }
 
-void Object3d::preDraw() {
+void Particle::preDraw() {
 
 	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
 
@@ -221,13 +213,40 @@ void Object3d::preDraw() {
 
 }
 
-void Object3d::postDraw() {
+void Particle::postDraw() {}
+
+Particle::ParticleData Particle::MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate){
+
+	std::uniform_real_distribution<float> distPos(-5.0f, 5.0f);
+	std::uniform_real_distribution<float> distVelocity(-1.0f, 1.0f);
+	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+	std::uniform_real_distribution<float> distTime(1.0f, 6.0f);
+	ParticleData particle;
+
+	//particle.worldTransform_.translation_ = { /*distPos(randomEngine),distPos(randomEngine) ,distPos(randomEngine)*/ };
+	particle.worldTransform_.translation_ = translate;
+	particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine) ,0.0f };
+	particle.color_ = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine),1.0 };
+	particle.lifeTime_ = 5.0f;
+	//particle.lifeTime_ = distTime(randomEngine);
+	particle.currentTime_ = 0.0f;
 
 
-
+	return particle;
 }
 
-ComPtr<IDxcBlob> Object3d::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer) {
+std::list<Particle::ParticleData> Particle::Emit(const Particle::Emitter& emitter, std::mt19937& randomEngine){
+	std::list<Particle::ParticleData> particles;
+	for (uint32_t count = 0; count < emitter.count_; count++) {
+		particles.push_back(MakeNewParticle(randomEngine, emitter.translate_));
+	}
+
+	return particles;
+}
+
+
+
+ComPtr<IDxcBlob> Particle::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer) {
 
 	//これからシェーダーをコンパイルする旨をログに出す
 	Log(ConvertString(std::format(L"Begin CompileShader, Path:{},profile:{}\n", filePath, profile)));
@@ -285,7 +304,7 @@ ComPtr<IDxcBlob> Object3d::CompileShader(const std::wstring& filePath, const wch
 
 }
 
-ComPtr<ID3D12Resource> Object3d::CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes) {
+ComPtr<ID3D12Resource> Particle::CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes) {
 	//リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapproperties{};
 	uploadHeapproperties.Type = D3D12_HEAP_TYPE_UPLOAD;//UploadHeapを使う
@@ -309,54 +328,154 @@ ComPtr<ID3D12Resource> Object3d::CreateBufferResource(ComPtr<ID3D12Device> devic
 	return Resource;
 }
 
-void Object3d::Initialize(uint32_t modelHandle) {
+void Particle::Initialize(uint32_t textureHandle, uint32_t particleNum) {
 
-
-	modelHandle_ = modelHandle;
-
-	//WVP用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
-	wvpResource_ = CreateBufferResource(device_, sizeof(TransformationMatrix));
-
-	//データを書き込む
-	TransformationMatrix* wvpData = nullptr;
-	//書き込むためのアドレスを取得
-	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	//単位行列を書き込んでおく
-	wvpData->WVP = MakeIdentity44();
-	wvpData->World = MakeIdentity44();
-
-	//DirectionalLighting用のリソースを作る
-	directionalLightResource_ = CreateBufferResource(device_, sizeof(DirectionalLight));
-	//データを書き込む
-	DirectionalLight* directionalLightData = nullptr;
-	//書き込むためのアドレスを取得
-	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
-	directionalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
-	directionalLightData->direction = { 0.0f,-1.0f,0.0f };
-	directionalLightData->intensity = 1.0f;
-
-	
-
+	uvHandle_ = textureHandle;
+	particleMaxNum_ = particleNum;
+	CreateMesh();
 }
 
-void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjwction) {
-	
-	Matrix4x4 wvpMat = worldTransform.matWorld_ * (viewProjwction.matView_ * viewProjwction.matProjection_);
-	TransformationMatrix* wvpData = nullptr;
-	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	wvpData->WVP = wvpMat;
+void Particle::Draw(std::list<ParticleData>& particleData,const ViewProjection& viewProjection) {
 
-	
-	ModelManager::GetInstance()->SetVertexBuffers(commandList_,modelHandle_);
-	ModelManager::GetInstance()->SetGraphicsRootConstantBufferView(commandList_, 0, modelHandle_);
+	ParticleGPU* instancingData = nullptr;
+	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
+	particleNum_ = 0;
+	for (std::list<ParticleData>::iterator itParticle = particleData.begin(); itParticle != particleData.end();) {
+		if ((*itParticle).currentTime_ >= (*itParticle).lifeTime_) {
+			itParticle = particleData.erase(itParticle);
+			continue;
+		}
+
+		Matrix4x4 billboardMat = viewProjection.matView_;
+		billboardMat = billboardMat.Inverse();
+		billboardMat.m[3][0] = 0.0f;
+		billboardMat.m[3][1] = 0.0f;
+		billboardMat.m[3][2] = 0.0f;
+
+		Matrix4x4 worldMatrix = MakeScaleMatrix({ 1.0f,1.0f,1.0f }) * billboardMat * MakeTranslateMatrix((*itParticle).worldTransform_.translation_);
+
+		Matrix4x4 wvpMatrix = worldMatrix * (viewProjection.matView_ * viewProjection.matProjection_);
+		float alpha = 1.0f - ((*itParticle).currentTime_ / (*itParticle).lifeTime_);
+
+		if (particleNum_ < particleMaxNum_) {
+			instancingData[particleNum_].WVP = wvpMatrix;
+			instancingData[particleNum_].color = (*itParticle).color_;
+			instancingData[particleNum_].color.w = alpha;
+			particleNum_++;
+		}
+		
+		
+		
+		itParticle++;
+	}
+
+	Material* material = nullptr;
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&material));
+	material->color_ = color_;
+
+	//VBVを設定
+	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList_->IASetIndexBuffer(&indexBufferView_);
+	//マテリアルCBufferの場所を設定
+	commandList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//wvp用のCBufferの場所の設定
-	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, 2, ModelManager::GetInstance()->GetUvHandle(modelHandle_));
+	//commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootDescriptorTable(1, particleSrvHandleGPU_);
+	//SRVのDescriptorTableの先頭を設定。
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, 2, uvHandle_);
 
-	commandList_->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
-
-	commandList_->DrawInstanced(ModelManager::GetInstance()->GetIndex(modelHandle_), 1, 0, 0);
+	commandList_->DrawIndexedInstanced(6, (UINT)particleNum_, 0, 0, 0);
 
 }
 
+void Particle::CreateMesh() {
+	
+	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * 4);
+
+	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
+	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+
+	VertexData* vertices = nullptr;
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertices));
+
+	//左下
+	vertices[0].pos_ = { -1.0f,-1.0f,0.0f,1.0f };
+	vertices[0].uv_ = { 0.0f,1.0f };
+	//左上
+	vertices[1].pos_ = { -1.0f,1.0f,0.0f,1.0f };
+	vertices[1].uv_ = { 0.0f,0.0f };
+	//右下
+	vertices[2].pos_ = { 1.0f,-1.0f,0.0f,1.0f };
+	vertices[2].uv_ = { 1.0f,1.0f };
+
+	//左上
+	//vertices[3] = vertices[1];
+	//右上
+	vertices[3].pos_ = { 1.0f,1.0f,0.0f,1.0f };
+	vertices[3].uv_ = { 1.0f,0.0f };
+	//右下
+	//vertices[5] = vertices[2];
+
+	indexResource_ = CreateBufferResource(device_, sizeof(uint32_t) * 6);
+
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
+	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
+
+	uint32_t* indices = nullptr;
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indices));
+
+	indices[0] = 0;  indices[1] = 1;  indices[2] = 2;
+	indices[3] = 1;  indices[4] = 3;  indices[5] = 2;
+
+
+	materialResource_ = CreateBufferResource(device_, sizeof(Material));
+
+	Material* material = nullptr;
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&material));
+	material->color_ = color_;
+
+	//wvpResource_ = CreateBufferResource(device_, sizeof(TransformationMatrix));
+
+	/*TransformationMatrix* wvpData = nullptr;
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	wvpData->WVP = MakeIdentity44();*/
+
+	instancingResource_ = CreateBufferResource(device_, sizeof(ParticleGPU) * particleMaxNum_);
+
+	/*ParticleGPU* instancingData = nullptr;
+	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
+	for (size_t index = 0; index < particleMaxNum_; ++index) {
+		instancingData[index].WVP = MakeIdentity44();
+		instancingData[index].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	}*/
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc{};
+	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	instancingSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	instancingSrvDesc.Buffer.FirstElement = 0;
+	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	instancingSrvDesc.Buffer.NumElements = particleMaxNum_;
+	instancingSrvDesc.Buffer.StructureByteStride = sizeof(ParticleGPU);
+	UINT handleSize = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	particleSrvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), handleSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	particleSrvHandleGPU_ = GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), handleSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	DirectXCommon::GetInstance()->IncrementSrvHeapCount();
+
+	device_->CreateShaderResourceView(instancingResource_.Get(), &instancingSrvDesc, particleSrvHandleCPU_);
+
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE Particle::GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index) {
+	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	handleCPU.ptr += (descriptorSize * index);
+	return handleCPU;
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE Particle::GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index) {
+	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+	handleGPU.ptr += (descriptorSize * index);
+	return handleGPU;
+}
