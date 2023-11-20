@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include "TextureManager.h"
+#include "ModelManager.h"
 #include "Log.h"
 
 #pragma comment(lib,"dxcompiler.lib")
@@ -200,10 +201,11 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 }
 
-Object3d* Object3d::Create(const std::string& modelname) {
+Object3d* Object3d::Create(uint32_t modelHandle) {
+	
 
 	Object3d* obj = new Object3d();
-	obj->Initialize(modelname);
+	obj->Initialize(modelHandle);
 
 	return obj;
 
@@ -307,34 +309,9 @@ ComPtr<ID3D12Resource> Object3d::CreateBufferResource(ComPtr<ID3D12Device> devic
 	return Resource;
 }
 
-void Object3d::Initialize(const std::string& modelname) {
+void Object3d::Initialize(uint32_t modelHandle) {
 
-	//モデル読み込み
-	ModelData modelData = LoadObjFile(modelname);
-
-	//頂点リソースを作る
-	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * modelData.vertices_.size());
-	//頂点バッファビューを作成する
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();  //リソースの先頭のアドレスから使う
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices_.size()); //使用するリソースのサイズは頂点のサイズ
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);  //1頂点当たりのサイズ
-
-	//頂点リソースにデータを書き込む
-	VertexData* vertexData = nullptr;
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));  //書き込むためのアドレスを取得
-	std::memcpy(vertexData, modelData.vertices_.data(), sizeof(VertexData) * modelData.vertices_.size());  //頂点データをリソースにコピー
-
-	index_ = UINT(modelData.vertices_.size());
-
-	//マテリアル用のリソースを作る。
-	materialResource_ = CreateBufferResource(device_, sizeof(Material));
-	//マテリアルにデータを書き込む
-	Material* materialData = nullptr;
-	//書き込むためのアドレスを取得
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	materialData->color_ = color_;
-	materialData->enableLightnig_ = true;
-	materialData->uvtransform_ = MakeIdentity44();
+	modelHandle_ = modelHandle;
 
 	//WVP用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
 	wvpResource_ = CreateBufferResource(device_, sizeof(TransformationMatrix));
@@ -362,132 +339,23 @@ void Object3d::Initialize(const std::string& modelname) {
 }
 
 void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjwction) {
-
 	
 	Matrix4x4 wvpMat = worldTransform.matWorld_ * (viewProjwction.matView_ * viewProjwction.matProjection_);
 	TransformationMatrix* wvpData = nullptr;
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	wvpData->WVP = wvpMat;
 
-
-	//VBVを設定
-	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
-	//マテリアルCBufferの場所を設定
-	commandList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+	
+	ModelManager::GetInstance()->SetVertexBuffers(commandList_,modelHandle_);
+	ModelManager::GetInstance()->SetGraphicsRootConstantBufferView(commandList_, 0, modelHandle_);
 	//wvp用のCBufferの場所の設定
 	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	//SRVのDescriptorTableの先頭を設定。
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, 2, uvHandle_);
+	
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, 2, ModelManager::GetInstance()->GetUvHandle(modelHandle_));
+
 	commandList_->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 
-	commandList_->DrawInstanced(index_, 1, 0, 0);
+	commandList_->DrawInstanced(ModelManager::GetInstance()->GetIndex(modelHandle_), 1, 0, 0);
 
 }
 
-Object3d::ModelData Object3d::LoadObjFile(const std::string& modelname) {
-
-	ModelData modelData; //構築するModelData
-	std::vector<Vector4> positions;  //位置
-	std::vector<Vector3> normals;  //法線
-	std::vector<Vector2> texcoords;  //テクスチャ座標
-	std::string line;  //ファイルから呼んだ1行を格納するもの
-
-	filename_ = modelname + ".obj";
-	directoryPath_ = "Resources/" + modelname + "/";
-
-	std::ifstream file(directoryPath_ + filename_); //ファイルと開く
-	assert(file.is_open());  //とりあえず開けなかったら止める
-
-	while (std::getline(file, line)) {
-
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;  //先頭の識別子を読む
-
-		//identifierに応じた処理
-		if (identifier == "v") {
-			Vector4 position;
-			s >> position.x >> position.y >> position.z;
-
-			position.w = 1.0f;
-			positions.push_back(position);
-		}
-		else if (identifier == "vt") {
-			Vector2 texcoord;
-			s >> texcoord.x >> texcoord.y;
-			texcoords.push_back(texcoord);
-		}
-		else if (identifier == "vn") {
-			Vector3 normal;
-			s >> normal.x >> normal.y >> normal.z;
-
-			normals.push_back(normal);
-		}
-		else if (identifier == "f") {
-			VertexData triangle[3];
-			//面は三角形限定。その他は未対応
-			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
-				std::string vertexDefinition;
-				s >> vertexDefinition;
-				//頂点への要素へのindexは「位置/UV/法線」で格納されているので、分散してindexを取得する
-				std::istringstream v(vertexDefinition);
-				uint32_t elementIndices[3]{};
-				for (int32_t element = 0; element < 3; ++element) {
-					std::string index;
-					std::getline(v, index, '/');  //区切りでインデックスを読んでいく
-					elementIndices[element] = std::stoi(index);
-				}
-				//要素へのindexから、実際の要素の値を取得して、頂点を構築する
-				Vector4 position = positions[elementIndices[0] - 1];
-				Vector2 texcoord = texcoords[elementIndices[1] - 1];
-				Vector3 normal = normals[elementIndices[2] - 1];
-
-				position.x *= -1;
-				normal.x *= -1;
-				texcoord.y = 1.0f - texcoord.y;
-
-				//VertexData vertex = { position,texcoord,normal };
-				//modelData.vertices.push_back(vertex);
-				triangle[faceVertex] = { position,texcoord,normal };
-			}
-			//頂点を逆順で登録することで、周り順を逆にする
-			modelData.vertices_.push_back(triangle[2]);
-			modelData.vertices_.push_back(triangle[1]);
-			modelData.vertices_.push_back(triangle[0]);
-		}
-		else if (identifier == "mtllib") {
-			//materialTemplateLibraryファイルの名前を取得する
-			std::string materialFilename;
-			s >> materialFilename;
-			//基本的にobjファイルと同一階層にmtlは存続させるので、ディレクトリ名とファイル名を渡す
-			modelData.material_ = LoadMaterialTemplateFile(materialFilename);
-			
-		}
-	}
-
-	return modelData;
-}
-
-Object3d::MaterialData Object3d::LoadMaterialTemplateFile(const std::string& filename) {
-
-	MaterialData materialData; //構築するMatrialData
-	std::string line; //ファイルから読んだ1行を格納するもの
-	std::ifstream file(directoryPath_ + filename); //ファイルを開く
-	assert(file.is_open()); //開かなかったら止める
-
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;
-
-		//identifierに応じた処理
-		if (identifier == "map_Kd") {
-			std::string textureFilename;
-			s >> textureFilename;
-			//連結してファイルパスにする
-			materialData.textureFilePath_ = directoryPath_ + textureFilename;
-			uvHandle_ = TextureManager::GetInstance()->LoadUv(textureFilename, materialData.textureFilePath_);
-		}
-	}
-	return materialData;
-}

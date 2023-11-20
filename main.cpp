@@ -13,6 +13,7 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "TextureManager.h"
+#include "ModelManager.h"
 #include <memory>
 #include "Particle.h"
 #include <random>
@@ -62,6 +63,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	input->Initialize(win);
 
 	TextureManager::GetInstance()->Initialize();
+	ModelManager::GetInstance()->Initialize();
 	//TextureManager::Load("uvChecker.png");
 
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
@@ -79,17 +81,29 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	float rotate = sprite->GetRotate();
 	Vector2 pos = sprite->GetPosition();
 
+	/*std::unique_ptr<Model> teapot = std::make_unique<Model>();
+	teapot.reset(Model::LoadOBJ("teapot"));*/
+	uint32_t teapot = ModelManager::Load("teapot");
+	
+	/*std::unique_ptr<Model> plane = std::make_unique<Model>();
+	plane.reset(Model::LoadOBJ("Plane"));*/
+	uint32_t plane = ModelManager::Load("Plane");
+
 	std::unique_ptr<Object3d> obj;
 	obj = std::make_unique<Object3d>();
-	obj.reset(Object3d::Create("teapot"));
+	obj.reset(Object3d::Create(teapot));
 
-	std::unique_ptr<Object3d> plane;
-	plane = std::make_unique<Object3d>();
-	plane.reset(Object3d::Create("Plane"));
+	std::unique_ptr<Object3d> obj2;
+	obj2 = std::make_unique<Object3d>();
+	obj2.reset(Object3d::Create(plane));
 
-	std::unique_ptr<Particle> particle_;
-	particle_ = std::make_unique<Particle>();
-	particle_.reset(Particle::Create(circle, 1000));
+	std::unique_ptr<Object3d> obj3;
+	obj3 = std::make_unique<Object3d>();
+	obj3.reset(Object3d::Create(plane));
+
+	
+
+	
 	
 
 	//
@@ -155,23 +169,16 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	ViewProjection viewProjection;
 	viewProjection.Initialize();
 
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
+	
 
 	
 
-	const float kDeltaTime = 1.0f / 60.0f;
+	
 	
 	WorldTransform worldTransform;
-	WorldTransform worldTransformPlane;
-	worldTransformPlane.parent_ = &worldTransform;
-	std::list<Particle::ParticleData> particles;
-	Particle::Emitter emitter{};
-	emitter.count_ = 5;
-	emitter.frequency_ = 0.5f;
+	WorldTransform worldTransform2;
+	WorldTransform worldTransform3;
 	
-	bool particleStop = false;
-
 
 	
 	//ウィンドウの✕ボタンが押されるまでループ
@@ -182,21 +189,20 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		imguiManager->Begin();
 
+		input->Update();
+
 		//更新
 #ifdef _DEBUG
 		ImGui::Begin("window");
 		ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
 
+		ImGui::End();
 
-		if (ImGui::Button("Add Particle")) {
-			particles.splice(particles.end(), Particle::Emit(emitter, randomEngine));
-		}
+		ImGui::Begin("OBJ");
 
-		ImGui::Checkbox("Particle Stop", &particleStop);
-
-
-		ImGui::DragFloat3("Emitter Translate", &emitter.translate_.x, 0.05f);
-
+		ImGui::DragFloat3("obj1", &worldTransform.translation_.x, 0.01f);
+		ImGui::DragFloat3("obj2", &worldTransform2.translation_.x, 0.01f);
+		ImGui::DragFloat3("obj3", &worldTransform3.translation_.x, 0.01f);
 
 		ImGui::End();
 
@@ -209,34 +215,33 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 #endif // _DEBUG
 
 		
-
-        input->Update();
+		if (input->PushKey(DIK_SPACE)) {
+			obj2->SetModelHandle(teapot);
+			obj3->SetModelHandle(teapot);
+		}
+		else {
+			obj2->SetModelHandle(plane);
+			obj3->SetModelHandle(plane);
+		}
+        
 		
 		rotate += 0.02f;
 		pos.x += 1.0f;
 		pos.y += 1.0f;
 		//worldTransform.translation_.x += 0.01f;
+
+		
 		
 
 		sprite->SetRotate(rotate);
 		sprite->SetPosition(pos);
 		
 		
-		emitter.frequencyTime_ += kDeltaTime;
-		if (emitter.frequencyTime_ >= emitter.frequency_) {
-			particles.splice(particles.end(), Particle::Emit(emitter, randomEngine));
-			emitter.frequencyTime_ -= emitter.frequency_;
-		}
 		
-
-		
-		for (std::list<Particle::ParticleData>::iterator itParticle = particles.begin(); itParticle != particles.end(); itParticle++) {
-			(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_ * kDeltaTime;
-			(*itParticle).currentTime_ += kDeltaTime;
-		}
 
 		worldTransform.UpdateMatrix();
-		worldTransformPlane.UpdateMatrix();
+		worldTransform2.UpdateMatrix();
+		worldTransform3.UpdateMatrix();
 		viewProjection.UpdateMatrix();
 
 
@@ -258,14 +263,15 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		Object3d::preDraw();
 
 
-		//obj->Draw(worldTransform,viewProjection);
-		//plane->Draw(worldTransformPlane,viewProjection);
+		obj->Draw(worldTransform,viewProjection);
+		obj2->Draw(worldTransform2,viewProjection);
+		obj3->Draw(worldTransform3, viewProjection);
 
 		Object3d::postDraw();
 
 		Particle::preDraw();
 
-		particle_->Draw(particles, viewProjection);
+		
 
 		Particle::postDraw();
 		
