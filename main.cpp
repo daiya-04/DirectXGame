@@ -15,10 +15,18 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include <memory>
-#include "Particle.h"
-#include <random>
-#include <numbers>
 #include <list>
+#include "Particle.h"
+#include "GlobalVariables.h"
+
+#include "Skydome.h"
+#include "Ground.h"
+#include "Player.h"
+#include "Hit.h"
+#include "Goal.h"
+#include "Enemy.h"
+#include "FollowCamera.h"
+
 
 
 #pragma comment(lib,"dxguid.lib")
@@ -51,7 +59,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	
 
 	win = WinApp::GetInstance();
-	win->CreateGameWindow(L"LE2A_12_セト_ダイヤ");
+	win->CreateGameWindow(L"Ultimate1");
 
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(win);
@@ -68,117 +76,89 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
+　Particle::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
 
-	Particle::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
+	GlobalVariables::GetInstance()->LoadFiles();
 
-	uint32_t uv = TextureManager::Load("uvChecker.png");
-	uint32_t circle = TextureManager::Load("circle.png");
+	///オブジェクトの初期化
 
-	Sprite* sprite = new Sprite(uv,{50.0f,50.0f}, { 100.0f,100.0f });
-	sprite->Initialize();
-	sprite->SetAnchorpoint({ 0.5f,0.5f });
+	ViewProjection viewProjection_;
+	viewProjection_.Initialize();
 
-	float rotate = sprite->GetRotate();
-	Vector2 pos = sprite->GetPosition();
+	//天球
+	std::unique_ptr<Skydome> skydome_;
+	std::unique_ptr<Object3d> skydomeModel_;
+	skydomeModel_.reset(Object3d::Create("skydome"));
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Initialize(skydomeModel_.get());
 
-	/*std::unique_ptr<Model> teapot = std::make_unique<Model>();
-	teapot.reset(Model::LoadOBJ("teapot"));*/
-	uint32_t teapot = ModelManager::Load("teapot");
+	//地面
+	std::vector<std::unique_ptr<Ground>> grounds_;
+	std::unique_ptr<Object3d> groundModel1_;
+	std::unique_ptr<Object3d> groundModel2_;
+	std::unique_ptr<Object3d> groundModel3_;
+
+	groundModel1_.reset(Object3d::Create("ground"));
+	groundModel2_.reset(Object3d::Create("ground"));
+	groundModel3_.reset(Object3d::Create("ground"));
+	for (size_t index = 0; index < 3; index++) {
+		grounds_.push_back(std::make_unique<Ground>());
+	}
+	grounds_[0]->Initialize(groundModel1_.get(), Type::Static, { 0.0f,0.0f,0.0f }, { 1.5f,1.0f,1.5f });
+	grounds_[1]->Initialize(groundModel2_.get(), Type::Dynamic, { 0.0f,0.0f,grounds_[0]->GetWorldPos().z + grounds_[0]->GetSize().z * 3.0f}, { 1.5f,1.0f,1.5f });
+	grounds_[2]->Initialize(groundModel3_.get(), Type::Static, { 0.0f,0.0f,80.0f},{10.0f,1.0f,6.0f});
+
+	//プレイヤー
+	std::unique_ptr<Player> player_;
+	std::unique_ptr<Object3d> playerHaedModel_;
+	std::unique_ptr<Object3d> playerBodyModel_;
+
+	std::unique_ptr<Object3d> weaponModel_;
+
+	playerHaedModel_.reset(Object3d::Create("float_Head"));
+	playerBodyModel_.reset(Object3d::Create("float_Body"));
+	weaponModel_.reset(Object3d::Create("Stamp"));
+	std::vector<Object3d*> playerModels = {
+		playerBodyModel_.get(),playerHaedModel_.get(),weaponModel_.get()
+	};
+	player_ = std::make_unique<Player>();
+	player_->Initialize(playerModels);
 	
-	/*std::unique_ptr<Model> plane = std::make_unique<Model>();
-	plane.reset(Model::LoadOBJ("Plane"));*/
-	uint32_t plane = ModelManager::Load("Plane");
 
-	std::unique_ptr<Object3d> obj;
-	obj = std::make_unique<Object3d>();
-	obj.reset(Object3d::Create(teapot));
+	//敵
+	std::unique_ptr<Enemy> enemy_;
+	std::unique_ptr<Object3d> enemyBodyModel_;
+	std::unique_ptr<Object3d> enemyHeadModel_;
 
-	std::unique_ptr<Object3d> obj2;
-	obj2 = std::make_unique<Object3d>();
-	obj2.reset(Object3d::Create(plane));
-
-	std::unique_ptr<Object3d> obj3;
-	obj3 = std::make_unique<Object3d>();
-	obj3.reset(Object3d::Create(plane));
-
+	enemyBodyModel_.reset(Object3d::Create("EnemyBody"));
+	enemyHeadModel_.reset(Object3d::Create("EnemyHead"));
+	std::vector<Object3d*> enemyModels = {
+		enemyBodyModel_.get(),enemyHeadModel_.get()
+	};
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize(enemyModels);
 	
 
-	
-	
+	//ゴール
+	std::unique_ptr<Goal> goal_;
+	std::unique_ptr<Object3d> goalModel_;
 
-	//
-	//vertexDataCube[0].position = { -1.0f,1.0f,-1.0f,1.0f };    //左上前
-	//vertexDataCube[0].texcoord = { 0.0f,0.0f };				   
-	//vertexDataCube[1].position = { 1.0f,1.0f,-1.0f,1.0f };     //右上前
-	//vertexDataCube[1].texcoord = { 1.0f,0.0f };				   
-	//vertexDataCube[2].position = { -1.0f,-1.0f,-1.0f,1.0f };   //左下前
-	//vertexDataCube[2].texcoord = { 0.0f,1.0f };				   
-	//vertexDataCube[3] = vertexDataCube[1];                     //右上前
-	//vertexDataCube[4].position = { 1.0f,-1.0f,-1.0f,1.0f };    //右下前
-	//vertexDataCube[4].texcoord = { 1.0f,1.0f };				   
-	//vertexDataCube[5] = vertexDataCube[2];                     //左下前
-	//vertexDataCube[6].position = { -1.0f,1.0f,1.0f,1.0f };     //左上奥
-	//vertexDataCube[6].texcoord = {0.0f,0.0f};				   
-	//vertexDataCube[7].position = vertexDataCube[0].position;   //左上前
-	//vertexDataCube[7].texcoord = { 1.0f,0.0f };				   
-	//vertexDataCube[8].position = { -1.0f,-1.0f,1.0f,1.0f };    //左下奥
-	//vertexDataCube[8].texcoord = { 0.0f,1.0f };				   
-	//vertexDataCube[9] = vertexDataCube[7];                     //左上前
-	//vertexDataCube[10].position = vertexDataCube[2].position;  //左下前
-	//vertexDataCube[10].texcoord = { 1.0f,1.0f };			   
-	//vertexDataCube[11] = vertexDataCube[8];                    //左下奥
-	//vertexDataCube[12].position = { 1.0f,1.0f,1.0f,1.0f };     //右上奥
-	//vertexDataCube[12].texcoord = { 0.0f,0.0f };			   
-	//vertexDataCube[13].position = vertexDataCube[6].position;  //左上奥
-	//vertexDataCube[13].texcoord = { 1.0f,0.0f };			   
-	//vertexDataCube[14].position = { 1.0f,-1.0f,1.0f,1.0f };    //右下奥
-	//vertexDataCube[14].texcoord = { 0.0f,1.0f };			   
-	//vertexDataCube[15] = vertexDataCube[13];                   //左上奥
-	//vertexDataCube[16].position = vertexDataCube[8].position;  //左下奥
-	//vertexDataCube[16].texcoord = { 1.0f,1.0f };			   
-	//vertexDataCube[17] = vertexDataCube[14];                   //右下奥
-	//vertexDataCube[18].position = vertexDataCube[1].position;  //右上前
-	//vertexDataCube[18].texcoord = { 0.0f,0.0f };			   
-	//vertexDataCube[19].position = vertexDataCube[12].position; //右上奥
-	//vertexDataCube[19].texcoord = { 1.0f,0.0f };
-	//vertexDataCube[20].position = vertexDataCube[4].position;  //右下前
-	//vertexDataCube[20].texcoord = { 0.0f,1.0f };
-	//vertexDataCube[21] = vertexDataCube[19];                   //右上奥
-	//vertexDataCube[22].position = vertexDataCube[14].position; //右下奥
-	//vertexDataCube[22].texcoord = { 1.0f,1.0f };
-	//vertexDataCube[23] = vertexDataCube[20];                   //右下前
-	//vertexDataCube[24] = vertexDataCube[0];                    //左上前
-	//vertexDataCube[25] = vertexDataCube[13];                   //左上奥
-	//vertexDataCube[26].position = vertexDataCube[18].position; //右上前
-	//vertexDataCube[26].texcoord = { 0.0f,1.0f };
-	//vertexDataCube[27] = vertexDataCube[25];                   //左上前
-	//vertexDataCube[28].position = vertexDataCube[19].position; //右上奥
-	//vertexDataCube[28].texcoord = { 1.0f,1.0f };
-	//vertexDataCube[29] = vertexDataCube[26];                   //右上前
-	//vertexDataCube[30].position = vertexDataCube[8].position;  //左下奥
-	//vertexDataCube[30].texcoord = { 0.0f,0.0f };
-	//vertexDataCube[31].position = vertexDataCube[2].position;  //左下前
-	//vertexDataCube[31].texcoord = { 1.0f,0.0f };
-	//vertexDataCube[32].position = vertexDataCube[14].position; //右下奥
-	//vertexDataCube[32].texcoord = { 0.0f,1.0f };
-	//vertexDataCube[33] = vertexDataCube[31];                   //左下前
-	//vertexDataCube[34].position = vertexDataCube[4].position;  //右下前
-	//vertexDataCube[34].texcoord = { 1.0f,1.0f };
-	//vertexDataCube[35] = vertexDataCube[32];                   //右下奥
-
-	ViewProjection viewProjection;
-	viewProjection.Initialize();
+	goalModel_.reset(Object3d::Create("goal"));
+	goal_ = std::make_unique<Goal>();
+	goal_->Initialize(goalModel_.get());
 
 	
 
-	
+	//追従カメラ
+	std::unique_ptr<FollowCamera> followCemra_;
+	followCemra_ = std::make_unique<FollowCamera>();
+	followCemra_->Initialize();
+	followCemra_->SetTarget(&player_->GetWorldTransform());
+	player_->SetFollowCamera(followCemra_.get());
+	player_->SetViewProjection(&followCemra_->GetViewProjection());
 
-	
-	
-	WorldTransform worldTransform;
-	WorldTransform worldTransform2;
-	WorldTransform worldTransform3;
-	
+	///
+
 
 	
 	//ウィンドウの✕ボタンが押されるまでループ
@@ -189,62 +169,108 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		imguiManager->Begin();
 
-		input->Update();
 
-		//更新
 #ifdef _DEBUG
-		ImGui::Begin("window");
-		ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
+		
 
-		ImGui::End();
+		/*ImGui::Begin("Camera");
 
-		ImGui::Begin("OBJ");
+		ImGui::DragFloat3("translation", &viewProjection_.translation_.x, 0.1f);
+		ImGui::DragFloat3("rotation", &viewProjection_.rotation_.x, 0.01f);
+		
+		ImGui::End();*/
 
-		ImGui::DragFloat3("obj1", &worldTransform.translation_.x, 0.01f);
-		ImGui::DragFloat3("obj2", &worldTransform2.translation_.x, 0.01f);
-		ImGui::DragFloat3("obj3", &worldTransform3.translation_.x, 0.01f);
+		
 
-		ImGui::End();
-
-		ImGui::Begin("Camera");
-
-		ImGui::DragFloat3("Postion", &viewProjection.translation_.x, 0.01f);
-		ImGui::DragFloat3("Rotation", &viewProjection.rotation_.x, 0.01f);
-
-		ImGui::End();
+		
 #endif // _DEBUG
 
 		
-		if (input->PushKey(DIK_SPACE)) {
-			obj2->SetModelHandle(teapot);
-			obj3->SetModelHandle(teapot);
+
+		//更新
+
+        input->Update();
+
+		GlobalVariables::GetInstance()->Update();
+
+		///オブジェクトの更新
+
+		
+
+		skydome_->Update();
+		for (const auto& ground : grounds_) {
+			ground->Update();
 		}
-		else {
-			obj2->SetModelHandle(plane);
-			obj3->SetModelHandle(plane);
+		player_->Update();
+		goal_->Update();
+		enemy_->SetCenter(goal_->GetWorldPos());
+		enemy_->Update();
+		followCemra_->Update();
+		
+
+
+		///
+
+		///衝突判定
+		
+		AABB player = {
+			player_->GetWorldPos() - player_->GetSize(),
+			player_->GetWorldPos() + player_->GetSize(),
+		};
+
+		AABB goal = {
+			goal_->GetWorldPos() - goal_->GetSize(),
+			goal_->GetWorldPos() + goal_->GetSize()
+		};
+
+		AABB enemy = {
+			enemy_->GetWorldPos() - enemy_->GetSize(),
+			enemy_->GetWorldPos() + enemy_->GetSize()
+		};
+
+		Sphere stamp = { player_->GetWeaponWorldPos(),2.0f };
+
+		for (const auto& ground : grounds_) {
+			AABB aabbGround = {
+				ground->GetWorldPos() - ground->GetSize(),
+				ground->GetWorldPos() + ground->GetSize(),
+			};
+			if (IsCollision(player, aabbGround)) {
+				player_->OnGround();
+				if (ground->GetType() == Type::Dynamic) {
+					//player_->SetTranslationParent(&ground->GetWorldTransform());
+					player_->AddTransform(ground->GetVelocity());
+				}
+			}
+			else {
+				if (ground->GetType() == Type::Dynamic) {
+					player_->SetTranslationParent(nullptr);
+				}
+			}
 		}
-        
+
+		if (IsCollision(player, goal)) {
+			player_->ReStart();
+		}
 		
-		rotate += 0.02f;
-		pos.x += 1.0f;
-		pos.y += 1.0f;
-		//worldTransform.translation_.x += 0.01f;
+		if (IsCollision(player, enemy)) {
+			player_->ReStart();
+		}
+
+		if (IsCollision(enemy, stamp)) {
+			if (player_->IsAttack()) {
+				enemy_->OnCollision();
+			}
+			
+		}
+
+		///
+
+		viewProjection_.matView_ = followCemra_->GetViewProjection().matView_;
 
 		
 		
-
-		sprite->SetRotate(rotate);
-		sprite->SetPosition(pos);
 		
-		
-		
-
-		worldTransform.UpdateMatrix();
-		worldTransform2.UpdateMatrix();
-		worldTransform3.UpdateMatrix();
-		viewProjection.UpdateMatrix();
-
-
 		imguiManager->End();
 
 		//描画
@@ -252,22 +278,29 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		dxCommon->preDraw();
 
 		
-		
 		Sprite::preDraw(dxCommon->GetCommandList());
+		///スプライト描画
+		
 
-
-		//sprite->Draw();
-
+		///
 		Sprite::postDraw();
 
+		
 		Object3d::preDraw();
+		///3dオブジェクトの描画
 
+		skydome_->Draw(viewProjection_);
+		for (const auto& ground : grounds_) {
+			ground->Draw(viewProjection_);
+		}
+		
+		player_->Draw(viewProjection_);
+		enemy_->Draw(viewProjection_);
+		goal_->Draw(viewProjection_);
 
-		obj->Draw(worldTransform,viewProjection);
-		obj2->Draw(worldTransform2,viewProjection);
-		obj3->Draw(worldTransform3, viewProjection);
-
+		///
 		Object3d::postDraw();
+
 
 		Particle::preDraw();
 
@@ -285,7 +318,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 	//解放処理
 
-	delete sprite;
 	win->TerminateGameWindow();
 
 	return 0;

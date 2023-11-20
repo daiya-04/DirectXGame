@@ -38,14 +38,16 @@ public:
 
 	//キーのトリガーをチェック
 	bool TriggerKey(BYTE keyNumber) const;
-
+	//ゲームパッドの状態取得
 	bool GetJoystickState();
 
 	Vector3 GetMoveXZ() {
+		if (!GetJoystickState()) { return {}; }
 		return { (float)joyState.Gamepad.sThumbLX, 0.0f, (float)joyState.Gamepad.sThumbLY };
 	}
 
 	Vector3 GetCameraRotate() {
+		if (!GetJoystickState()) { return {}; }
 		return { (float)joyState.Gamepad.sThumbRY / SHRT_MAX,(float)joyState.Gamepad.sThumbRX / SHRT_MAX,0.0f };
 	}
 

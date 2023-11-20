@@ -1,18 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="リソース ファイル">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="imgui">
-      <UniqueIdentifier>{9994cc14-7f0a-47aa-861e-c70ee5f4a53c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine">
-      <UniqueIdentifier>{64da1eb4-35aa-4e29-9a69-e2829f05c147}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="FollowCamera.cpp" />
+    <ClCompile Include="Goal.cpp" />
+    <ClCompile Include="Ground.cpp" />
+    <ClCompile Include="Hit.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
@@ -52,16 +47,22 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="WinApp.cpp">
+    <ClCompile Include="TextureManager.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="ViewProjection.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="WinApp.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
     <ClCompile Include="WorldTransform.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
+    <ClCompile Include="GlobalVariables.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Easing.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Particle.cpp">
@@ -70,6 +71,13 @@
     <ClCompile Include="ModelManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="FollowCamera.h" />
+    <ClInclude Include="Goal.h" />
+    <ClInclude Include="Ground.h" />
+    <ClInclude Include="Hit.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Skydome.h" />
     <ClInclude Include="externals\imgui\imconfig.h">
       <Filter>imgui</Filter>
     </ClInclude>
@@ -112,6 +120,9 @@
     <ClInclude Include="Sprite.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
     <ClInclude Include="Vec2.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -121,16 +132,16 @@
     <ClInclude Include="Vec4.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="WinApp.h">
+    <ClInclude Include="ViewProjection.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="ViewProjection.h">
+    <ClInclude Include="WinApp.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="WorldTransform.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
+    <ClInclude Include="GlobalVariables.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Log.h">
@@ -140,6 +151,17 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="ModelManager.h" />
+    <ClInclude Include="Easing.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{d0c0fadc-7fbb-423e-bb8d-5a9501c303f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{c2e45afd-982b-486f-a3d4-7db9f7b83d00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

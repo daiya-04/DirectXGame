@@ -117,3 +117,8 @@ public:
 		return p;
 	}
 };
+
+inline float Lerp(float t, float start, float end) {
+	t = std::clamp(t, 0.0f, 1.0f);
+	return { (1.0f - t) * start + t * end };
+}

@@ -311,6 +311,7 @@ ComPtr<ID3D12Resource> Object3d::CreateBufferResource(ComPtr<ID3D12Device> devic
 
 void Object3d::Initialize(uint32_t modelHandle) {
 
+
 	modelHandle_ = modelHandle;
 
 	//WVP用のリソースを作る。Matrix4x4 1つ分のサイズを用意する

@@ -15,6 +15,7 @@ public:
 	Matrix4x4 matWorld_;
 
 	const WorldTransform* parent_ = nullptr;
+	const WorldTransform* translationParent_ = nullptr;
 
 public:
 	void UpdateMatrix();

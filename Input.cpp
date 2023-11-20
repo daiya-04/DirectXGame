@@ -70,6 +70,7 @@ bool Input::GetJoystickState() {
 	dwResult = XInputGetState(0, &joyState);
 
 	if (dwResult == ERROR_SUCCESS) {
+
 		if (fabs(joyState.Gamepad.sThumbLX) < 10000) {
 			joyState.Gamepad.sThumbLX = 0;
 		}
@@ -82,6 +83,8 @@ bool Input::GetJoystickState() {
 		if (fabs(joyState.Gamepad.sThumbRY) < 10000) {
 			joyState.Gamepad.sThumbRY = 0;
 		}
+
+
 		return true;
 	}
 
