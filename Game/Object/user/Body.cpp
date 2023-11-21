@@ -7,6 +7,7 @@ void BodyBlock::Initialize()
 
 void BodyBlock::Update()
 {
+	modelPosition_.translation_ = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
 	//BaseBlock::Update();
 	if (stagingRequest_) {
 		staging_ = stagingRequest_.value();
@@ -53,10 +54,12 @@ void BodyBlock::Update()
 	default:
 		break;
 	}
+	modelPosition_.UpdateMatrix();
 }
 
 void BodyBlock::Draw()
 {
+	model_->Draw(modelPosition_, *viewProjection_);
 }
 
 void BodyBlock::ApplyVariables(const char* groupName)

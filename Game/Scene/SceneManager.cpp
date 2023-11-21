@@ -1,6 +1,9 @@
 #include "SceneManager.h"
 
 #include "SceneList.h"
+#include "../Object/BlockManager.h"
+#include "../Object/MapManager.h"
+
 using enum IScene::SCENE;
 
 SceneManager* SceneManager::GetInstace()
@@ -22,6 +25,9 @@ void SceneManager::Initialize()
 	{
 		sceneArray_[i]->Initialize();
 	}
+
+	BlockManager::GetInstance()->Initialize();
+	MapManager::GetInstance()->Initialize();
 
 	//sceneArray_[kTITLE]->Initialize();
 }

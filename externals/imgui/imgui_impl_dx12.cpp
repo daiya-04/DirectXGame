@@ -114,14 +114,14 @@ static void ImGui_ImplDX12_SetupRenderState(ImDrawData* draw_data, ID3D12Graphic
     }
 
     // Setup viewport
-    D3D12_VIEWPORT vp;
-    memset(&vp, 0, sizeof(D3D12_VIEWPORT));
-    vp.Width = draw_data->DisplaySize.x;
-    vp.Height = draw_data->DisplaySize.y;
-    vp.MinDepth = 0.0f;
-    vp.MaxDepth = 1.0f;
-    vp.TopLeftX = vp.TopLeftY = 0.0f;
-    ctx->RSSetViewports(1, &vp);
+    D3D12_VIEWPORT vp_;
+    memset(&vp_, 0, sizeof(D3D12_VIEWPORT));
+    vp_.Width = draw_data->DisplaySize.x;
+    vp_.Height = draw_data->DisplaySize.y;
+    vp_.MinDepth = 0.0f;
+    vp_.MaxDepth = 1.0f;
+    vp_.TopLeftX = vp_.TopLeftY = 0.0f;
+    ctx->RSSetViewports(1, &vp_);
 
     // Bind shader and vertex buffers
     unsigned int stride = sizeof(ImDrawVert);

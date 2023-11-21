@@ -7,7 +7,7 @@
 
 #include "../Object/BaseBlock.h"
 #include "../Object/MapManager.h"
-
+#include "../Object/BlockManager.h"
 
 class DebugStage
 {
@@ -18,6 +18,7 @@ private:
 	
 	// マップの管理マネージャー
 	MapManager* mapManager_ = nullptr;
+	BlockManager* blockManager_ = nullptr;
 
 public:
 
@@ -25,7 +26,7 @@ public:
 	~DebugStage();
 
 	// ステージ情報の読み込みを行う
-	void Initialize();
+	void Initialize(ViewProjection* view);
 	// ステージ情報をセット
 	void Reset();
 

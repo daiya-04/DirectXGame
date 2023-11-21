@@ -135,6 +135,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="Game\Math\Math.h" />
     <ClInclude Include="Game\Object\BaseBlock.h" />
+    <ClInclude Include="Game\Object\BlockList.h" />
     <ClInclude Include="Game\Object\BlockManager.h" />
     <ClInclude Include="Game\Object\IObject.h" />
     <ClInclude Include="Game\Object\MapManager.h" />

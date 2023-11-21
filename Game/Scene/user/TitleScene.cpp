@@ -12,8 +12,11 @@ void TitleScene::Initialize()
 	rotate_ = sprite_->GetRotate();
 	pos_ = sprite_->GetPosition();
 
-	pot_.reset(Object3d::Create("teapot"));
-	plane_.reset(Object3d::Create("Plane"));
+	uint32_t mHandleTeapot = ModelManager::GetInstance()->Load("teapot");
+	uint32_t mHandlePlane= ModelManager::GetInstance()->Load("plane");
+
+	pot_.reset(Object3d::Create(mHandleTeapot));
+	plane_.reset(Object3d::Create(mHandlePlane));
 
 	viewProjection_.reset(new ViewProjection());
 	viewProjection_->Initialize();

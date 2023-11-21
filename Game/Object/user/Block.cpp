@@ -1,5 +1,7 @@
 #include "Block.h"
 
+#include "../../../ImGuiManager.h"
+
 void NormalBlock::Initialize()
 {
 	BaseBlock::Initialize();
@@ -7,6 +9,7 @@ void NormalBlock::Initialize()
 
 void NormalBlock::Update()
 {
+	modelPosition_.translation_ = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
 	//BaseBlock::Update();
 	if (stagingRequest_) {
 		staging_ = stagingRequest_.value();
@@ -53,6 +56,8 @@ void NormalBlock::Update()
 	default:
 		break;
 	}
+
+	modelPosition_.UpdateMatrix();
 }
 
 void NormalBlock::Draw()

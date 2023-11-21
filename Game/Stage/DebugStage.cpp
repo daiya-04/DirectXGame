@@ -14,17 +14,19 @@ DebugStage::~DebugStage()
 {
 }
 
-void DebugStage::Initialize()
+void DebugStage::Initialize(ViewProjection* view)
 {
-	mapManager_ = new MapManager;
-	mapManager_->Initialize();
+	mapManager_ = MapManager::GetInstance();
+	blockManager_ = BlockManager::GetInstance();
 
+	blockManager_->SetViewProjection(view);
 	LoadStageData();
 	ApplyStageData();
 }
 
 void DebugStage::Reset()
 {
+	blockManager_->Reset();
 	// ステージの情報を反映
 	ApplyStageData();
 }
@@ -34,10 +36,12 @@ void DebugStage::Update()
 	DebugGUI();
 
 	mapManager_->Update();
+	blockManager_->Update();
 }
 
 void DebugStage::Draw()
 {
+	blockManager_->Draw();
 }
 
 void DebugStage::DebugGUI()
@@ -47,7 +51,7 @@ void DebugStage::DebugGUI()
 	ImGui::Begin("DebugStage");
 
 	if (ImGui::Button("Load")) {
-		ApplyStageData();
+		Reset();
 	}
 
 	ImGui::End();
@@ -105,4 +109,5 @@ void DebugStage::ApplyStageData()
 	data[1][3][1] = Element::kPlayer;
 
 	mapManager_->SetStageData(kStageData_.array_);
+	blockManager_->SetStageData(kStageData_.array_);
 }

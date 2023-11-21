@@ -276,6 +276,9 @@
     <ClInclude Include="ModelManager.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Object\BlockList.h">
+      <Filter>Engine\Game\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
