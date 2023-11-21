@@ -56,6 +56,9 @@
     <Filter Include="Engine\GlobalVariable">
       <UniqueIdentifier>{2507a18b-ca0b-4aee-a5e5-cc50b8d5ea00}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Particle">
+      <UniqueIdentifier>{7d8ec375-63f6-4f0c-9e7d-f110cefd43ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -124,9 +127,6 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>Engine\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="Particle.cpp">
-      <Filter>Engine\Sprite</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Object\user\Player.cpp">
       <Filter>Engine\Game\Object\user</Filter>
     </ClCompile>
@@ -144,6 +144,15 @@
     </ClCompile>
     <ClCompile Include="Game\Object\user\Body.cpp">
       <Filter>Engine\Game\Object\user</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Engine\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelManager.cpp">
+      <Filter>Engine\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -231,9 +240,6 @@
     <ClInclude Include="Game\Scene\SceneList.h">
       <Filter>Engine\Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Particle.h">
-      <Filter>Engine\Sprite</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Scene\SceneManager.h">
       <Filter>Engine\Game\Scene</Filter>
     </ClInclude>
@@ -257,6 +263,18 @@
     </ClInclude>
     <ClInclude Include="Game\Object\user\Body.h">
       <Filter>Engine\Game\Object\user</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Engine\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelManager.h">
+      <Filter>Engine\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

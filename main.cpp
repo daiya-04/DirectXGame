@@ -13,6 +13,7 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "TextureManager.h"
+#include "ModelManager.h"
 #include <memory>
 #include "Particle.h"
 #include <random>
@@ -63,6 +64,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	input->Initialize(win);
 
 	TextureManager::GetInstance()->Initialize();
+	ModelManager::GetInstance()->Initialize();
 	//TextureManager::Load("uvChecker.png");
 
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
