@@ -104,6 +104,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Object\BlockManager.cpp" />
     <ClCompile Include="Game\Object\MapManager.cpp" />
     <ClCompile Include="Game\Object\user\Block.cpp" />
+    <ClCompile Include="Game\Object\user\Body.cpp" />
     <ClCompile Include="Game\Object\user\Player.cpp" />
     <ClCompile Include="Game\Scene\IScene.cpp" />
     <ClCompile Include="Game\Scene\SceneManager.cpp" />
@@ -137,6 +138,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Object\IObject.h" />
     <ClInclude Include="Game\Object\MapManager.h" />
     <ClInclude Include="Game\Object\user\Block.h" />
+    <ClInclude Include="Game\Object\user\Body.h" />
     <ClInclude Include="Game\Object\user\Player.h" />
     <ClInclude Include="Game\Scene\IScene.h" />
     <ClInclude Include="Game\Scene\SceneList.h" />

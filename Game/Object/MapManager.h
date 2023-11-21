@@ -5,6 +5,8 @@
 #include "BaseBlock.h"
 #include "../../Input.h"
 
+#include "BlockManager.h"
+
 /// <summary>
 /// シングルトンパターンにしたい
 /// </summary>
@@ -39,6 +41,7 @@ private:
 	Input* input_ = nullptr;
 
 	BaseBlock::StageVector playerPosition_;
+	BlockManager* blockManager_ = nullptr;
 
 public:
 
@@ -55,13 +58,27 @@ public:
 
 private:
 
+	// 走査によるフラグの管理のみをしたい
+	// 今は変更までしてしまっている
 	void GetOperate();
 
+	// 重くなりそうなので最初の一回のみ
 	void GetPlayerPosition();
 
-	void MoveStage(MoveDirect direct);
+	// 動かす為の処理をまとめる
+	void MoveMainObject(MoveDirect direct);
 
-	bool CheckDirect(BaseBlock::StageVector position, MoveDirect direct);
+	// 方向を確認する
+	// プレイヤーの移動のみ対応
+	bool CheckDirectPlayer(BaseBlock::StageVector position, MoveDirect direct, BaseBlock::Element element);
+	bool CheckDirectBody(BaseBlock::StageVector position, MoveDirect direct, BaseBlock::Element element,BaseBlock::StageVector limit);
 
+	// 場所を指定して属性変更
 	void SetElement(BaseBlock::StageVector position, BaseBlock::Element element);
+	const BaseBlock::Element& GetElement(BaseBlock::StageVector position);
+
+	// 移動先に体がないことを確認する
+	// 再起関数?
+	BaseBlock::StageVector GetOnBody(const BaseBlock::StageVector& pos);
+
 };

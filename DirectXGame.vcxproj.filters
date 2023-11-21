@@ -142,6 +142,9 @@
     <ClCompile Include="Game\Object\MapManager.cpp">
       <Filter>Engine\Game\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Object\user\Body.cpp">
+      <Filter>Engine\Game\Object\user</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -251,6 +254,9 @@
     </ClInclude>
     <ClInclude Include="Game\Object\MapManager.h">
       <Filter>Engine\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\user\Body.h">
+      <Filter>Engine\Game\Object\user</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
