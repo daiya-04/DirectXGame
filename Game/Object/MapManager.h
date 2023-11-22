@@ -5,12 +5,12 @@
 #include "BaseBlock.h"
 #include "../../Input.h"
 
-#include "BlockManager.h"
+class BlockManager;
 
 /// <summary>
 /// シングルトンパターンにしたい
 /// </summary>
-class MapManager
+class MapManager final
 {
 public:
 
@@ -45,6 +45,8 @@ private:
 
 public:
 
+	static MapManager* GetInstance();
+
 	void Initialize();
 
 	void Update();
@@ -57,6 +59,11 @@ public:
 	void SetStageData(const StageArray<BaseBlock::Element>& data);
 
 private:
+
+	MapManager() = default;
+	~MapManager() = default;
+	MapManager(const MapManager& obj) = delete;
+	const MapManager& operator=(const MapManager& obj) = delete;
 
 	// 走査によるフラグの管理のみをしたい
 	// 今は変更までしてしまっている

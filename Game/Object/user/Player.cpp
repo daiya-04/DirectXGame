@@ -7,6 +7,7 @@ void PlayerBlock::Initialize()
 
 void PlayerBlock::Update()
 {
+	modelPosition_.translation_ = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
 	//BaseBlock::Update();
 	if (stagingRequest_) {
 		staging_ = stagingRequest_.value();
@@ -53,10 +54,12 @@ void PlayerBlock::Update()
 	default:
 		break;
 	}
+	modelPosition_.UpdateMatrix();
 }
 
 void PlayerBlock::Draw()
 {
+	model_->Draw(modelPosition_, *viewProjection_);
 }
 
 void PlayerBlock::ApplyVariables(const char* groupName)

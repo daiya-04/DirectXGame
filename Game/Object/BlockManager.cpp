@@ -1,30 +1,59 @@
 #include "BlockManager.h"
 
-#include "user/Player.h"
-#include "user/Block.h"
+#include "BlockList.h"
+#include "../../ImGuiManager.h"
+
+using Element = BaseBlock::Element;
+
+BlockManager* BlockManager::GetInstance()
+{
+	static BlockManager instance;
+	return &instance;
+}
 
 void BlockManager::Initialize()
 {
-	BaseBlock::StageVector position{ 0,0,0 };
-	currentData_.reserve(5);
-	// x 軸
-	for (size_t i = 0; i < currentData_.size(); i++)
+	uint32_t modelHandle = ModelManager::Load("Box");
+	for (size_t i = 0; i < kMaxNormalBlockNum_; i++)
 	{
-		position.x = i;
-		currentData_[i].reserve(5);
-		// y 軸
-		for (size_t j = 0; j < currentData_[i].size(); j++)
+		arrModelNormal_[i].reset(Object3d::Create(modelHandle));
+	}
+	modelHandle = ModelManager::Load("Box");
+	for (size_t i = 0; i < kMaxPlayerBlockNum_; i++)
+	{
+		arrModelPlayer_[i].reset(Object3d::Create(modelHandle));
+	}
+	modelHandle = ModelManager::Load("Box");
+	for (size_t i = 0; i < kMaxHeadBlockNum_; i++)
+	{
+		arrModelHead_[i].reset(Object3d::Create(modelHandle));
+	}
+	modelHandle = ModelManager::Load("Box");
+	for (size_t i = 0; i < kMaxBodyBlockNum_; i++)
+	{
+		arrModelBody_[i].reset(Object3d::Create(modelHandle));
+	}
+	Reset();
+}
+
+void BlockManager::Reset()
+{
+	listBlock_.clear();
+	iNormalModel_ = 0;
+	iPlayerModel_ = 0;
+	iBodyModel_ = 0;
+	iHeadModel_ = 0;
+	mapBlock_.clear();
+	mapBlock_.resize(kMapSize);
+	for (size_t i = 0; i < kMapSize; i++)
+	{
+		mapBlock_[i].resize(kMapSize);
+		for (size_t j = 0; j < kMapSize; j++)
 		{
-			position.y = j;
-			currentData_[i][j].reserve(5);
-			// z 軸
-			for (size_t k = 0; k < currentData_[i][j].size(); k++)
+			mapBlock_[i][j].resize(kMapSize);
+			for (size_t k = 0; k < kMapSize; k++)
 			{
-				position.z = k;
-				BaseBlock* block = new NormalBlock;
-				block->Initialize(position);
-				//block->SetViewProjection()
-				currentData_[i][j][k].reset(block);
+				mapBlock_[i][j][k] = nullptr;
 			}
 		}
 	}
@@ -32,54 +61,101 @@ void BlockManager::Initialize()
 
 void BlockManager::Update()
 {
-	// x 軸
-	for (size_t i = 0; i < currentData_.size(); i++)
+	std::list<pBlock>::iterator itr = listBlock_.begin();
+	for (; itr != listBlock_.end(); ++itr)
 	{
-		// y 軸
-		for (size_t j = 0; j < currentData_[i].size(); j++)
-		{
-			// z 軸
-			for (size_t k = 0; k < currentData_[i][j].size(); k++)
-			{
-				pBlock& block = currentData_[i][j][k];
-				block->Update();
-			}
-		}
+		itr->get()->Update();
 	}
 }
 
 void BlockManager::Draw()
 {
-	// x 軸
-	for (size_t i = 0; i < currentData_.size(); i++)
+	std::list<pBlock>::iterator itr = listBlock_.begin();
+	for (; itr != listBlock_.end(); ++itr)
 	{
-		// y 軸
-		for (size_t j = 0; j < currentData_[i].size(); j++)
+		itr->get()->Draw();
+	}
+}
+
+void BlockManager::SetStageData(const MapManager::StageArray<BaseBlock::Element> data)
+{
+	kMapSize = data.size();
+	Reset();
+	BaseBlock* block = nullptr;
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		for (size_t j = 0; j < data[i].size(); j++)
 		{
-			// z 軸
-			for (size_t k = 0; k < currentData_[i][j].size(); k++)
+			for (size_t k = 0; k < data[i][j].size(); k++)
 			{
-				pBlock& block = currentData_[i][j][k];
-				block->Draw();
+				switch (data[i][j][k])
+				{
+				case  Element::kNone:
+					break;
+				case  Element::kPlayer:
+					block = new PlayerBlock;
+					listBlock_.emplace_back(CreatePlayerBlock({ i,j,k }));
+					break;
+				case  Element::kBody:
+					listBlock_.emplace_back(CreateBodyBlock({ i,j,k }));
+					break;
+				case  Element::kBlock:
+					listBlock_.emplace_back(CreateNormalBlock({ i,j,k }));
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}
 }
 
-void BlockManager::SetModel(BaseBlock::Element elment)
+void BlockManager::SetBlockPosition(const BaseBlock::StageVector& prePos, const BaseBlock::StageVector& pos)
 {
-	// x 軸
-	for (size_t i = 0; i < currentData_.size(); i++)
-	{
-		// y 軸
-		for (size_t j = 0; j < currentData_[i].size(); j++)
-		{
-			// z 軸
-			for (size_t k = 0; k < currentData_[i][j].size(); k++)
-			{
-				pBlock& block = currentData_[i][j][k];
-				block->Draw();
-			}
-		}
-	}
+	mapBlock_[pos.x][pos.y][pos.z] = mapBlock_[prePos.x][prePos.y][prePos.z];
+	mapBlock_[prePos.x][prePos.y][prePos.z] = nullptr;
+
+	mapBlock_[pos.x][pos.y][pos.z]->SetMapPosition(pos);
+}
+
+
+BaseBlock* BlockManager::CreateNormalBlock(const BaseBlock::StageVector& pos) {
+	BaseBlock* block = new NormalBlock;
+	block->Initialize(pos);
+	block->SetViewProjection(vp_);
+	block->SetModel(arrModelNormal_[iNormalModel_].get());
+	iNormalModel_++;
+	mapBlock_[pos.x][pos.y][pos.z] = block;
+	return block;
+}
+BaseBlock* BlockManager::CreatePlayerBlock(const BaseBlock::StageVector& pos) {
+
+	BaseBlock* block = new PlayerBlock;
+	block->Initialize(pos);
+	block->SetViewProjection(vp_);
+	block->SetModel(arrModelPlayer_[iPlayerModel_].get());
+	iNormalModel_++;
+	mapBlock_[pos.x][pos.y][pos.z] = block;
+	return block;
+}
+
+BaseBlock* BlockManager::CreateHeadBlock(const BaseBlock::StageVector& pos) {
+
+	BaseBlock* block = new NormalBlock;
+	block->Initialize(pos);
+	block->SetViewProjection(vp_);
+	block->SetModel(arrModelHead_[iHeadModel_].get());
+	iHeadModel_++;
+	mapBlock_[pos.x][pos.y][pos.z] = block;
+	return block;
+}
+BaseBlock* BlockManager::CreateBodyBlock(const BaseBlock::StageVector& pos) {
+
+	BaseBlock* block = new BodyBlock;
+	block->Initialize(pos);
+	block->SetViewProjection(vp_);
+	block->SetModel(arrModelBody_[iBodyModel_].get());
+	iBodyModel_++;
+	mapBlock_[pos.x][pos.y][pos.z] = block;
+	return block;
 }

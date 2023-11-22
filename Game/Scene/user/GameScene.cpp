@@ -10,7 +10,7 @@ void GameScene::Initialize()
 
 
 	debugStage_.reset(new DebugStage);
-	debugStage_->Initialize();
+	debugStage_->Initialize(viewProjection_.get());
 
 	Reset();
 
@@ -41,6 +41,7 @@ void GameScene::Update()
 
 void GameScene::DrawModel()
 {
+	debugStage_->Draw();
 }
 
 void GameScene::DrawUI()

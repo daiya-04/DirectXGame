@@ -13,7 +13,7 @@ void TitleScene::Initialize()
 	pos_ = sprite_->GetPosition();
 
 	uint32_t mHandleTeapot = ModelManager::GetInstance()->Load("teapot");
-	uint32_t mHandlePlane = ModelManager::GetInstance()->Load("plane");
+	uint32_t mHandlePlane= ModelManager::GetInstance()->Load("plane");
 
 	pot_.reset(Object3d::Create(mHandleTeapot));
 	plane_.reset(Object3d::Create(mHandlePlane));

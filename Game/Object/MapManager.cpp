@@ -2,15 +2,22 @@
 
 #include <cassert>
 
+#include "./BlockManager.h"
 #include "./BaseBlock.h"
 #include "../../ImGuiManager.h"
 
 using Element = BaseBlock::Element;
 
+MapManager* MapManager::GetInstance()
+{
+	static MapManager instance;
+	return &instance;
+}
+
 void MapManager::Initialize()
 {
 	input_ = Input::GetInstance();
-	blockManager_ = new BlockManager;
+	blockManager_ = BlockManager::GetInstance();
 
 	StageArray<Element>& data = currentData_.array_;
 	BaseBlock::StageVector position{ 0,0,0 };
@@ -108,6 +115,7 @@ void MapManager::SetStageData(const StageArray<BaseBlock::Element>& data)
 {
 	currentData_.array_ = data;
 	GetPlayerPosition();
+	preData_.array_ = currentData_.array_;
 }
 
 void MapManager::GetOperate()
@@ -159,7 +167,10 @@ void MapManager::MoveMainObject(MoveDirect direct)
 {
 	BaseBlock::StageVector temp = playerPosition_;
 	if (CheckDirectPlayer(playerPosition_, direct, Element::kPlayer)) {
-		// 動くことが出来たなら下
+		// 動いたことをプレイヤーに伝える
+		blockManager_->SetBlockPosition(temp, playerPosition_);
+
+		// 動くことが出来たなら下のブロックも判定する
 		do
 		{
 			// 頭の一個下

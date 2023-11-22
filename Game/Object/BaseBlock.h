@@ -28,6 +28,8 @@ public:
 
 protected:
 
+	const float kBlockSize = 2.0f;
+
 	enum Staging : size_t
 	{
 		kSROOT = 0,	// 待機
@@ -83,8 +85,10 @@ public:
 
 public:
 
+	const StageVector& GetMapPosition() const { return mapPosition_; }
 	Element GetElement() const { return element_; }
 	void SetModel(Object3d* model) { model_ = model; }
+	void SetMapPosition(const StageVector& pos) { mapPosition_ = pos; }
 
 protected:
 
