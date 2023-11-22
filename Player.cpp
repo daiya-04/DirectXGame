@@ -5,15 +5,27 @@
 #include <numbers>
 #include "GlobalVariables.h"
 
+const std::array<Player::ConstAttack, Player::comboNum_> Player::kConstAttacks_ = {
+	{
+	{0,0,20,0,0.0f,0.0f,0.15f},
+	{15,10,15,0,0.2f,0.0f,0.0f},
+	{15,10,15,30,0.2f,0.0f,0.0f}
+	}
+};
+
 void (Player::* Player::BehaviorTable[])() = {
 	&Player::RootUpdate,
 	&Player::AttackUpdate,
 	&Player::DashUpdate,
 };
 
-void Player::Initialize(const std::vector<Object3d*>& models) {
+void Player::Initialize(std::vector<uint32_t> modelHandles) {
 
-	models_ = models;
+	objects_.resize(modelHandles.size());
+	for (size_t index = 0; index < objects_.size();index++) {
+		objects_[index] = std::make_unique<Object3d>();
+		objects_[index]->Initialize(modelHandles[index]);
+	}
 	worldTransform_.scale_ = { 0.5f,0.5f,0.5f };
 	partsWorldTransform_[Head].translation_ = { 0.0f,6.5f,0.0f };
 
@@ -90,12 +102,12 @@ void Player::Update() {
 
 void Player::Draw(const ViewProjection& viewProjection) {
 
-	for (size_t index = 0; index < models_.size() - 1; index++) {
-		models_[index]->Draw(partsWorldTransform_[index], viewProjection);
+	for (size_t index = 0; index < objects_.size() - 1; index++) {
+		objects_[index]->Draw(partsWorldTransform_[index], viewProjection);
 	}
 
 	if (behavior_ == Behavior::kAttack) {
-		models_[models_.size() - 1]->Draw(weaponWorldTransform_, viewProjection);
+		objects_[objects_.size() - 1]->Draw(weaponWorldTransform_, viewProjection);
 	}
 	
 	
@@ -164,8 +176,8 @@ void Player::AttackInitialize() {
 	weaponCollision_.rotation_ = worldTransform_.rotation_;
 	weaponWorldTransform_.translation_.y = 3.0f;
 	weaponCollision_.translation_.y = 6.0f;
-	workAttack_.attackParameter_ = 0.0f;
-	workAttack_.coolTime_ = 0;
+	workAttack_.attackParameter_ = 0;
+	workAttack_.swingParam_ = 0.0f;
 	workAttack_.theta_ = 0.0f;
 	workAttack_.isAttack_ = true;
 
@@ -173,10 +185,54 @@ void Player::AttackInitialize() {
 
 void Player::AttackUpdate() {
 
-	workAttack_.attackParameter_ += 0.05f;
-	float T = Easing::easeInSine(workAttack_.attackParameter_);
-	weaponWorldTransform_.rotation_.x = Lerp(T, 0.0f, (float)std::numbers::pi / 2.0f);
-	workAttack_.theta_ = Lerp(T, 0.0f, (float)std::numbers::pi / 2.0f);
+	if (workAttack_.comboIndex_ < comboNum_) {
+		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_X)) {
+			workAttack_.comboNext_ = true;
+		}
+	}
+
+	
+	uint32_t totalAttackTime = kConstAttacks_[workAttack_.comboIndex_].anticipationTime_ + kConstAttacks_[workAttack_.comboIndex_].chargeTime_
+		+ kConstAttacks_[workAttack_.comboIndex_].recoveryTime_ + kConstAttacks_[workAttack_.comboIndex_].swingTime_;
+
+	if (++workAttack_.attackParameter_ >= totalAttackTime) {
+		if (workAttack_.comboNext_) {
+			workAttack_.comboNext_ = false;
+			workAttack_.comboIndex_++;
+
+			AttackInitialize();
+		}
+		else {
+			behaviorRequest_ = Behavior::kRoot;
+			workAttack_.isAttack_ = false;
+			workAttack_.comboIndex_ = 0;
+			return;
+		}
+	}
+	
+
+	workAttack_.swingParam_ += 1.0f / (float)kConstAttacks_[workAttack_.comboIndex_].swingTime_;
+	if (workAttack_.swingParam_ >= (float)kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
+		workAttack_.swingParam_ = (float)kConstAttacks_[workAttack_.comboIndex_].swingTime_;
+	}
+	float T = Easing::easeInSine(workAttack_.swingParam_);
+
+	switch (workAttack_.comboIndex_) {
+	    case 0:
+			workAttack_.theta_ = Lerp(T, 0.0f, (float)std::numbers::pi / 2.0f);
+			weaponWorldTransform_.rotation_.x = workAttack_.theta_;
+			break;
+		case 1:
+			workAttack_.theta_ = Lerp(T, 0.0f, (float)std::numbers::pi / 2.0f);
+			weaponWorldTransform_.rotation_.x = workAttack_.theta_;
+			break;
+		case 2:
+			workAttack_.theta_ = Lerp(T, -(float)std::numbers::pi / 2.0f, (float)std::numbers::pi / 2.0f);
+			weaponWorldTransform_.rotation_.x = workAttack_.theta_;
+			break;
+	}
+	
+	
 
 	Vector3 distance = { 0.0f,9.0f + weaponWorldTransform_.translation_.y ,0.0f };
 
@@ -190,15 +246,7 @@ void Player::AttackUpdate() {
 
 	weaponCollision_.translation_ = move + worldTransform_.translation_;
 
-	if (workAttack_.attackParameter_ >= 1.0f) {
-		workAttack_.attackParameter_ = 1.0f;
-		workAttack_.coolTime_++;
-	}
-
-	if (workAttack_.coolTime_ == 15) {
-		behaviorRequest_ = Behavior::kRoot;
-		workAttack_.isAttack_ = false;
-	}
+	
 
 }
 

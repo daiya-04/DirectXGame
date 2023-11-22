@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "Object3d.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
@@ -39,7 +40,7 @@ public: //振る舞い用メンバ関数
 	//ダッシュ更新
 	void DashUpdate();
 
-private:
+public:
 
 	struct WorkDash {
 		//ダッシュ用の媒介変数
@@ -49,11 +50,34 @@ private:
 	};
 
 	struct WorkAttack {
-		uint32_t coolTime_ = 0;
-		float attackParameter_ = 0.0f;
+		float swingParam_ = 0.0f;
+		uint32_t attackParameter_ = 0;
 		float theta_ = 0.0f;
 		bool isAttack_ = false;
+		uint32_t comboIndex_ = 0;
+		uint32_t inComboPhase_ = 0;
+		bool comboNext_ = false;
 	};
+
+	struct ConstAttack {
+		//振りかぶりの時間
+		uint32_t anticipationTime_;
+		//溜めの時間
+		uint32_t chargeTime_;
+		//攻撃振りの時間
+		uint32_t swingTime_;
+		//硬直時間
+		uint32_t recoveryTime_;
+		//振りかぶりの移動速さ
+		float anticipationSpeed_;
+		//溜めの移動速さ
+		float chargeSpeed_;
+		//攻撃振りの移動速さ
+		float swingSpeed_;
+	};
+
+	static const int comboNum_ = 3;
+	static const std::array<ConstAttack, comboNum_> kConstAttacks_;
 
 	enum Parts {
 		Body,
@@ -62,7 +86,9 @@ private:
 		partsNum,
 	};
 
-	std::vector<Object3d*> models_;
+private:
+
+	std::vector<std::unique_ptr<Object3d>> objects_;
 	WorldTransform worldTransform_;
 	std::array<WorldTransform, partsNum> partsWorldTransform_;
 	WorldTransform weaponWorldTransform_;
@@ -83,9 +109,11 @@ private:
 	FollowCamera* followCamera_ = nullptr;
 	const ViewProjection* viewProjection_;
 
+	
+
 public:
 
-	void Initialize(const std::vector<Object3d*>& models);
+	void Initialize(std::vector<uint32_t> modelHandles);
 
 	void Update();
 

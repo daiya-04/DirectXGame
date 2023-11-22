@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "Vec3.h"
 #include "Object3d.h"
 #include "WorldTransform.h"
@@ -12,7 +13,7 @@ enum Type {
 class Ground{
 private:
 
-	Object3d* model_ = nullptr;
+	std::unique_ptr<Object3d> object_;
 	WorldTransform worldTransform_;
 	Type type_;
 	Vector3 size_{};
@@ -26,7 +27,7 @@ private:
 
 public:
 
-	void Initialize(Object3d* model, Type type, const Vector3& position,const Vector3& scale = {1.0f,1.0f,1.0f});
+	void Initialize(uint32_t modelHandle, Type type, const Vector3& position,const Vector3& scale = {1.0f,1.0f,1.0f});
 
 	void Update();
 

@@ -114,146 +114,146 @@ public:
 	}
 };
 
-    inline Matrix4x4 MakeIdentity44() {
-		return{
-			1.0f,0.0f,0.0f,0.0f,
-			0.0f,1.0f,0.0f,0.0f,
-			0.0f,0.0f,1.0f,0.0f,
-			0.0f,0.0f,0.0f,1.0f
-		};
-	}
+   inline Matrix4x4 MakeIdentity44() {
+	return{
+		1.0f,0.0f,0.0f,0.0f,
+		0.0f,1.0f,0.0f,0.0f,
+		0.0f,0.0f,1.0f,0.0f,
+		0.0f,0.0f,0.0f,1.0f
+	};
+}
 
-	inline Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
-		return {
-			1.0f,0.0f,0.0f,0.0f,
-			0.0f,1.0f,0.0f,0.0f,
-			0.0f,0.0f,1.0f,0.0f,
-			translate.x,translate.y,translate.z,1.0f
-		};
-	}
+inline Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
+	return {
+		1.0f,0.0f,0.0f,0.0f,
+		0.0f,1.0f,0.0f,0.0f,
+		0.0f,0.0f,1.0f,0.0f,
+		translate.x,translate.y,translate.z,1.0f
+	};
+}
 
-	inline Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
-		return {
-			scale.x,0.0f,0.0f,0.0f,
-			0.0f,scale.y,0.0f,0.0f,
-			0.0f,0.0f,scale.z,0.0f,
-			0.0f,0.0f,0.0f,1.0f
-		};
-	}
+inline Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
+	return {
+		scale.x,0.0f,0.0f,0.0f,
+		0.0f,scale.y,0.0f,0.0f,
+		0.0f,0.0f,scale.z,0.0f,
+		0.0f,0.0f,0.0f,1.0f
+	};
+}
 
-	inline Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
-		Vector3 result{};
-		result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
-		result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
-		result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + 1.0f * matrix.m[3][2];
-		float w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] + 1.0f * matrix.m[3][3];
-		assert(w != 0.0f);
-		result.x /= w;
-		result.y /= w;
-		result.z /= w;
+inline Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
+	Vector3 result{};
+	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
+	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
+	result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + 1.0f * matrix.m[3][2];
+	float w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] + 1.0f * matrix.m[3][3];
+	assert(w != 0.0f);
+	result.x /= w;
+	result.y /= w;
+	result.z /= w;
 
-		return result;
-	}
+	return result;
+}
 
-	inline Matrix4x4 MakeRotateXMatrix(float radian) {
-		return {
-			1.0f,0.0f,0.0f,0.0f,
-			0.0f,std::cosf(radian),std::sinf(radian),0.0f,
-			0.0f,-std::sinf(radian),std::cosf(radian),0.0f,
-			0.0f,0.0f,0.0f,1.0f
-		};
-	}
+inline Matrix4x4 MakeRotateXMatrix(float radian) {
+	return {
+		1.0f,0.0f,0.0f,0.0f,
+		0.0f,std::cosf(radian),std::sinf(radian),0.0f,
+		0.0f,-std::sinf(radian),std::cosf(radian),0.0f,
+		0.0f,0.0f,0.0f,1.0f
+	};
+}
 
-	inline Matrix4x4 MakeRotateYMatrix(float radian) {
-		return {
-			std::cosf(radian),0.0f,-std::sinf(radian),0.0f,
-			0.0f,1.0f,0.0f,0.0f,
-			std::sinf(radian),0.0f,std::cosf(radian),0.0f,
-			0.0f,0.0f,0.0f,1.0f
-		};
-	}
+inline Matrix4x4 MakeRotateYMatrix(float radian) {
+	return {
+		std::cosf(radian),0.0f,-std::sinf(radian),0.0f,
+		0.0f,1.0f,0.0f,0.0f,
+		std::sinf(radian),0.0f,std::cosf(radian),0.0f,
+		0.0f,0.0f,0.0f,1.0f
+	};
+}
 
-	inline Matrix4x4 MakeRotateZMatrix(float radian) {
-		return {
-			std::cosf(radian),std::sinf(radian),0.0f,0.0f,
-			-std::sinf(radian),std::cosf(radian),0.0f,0.0f,
-			0.0f,0.0f,1.0f,0.0f,
-			0.0f,0.0f,0.0f,1.0f
-		};
-	}
+inline Matrix4x4 MakeRotateZMatrix(float radian) {
+	return {
+		std::cosf(radian),std::sinf(radian),0.0f,0.0f,
+		-std::sinf(radian),std::cosf(radian),0.0f,0.0f,
+		0.0f,0.0f,1.0f,0.0f,
+		0.0f,0.0f,0.0f,1.0f
+	};
+}
 
-	inline Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translation) {
-		
-		Matrix4x4 rotateMatrix = MakeRotateXMatrix(rotate.x) * MakeRotateYMatrix(rotate.y) * MakeRotateZMatrix(rotate.z);
-		Matrix4x4 scaleMatrix = MakeScaleMatrix(scale);
-		Matrix4x4 translateMatrix = MakeTranslateMatrix(translation);
+inline Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translation) {
+	
+	Matrix4x4 rotateMatrix = MakeRotateXMatrix(rotate.x) * MakeRotateYMatrix(rotate.y) * MakeRotateZMatrix(rotate.z);
+	Matrix4x4 scaleMatrix = MakeScaleMatrix(scale);
+	Matrix4x4 translateMatrix = MakeTranslateMatrix(translation);
 
-		return scaleMatrix * rotateMatrix * translateMatrix;
-	}
+	return scaleMatrix * rotateMatrix * translateMatrix;
+}
 
-	inline Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
-		Matrix4x4 result{};
-		result.m[0][0] = (1.0f / aspectRatio) * (1.0f / std::tanf(fovY / 2.0f));
-		result.m[1][1] = (1.0f / std::tanf(fovY / 2.0f));
-		result.m[2][2] = farClip / (farClip - nearClip);
-		result.m[2][3] = 1.0f;
-		result.m[3][2] = (-nearClip * farClip) / (farClip - nearClip);
+inline Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
+	Matrix4x4 result{};
+	result.m[0][0] = (1.0f / aspectRatio) * (1.0f / std::tanf(fovY / 2.0f));
+	result.m[1][1] = (1.0f / std::tanf(fovY / 2.0f));
+	result.m[2][2] = farClip / (farClip - nearClip);
+	result.m[2][3] = 1.0f;
+	result.m[3][2] = (-nearClip * farClip) / (farClip - nearClip);
 
-		return result;
-	}
+	return result;
+}
 
-	inline Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip) {
-		Matrix4x4 result{};
-		result.m[0][0] = 2.0f / (right - left);
-		result.m[1][1] = 2.0f / (top - bottom);
-		result.m[2][2] = 1.0f / (farClip - nearClip);
-		result.m[3][0] = (left + right) / (left - right);
-		result.m[3][1] = (top + bottom) / (bottom - top);
-		result.m[3][2] = nearClip / (nearClip - farClip);
-		result.m[3][3] = 1.0f;
+inline Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip) {
+	Matrix4x4 result{};
+	result.m[0][0] = 2.0f / (right - left);
+	result.m[1][1] = 2.0f / (top - bottom);
+	result.m[2][2] = 1.0f / (farClip - nearClip);
+	result.m[3][0] = (left + right) / (left - right);
+	result.m[3][1] = (top + bottom) / (bottom - top);
+	result.m[3][2] = nearClip / (nearClip - farClip);
+	result.m[3][3] = 1.0f;
 
-		return result;
-	}
+	return result;
+}
 
-	inline Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth = 0.0f, float maxDepth = 1.0f) {
-		Matrix4x4 result{};
-		float w = width / 2.0f;
-		float h = height / 2.0f;
+inline Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth = 0.0f, float maxDepth = 1.0f) {
+	Matrix4x4 result{};
+	float w = width / 2.0f;
+	float h = height / 2.0f;
 
-		result.m[0][0] = w;
-		result.m[1][1] = -h;
-		result.m[2][2] = maxDepth - minDepth;
-		result.m[3][0] = left + w;
-		result.m[3][1] = top + h;
-		result.m[3][2] = minDepth;
-		result.m[3][3] = 1.0f;
+	result.m[0][0] = w;
+	result.m[1][1] = -h;
+	result.m[2][2] = maxDepth - minDepth;
+	result.m[3][0] = left + w;
+	result.m[3][1] = top + h;
+	result.m[3][2] = minDepth;
+	result.m[3][3] = 1.0f;
 
-		return result;
-	}
+	return result;
+}
 
-	inline Vector3 TransformNormal(const Vector3& vector, const Matrix4x4& matrix) {
-	    return {
-	        vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0],
-	        vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1],
-	        vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2]};
-    }
+inline Vector3 TransformNormal(const Vector3& vector, const Matrix4x4& matrix) {
+    return {
+        vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0],
+        vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1],
+        vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2]};
+   }
 
 
-	inline Vector3 MakeScale(const Matrix4x4& matrix) {
+inline Vector3 MakeScale(const Matrix4x4& matrix) {
 
-		Vector3 scaleX = { matrix.m[0][0],matrix.m[0][1] ,matrix.m[0][2] };
-		Vector3 scaleY = { matrix.m[1][0],matrix.m[1][1] ,matrix.m[1][2] };
-		Vector3 scaleZ = { matrix.m[2][0],matrix.m[2][1] ,matrix.m[2][2] };
-		Vector3 result;
+	Vector3 scaleX = { matrix.m[0][0],matrix.m[0][1] ,matrix.m[0][2] };
+	Vector3 scaleY = { matrix.m[1][0],matrix.m[1][1] ,matrix.m[1][2] };
+	Vector3 scaleZ = { matrix.m[2][0],matrix.m[2][1] ,matrix.m[2][2] };
+	Vector3 result;
 
-		result.x = scaleX.Length();
-		result.y = scaleY.Length();
-		result.z = scaleZ.Length();
+	result.x = scaleX.Length();
+	result.y = scaleY.Length();
+	result.z = scaleZ.Length();
 
-		return result;
-	}
+	return result;
+}
 
-　inline Vector3 MakeTranslation(const Matrix4x4& matrix) {
+inline Vector3 MakeTranslation(const Matrix4x4& matrix) {
 		Vector3 result;
 
 		result.x = matrix.m[3][0];
@@ -261,7 +261,7 @@ public:
 		result.z = matrix.m[3][2];
 
 		return result;
-	}
+}
   
   inline Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
 		Matrix4x4 result = MakeIdentity44();

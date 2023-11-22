@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "Object3d.h"
 #include "Vec3.h"
 #include "WorldTransform.h"
@@ -7,12 +8,12 @@
 class Goal{
 private:
 
-	Object3d* model_ = nullptr;
+	std::unique_ptr<Object3d> object_;
 	WorldTransform worldTransform_;
 
 public:
 	
-	void Initialize(Object3d* model);
+	void Initialize(uint32_t modelHandle);
 
 	void Update();
 

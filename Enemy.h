@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Object3d.h"
@@ -17,7 +18,7 @@ private:
 		partsNum
 	};
 
-	std::vector<Object3d*> models_;
+	std::vector<std::unique_ptr<Object3d>> objects_;
 	WorldTransform worldTransform_;
 	std::array<WorldTransform, partsNum> partsWorldTransform_;
 
@@ -39,7 +40,7 @@ private:
 
 public:
 
-	void Initialize(const std::vector<Object3d*>& models);
+	void Initialize(std::vector<uint32_t> modelHandles);
 
 	void Update();
 
@@ -51,7 +52,10 @@ public:
 
 	void OnCollision();
 
+	void Reset();
+
 	void SetCenter(const Vector3& center) { center_ = center; }
+	void SetPos(const Vector3& position) { worldTransform_.translation_ = position; }
 
 	Vector3 GetSize() const { return size_; }
 	Vector3 GetWorldPos() const;

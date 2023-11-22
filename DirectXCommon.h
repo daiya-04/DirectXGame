@@ -4,6 +4,7 @@
 #include <wrl.h>
 #include <vector>
 #include "WinApp.h"
+#include <thread>
 #include <chrono>
 #include <string>
 

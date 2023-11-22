@@ -59,7 +59,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	
 
 	win = WinApp::GetInstance();
-	win->CreateGameWindow(L"Ultimate1");
+	win->CreateGameWindow(L"Ultimate3");
 
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(win);
@@ -74,9 +74,11 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	ModelManager::GetInstance()->Initialize();
 	//TextureManager::Load("uvChecker.png");
 
+	
+
 	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
-　Particle::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
+	Particle::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
 
 	GlobalVariables::GetInstance()->LoadFiles();
 
@@ -86,66 +88,62 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	viewProjection_.Initialize();
 
 	//天球
-	std::unique_ptr<Skydome> skydome_;
-	std::unique_ptr<Object3d> skydomeModel_;
-	skydomeModel_.reset(Object3d::Create("skydome"));
-	skydome_ = std::make_unique<Skydome>();
-	skydome_->Initialize(skydomeModel_.get());
+	std::unique_ptr<Skydome> skydome_ = std::make_unique<Skydome>();
+	uint32_t skydomeModel_ = ModelManager::Load("skydome",false);
+	skydome_->Initialize(skydomeModel_);
 
 	//地面
 	std::vector<std::unique_ptr<Ground>> grounds_;
-	std::unique_ptr<Object3d> groundModel1_;
-	std::unique_ptr<Object3d> groundModel2_;
-	std::unique_ptr<Object3d> groundModel3_;
+	uint32_t groundModel_ = ModelManager::Load("ground");
 
-	groundModel1_.reset(Object3d::Create("ground"));
-	groundModel2_.reset(Object3d::Create("ground"));
-	groundModel3_.reset(Object3d::Create("ground"));
+	
 	for (size_t index = 0; index < 3; index++) {
 		grounds_.push_back(std::make_unique<Ground>());
 	}
-	grounds_[0]->Initialize(groundModel1_.get(), Type::Static, { 0.0f,0.0f,0.0f }, { 1.5f,1.0f,1.5f });
-	grounds_[1]->Initialize(groundModel2_.get(), Type::Dynamic, { 0.0f,0.0f,grounds_[0]->GetWorldPos().z + grounds_[0]->GetSize().z * 3.0f}, { 1.5f,1.0f,1.5f });
-	grounds_[2]->Initialize(groundModel3_.get(), Type::Static, { 0.0f,0.0f,80.0f},{10.0f,1.0f,6.0f});
+	grounds_[0]->Initialize(groundModel_, Type::Static, { 0.0f,0.0f,0.0f }, { 1.5f,1.0f,1.5f });
+	grounds_[1]->Initialize(groundModel_, Type::Dynamic, { 0.0f,0.0f,grounds_[0]->GetWorldPos().z + grounds_[0]->GetSize().z * 3.0f}, { 1.5f,1.0f,1.5f });
+	grounds_[2]->Initialize(groundModel_, Type::Static, { 0.0f,0.0f,80.0f},{20.0f,1.0f,6.0f});
 
-	//プレイヤー
+	////プレイヤー
 	std::unique_ptr<Player> player_;
-	std::unique_ptr<Object3d> playerHaedModel_;
-	std::unique_ptr<Object3d> playerBodyModel_;
+	uint32_t playerHaedModel_ = ModelManager::Load("float_Head");
+	uint32_t playerBodyModel_ = ModelManager::Load("float_Body");
 
-	std::unique_ptr<Object3d> weaponModel_;
+	uint32_t weaponModel_ = ModelManager::Load("Stamp");
 
-	playerHaedModel_.reset(Object3d::Create("float_Head"));
-	playerBodyModel_.reset(Object3d::Create("float_Body"));
-	weaponModel_.reset(Object3d::Create("Stamp"));
-	std::vector<Object3d*> playerModels = {
-		playerBodyModel_.get(),playerHaedModel_.get(),weaponModel_.get()
+	
+	std::vector<uint32_t> playerModels = {
+		playerBodyModel_,playerHaedModel_,weaponModel_
 	};
 	player_ = std::make_unique<Player>();
 	player_->Initialize(playerModels);
 	
 
 	//敵
-	std::unique_ptr<Enemy> enemy_;
-	std::unique_ptr<Object3d> enemyBodyModel_;
-	std::unique_ptr<Object3d> enemyHeadModel_;
+	uint32_t enemyNum_ = 5;
+	std::list<std::unique_ptr<Enemy>> enemies_;
+	uint32_t enemyBodyModel_ = ModelManager::Load("EnemyBody");
+	uint32_t enemyHeadModel_ = ModelManager::Load("EnemyHead");
 
-	enemyBodyModel_.reset(Object3d::Create("EnemyBody"));
-	enemyHeadModel_.reset(Object3d::Create("EnemyHead"));
-	std::vector<Object3d*> enemyModels = {
-		enemyBodyModel_.get(),enemyHeadModel_.get()
+	
+	std::vector<uint32_t> enemyModels = {
+		enemyBodyModel_,enemyHeadModel_
 	};
-	enemy_ = std::make_unique<Enemy>();
-	enemy_->Initialize(enemyModels);
+	for (size_t index = 0; index < enemyNum_; index++) {
+		Enemy* enemy = new Enemy();
+		enemy->Initialize(enemyModels);
+		enemy->SetPos({ 0.0f,4.0f * index,0.0f });
+		enemies_.push_back(std::unique_ptr<Enemy>(enemy));
+	}
+	
 	
 
 	//ゴール
 	std::unique_ptr<Goal> goal_;
-	std::unique_ptr<Object3d> goalModel_;
+	uint32_t goalModel_ = ModelManager::Load("goal");
 
-	goalModel_.reset(Object3d::Create("goal"));
 	goal_ = std::make_unique<Goal>();
-	goal_->Initialize(goalModel_.get());
+	goal_->Initialize(goalModel_);
 
 	
 
@@ -157,7 +155,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	player_->SetFollowCamera(followCemra_.get());
 	player_->SetViewProjection(&followCemra_->GetViewProjection());
 
-	///
+	/////
 
 
 	
@@ -181,8 +179,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		ImGui::End();*/
 
 		
-
-		
 #endif // _DEBUG
 
 		
@@ -203,8 +199,11 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		}
 		player_->Update();
 		goal_->Update();
-		enemy_->SetCenter(goal_->GetWorldPos());
-		enemy_->Update();
+		for (const auto& enemy : enemies_) {
+			enemy->SetCenter({ goal_->GetWorldPos().x,0.0f,goal_->GetWorldPos().z });
+			enemy->Update();
+		}
+		
 		followCemra_->Update();
 		
 
@@ -223,10 +222,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 			goal_->GetWorldPos() + goal_->GetSize()
 		};
 
-		AABB enemy = {
-			enemy_->GetWorldPos() - enemy_->GetSize(),
-			enemy_->GetWorldPos() + enemy_->GetSize()
-		};
+		
 
 		Sphere stamp = { player_->GetWeaponWorldPos(),2.0f };
 
@@ -253,23 +249,36 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 			player_->ReStart();
 		}
 		
-		if (IsCollision(player, enemy)) {
-			player_->ReStart();
+		for (const auto& enemy : enemies_) {
+			AABB enemyAabb = {
+			enemy->GetWorldPos() - enemy->GetSize(),
+			enemy->GetWorldPos() + enemy->GetSize()
+			};
+			if (IsCollision(player, enemyAabb)) {
+				player_->ReStart();
+			}
+		}
+		
+		for (const auto& enemy : enemies_) {
+			AABB enemyAabb = {
+			enemy->GetWorldPos() - enemy->GetSize(),
+			enemy->GetWorldPos() + enemy->GetSize()
+			};
+			if (IsCollision(enemyAabb, stamp)) {
+				if (player_->IsAttack()) {
+					enemy->OnCollision();
+				}
+			}
 		}
 
-		if (IsCollision(enemy, stamp)) {
-			if (player_->IsAttack()) {
-				enemy_->OnCollision();
-			}
-			
-		}
+		
 
 		///
 
 		viewProjection_.matView_ = followCemra_->GetViewProjection().matView_;
 
 		
-		
+		//viewProjection_.UpdateViewMatrix();
 		
 		imguiManager->End();
 
@@ -295,7 +304,10 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		}
 		
 		player_->Draw(viewProjection_);
-		enemy_->Draw(viewProjection_);
+		for (const auto& enemy : enemies_) {
+			enemy->Draw(viewProjection_);
+		}
+		
 		goal_->Draw(viewProjection_);
 
 		///

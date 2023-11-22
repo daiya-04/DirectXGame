@@ -2,9 +2,10 @@
 #include <cassert>
 #include "GlobalVariables.h"
 
-void Goal::Initialize(Object3d* model) {
-	assert(model);
-	model_ = model;
+void Goal::Initialize(uint32_t modelHandle) {
+	
+	object_ = std::make_unique<Object3d>();
+	object_->Initialize(modelHandle);
 
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "Goal";
@@ -26,7 +27,7 @@ void Goal::Update() {
 
 void Goal::Draw(const ViewProjection& viewProjection) {
 
-	model_->Draw(worldTransform_, viewProjection);
+	object_->Draw(worldTransform_, viewProjection);
 
 }
 

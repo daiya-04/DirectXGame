@@ -20,7 +20,7 @@ public:
 	struct VertexData {
 		Vector4 pos_;
 		Vector2 uv_;
-		Vector3 normal;
+		Vector3 normal_;
 	};
 
 	struct Material {
@@ -37,6 +37,7 @@ public:
 		ComPtr<ID3D12Resource> materialResource_;
 		UINT index_ = 0;
 		int32_t uvHandle_ = 0;
+		bool isLighting_ = true;
 		std::string name_;
 	};
 
@@ -52,7 +53,7 @@ public:
 
 	static ModelManager* GetInstance();
 
-	static uint32_t Load(const std::string& modelName);
+	static uint32_t Load(const std::string& modelName,bool isLighting = true);
 
 	//リソースの生成
 	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
@@ -69,7 +70,7 @@ public:
 
 private:
 
-	uint32_t LoadInternal(const std::string& modelName);
+	uint32_t LoadInternal(const std::string& modelName, bool isLighting = true);
 
 	void LoadObjFile(const std::string& modelName);
 

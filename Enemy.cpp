@@ -2,9 +2,13 @@
 #include <cmath>
 #include <numbers>
 
-void Enemy::Initialize(const std::vector<Object3d*>& models){
+void Enemy::Initialize(std::vector<uint32_t> modelHandles){
 
-	models_ = models;
+	objects_.resize(modelHandles.size());
+	for (size_t index = 0; index < objects_.size(); index++) {
+		objects_[index] = std::make_unique<Object3d>();
+		objects_[index]->Initialize(modelHandles[index]);
+	}
 
 	InitializeFloatingGimmick();
 
@@ -25,7 +29,7 @@ void Enemy::Update(){
 
 		Vector3 move = {
 			distance.x * std::cosf(theta_) - distance.z * std::sinf(theta_),
-			0.0f,
+			worldTransform_.translation_.y,
 			distance.x * std::sinf(theta_) + distance.z * std::cosf(theta_),
 		};
 
@@ -36,8 +40,7 @@ void Enemy::Update(){
 		worldTransform_.rotation_.y = std::atan2(rotate.x, rotate.z);
 
 		UpdateFloatingGimmick();
-	}
-	else {
+	}else {
 		if (++rePopCount_ > rePopTime) {
 			isDead_ = false;
 			rePopCount_ = 0;
@@ -58,7 +61,7 @@ void Enemy::Draw(const ViewProjection& viewProjection){
 
 	if (isDead_) { return; }
 	for (size_t index = 0; index < partsWorldTransform_.size(); index++) {
-		models_[index]->Draw(partsWorldTransform_[index], viewProjection);
+		objects_[index]->Draw(partsWorldTransform_[index], viewProjection);
 	}
 
 }
@@ -84,6 +87,12 @@ void Enemy::UpdateFloatingGimmick() {
 
 void Enemy::OnCollision(){
 	isDead_ = true;
+
+}
+
+void Enemy::Reset() {
+
+
 
 }
 

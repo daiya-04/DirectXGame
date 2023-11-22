@@ -1,10 +1,10 @@
 #include "Skydome.h"
 #include <cassert>
 
-void Skydome::Initialize(Object3d* model){
+void Skydome::Initialize(uint32_t modelHandle){
 
-	assert(model);
-	model_ = model;
+	object_ = std::make_unique<Object3d>();
+	object_->Initialize(modelHandle);
 
 }
 
@@ -17,6 +17,6 @@ void Skydome::Update() {
 
 void Skydome::Draw(const ViewProjection& viewProjection) {
 
-	model_->Draw(worldTransform_,viewProjection);
+	object_->Draw(worldTransform_,viewProjection);
 
 }

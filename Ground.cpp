@@ -4,10 +4,10 @@
 #include <numbers>
 #include "ImGuiManager.h"
 
-void Ground::Initialize(Object3d* model, Type type, const Vector3& position, const Vector3& scale) {
+void Ground::Initialize(uint32_t modelHandle, Type type, const Vector3& position, const Vector3& scale) {
 
-	assert(model);
-	model_ = model;
+	object_ = std::make_unique<Object3d>();
+	object_->Initialize(modelHandle);
 	type_ = type;
 	worldTransform_.translation_ = position;
 	worldTransform_.scale_ = scale;
@@ -40,7 +40,7 @@ void Ground::Update() {
 
 void Ground::Draw(const ViewProjection& viewProjection) {
 
-	model_->Draw(worldTransform_,viewProjection);
+	object_->Draw(worldTransform_,viewProjection);
 
 }
 

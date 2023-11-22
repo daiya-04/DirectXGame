@@ -68,7 +68,9 @@
     <ClCompile Include="Particle.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="ModelManager.cpp" />
+    <ClCompile Include="ModelManager.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enemy.h" />
@@ -150,8 +152,10 @@
     <ClInclude Include="Particle.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="ModelManager.h" />
     <ClInclude Include="Easing.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelManager.h">
       <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
