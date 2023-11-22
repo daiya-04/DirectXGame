@@ -52,7 +52,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	
 
 	win = WinApp::GetInstance();
-	win->CreateGameWindow(L"LE2A_12_セト_ダイヤ");
+	win->CreateGameWindow(L"2207_ダルマモドシ");
 
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(win);

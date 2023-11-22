@@ -2,6 +2,7 @@
 
 #include "../Math/Math.h"
 #include "../../TextureManager.h"
+#include "../../ModelManager.h"
 #include "../../Sprite.h"
 #include "../../Object3d.h"
 #include "../../WorldTransform.h"
