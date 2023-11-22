@@ -89,7 +89,7 @@ void ModelManager::LoadObjFile(const std::string& modelName) {
 	std::string line;  //ファイルから呼んだ1行を格納するもの
 
 	filename_ = modelName + ".obj";
-	directoryPath_ = "Resources/" + modelName + "/";
+	directoryPath_ = "Resources/model/" + modelName + "/";
 
 	std::ifstream file(directoryPath_ + filename_); //ファイルと開く
 	assert(file.is_open());  //とりあえず開けなかったら止める

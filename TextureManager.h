@@ -24,7 +24,7 @@ private:
 
 	ID3D12Device* device_ = nullptr;
 	UINT srvDescriptorHandleSize_ = 0;
-	std::string directoryPath_ = "Resources/";
+	std::string directoryPath_ = "Resources/texture/";
 	std::array<Texture, kNumTextures> textures_;
 	int32_t useTextureNum_ = 0;
 	std::array<ComPtr<ID3D12Resource>,kNumTextures> intermediateResource_;
