@@ -185,6 +185,16 @@ void Player::AttackInitialize() {
 
 void Player::AttackUpdate() {
 
+	if (workAttack_.attackParameter_ >= kConstAttacks_[workAttack_.comboIndex_].anticipationTime_ + kConstAttacks_[workAttack_.comboIndex_].chargeTime_ + kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
+		workAttack_.inComboPhase_ = 3;
+	}else if (workAttack_.attackParameter_ >= kConstAttacks_[workAttack_.comboIndex_].anticipationTime_ + kConstAttacks_[workAttack_.comboIndex_].chargeTime_) {
+		workAttack_.inComboPhase_ = 2;
+	}else if (workAttack_.attackParameter_ >= kConstAttacks_[workAttack_.comboIndex_].anticipationTime_) {
+		workAttack_.inComboPhase_ = 1;
+	}else {
+		workAttack_.inComboPhase_ = 0;
+	}
+
 	if (workAttack_.comboIndex_ < comboNum_) {
 		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_X)) {
 			workAttack_.comboNext_ = true;
@@ -210,10 +220,11 @@ void Player::AttackUpdate() {
 		}
 	}
 	
-
-	workAttack_.swingParam_ += 1.0f / (float)kConstAttacks_[workAttack_.comboIndex_].swingTime_;
-	if (workAttack_.swingParam_ >= (float)kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
-		workAttack_.swingParam_ = (float)kConstAttacks_[workAttack_.comboIndex_].swingTime_;
+	if (workAttack_.inComboPhase_ == 2) {
+		workAttack_.swingParam_ += 1.0f / (float)kConstAttacks_[workAttack_.comboIndex_].swingTime_;
+		if (workAttack_.swingParam_ >= (float)kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
+			workAttack_.swingParam_ = (float)kConstAttacks_[workAttack_.comboIndex_].swingTime_;
+		}
 	}
 	float T = Easing::easeInSine(workAttack_.swingParam_);
 
