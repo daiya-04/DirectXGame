@@ -121,6 +121,21 @@ void BlockManager::SetBlockPosition(const BaseBlock::StageVector& prePos, const 
 	mapBlock_[pos.x][pos.y][pos.z]->SetMapPosition(pos);
 }
 
+bool BlockManager::GetIsStaging()
+{
+	bool result = false;
+	std::list<pBlock>::iterator itr = listBlock_.begin();
+	for (; itr != listBlock_.end(); ++itr)
+	{
+		if (itr->get()->GetIsStaging()) {
+			result = true;
+			break;
+		}
+	}
+
+	return result;
+}
+
 
 BaseBlock* BlockManager::CreateNormalBlock(const BaseBlock::StageVector& pos) {
 	BaseBlock* block = new NormalBlock;

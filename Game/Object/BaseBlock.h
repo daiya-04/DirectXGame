@@ -94,6 +94,7 @@ public:
 		stagingRequest_ = kSMOVE;
 		mapPosition_ = pos;
 	}
+	bool GetIsStaging() const { return staging_ != kSROOT; }
 
 protected:
 

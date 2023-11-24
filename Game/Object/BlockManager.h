@@ -75,6 +75,8 @@ public:
 	// マップの場所を保存して指定できるようにする
 	void SetBlockPosition(const BaseBlock::StageVector& prePos,const BaseBlock::StageVector& pos);
 
+	bool GetIsStaging();
+
 private:
 
 	BlockManager() = default;
