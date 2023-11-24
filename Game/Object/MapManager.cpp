@@ -135,8 +135,9 @@ void MapManager::GetOperate()
 		direct = dRIGHT;
 	}
 
+	// 演出中でなく
 	// 動いていたら
-	if (direct != dNONE) {
+	if (!isStaging_ && direct != dNONE) {
 		MoveMainObject(direct);
 	}
 

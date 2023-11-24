@@ -43,6 +43,9 @@ private:
 	BaseBlock::StageVector playerPosition_;
 	BlockManager* blockManager_ = nullptr;
 
+	// 演出中でないことを確認する
+	bool isStaging_ = false;
+
 public:
 
 	static MapManager* GetInstance();

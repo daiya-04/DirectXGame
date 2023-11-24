@@ -9,7 +9,7 @@ void NormalBlock::Initialize()
 
 void NormalBlock::Update()
 {
-	modelPosition_.translation_ = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
+	modelTransform_.translation_ = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
 	//BaseBlock::Update();
 	if (stagingRequest_) {
 		staging_ = stagingRequest_.value();
@@ -57,12 +57,12 @@ void NormalBlock::Update()
 		break;
 	}
 
-	modelPosition_.UpdateMatrix();
+	modelTransform_.UpdateMatrix();
 }
 
 void NormalBlock::Draw()
 {
-	model_->Draw(modelPosition_, *viewProjection_);
+	model_->Draw(modelTransform_, *viewProjection_);
 }
 
 void NormalBlock::ApplyVariables(const char* groupName)

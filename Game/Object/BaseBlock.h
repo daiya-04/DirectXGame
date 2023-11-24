@@ -41,12 +41,13 @@ protected:
 		kSCOUNT,	// カウント
 	};
 
+	StageVector preMapPosition_;
 	// マップのどの場所にあるか
 	StageVector mapPosition_;
 	// モデルの描画場所
 	// ワールドトランスフォームにするかも
 	// マップの位置からの参照
-	WorldTransform modelPosition_;
+	WorldTransform modelTransform_;
 
 	Element element_;
 
@@ -88,7 +89,11 @@ public:
 	const StageVector& GetMapPosition() const { return mapPosition_; }
 	Element GetElement() const { return element_; }
 	void SetModel(Object3d* model) { model_ = model; }
-	void SetMapPosition(const StageVector& pos) { mapPosition_ = pos; }
+	void SetMapPosition(const StageVector& pos) {
+		preMapPosition_ = mapPosition_;
+		stagingRequest_ = kSMOVE;
+		mapPosition_ = pos;
+	}
 
 protected:
 
