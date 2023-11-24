@@ -12,6 +12,10 @@ void BaseBlock::Initialize()
 	//pStaging[kSMOVE] = &BaseBlock::StagingMove;
 	//pStaging[kSSTOP] = &BaseBlock::StagingStop;
 	//pStaging[kSLOAD] = &BaseBlock::StagingLoad;
+	for (size_t i = 0; i < kSCOUNT; i++)
+	{
+		cStagingFrames_[i] = 30;
+	}
 }
 
 void BaseBlock::Initialize(const StageVector& pos)
@@ -22,6 +26,7 @@ void BaseBlock::Initialize(const StageVector& pos)
 
 void BaseBlock::Update()
 {
+	preMapPosition_ = mapPosition_;
 	if (stagingRequest_) {
 		staging_ = stagingRequest_.value();
 		switch (staging_)
@@ -89,6 +94,7 @@ void BaseBlock::StorageVariables(const char* groupName)
 void BaseBlock::StagingInitialize()
 {
 	stagingFrame_ = 0;
+	modelTransform_.rotation_ = { 0.0f,0.0f,0.0f };
 }
 
 void BaseBlock::StagingRoot()

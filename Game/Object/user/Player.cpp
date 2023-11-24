@@ -7,7 +7,7 @@ void PlayerBlock::Initialize()
 
 void PlayerBlock::Update()
 {
-	modelPosition_.translation_ = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
+	modelTransform_.translation_ = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
 	//BaseBlock::Update();
 	if (stagingRequest_) {
 		staging_ = stagingRequest_.value();
@@ -54,12 +54,12 @@ void PlayerBlock::Update()
 	default:
 		break;
 	}
-	modelPosition_.UpdateMatrix();
+	modelTransform_.UpdateMatrix();
 }
 
 void PlayerBlock::Draw()
 {
-	model_->Draw(modelPosition_, *viewProjection_);
+	model_->Draw(modelTransform_, *viewProjection_);
 }
 
 void PlayerBlock::ApplyVariables(const char* groupName)
@@ -84,7 +84,9 @@ void PlayerBlock::StagingRoot()
 	stagingFrame_++;
 
 	// 操作を受け付ける
+	// 操作はマップマネージャで受け付けている
 
+	modelTransform_.rotation_.y = stagingFrame_ * 0.2f;
 
 	// ループさせる
 	if (cStagingFrames_[kSROOT] <= stagingFrame_) {
@@ -97,10 +99,15 @@ void PlayerBlock::StagingMove()
 {
 	stagingFrame_++;
 
+	Vector3 start = { preMapPosition_.x * kBlockSize,preMapPosition_.y * -kBlockSize,preMapPosition_.z * kBlockSize };
+	Vector3 end = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
+
+	modelTransform_.translation_ = start + ((end - start) * (stagingFrame_ / (float)cStagingFrames_[kSMOVE]));
+
 
 	// 体に当たっている場合は積込をしたい
 	if (cStagingFrames_[kSMOVE] <= stagingFrame_) {
-		stagingRequest_ = kSROOT;
+		stagingRequest_ = kSSTOP;
 	}
 }
 
@@ -108,6 +115,7 @@ void PlayerBlock::StagingStop()
 {
 	stagingFrame_++;
 
+	modelTransform_.rotation_.x = stagingFrame_ * 0.1f;
 
 
 	if (cStagingFrames_[kSSTOP] <= stagingFrame_) {

@@ -112,6 +112,9 @@ void BlockManager::SetStageData(const MapManager::StageArray<BaseBlock::Element>
 
 void BlockManager::SetBlockPosition(const BaseBlock::StageVector& prePos, const BaseBlock::StageVector& pos)
 {
+	if (prePos.x == pos.x && prePos.y == pos.y && prePos.z == pos.z) {
+		return;
+	}
 	mapBlock_[pos.x][pos.y][pos.z] = mapBlock_[prePos.x][prePos.y][prePos.z];
 	mapBlock_[prePos.x][prePos.y][prePos.z] = nullptr;
 
