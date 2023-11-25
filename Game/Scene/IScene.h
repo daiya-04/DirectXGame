@@ -17,6 +17,7 @@ public:
 	enum SCENE : int
 	{
 		kTITLE,	// タイトル
+		kSELECT,//ステージ選択
 		kGAME,	// ゲーム
 		//kCLEAR,	// クリア
 
