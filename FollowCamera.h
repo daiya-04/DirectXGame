@@ -4,6 +4,8 @@
 #include "Vec3.h"
 #include "Input.h"
 
+class LockOn;
+
 class FollowCamera{
 private:
 
@@ -15,6 +17,8 @@ private:
 	float num = 0.0f;
 
 	uint32_t delayTime_ = 0;
+
+	const LockOn* lockOn_ = nullptr;
 
 public:
 
@@ -29,6 +33,8 @@ public:
 	Vector3 OffsetCalc() const;
 
 	void SetTarget(const WorldTransform* target);
+	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
+
 	ViewProjection& GetViewProjection() { return viewProjection_; }
 
 };

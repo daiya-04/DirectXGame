@@ -51,7 +51,7 @@ public:
 		return { (float)joyState.Gamepad.sThumbRY / SHRT_MAX,(float)joyState.Gamepad.sThumbRX / SHRT_MAX,0.0f };
 	}
 
-	bool TriggerButton(int button) {
+	bool TriggerButton(int button) const{
 		if ((joyState.Gamepad.wButtons & button) && !(preJoyState.Gamepad.wButtons & button)) {
 			return true;
 		}

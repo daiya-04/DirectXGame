@@ -26,6 +26,7 @@
 #include "Goal.h"
 #include "Enemy.h"
 #include "FollowCamera.h"
+#include "LockOn.h"
 
 
 
@@ -120,7 +121,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	
 
 	//敵
-	uint32_t enemyNum_ = 5;
+	uint32_t enemyNum_ = 1;
 	std::list<std::unique_ptr<Enemy>> enemies_;
 	uint32_t enemyBodyModel_ = ModelManager::Load("EnemyBody");
 	uint32_t enemyHeadModel_ = ModelManager::Load("EnemyHead");
@@ -154,6 +155,13 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	followCemra_->SetTarget(&player_->GetWorldTransform());
 	player_->SetFollowCamera(followCemra_.get());
 	player_->SetViewProjection(&followCemra_->GetViewProjection());
+
+	//
+	std::unique_ptr<LockOn> lockOn_;
+	lockOn_ = std::make_unique<LockOn>();
+	lockOn_->Initialize();
+	followCemra_->SetLockOn(lockOn_.get());
+	player_->SetLockOn(lockOn_.get());
 
 	/////
 
@@ -205,7 +213,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		}
 		
 		followCemra_->Update();
-		
+		lockOn_->Update(enemies_, viewProjection_);
 
 
 		///
@@ -312,6 +320,14 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		///
 		Object3d::postDraw();
+
+		Sprite::preDraw(dxCommon->GetCommandList());
+		///スプライト描画
+
+		lockOn_->Draw();
+
+		///
+		Sprite::postDraw();
 
 
 		Particle::preDraw();

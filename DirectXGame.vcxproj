@@ -115,6 +115,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Hit.cpp" />
     <ClCompile Include="ImGuiManager.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="LockOn.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="Object3d.cpp" />
@@ -146,6 +147,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Hit.h" />
     <ClInclude Include="ImGuiManager.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="LockOn.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Matrix44.h" />
     <ClInclude Include="ModelManager.h" />

@@ -4,11 +4,12 @@
 #include <cmath>
 #include <numbers>
 #include "GlobalVariables.h"
+#include "LockOn.h"
 
 const std::array<Player::ConstAttack, Player::comboNum_> Player::kConstAttacks_ = {
 	{
-	{0,0,20,0,0.0f,0.0f,0.15f},
-	{15,10,15,0,0.2f,0.0f,0.0f},
+	{0,0,20,5,0.0f,0.0f,0.15f},
+	{15,10,15,5,0.2f,0.0f,0.0f},
 	{15,10,15,30,0.2f,0.0f,0.0f}
 	}
 };
@@ -159,11 +160,23 @@ void Player::RootUpdate() {
 
 	worldTransform_.translation_ += move + velocity_;
 
-	if (move != zeroVector) {
-		rotate_ = move;
+	if (lockOn_->ExistTarget()) {
+
+		Vector3 lockOnPos = lockOn_->GetTargetPos();
+
+		Vector3 sub = lockOnPos - worldTransform_.translation_;
+
+		worldTransform_.rotation_.y = std::atan2(sub.x, sub.z);
+
+	}else {
+		if (move != zeroVector) {
+			rotate_ = move;
+		}
+
+		worldTransform_.rotation_.y = std::atan2(rotate_.x, rotate_.z);
 	}
 
-	worldTransform_.rotation_.y = std::atan2(rotate_.x, rotate_.z);
+	
 	
 
 }
@@ -185,6 +198,8 @@ void Player::AttackInitialize() {
 
 void Player::AttackUpdate() {
 
+	
+
 	if (workAttack_.attackParameter_ >= kConstAttacks_[workAttack_.comboIndex_].anticipationTime_ + kConstAttacks_[workAttack_.comboIndex_].chargeTime_ + kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
 		workAttack_.inComboPhase_ = 3;
 	}else if (workAttack_.attackParameter_ >= kConstAttacks_[workAttack_.comboIndex_].anticipationTime_ + kConstAttacks_[workAttack_.comboIndex_].chargeTime_) {
@@ -195,7 +210,7 @@ void Player::AttackUpdate() {
 		workAttack_.inComboPhase_ = 0;
 	}
 
-	if (workAttack_.comboIndex_ < comboNum_) {
+	if (workAttack_.comboIndex_ < comboNum_ - 1) {
 		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_X)) {
 			workAttack_.comboNext_ = true;
 		}
@@ -243,7 +258,18 @@ void Player::AttackUpdate() {
 			break;
 	}
 	
-	
+	if (lockOn_->ExistTarget()) {
+
+		Vector3 lockOnPos = lockOn_->GetTargetPos();
+
+		Vector3 sub = lockOnPos - worldTransform_.translation_;
+
+		worldTransform_.rotation_.y = std::atan2(sub.x, sub.z);
+
+		weaponWorldTransform_.rotation_.y = worldTransform_.rotation_.y;
+		weaponCollision_.rotation_.y = worldTransform_.rotation_.y;
+
+	}
 
 	Vector3 distance = { 0.0f,9.0f + weaponWorldTransform_.translation_.y ,0.0f };
 

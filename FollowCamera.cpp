@@ -3,6 +3,7 @@
 #include <numbers>
 #include "Easing.h"
 #include "GlobalVariables.h"
+#include "LockOn.h"
 
 void FollowCamera::Initialize() {
 
@@ -16,30 +17,46 @@ void FollowCamera::Update() {
 
 	ApplyGlobalVariables();
 
-	const float rotateSpeed = 0.02f;
+	if (lockOn_->ExistTarget()) {
 
-	viewProjection_.rotation_ += Input::GetInstance()->GetCameraRotate() * rotateSpeed;
+		Vector3 lockOnPos = lockOn_->GetTargetPos();
 
-	viewProjection_.rotation_.x = min(viewProjection_.rotation_.x, 89.99f * (float)std::numbers::pi / 180.0f);
-	viewProjection_.rotation_.x = max(viewProjection_.rotation_.x, -5.0f * (float)std::numbers::pi / 180.0f);
+		Vector3 sub = lockOnPos - target_->translation_;
 
-	if (target_) {
-
-		num += (float)1 / delayTime_;
-
-		if (num >= 1.0f) {
-			num = 1.0f;
-		}
-
-		float T = Easing::easeInSine(num);
-
-		interTarget_ = Lerp(T, interTarget_, target_->translation_);
+		viewProjection_.rotation_.y = std::atan2(sub.x, sub.z);
 
 		Vector3 offset = OffsetCalc();
-		
 
-		viewProjection_.translation_ = interTarget_ + offset;
+		viewProjection_.translation_ = target_->translation_ + offset;
+
+	} else {
+		const float rotateSpeed = 0.02f;
+
+		viewProjection_.rotation_ += Input::GetInstance()->GetCameraRotate() * rotateSpeed;
+
+		viewProjection_.rotation_.x = min(viewProjection_.rotation_.x, 89.99f * (float)std::numbers::pi / 180.0f);
+		viewProjection_.rotation_.x = max(viewProjection_.rotation_.x, -5.0f * (float)std::numbers::pi / 180.0f);
+
+		if (target_) {
+
+			num += (float)1 / delayTime_;
+
+			if (num >= 1.0f) {
+				num = 1.0f;
+			}
+
+			float T = Easing::easeInSine(num);
+
+			interTarget_ = Lerp(T, interTarget_, target_->translation_);
+
+			Vector3 offset = OffsetCalc();
+
+
+			viewProjection_.translation_ = interTarget_ + offset;
+		}
 	}
+
+	
 
 
 

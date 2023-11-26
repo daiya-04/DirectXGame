@@ -10,6 +10,7 @@
 #include <optional>
 #include "FollowCamera.h"
 
+class LockOn;
 
 class Player{
 private: //振る舞い用メンバ変数
@@ -108,7 +109,7 @@ private:
 
 	FollowCamera* followCamera_ = nullptr;
 	const ViewProjection* viewProjection_;
-
+	const LockOn* lockOn_ = nullptr;
 	
 
 public:
@@ -127,6 +128,7 @@ public:
 
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
+	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
 	void SetTranslationParent(const WorldTransform* parent) { worldTransform_.translationParent_ = parent; }
 
 	void AddTransform(const Vector3& velocity) { worldTransform_.translation_ += velocity; }
