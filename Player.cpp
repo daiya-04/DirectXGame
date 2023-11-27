@@ -9,7 +9,7 @@
 const std::array<Player::ConstAttack, Player::comboNum_> Player::kConstAttacks_ = {
 	{
 	{0,0,20,5,0.0f,0.0f,0.15f},
-	{15,10,15,5,0.2f,0.0f,0.0f},
+	{15,5,20,5,0.2f,0.0f,0.0f},
 	{15,10,15,30,0.2f,0.0f,0.0f}
 	}
 };
@@ -21,6 +21,9 @@ void (Player::* Player::BehaviorTable[])() = {
 };
 
 void Player::Initialize(std::vector<uint32_t> modelHandles) {
+
+	modelHandles_ = modelHandles;
+
 
 	objects_.resize(modelHandles.size());
 	for (size_t index = 0; index < objects_.size();index++) {
@@ -85,13 +88,6 @@ void Player::Update() {
 //#endif // _DEBUG
 
 	
-	
-
-	if (worldTransform_.translation_.y <= -20.0f) {
-		worldTransform_.translation_ = { 0.0f,0.0f,0.0f };
-	}
-
-
 	//行列更新
 	worldTransform_.UpdateMatrix();
 	for (size_t index = 0; index < partsWorldTransform_.size(); index++) {
@@ -121,8 +117,7 @@ void Player::OnGround() {
 }
 
 void Player::ReStart() {
-	worldTransform_.translation_ = {};
-	worldTransform_.translation_ = {};
+	worldTransform_.translation_ = {0.0f,1.0f,0.0f};
 	behaviorRequest_ = Behavior::kRoot;
 	followCamera_->Reset();
 }

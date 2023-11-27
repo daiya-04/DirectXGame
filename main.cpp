@@ -50,6 +50,8 @@ struct D3DResourceLeakChecker {
 	}
 };
 
+Enemy* EnemyPop(std::vector<uint32_t> modelHandles,Vector3 pos);
+
 int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//D3DResourceLeakChecker leakCheck;
 
@@ -103,7 +105,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	}
 	grounds_[0]->Initialize(groundModel_, Type::Static, { 0.0f,0.0f,0.0f }, { 1.5f,1.0f,1.5f });
 	grounds_[1]->Initialize(groundModel_, Type::Dynamic, { 0.0f,0.0f,grounds_[0]->GetWorldPos().z + grounds_[0]->GetSize().z * 3.0f}, { 1.5f,1.0f,1.5f });
-	grounds_[2]->Initialize(groundModel_, Type::Static, { 0.0f,0.0f,80.0f},{20.0f,1.0f,6.0f});
+	grounds_[2]->Initialize(groundModel_, Type::Static, { 0.0f,0.0f,120.0f},{20.0f,1.0f,12.0f});
 
 	////プレイヤー
 	std::unique_ptr<Player> player_;
@@ -131,10 +133,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		enemyBodyModel_,enemyHeadModel_
 	};
 	for (size_t index = 0; index < enemyNum_; index++) {
-		Enemy* enemy = new Enemy();
-		enemy->Initialize(enemyModels);
-		enemy->SetPos({ 0.0f,4.0f * index,0.0f });
-		enemies_.push_back(std::unique_ptr<Enemy>(enemy));
+		enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop(enemyModels, { 30.0f,0.0f,100.0f })));
 	}
 	
 	
@@ -199,7 +198,12 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		///オブジェクトの更新
 
-		
+		enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
+			if (enemy->IsDead()) {
+				return true;
+			}
+			return false;
+		});
 
 		skydome_->Update();
 		for (const auto& ground : grounds_) {
@@ -208,7 +212,6 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		player_->Update();
 		goal_->Update();
 		for (const auto& enemy : enemies_) {
-			enemy->SetCenter({ goal_->GetWorldPos().x,0.0f,goal_->GetWorldPos().z });
 			enemy->Update();
 		}
 		
@@ -255,6 +258,22 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		if (IsCollision(player, goal)) {
 			player_->ReStart();
+			for (const auto& enemy : enemies_) {
+				enemy->SetIsDead(true);
+			}
+			for (size_t index = 0; index < enemyNum_; index++) {
+				enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop(enemyModels, { 30.0f,0.0f,100.0f })));
+			}
+		}
+
+		if (player_->GetWorldPos().y <= -20.0f) {
+			player_->ReStart();
+			for (const auto& enemy : enemies_) {
+				enemy->SetIsDead(true);
+			}
+			for (size_t index = 0; index < enemyNum_; index++) {
+				enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop(enemyModels, { 30.0f,0.0f,100.0f })));
+			}
 		}
 		
 		for (const auto& enemy : enemies_) {
@@ -349,4 +368,13 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	win->TerminateGameWindow();
 
 	return 0;
+}
+
+Enemy* EnemyPop(std::vector<uint32_t> modelHandles, Vector3 pos) {
+
+	Enemy* enemy = new Enemy();
+	enemy->Initialize(modelHandles);
+	enemy->SetPos(pos);
+
+	return enemy;
 }

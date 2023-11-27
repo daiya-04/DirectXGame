@@ -18,7 +18,7 @@ void FollowCamera::Update() {
 	ApplyGlobalVariables();
 
 	if (lockOn_->ExistTarget()) {
-
+		num = 0.0f;
 		Vector3 lockOnPos = lockOn_->GetTargetPos();
 
 		Vector3 sub = lockOnPos - target_->translation_;

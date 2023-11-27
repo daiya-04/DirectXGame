@@ -59,6 +59,13 @@ void ModelManager::SetGraphicsRootConstantBufferView(ID3D12GraphicsCommandList* 
 	commandList->SetGraphicsRootConstantBufferView(rootParamIndex, models_[modelHandle].materialResource_->GetGPUVirtualAddress());
 }
 
+void ModelManager::SetColor(uint32_t modelHandle, const Vector4& color){
+	Material* materialData = nullptr;
+	//書き込むためのアドレスを取得
+	models_[modelHandle].materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+	materialData->color_ = color;
+}
+
 uint32_t ModelManager::LoadInternal(const std::string& modelName, bool isLighting) {
 
 	assert(useModelNum_ < kNumModel);
@@ -210,7 +217,7 @@ void ModelManager::CreateBuffer() {
 	Material* materialData = nullptr;
 	//書き込むためのアドレスを取得
 	models_[useModelNum_].materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	materialData->color_ = Vector4(1.0f,1.0f,1.0f,1.0f);
+	materialData->color_ = models_[useModelNum_].color_;
 	materialData->enableLightnig_ = models_[useModelNum_].isLighting_;
 	materialData->uvtransform_ = MakeIdentity44();
 

@@ -1,8 +1,17 @@
 #include "Enemy.h"
+#include "ModelManager.h"
+#include "Easing.h"
 #include <cmath>
 #include <numbers>
 
+void (Enemy::* Enemy::BehaviorTable[])() = {
+	&Enemy::RootUpdate,
+	&Enemy::DeadUpdate,
+};
+
 void Enemy::Initialize(std::vector<uint32_t> modelHandles){
+
+	modelHandles_ = modelHandles;
 
 	objects_.resize(modelHandles.size());
 	for (size_t index = 0; index < objects_.size(); index++) {
@@ -20,36 +29,31 @@ void Enemy::Initialize(std::vector<uint32_t> modelHandles){
 
 void Enemy::Update(){
 
-	if (!isDead_) {
-		Vector3 prePos = worldTransform_.translation_;
-		theta_ += 0.01f;
-		theta_ = std::fmod(theta_, 2.0f * (float)std::numbers::pi);
-
-		Vector3 distance = { center_.x - radius_,0.0f,0.0f };
-
-		Vector3 move = {
-			distance.x * std::cosf(theta_) - distance.z * std::sinf(theta_),
-			worldTransform_.translation_.y,
-			distance.x * std::sinf(theta_) + distance.z * std::cosf(theta_),
-		};
-
-		worldTransform_.translation_ = move + center_;
-
-		Vector3 rotate = worldTransform_.translation_ - prePos;
-
-		worldTransform_.rotation_.y = std::atan2(rotate.x, rotate.z);
-
-		UpdateFloatingGimmick();
-	}else {
-		if (++rePopCount_ > rePopTime) {
-			isDead_ = false;
-			rePopCount_ = 0;
-		}
-	}
-
 	
 
+	if (behaviorRequest_) {
 
+		behavior_ = behaviorRequest_.value();
+
+		switch (behavior_) {
+		case Behavior::kRoot:
+		default:
+			RootInitialize();
+			break;
+		case Behavior::kDead:
+			DeadInitialize();
+			break;
+		}
+
+		behaviorRequest_ = std::nullopt;
+	}
+
+	(this->*BehaviorTable[static_cast<size_t>(behavior_)])();
+
+	
+	for (const auto& modelHandle : modelHandles_) {
+		ModelManager::GetInstance()->SetColor(modelHandle, color_);
+	}
 	//行列更新
 	worldTransform_.UpdateMatrix();
 	for (size_t index = 0; index < partsWorldTransform_.size(); index++) {
@@ -86,7 +90,7 @@ void Enemy::UpdateFloatingGimmick() {
 }
 
 void Enemy::OnCollision(){
-	isDead_ = true;
+	behaviorRequest_ = Behavior::kDead;
 
 }
 
@@ -104,4 +108,42 @@ Vector3 Enemy::GetWorldPos() const {
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
+}
+
+void Enemy::RootInitialize(){
+
+	worldTransform_.rotation_.y = 0.0f;
+
+}
+
+void Enemy::RootUpdate(){
+
+	worldTransform_.rotation_.y += 5.0f * (std::numbers::pi_v<float> / 180.0f);
+	worldTransform_.rotation_.y = std::fmod(worldTransform_.rotation_.y, 2.0f * (float)std::numbers::pi);
+
+	UpdateFloatingGimmick();
+
+}
+
+void Enemy::DeadInitialize(){
+
+	crushParam_ = 0.0f;
+
+}
+
+void Enemy::DeadUpdate(){
+
+	crushParam_ += 0.05f;
+	crushParam_ = min(crushParam_, 1.0f);
+	float T = Easing::easeInSine(crushParam_);
+	worldTransform_.scale_.y = Lerp(T, worldTransform_.scale_.y, 0.1f);
+
+	if (crushParam_ >= 1.0f) {
+		color_.w -= 0.05f;
+	}
+
+	if (color_.w <= 0.0f) {
+		isDead_ = true;
+	}
+
 }

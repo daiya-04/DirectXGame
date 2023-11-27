@@ -6,6 +6,7 @@
 #include "Vec3.h"
 #include <vector>
 #include <array>
+#include <optional>
 
 
 class Enemy{
@@ -19,12 +20,12 @@ private:
 	};
 
 	std::vector<std::unique_ptr<Object3d>> objects_;
+	std::vector<uint32_t> modelHandles_;
 	WorldTransform worldTransform_;
 	std::array<WorldTransform, partsNum> partsWorldTransform_;
+	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 
-	Vector3 center_;
-	float radius_ = 10.0f;
-	float theta_ = 0.0f;
+	
 
 	Vector3 size_ = { 1.0f,1.5f,2.0f };
 
@@ -34,9 +35,9 @@ private:
 	// 浮遊移動のサイクル<frame>
 	int cycle = 60;
 
+	float crushParam_ = 0.0f;
+
 	bool isDead_ = false;
-	int rePopTime = 60;
-	int rePopCount_ = 0;
 
 public:
 
@@ -54,11 +55,36 @@ public:
 
 	void Reset();
 
-	void SetCenter(const Vector3& center) { center_ = center; }
+	
 	void SetPos(const Vector3& position) { worldTransform_.translation_ = position; }
+	void SetIsDead(bool isDead) { isDead_ = isDead; }
 
 	Vector3 GetSize() const { return size_; }
 	Vector3 GetWorldPos() const;
+	bool IsDead() { return isDead_; }
+
+private:
+
+	enum class Behavior {
+		kRoot,
+		kDead,
+	};
+
+	Behavior behavior_ = Behavior::kRoot;
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+	static void(Enemy::* BehaviorTable[])();
+
+public:
+
+	//通常行動初期化
+	void RootInitialize();
+	//通常行動更新
+	void RootUpdate();
+	//
+	void DeadInitialize();
+	//
+	void DeadUpdate();
 
 };
 

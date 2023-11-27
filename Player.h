@@ -90,6 +90,7 @@ public:
 private:
 
 	std::vector<std::unique_ptr<Object3d>> objects_;
+	std::vector<uint32_t> modelHandles_;
 	WorldTransform worldTransform_;
 	std::array<WorldTransform, partsNum> partsWorldTransform_;
 	WorldTransform weaponWorldTransform_;

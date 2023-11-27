@@ -34,7 +34,7 @@ void Ground::Update() {
 	}
 
 
-	size_ = { worldTransform_.scale_.x * 6.0f,0.0f,worldTransform_.scale_.z * 6.0f };
+	size_ = { worldTransform_.scale_.x * 6.3f,0.0f,worldTransform_.scale_.z * 6.2f };
 	worldTransform_.UpdateMatrix();
 }
 

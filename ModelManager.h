@@ -38,6 +38,7 @@ public:
 		UINT index_ = 0;
 		int32_t uvHandle_ = 0;
 		bool isLighting_ = true;
+		Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 		std::string name_;
 	};
 
@@ -63,6 +64,8 @@ public:
 	void SetVertexBuffers(ID3D12GraphicsCommandList* commandList, uint32_t modelHandle);
 
 	void SetGraphicsRootConstantBufferView(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex, uint32_t modelHandle);
+
+	void SetColor(uint32_t modelHandle,const Vector4& color);
 
 	uint32_t GetUvHandle(uint32_t modelHandle) { return models_[modelHandle].uvHandle_; }
 
