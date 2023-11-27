@@ -77,6 +77,12 @@ public:
 
 	bool GetIsStaging();
 
+	void FallFloatingBlock();
+
+	// 再起関数
+	// ブロックの下にブロックがあるか
+	bool ChainFall(const BaseBlock::StageVector& pos);
+
 private:
 
 	BlockManager() = default;

@@ -46,6 +46,7 @@ private:
 	// 演出中でないことを確認する
 	bool isStaging_ = false;
 
+
 public:
 
 	static MapManager* GetInstance();
@@ -68,8 +69,13 @@ private:
 	MapManager(const MapManager& obj) = delete;
 	const MapManager& operator=(const MapManager& obj) = delete;
 
+	// 落とす
+	void FallFloatingBlock();
+	bool ChainFall(const BaseBlock::StageVector& pos);
+
 	// 走査によるフラグの管理のみをしたい
 	// 今は変更までしてしまっている
+	// 多分無理
 	void GetOperate();
 
 	// 重くなりそうなので最初の一回のみ
@@ -81,7 +87,7 @@ private:
 	// 方向を確認する
 	// プレイヤーの移動のみ対応
 	bool CheckDirectPlayer(BaseBlock::StageVector position, MoveDirect direct, BaseBlock::Element element);
-	bool CheckDirectBody(BaseBlock::StageVector position, MoveDirect direct, BaseBlock::Element element,BaseBlock::StageVector limit);
+	bool CheckDirectBody(BaseBlock::StageVector position, MoveDirect direct, BaseBlock::Element element,BaseBlock::StageVector limit,BaseBlock::StageVector& nextPos);
 
 	// 場所を指定して属性変更
 	void SetElement(BaseBlock::StageVector position, BaseBlock::Element element);

@@ -53,7 +53,7 @@ void MapManager::Update()
 
 
 	// まずブロックが空中にあるかどうかを判定する
-
+	FallFloatingBlock();
 
 	// ブロックが演出中でない
 	isStaging_ = blockManager_->GetIsStaging();
@@ -121,6 +121,54 @@ void MapManager::SetStageData(const StageArray<BaseBlock::Element>& data)
 	preData_.array_ = currentData_.array_;
 }
 
+void MapManager::FallFloatingBlock()
+{
+	StageArray<Element>& data = currentData_.array_;
+	// x 軸
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		// y 軸
+		for (size_t j = 0; j < data[i].size(); j++)
+		{
+			// z 軸
+			for (size_t k = 0; k < data[i][j].size(); k++)
+			{
+				ChainFall({ i,j,k });
+			}
+		}
+	}
+	blockManager_->FallFloatingBlock();
+}
+
+bool MapManager::ChainFall(const BaseBlock::StageVector& pos)
+{
+	StageArray<Element>& data = currentData_.array_;
+	// 空気なら落とす
+	Element element = data[pos.x][pos.y][pos.z];
+	if (element == Element::kNone) {
+		return true;
+	}
+	// 落下するブロックだったら
+	if (element == Element::kPlayer ||
+		element == Element::kBody) {
+		BaseBlock::StageVector down = pos;
+		down.y += 1;
+		// 落ちるかの判定
+		// 下に落下ブロックが続いているなら再帰
+		if (ChainFall(down)) {
+			//element->FallMapPosition(down);
+			SetElement(pos, Element::kNone);
+			SetElement(down, element);
+			if (element == Element::kPlayer) {
+				playerPosition_ = down;
+			}
+			return true;
+		}
+	}
+	// 落ちないブロックなので処理しない
+	return false;
+}
+
 void MapManager::GetOperate()
 {
 	MoveDirect direct = dNONE;
@@ -174,18 +222,19 @@ void MapManager::MoveMainObject(MoveDirect direct)
 		// 動いたことをプレイヤーに伝える
 		blockManager_->SetBlockPosition(temp, playerPosition_);
 
+		// 頭の一個下
+		temp.y += 1;
+		BaseBlock::StageVector blockPos{};
 		// 動くことが出来たなら下のブロックも判定する
-		do
-		{
+		while (GetElement(temp) == Element::kBody) {
+			// 終了条件は体じゃない要素が出てくること
+			CheckDirectBody(temp, direct, Element::kBody, playerPosition_, blockPos);
+			blockManager_->SetBlockPosition(temp, blockPos);
+
+			// 下が体か確認する
 			// 頭の一個下
 			temp.y += 1;
-			// 下が体か確認する
-			if (GetElement(temp) != Element::kBody) {
-				break;
-			}
-			// 終了条件は体じゃない要素が出てくること
-		} while (CheckDirectBody(temp, direct, Element::kBody, playerPosition_));
-
+		}
 	}
 }
 
@@ -297,7 +346,7 @@ bool MapManager::CheckDirectPlayer(BaseBlock::StageVector position, MoveDirect d
 	return false;
 }
 
-bool MapManager::CheckDirectBody(BaseBlock::StageVector position, MoveDirect direct, BaseBlock::Element element, BaseBlock::StageVector limit)
+bool MapManager::CheckDirectBody(BaseBlock::StageVector position, MoveDirect direct, BaseBlock::Element element, BaseBlock::StageVector limit, BaseBlock::StageVector& nextPos)
 {
 	size_t& x = position.x;
 	size_t& y = position.y;
@@ -315,12 +364,14 @@ bool MapManager::CheckDirectBody(BaseBlock::StageVector position, MoveDirect dir
 			if (data[x][y][i] == Element::kBlock || data[x][y][i] == Element::kBody) {
 				SetElement(position, Element::kNone);
 				position = { x,y,i - 1 };
+				nextPos = position;
 				SetElement(position, element);
 				return true;
 			}
 		}
 		SetElement(position, Element::kNone);
 		position = { x,y,limit.z };
+		nextPos = position;
 		SetElement(position, element);
 		return true;
 		break;
@@ -332,12 +383,14 @@ bool MapManager::CheckDirectBody(BaseBlock::StageVector position, MoveDirect dir
 			if (data[x][y][i - 1] == Element::kBlock || data[x][y][i - 1] == Element::kBody) {
 				SetElement(position, Element::kNone);
 				position = { x,y,i };
+				nextPos = position;
 				SetElement(position, element);
 				return true;
 			}
 		}
 		SetElement(position, Element::kNone);
 		position = { x,y,limit.z };
+		nextPos = position;
 		SetElement(position, element);
 		break;
 	case MapManager::dRIGHT:
@@ -348,12 +401,14 @@ bool MapManager::CheckDirectBody(BaseBlock::StageVector position, MoveDirect dir
 			if (data[i][y][z] == Element::kBlock || data[i][y][z] == Element::kBody) {
 				SetElement(position, Element::kNone);
 				position = { i - 1,y,z };
+				nextPos = position;
 				SetElement(position, element);
 				return true;
 			}
 		}
 		SetElement(position, Element::kNone);
 		position = { limit.x,y,z };
+		nextPos = position;
 		SetElement(position, element);
 		break;
 	case MapManager::dLEFT:
@@ -364,12 +419,14 @@ bool MapManager::CheckDirectBody(BaseBlock::StageVector position, MoveDirect dir
 			if (data[i - 1][y][z] == Element::kBlock || data[i - 1][y][z] == Element::kBody) {
 				SetElement(position, Element::kNone);
 				position = { i,y,z };
+				nextPos = position;
 				SetElement(position, element);
 				return true;
 			}
 		}
 		SetElement(position, Element::kNone);
 		position = { limit.x,y,z };
+		nextPos = position;
 		SetElement(position, element);
 		break;
 	case MapManager::dDOWN:

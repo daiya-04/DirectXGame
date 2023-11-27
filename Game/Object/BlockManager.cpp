@@ -118,7 +118,7 @@ void BlockManager::SetBlockPosition(const BaseBlock::StageVector& prePos, const 
 	mapBlock_[pos.x][pos.y][pos.z] = mapBlock_[prePos.x][prePos.y][prePos.z];
 	mapBlock_[prePos.x][prePos.y][prePos.z] = nullptr;
 
-	mapBlock_[pos.x][pos.y][pos.z]->SetMapPosition(pos);
+	mapBlock_[pos.x][pos.y][pos.z]->MoveMapPosition(pos);
 }
 
 bool BlockManager::GetIsStaging()
@@ -134,6 +134,45 @@ bool BlockManager::GetIsStaging()
 	}
 
 	return result;
+}
+
+void BlockManager::FallFloatingBlock()
+{
+	if (GetIsStaging()) {
+		return;
+	}
+	std::list<pBlock>::iterator itr = listBlock_.begin();
+	for (; itr != listBlock_.end(); ++itr)
+	{
+		BaseBlock::StageVector pos = itr->get()->GetMapPosition();
+		ChainFall(pos);
+	}
+
+}
+
+bool BlockManager::ChainFall(const BaseBlock::StageVector& pos)
+{
+	// 空気なら落とす
+	BaseBlock* block = mapBlock_[pos.x][pos.y][pos.z];
+	if (block == nullptr) {
+		return true;
+	}
+	// 落下するブロックだったら
+	if (block->GetElement() == Element::kPlayer ||
+		block->GetElement() == Element::kBody) {
+		BaseBlock::StageVector down = pos;
+		down.y += 1;
+		// 落ちるかの判定
+		// 下に落下ブロックが続いているなら再帰
+		if (ChainFall(down)) {
+			block->FallMapPosition(down);
+			mapBlock_[down.x][down.y][down.z] = mapBlock_[pos.x][pos.y][pos.z];
+			mapBlock_[pos.x][pos.y][pos.z] = nullptr;
+			return true;
+		}
+	}
+	// 落ちないブロックなので処理しない
+	return false;
 }
 
 

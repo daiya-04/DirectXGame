@@ -36,7 +36,7 @@ protected:
 		kSMOVE,		// 移動
 		kSSTOP,		// 停止
 		kSLOAD,		// 積込
-
+		kSFALL,		// 落下
 
 		kSCOUNT,	// カウント
 	};
@@ -89,9 +89,14 @@ public:
 	const StageVector& GetMapPosition() const { return mapPosition_; }
 	Element GetElement() const { return element_; }
 	void SetModel(Object3d* model) { model_ = model; }
-	void SetMapPosition(const StageVector& pos) {
+	void MoveMapPosition(const StageVector& pos) {
 		preMapPosition_ = mapPosition_;
 		stagingRequest_ = kSMOVE;
+		mapPosition_ = pos;
+	}
+	void FallMapPosition(const StageVector& pos) {
+		preMapPosition_ = mapPosition_;
+		stagingRequest_ = kSFALL;
 		mapPosition_ = pos;
 	}
 	bool GetIsStaging() const { return staging_ != kSROOT; }
@@ -104,5 +109,6 @@ protected:
 	virtual void StagingMove();
 	virtual void StagingStop();
 	virtual void StagingLoad();
+	virtual void StagingFall();
 
 };
