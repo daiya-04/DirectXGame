@@ -19,7 +19,7 @@ void LockOn::Initialize() {
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection) {
 
 	if (target_) {
-		if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
 
 			target_ = nullptr;
 		}else if (OutSideDecision(enemies, viewProjection)) {
@@ -28,10 +28,24 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 
 	}else {
 
-		if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-			
+		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_Y)) {
+			if (isAuto_) {
+				isAuto_ = false;
+			}
+			else {
+				isAuto_ = true;
+			}
+		}
+
+		if (!isAuto_) {
+			if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
+				Search(enemies, viewProjection);
+			}
+		}
+		else {
 			Search(enemies, viewProjection);
 		}
+		
 
 	}
 

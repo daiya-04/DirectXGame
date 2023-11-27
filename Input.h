@@ -42,21 +42,14 @@ public:
 	bool GetJoystickState();
 
 	Vector3 GetMoveXZ() {
-		if (!GetJoystickState()) { return {}; }
 		return { (float)joyState.Gamepad.sThumbLX, 0.0f, (float)joyState.Gamepad.sThumbLY };
 	}
 
 	Vector3 GetCameraRotate() {
-		if (!GetJoystickState()) { return {}; }
 		return { (float)joyState.Gamepad.sThumbRY / SHRT_MAX,(float)joyState.Gamepad.sThumbRX / SHRT_MAX,0.0f };
 	}
 
-	bool TriggerButton(int button) const{
-		if ((joyState.Gamepad.wButtons & button) && !(preJoyState.Gamepad.wButtons & button)) {
-			return true;
-		}
-		return false;
-	}
+	bool TriggerButton(int button) const;
 
 private:
 	Input() = default;

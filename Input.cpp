@@ -41,6 +41,8 @@ void Input::Update() {
 	//全キーの入力状態を取得する
 	keyBoard->GetDeviceState(sizeof(key), key);
 
+	GetJoystickState();
+
 }
 
 bool Input::PushKey(BYTE keyNumber) const{
@@ -88,5 +90,12 @@ bool Input::GetJoystickState() {
 		return true;
 	}
 
+	return false;
+}
+
+bool Input::TriggerButton(int button) const{
+	if ((joyState.Gamepad.wButtons & button) && !(preJoyState.Gamepad.wButtons & button)) {
+		return true;
+	}
 	return false;
 }

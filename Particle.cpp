@@ -218,16 +218,17 @@ void Particle::postDraw() {}
 Particle::ParticleData Particle::MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate){
 
 	std::uniform_real_distribution<float> distPos(-5.0f, 5.0f);
-	std::uniform_real_distribution<float> distVelocity(-1.0f, 1.0f);
-	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+	std::uniform_real_distribution<float> distVelocityXZ(-1.0f, 1.0f);
+	std::uniform_real_distribution<float> distVelocityY(0.1f, 0.5f);
+	std::uniform_real_distribution<float> distColor(0.5f, 1.0f);
 	std::uniform_real_distribution<float> distTime(1.0f, 6.0f);
 	ParticleData particle;
 
 	//particle.worldTransform_.translation_ = { /*distPos(randomEngine),distPos(randomEngine) ,distPos(randomEngine)*/ };
 	particle.worldTransform_.translation_ = translate;
-	particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine) ,0.0f };
+	particle.velocity_ = { distVelocityXZ(randomEngine), distVelocityY(randomEngine) ,distVelocityXZ(randomEngine) };
 	particle.color_ = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine),1.0 };
-	particle.lifeTime_ = 5.0f;
+	particle.lifeTime_ = 0.4f;
 	//particle.lifeTime_ = distTime(randomEngine);
 	particle.currentTime_ = 0.0f;
 

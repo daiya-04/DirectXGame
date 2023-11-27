@@ -27,6 +27,8 @@ private:
 	//角度範囲
 	float angleRange_ = 20.0f * kDegreeToRadian_;
 
+	bool isAuto_ = false;
+
 
 public:
 

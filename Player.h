@@ -104,6 +104,7 @@ private:
 
 	bool isJamp_ = false;
 	bool onGround_ = false;
+	bool isParticle_ = false;
 
 	WorkDash workDash_;
 	WorkAttack workAttack_;
@@ -111,6 +112,7 @@ private:
 	FollowCamera* followCamera_ = nullptr;
 	const ViewProjection* viewProjection_;
 	const LockOn* lockOn_ = nullptr;
+	
 	
 
 public:
@@ -140,7 +142,8 @@ public:
 	Vector3 GetWeaponWorldPos() const;
 	Vector3 GetSize() const { return size_; }
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
-	bool IsHit() { return workAttack_.isHit_; }
+	bool IsHit() const { return workAttack_.isHit_; }
+	bool IsParticle() const { return isParticle_; }
 
 };
 

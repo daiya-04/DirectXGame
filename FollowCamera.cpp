@@ -4,6 +4,7 @@
 #include "Easing.h"
 #include "GlobalVariables.h"
 #include "LockOn.h"
+#include "ImGuiManager.h"
 
 void FollowCamera::Initialize() {
 
@@ -17,8 +18,22 @@ void FollowCamera::Update() {
 
 	ApplyGlobalVariables();
 
+	ImGui::Begin("Camera");
+
+	ImGui::DragFloat3("translation", &viewProjection_.translation_.x, 0.1f);
+	ImGui::DragFloat3("rotation", &viewProjection_.rotation_.x, 0.01f);
+
+	ImGui::End();
+
+	const float rotateSpeed = 0.02f;
+
+	viewProjection_.rotation_ += Input::GetInstance()->GetCameraRotate() * rotateSpeed;
+
+	viewProjection_.rotation_.x = min(viewProjection_.rotation_.x, 89.99f * (float)std::numbers::pi / 180.0f);
+	viewProjection_.rotation_.x = max(viewProjection_.rotation_.x, -5.0f * (float)std::numbers::pi / 180.0f);
+
 	if (lockOn_->ExistTarget()) {
-		num = 0.0f;
+		
 		Vector3 lockOnPos = lockOn_->GetTargetPos();
 
 		Vector3 sub = lockOnPos - target_->translation_;
@@ -30,12 +45,6 @@ void FollowCamera::Update() {
 		viewProjection_.translation_ = target_->translation_ + offset;
 
 	} else {
-		const float rotateSpeed = 0.02f;
-
-		viewProjection_.rotation_ += Input::GetInstance()->GetCameraRotate() * rotateSpeed;
-
-		viewProjection_.rotation_.x = min(viewProjection_.rotation_.x, 89.99f * (float)std::numbers::pi / 180.0f);
-		viewProjection_.rotation_.x = max(viewProjection_.rotation_.x, -5.0f * (float)std::numbers::pi / 180.0f);
 
 		if (target_) {
 

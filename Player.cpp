@@ -201,7 +201,7 @@ void Player::AttackInitialize() {
 
 void Player::AttackUpdate() {
 
-	
+	isParticle_ = false;
 
 	if (workAttack_.attackParameter_ >= kConstAttacks_[workAttack_.comboIndex_].anticipationTime_ + kConstAttacks_[workAttack_.comboIndex_].chargeTime_ + kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
 		workAttack_.inComboPhase_ = 3;
@@ -240,8 +240,9 @@ void Player::AttackUpdate() {
 	
 	if (workAttack_.inComboPhase_ == 2) {
 		workAttack_.swingParam_ += 1.0f / (float)kConstAttacks_[workAttack_.comboIndex_].swingTime_;
-		if (workAttack_.swingParam_ >= (float)kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
-			workAttack_.swingParam_ = (float)kConstAttacks_[workAttack_.comboIndex_].swingTime_;
+		if (workAttack_.swingParam_ >= 1.0f) {
+			workAttack_.swingParam_ = 1.0f;
+			isParticle_ = true;
 		}
 	}
 	float T = Easing::easeInSine(workAttack_.swingParam_);

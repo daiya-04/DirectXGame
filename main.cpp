@@ -16,6 +16,7 @@
 #include "ModelManager.h"
 #include <memory>
 #include <list>
+#include <random>
 #include "Particle.h"
 #include "GlobalVariables.h"
 
@@ -58,7 +59,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	WinApp* win = nullptr;
 	DirectXCommon* dxCommon = nullptr;
 
-	Input* input = nullptr;
+	
 	
 
 	win = WinApp::GetInstance();
@@ -70,8 +71,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
 	imguiManager->Initialize(win, dxCommon);
 
-	input = Input::GetInstance();
-	input->Initialize(win);
+	
+	Input::GetInstance()->Initialize(win);
 
 	TextureManager::GetInstance()->Initialize();
 	ModelManager::GetInstance()->Initialize();
@@ -162,12 +163,25 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	player_->SetFollowCamera(followCemra_.get());
 	player_->SetViewProjection(&followCemra_->GetViewProjection());
 
-	//
+	//ロックオン
 	std::unique_ptr<LockOn> lockOn_;
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
 	followCemra_->SetLockOn(lockOn_.get());
 	player_->SetLockOn(lockOn_.get());
+
+	//パーティクル
+	uint32_t circle = TextureManager::Load("circle.png");
+	std::unique_ptr<Particle> particle_ = std::make_unique<Particle>();
+	particle_.reset(Particle::Create(circle, 50));
+
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine(seedGenerator());
+	const float kDeltaTime = 1.0f / 60.0f;
+
+	std::list<Particle::ParticleData> particles_;
+	Particle::Emitter emitter_{};
+	emitter_.count_ = particle_->particleMaxNum_;
 
 	/////
 
@@ -185,12 +199,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 #ifdef _DEBUG
 		
 
-		/*ImGui::Begin("Camera");
-
-		ImGui::DragFloat3("translation", &viewProjection_.translation_.x, 0.1f);
-		ImGui::DragFloat3("rotation", &viewProjection_.rotation_.x, 0.01f);
 		
-		ImGui::End();*/
 
 		
 #endif // _DEBUG
@@ -199,7 +208,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		//更新
 
-        input->Update();
+		Input::GetInstance()->Update();
+		
 
 		GlobalVariables::GetInstance()->Update();
 
@@ -224,6 +234,16 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		
 		followCemra_->Update();
 		lockOn_->Update(enemies_, viewProjection_);
+
+		if (player_->IsParticle()) {
+			emitter_.translate_ = player_->GetWeaponWorldPos();
+			particles_.splice(particles_.end(), Particle::Emit(emitter_, randomEngine));
+		}
+
+		for (std::list<Particle::ParticleData>::iterator itParticle = particles_.begin(); itParticle != particles_.end(); itParticle++) {
+			(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_;
+			(*itParticle).currentTime_ += kDeltaTime;
+		}
 
 
 		///
@@ -359,7 +379,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 
 		Particle::preDraw();
 
-		
+		particle_->Draw(particles_, viewProjection_);
 
 		Particle::postDraw();
 		
