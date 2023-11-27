@@ -13,12 +13,12 @@ BlockManager* BlockManager::GetInstance()
 
 void BlockManager::Initialize()
 {
-	uint32_t modelHandle = ModelManager::Load("Box");
+	uint32_t modelHandle = ModelManager::Load("Block");
 	for (size_t i = 0; i < kMaxNormalBlockNum_; i++)
 	{
 		arrModelNormal_[i].reset(Object3d::Create(modelHandle));
 	}
-	modelHandle = ModelManager::Load("Box");
+	modelHandle = ModelManager::Load("Head");
 	for (size_t i = 0; i < kMaxPlayerBlockNum_; i++)
 	{
 		arrModelPlayer_[i].reset(Object3d::Create(modelHandle));
@@ -28,7 +28,7 @@ void BlockManager::Initialize()
 	{
 		arrModelHead_[i].reset(Object3d::Create(modelHandle));
 	}
-	modelHandle = ModelManager::Load("Box");
+	modelHandle = ModelManager::Load("Body");
 	for (size_t i = 0; i < kMaxBodyBlockNum_; i++)
 	{
 		arrModelBody_[i].reset(Object3d::Create(modelHandle));
