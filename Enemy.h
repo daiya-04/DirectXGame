@@ -37,6 +37,7 @@ private:
 
 	float crushParam_ = 0.0f;
 
+	int life_ = 3;
 	bool isDead_ = false;
 
 public:

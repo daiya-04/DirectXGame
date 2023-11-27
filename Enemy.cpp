@@ -90,7 +90,7 @@ void Enemy::UpdateFloatingGimmick() {
 }
 
 void Enemy::OnCollision(){
-	behaviorRequest_ = Behavior::kDead;
+	life_--;
 
 }
 
@@ -123,6 +123,10 @@ void Enemy::RootUpdate(){
 
 	UpdateFloatingGimmick();
 
+	if (life_ <= 0) {
+		behaviorRequest_ = Behavior::kDead;
+	}
+
 }
 
 void Enemy::DeadInitialize(){
@@ -134,15 +138,10 @@ void Enemy::DeadInitialize(){
 void Enemy::DeadUpdate(){
 
 	crushParam_ += 0.05f;
-	crushParam_ = min(crushParam_, 1.0f);
 	float T = Easing::easeInSine(crushParam_);
 	worldTransform_.scale_.y = Lerp(T, worldTransform_.scale_.y, 0.1f);
 
 	if (crushParam_ >= 1.0f) {
-		color_.w -= 0.05f;
-	}
-
-	if (color_.w <= 0.0f) {
 		isDead_ = true;
 	}
 

@@ -122,6 +122,10 @@ void Player::ReStart() {
 	followCamera_->Reset();
 }
 
+void Player::AttackHit(){
+	workAttack_.isHit_ = true;
+}
+
 void Player::RootInitialize() {
 
 
@@ -161,6 +165,8 @@ void Player::RootUpdate() {
 
 		Vector3 sub = lockOnPos - worldTransform_.translation_;
 
+		rotate_ = sub;
+
 		worldTransform_.rotation_.y = std::atan2(sub.x, sub.z);
 
 	}else {
@@ -169,6 +175,8 @@ void Player::RootUpdate() {
 		}
 
 		worldTransform_.rotation_.y = std::atan2(rotate_.x, rotate_.z);
+
+
 	}
 
 	
@@ -187,7 +195,7 @@ void Player::AttackInitialize() {
 	workAttack_.attackParameter_ = 0;
 	workAttack_.swingParam_ = 0.0f;
 	workAttack_.theta_ = 0.0f;
-	workAttack_.isAttack_ = true;
+	workAttack_.isHit_ = false;
 
 }
 
@@ -224,7 +232,7 @@ void Player::AttackUpdate() {
 		}
 		else {
 			behaviorRequest_ = Behavior::kRoot;
-			workAttack_.isAttack_ = false;
+			workAttack_.isHit_ = false;
 			workAttack_.comboIndex_ = 0;
 			return;
 		}

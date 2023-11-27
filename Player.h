@@ -54,7 +54,7 @@ public:
 		float swingParam_ = 0.0f;
 		uint32_t attackParameter_ = 0;
 		float theta_ = 0.0f;
-		bool isAttack_ = false;
+		bool isHit_ = false;
 		uint32_t comboIndex_ = 0;
 		uint32_t inComboPhase_ = 0;
 		bool comboNext_ = false;
@@ -125,6 +125,8 @@ public:
 
 	void ReStart();
 
+	void AttackHit();
+
 	void ApplyGlobalVariables();
 
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
@@ -138,7 +140,7 @@ public:
 	Vector3 GetWeaponWorldPos() const;
 	Vector3 GetSize() const { return size_; }
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
-	bool IsAttack() { return workAttack_.isAttack_; }
+	bool IsHit() { return workAttack_.isHit_; }
 
 };
 

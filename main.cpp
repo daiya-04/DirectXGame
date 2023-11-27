@@ -123,17 +123,24 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	
 
 	//敵
-	uint32_t enemyNum_ = 1;
+	uint32_t enemyNum_ = 5;
 	std::list<std::unique_ptr<Enemy>> enemies_;
 	uint32_t enemyBodyModel_ = ModelManager::Load("EnemyBody");
 	uint32_t enemyHeadModel_ = ModelManager::Load("EnemyHead");
 
+	std::vector<Vector3> enemyPos(enemyNum_);
+
+	enemyPos = {
+		{-70.0f,0.0f,80.0f},{-50.0f,0.0f,80.0f},
+		{0.0f,0.0f,80.0f},
+		{70.0f,0.0f,80.0f},{50.0f,0.0f,80.0f},
+	};
 	
 	std::vector<uint32_t> enemyModels = {
 		enemyBodyModel_,enemyHeadModel_
 	};
 	for (size_t index = 0; index < enemyNum_; index++) {
-		enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop(enemyModels, { 30.0f,0.0f,100.0f })));
+		enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop(enemyModels, enemyPos[index])));
 	}
 	
 	
@@ -262,7 +269,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 				enemy->SetIsDead(true);
 			}
 			for (size_t index = 0; index < enemyNum_; index++) {
-				enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop(enemyModels, { 30.0f,0.0f,100.0f })));
+				enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop(enemyModels, enemyPos[index])));
 			}
 		}
 
@@ -272,7 +279,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 				enemy->SetIsDead(true);
 			}
 			for (size_t index = 0; index < enemyNum_; index++) {
-				enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop(enemyModels, { 30.0f,0.0f,100.0f })));
+				enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop(enemyModels, enemyPos[index])));
 			}
 		}
 		
@@ -292,8 +299,9 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 			enemy->GetWorldPos() + enemy->GetSize()
 			};
 			if (IsCollision(enemyAabb, stamp)) {
-				if (player_->IsAttack()) {
+				if (!player_->IsHit()) {
 					enemy->OnCollision();
+					player_->AttackHit();
 				}
 			}
 		}
