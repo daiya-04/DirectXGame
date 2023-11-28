@@ -23,7 +23,7 @@ void BlockManager::Initialize()
 	{
 		arrModelPlayer_[i].reset(Object3d::Create(modelHandle));
 	}
-	modelHandle = ModelManager::Load("Box");
+	modelHandle = ModelManager::Load("Head2");
 	for (size_t i = 0; i < kMaxHeadBlockNum_; i++)
 	{
 		arrModelHead_[i].reset(Object3d::Create(modelHandle));
@@ -44,14 +44,14 @@ void BlockManager::Reset()
 	iBodyModel_ = 0;
 	iHeadModel_ = 0;
 	mapBlock_.clear();
-	mapBlock_.resize(kMapSize);
-	for (size_t i = 0; i < kMapSize; i++)
+	mapBlock_.resize(kMapSize.x);
+	for (size_t i = 0; i < kMapSize.x; i++)
 	{
-		mapBlock_[i].resize(kMapSize);
-		for (size_t j = 0; j < kMapSize; j++)
+		mapBlock_[i].resize(kMapSize.y);
+		for (size_t j = 0; j < kMapSize.y; j++)
 		{
-			mapBlock_[i][j].resize(kMapSize);
-			for (size_t k = 0; k < kMapSize; k++)
+			mapBlock_[i][j].resize(kMapSize.z);
+			for (size_t k = 0; k < kMapSize.z; k++)
 			{
 				mapBlock_[i][j][k] = nullptr;
 			}
@@ -77,18 +77,18 @@ void BlockManager::Draw()
 	}
 }
 
-void BlockManager::SetStageData(const MapManager::StageArray<BaseBlock::Element> data)
+void BlockManager::SetStageData(const MapManager::StageData& data)
 {
-	kMapSize = data.size();
+	kMapSize = data.kMaxStageSize_;
 	Reset();
 	BaseBlock* block = nullptr;
-	for (size_t i = 0; i < data.size(); i++)
+	for (size_t i = 0; i < data.array_.size(); i++)
 	{
-		for (size_t j = 0; j < data[i].size(); j++)
+		for (size_t j = 0; j < data.array_[i].size(); j++)
 		{
-			for (size_t k = 0; k < data[i][j].size(); k++)
+			for (size_t k = 0; k < data.array_[i][j].size(); k++)
 			{
-				switch (data[i][j][k])
+				switch (data.array_[i][j][k])
 				{
 				case  Element::kNone:
 					break;
@@ -98,6 +98,9 @@ void BlockManager::SetStageData(const MapManager::StageArray<BaseBlock::Element>
 					break;
 				case  Element::kBody:
 					listBlock_.emplace_back(CreateBodyBlock({ i,j,k }));
+					break;
+				case  Element::kHead:
+					listBlock_.emplace_back(CreateHeadBlock({ i,j,k }));
 					break;
 				case  Element::kBlock:
 					listBlock_.emplace_back(CreateNormalBlock({ i,j,k }));
@@ -112,13 +115,31 @@ void BlockManager::SetStageData(const MapManager::StageArray<BaseBlock::Element>
 
 void BlockManager::SetBlockPosition(const BaseBlock::StageVector& prePos, const BaseBlock::StageVector& pos)
 {
-	if (prePos.x == pos.x && prePos.y == pos.y && prePos.z == pos.z) {
+	if (prePos.x == pos.x && prePos.y == pos.y && prePos.z == pos.z)
+	{
 		return;
 	}
-	mapBlock_[pos.x][pos.y][pos.z] = mapBlock_[prePos.x][prePos.y][prePos.z];
-	mapBlock_[prePos.x][prePos.y][prePos.z] = nullptr;
+	if (prePos.y != pos.y)
+	{
+		mapBlock_[pos.x][pos.y][pos.z] = mapBlock_[prePos.x][prePos.y][prePos.z];
+		mapBlock_[prePos.x][prePos.y][prePos.z] = nullptr;
 
-	mapBlock_[pos.x][pos.y][pos.z]->MoveMapPosition(pos);
+		mapBlock_[pos.x][pos.y][pos.z]->MoveMapPosition({ pos.x,prePos.y,pos.z });
+		mapBlock_[pos.x][pos.y][pos.z]->SetNextMapPosition(pos);
+	}
+	else
+	{
+		mapBlock_[pos.x][pos.y][pos.z] = mapBlock_[prePos.x][prePos.y][prePos.z];
+		mapBlock_[prePos.x][prePos.y][prePos.z] = nullptr;
+
+		mapBlock_[pos.x][pos.y][pos.z]->MoveMapPosition(pos);
+	}
+}
+
+void BlockManager::DeleteBlockPosition(const BaseBlock::StageVector& pos)
+{
+	mapBlock_[pos.x][pos.y][pos.z]->SetIsDraw(false);
+	mapBlock_[pos.x][pos.y][pos.z] = nullptr;
 }
 
 bool BlockManager::GetIsStaging()
@@ -127,7 +148,8 @@ bool BlockManager::GetIsStaging()
 	std::list<pBlock>::iterator itr = listBlock_.begin();
 	for (; itr != listBlock_.end(); ++itr)
 	{
-		if (itr->get()->GetIsStaging()) {
+		if (itr->get()->GetIsStaging())
+		{
 			result = true;
 			break;
 		}
@@ -138,7 +160,8 @@ bool BlockManager::GetIsStaging()
 
 void BlockManager::FallFloatingBlock()
 {
-	if (GetIsStaging()) {
+	if (GetIsStaging())
+	{
 		return;
 	}
 	std::list<pBlock>::iterator itr = listBlock_.begin();
@@ -154,17 +177,20 @@ bool BlockManager::ChainFall(const BaseBlock::StageVector& pos)
 {
 	// 空気なら落とす
 	BaseBlock* block = mapBlock_[pos.x][pos.y][pos.z];
-	if (block == nullptr) {
+	if (block == nullptr)
+	{
 		return true;
 	}
 	// 落下するブロックだったら
 	if (block->GetElement() == Element::kPlayer ||
-		block->GetElement() == Element::kBody) {
+		block->GetElement() == Element::kBody)
+	{
 		BaseBlock::StageVector down = pos;
 		down.y += 1;
 		// 落ちるかの判定
 		// 下に落下ブロックが続いているなら再帰
-		if (ChainFall(down)) {
+		if (ChainFall(down))
+		{
 			block->FallMapPosition(down);
 			mapBlock_[down.x][down.y][down.z] = mapBlock_[pos.x][pos.y][pos.z];
 			mapBlock_[pos.x][pos.y][pos.z] = nullptr;
@@ -176,7 +202,8 @@ bool BlockManager::ChainFall(const BaseBlock::StageVector& pos)
 }
 
 
-BaseBlock* BlockManager::CreateNormalBlock(const BaseBlock::StageVector& pos) {
+BaseBlock* BlockManager::CreateNormalBlock(const BaseBlock::StageVector& pos)
+{
 	BaseBlock* block = new NormalBlock;
 	block->Initialize(pos);
 	block->SetViewProjection(vp_);
@@ -185,7 +212,8 @@ BaseBlock* BlockManager::CreateNormalBlock(const BaseBlock::StageVector& pos) {
 	mapBlock_[pos.x][pos.y][pos.z] = block;
 	return block;
 }
-BaseBlock* BlockManager::CreatePlayerBlock(const BaseBlock::StageVector& pos) {
+BaseBlock* BlockManager::CreatePlayerBlock(const BaseBlock::StageVector& pos)
+{
 
 	BaseBlock* block = new PlayerBlock;
 	block->Initialize(pos);
@@ -196,9 +224,10 @@ BaseBlock* BlockManager::CreatePlayerBlock(const BaseBlock::StageVector& pos) {
 	return block;
 }
 
-BaseBlock* BlockManager::CreateHeadBlock(const BaseBlock::StageVector& pos) {
+BaseBlock* BlockManager::CreateHeadBlock(const BaseBlock::StageVector& pos)
+{
 
-	BaseBlock* block = new NormalBlock;
+	BaseBlock* block = new HeadBlock;
 	block->Initialize(pos);
 	block->SetViewProjection(vp_);
 	block->SetModel(arrModelHead_[iHeadModel_].get());
@@ -206,7 +235,8 @@ BaseBlock* BlockManager::CreateHeadBlock(const BaseBlock::StageVector& pos) {
 	mapBlock_[pos.x][pos.y][pos.z] = block;
 	return block;
 }
-BaseBlock* BlockManager::CreateBodyBlock(const BaseBlock::StageVector& pos) {
+BaseBlock* BlockManager::CreateBodyBlock(const BaseBlock::StageVector& pos)
+{
 
 	BaseBlock* block = new BodyBlock;
 	block->Initialize(pos);

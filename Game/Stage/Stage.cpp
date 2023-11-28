@@ -1,4 +1,4 @@
-#include "DebugStage.h"
+#include "Stage.h"
 
 #include "../../ImGuiManager.h"
 
@@ -6,15 +6,15 @@ using Element = BaseBlock::Element;
 template<typename Ty>
 using StageArray = MapManager::StageArray<Ty>;
 
-DebugStage::DebugStage()
+Stage::Stage()
 {
 }
 
-DebugStage::~DebugStage()
+Stage::~Stage()
 {
 }
 
-void DebugStage::Initialize(ViewProjection* view)
+void Stage::Initialize(ViewProjection* view)
 {
 	mapManager_ = MapManager::GetInstance();
 	blockManager_ = BlockManager::GetInstance();
@@ -24,14 +24,14 @@ void DebugStage::Initialize(ViewProjection* view)
 	ApplyStageData();
 }
 
-void DebugStage::Reset()
+void Stage::Reset()
 {
 	blockManager_->Reset();
 	// ステージの情報を反映
 	ApplyStageData();
 }
 
-void DebugStage::Update()
+void Stage::Update()
 {
 	DebugGUI();
 
@@ -44,16 +44,16 @@ void DebugStage::Update()
 	blockManager_->Update();
 }
 
-void DebugStage::Draw()
+void Stage::Draw()
 {
 	blockManager_->Draw();
 }
 
-void DebugStage::DebugGUI()
+void Stage::DebugGUI()
 {
 #ifdef _DEBUG
 
-	ImGui::Begin("DebugStage");
+	ImGui::Begin("Stage");
 
 	if (ImGui::Button("Load")) {
 		Reset();
@@ -64,7 +64,7 @@ void DebugStage::DebugGUI()
 #endif // _DEBUG
 }
 
-void DebugStage::LoadStageData()
+void Stage::LoadStageData()
 {
 	// グローバルバリアブルズを使う
 
@@ -86,11 +86,11 @@ void DebugStage::LoadStageData()
 	}
 }
 
-void DebugStage::SaveStageData()
+void Stage::SaveStageData()
 {
 }
 
-void DebugStage::ApplyStageData()
+void Stage::ApplyStageData()
 {
 	StageArray<Element>& data = kStageData_.array_;
 	BaseBlock::StageVector size = kStageData_.kMaxStageSize_;
@@ -100,10 +100,7 @@ void DebugStage::ApplyStageData()
 			data[i][size.y - 1][j] = Element::kBlock;
 		}
 	}
-	data[3][2][0] = Element::kBlock;
 	data[3][3][0] = Element::kBlock;
-
-	data[1][3][1] = Element::kHead;
 
 	data[3][3][3] = Element::kBody;
 	data[1][3][2] = Element::kBody;
