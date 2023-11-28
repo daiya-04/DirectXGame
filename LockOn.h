@@ -23,7 +23,7 @@ private:
 	//最小距離
 	float minDistance_ = 30.0f;
 	//最大距離
-	float maxDistance_ = 80.0f;
+	float maxDistance_ = 60.0f;
 	//角度範囲
 	float angleRange_ = 20.0f * kDegreeToRadian_;
 

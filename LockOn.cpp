@@ -18,6 +18,15 @@ void LockOn::Initialize() {
 
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection) {
 
+	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_Y)) {
+		if (isAuto_) {
+			isAuto_ = false;
+		}
+		else {
+			isAuto_ = true;
+		}
+	}
+
 	if (target_) {
 		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
 
@@ -32,14 +41,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 
 	}else {
 
-		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_Y)) {
-			if (isAuto_) {
-				isAuto_ = false;
-			}
-			else {
-				isAuto_ = true;
-			}
-		}
+		
 
 		if (!isAuto_) {
 			if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_LEFT_SHOULDER)) {
