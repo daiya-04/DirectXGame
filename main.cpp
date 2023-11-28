@@ -19,6 +19,7 @@
 #include <random>
 #include <numbers>
 #include <list>
+#include "Audio.h"
 
 
 #pragma comment(lib,"dxguid.lib")
@@ -63,6 +64,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	input = Input::GetInstance();
 	input->Initialize(win);
 
+	Audio::GetInstance()->Initialize();
+
 	TextureManager::GetInstance()->Initialize();
 	ModelManager::GetInstance()->Initialize();
 	//TextureManager::Load("uvChecker.png");
@@ -89,6 +92,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		imguiManager->Begin();
 
         input->Update();
+
+		Audio::GetInstance()->Update();
 
 		////////////////////////
 		////	ゲーム部分	////

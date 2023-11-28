@@ -154,6 +154,7 @@
     <ClCompile Include="ModelManager.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Audio.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -279,6 +280,7 @@
     <ClInclude Include="Game\Object\BlockList.h">
       <Filter>Engine\Game\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Audio.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
