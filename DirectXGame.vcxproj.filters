@@ -158,6 +158,7 @@
     <ClCompile Include="Game\Scene\user\SelectScene.cpp">
       <Filter>Engine\Game\Scene\user</Filter>
     </ClCompile>
+    <ClCompile Include="GlobalVariables.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -287,6 +288,7 @@
     <ClInclude Include="Game\Scene\user\SelectScene.h">
       <Filter>Engine\Game\Scene\user</Filter>
     </ClInclude>
+    <ClInclude Include="GlobalVariables.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
