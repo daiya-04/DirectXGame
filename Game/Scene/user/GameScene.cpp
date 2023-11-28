@@ -5,12 +5,13 @@
 
 void GameScene::Initialize()
 {
-	viewProjection_.reset(new ViewProjection());
+	maingCamera_.reset(new ViewProjection());
 
+	maingCamera_->translation_ = kOriginOffset_;
+	maingCamera_->rotation_ = kOriginAngle;
 
-
-	debugStage_.reset(new DebugStage);
-	debugStage_->Initialize(viewProjection_.get());
+	currentStage_.reset(new DebugStage);
+	currentStage_->Initialize(maingCamera_.get());
 
 	Reset();
 
@@ -19,11 +20,11 @@ void GameScene::Initialize()
 void GameScene::Reset()
 {
 	//viewProjection_.reset(new ViewProjection());
-	viewProjection_->Initialize();
-	viewProjection_->translation_ = { 0.0f,17.0f,-10.0f };
-	viewProjection_->rotation_ = { 1.0f,0.0f,0.0f, };
+	maingCamera_->Initialize();
+	maingCamera_->translation_ = kOriginOffset_;
+	maingCamera_->rotation_ = kOriginAngle;
 
-	debugStage_->Reset();
+	currentStage_->Reset();
 
 }
 
@@ -31,17 +32,19 @@ void GameScene::Update()
 {
 	DebugGUI();
 
-	debugStage_->Update();
+	currentStage_->Update();
 
-	if (input_->TriggerKey(DIK_SPACE)) {
+	if (input_->TriggerKey(DIK_SPACE))
+	{
 		SceneManager::GetInstace()->ChegeScene(kTITLE);
 	}
+	// カメラ移動
 
 }
 
 void GameScene::DrawModel()
 {
-	debugStage_->Draw();
+	currentStage_->Draw();
 }
 
 void GameScene::DrawUI()
@@ -57,10 +60,15 @@ void GameScene::DebugGUI()
 
 	ImGui::Begin("GameScene");
 
-	ImGui::DragFloat3("ViewRotate", &viewProjection_->rotation_.x, 0.01f);
-	ImGui::DragFloat3("ViewTranslate", &viewProjection_->translation_.x, 0.1f);
+	ImGui::DragFloat3("ViewRotate", &maingCamera_->rotation_.x, 0.01f);
+	ImGui::DragFloat3("ViewTranslate", &maingCamera_->translation_.x, 0.1f);
 
-	viewProjection_->UpdateMatrix();
+	if (ImGui::Button("Reset"))
+	{
+		Reset();
+	}
+
+	maingCamera_->UpdateMatrix();
 
 	ImGui::End();
 

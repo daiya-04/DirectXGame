@@ -32,9 +32,13 @@ private: // プライベート変数
 
 
 	// ゲームシーン内でデータを保存する
-	std::unique_ptr<ViewProjection> viewProjection_;
+	std::unique_ptr<ViewProjection> maingCamera_;
 
 	// ステージを持たせる
-	std::unique_ptr<DebugStage> debugStage_;
+	std::unique_ptr<DebugStage> currentStage_;
+
+	// 原点へのオフセット
+	Vector3 kOriginOffset_ = { 0.0f,17.0f,-10.0f };
+	Vector3 kOriginAngle = { 1.0f,0.0f,0.0f, };
 
 };

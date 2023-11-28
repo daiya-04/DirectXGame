@@ -84,14 +84,14 @@ void MapManager::DebugGUI()
 	std::string line[5];
 
 	// 今のステージの情報を取る
-	for (size_t i = 0; i < data.size(); i++)
+	for (size_t i = 0; i < currentData_.kMaxStageSize_.y; i++)
 	{
-		line[i] = std::to_string(i) + "\n";
+		line[i] = "y : " + std::to_string(i) + "\n";
 		line[i] += "x:z 0 1 2 3 4 5 6\n";
-		for (size_t j = 0; j < data[i].size(); j++)
+		for (size_t j = 0; j < currentData_.kMaxStageSize_.x; j++)
 		{
 			line[i] += std::to_string(j) + ": ";
-			for (size_t k = 0; k < data[i][j].size(); k++)
+			for (size_t k = 0; k < currentData_.kMaxStageSize_.z; k++)
 			{
 				line[i] += " " + std::to_string((size_t)data[j][i][k]);
 			}
