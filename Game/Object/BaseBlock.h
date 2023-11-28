@@ -80,6 +80,8 @@ protected:
 	int32_t stagingFrame_ = 0;
 	int32_t cStagingFrames_[kSCOUNT];
 
+	bool isDraw_ = true;
+
 public:
 
 	virtual void Initialize() override;
@@ -121,6 +123,8 @@ public:
 		stagingNextRequest_ = kSLOAD;
 	}
 	bool GetIsStaging() const { return staging_ != kSROOT; }
+
+	void SetIsDraw(bool flag) { isDraw_ = flag; }
 
 protected:
 

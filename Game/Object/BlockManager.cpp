@@ -136,6 +136,12 @@ void BlockManager::SetBlockPosition(const BaseBlock::StageVector& prePos, const 
 	}
 }
 
+void BlockManager::DeleteBlockPosition(const BaseBlock::StageVector& pos)
+{
+	mapBlock_[pos.x][pos.y][pos.z]->SetIsDraw(false);
+	mapBlock_[pos.x][pos.y][pos.z] = nullptr;
+}
+
 bool BlockManager::GetIsStaging()
 {
 	bool result = false;

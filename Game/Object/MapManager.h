@@ -142,7 +142,7 @@ private:
 	void InspectShotAction(MoveDirect direct);
 
 	// 結果を反映
-	void ApplyShotAction();
+	void ApplyShotAction(MoveDirect direct);
 
 private:
 

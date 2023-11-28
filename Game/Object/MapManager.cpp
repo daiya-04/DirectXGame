@@ -78,6 +78,7 @@ void MapManager::DebugGUI()
 	ImGui::Text("Player  : %d,%d,%d", playerChunk_.position_.x, playerChunk_.position_.y - playerChunk_.bodyNum_, playerChunk_.position_.z);
 	ImGui::Text("Position: %d,%d,%d", playerChunk_.position_.x, playerChunk_.position_.y, playerChunk_.position_.z);
 	ImGui::Text("Bodys   : %d", playerChunk_.bodyNum_);
+	ImGui::Text("ShotFlag: %s", isShotFlag_ ? "true" : "false");
 
 
 	std::string line[5];
@@ -488,11 +489,15 @@ void MapManager::ApplyMoveAction()
 
 void MapManager::ShotSubObject(MoveDirect direct)
 {
+	if (playerChunk_.bodyNum_ == 0)
+	{
+		return;
+	}
 	CheckShotAction(direct);
 
 	InspectShotAction(direct);
 
-	ApplyShotAction();
+	ApplyShotAction(direct);
 }
 
 void MapManager::CheckShotAction(MoveDirect direct)
@@ -568,7 +573,7 @@ void MapManager::InspectShotAction(MoveDirect direct)
 		{
 			itr->result_ = MovedResult::kSUCCECES;
 			// 頭の時
-			if (data[x][y][z + 1] == Element::kHead)
+			if (data[x][y][z + 1] == Element::kHead || data[x][y][z + 1] == Element::kBlock)
 			{
 				itr->end_ = { x,y,z + 1 };
 			}
@@ -583,7 +588,7 @@ void MapManager::InspectShotAction(MoveDirect direct)
 		{
 			itr->result_ = MovedResult::kSUCCECES;
 			// 頭の時
-			if (data[x][y][z - 1] == Element::kHead)
+			if (data[x][y][z - 1] == Element::kHead || data[x][y][z - 1] == Element::kBlock)
 			{
 				itr->end_ = { x,y,z - 1 };
 			}
@@ -597,7 +602,7 @@ void MapManager::InspectShotAction(MoveDirect direct)
 		if (data[x + 1][y][z] != Element::kNone)
 		{
 			itr->result_ = MovedResult::kSUCCECES;
-			if (data[x + 1][y][z] == Element::kHead)
+			if (data[x + 1][y][z] == Element::kHead || data[x + 1][y][z] == Element::kBlock)
 			{
 				itr->end_ = { x + 1,y,z };
 			}
@@ -611,7 +616,7 @@ void MapManager::InspectShotAction(MoveDirect direct)
 		if (data[x - 1][y][z] != Element::kNone)
 		{
 			itr->result_ = MovedResult::kSUCCECES;
-			if (data[x - 1][y][z] == Element::kHead)
+			if (data[x - 1][y][z] == Element::kHead || data[x - 1][y][z] == Element::kBlock)
 			{
 				itr->end_ = { x - 1,y,z };
 			}
@@ -645,7 +650,7 @@ void MapManager::InspectShotAction(MoveDirect direct)
 	//}
 }
 
-void MapManager::ApplyShotAction()
+void MapManager::ApplyShotAction(MoveDirect direct)
 {
 	std::list<InspecterMove>::iterator itr = moveLists_.begin();
 	if (itr->result_ == MovedResult::kFAIL)
@@ -665,6 +670,36 @@ void MapManager::ApplyShotAction()
 		SetElement(itr->end_, GetElement(itr->start_));
 		SetElement(itr->start_, Element::kNone);
 		blockManager_->SetBlockPosition(itr->start_, itr->end_);
+	}
+	else if (GetElement(itr->end_) == Element::kBlock)
+	{
+		BaseBlock::StageVector bodyPos = { itr->end_.x ,itr->end_.y,itr->end_.z };
+		switch (direct)
+		{
+		case MapManager::dFRONT:
+			bodyPos.z--;
+			break;
+		case MapManager::dBACK:
+			bodyPos.z++;
+			break;
+		case MapManager::dRIGHT:
+			bodyPos.x--;
+			break;
+		case MapManager::dLEFT:
+			bodyPos.x++;
+			break;
+		case MapManager::dDOWN:
+			break;
+		case MapManager::dNONE:
+			break;
+		default:
+			break;
+		}
+		SetElement(itr->end_, Element::kNone);
+		blockManager_->DeleteBlockPosition(itr->end_);
+		SetElement(bodyPos, GetElement(itr->start_));
+		SetElement(itr->start_, Element::kNone);
+		blockManager_->SetBlockPosition(itr->start_, bodyPos);
 	}
 	else
 	{

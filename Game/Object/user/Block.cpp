@@ -9,7 +9,10 @@ void NormalBlock::Initialize()
 }
 void NormalBlock::Draw()
 {
-	model_->Draw(modelTransform_, *viewProjection_);
+	if (isDraw_)
+	{
+		model_->Draw(modelTransform_, *viewProjection_);
+	}
 }
 
 void NormalBlock::ApplyVariables(const char* groupName)
