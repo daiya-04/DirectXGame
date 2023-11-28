@@ -60,7 +60,10 @@ void BodyBlock::Initialize()
 
 void BodyBlock::Draw()
 {
-	model_->Draw(modelTransform_, *viewProjection_);
+	if (isDraw_)
+	{
+		model_->Draw(modelTransform_, *viewProjection_);
+	}
 }
 
 void BodyBlock::ApplyVariables(const char* groupName)

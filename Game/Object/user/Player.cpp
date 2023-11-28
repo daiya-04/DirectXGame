@@ -63,7 +63,10 @@ void PlayerBlock::Initialize()
 
 void PlayerBlock::Draw()
 {
-	model_->Draw(modelTransform_, *viewProjection_);
+	if (isDraw_)
+	{
+		model_->Draw(modelTransform_, *viewProjection_);
+	}
 }
 
 void PlayerBlock::ApplyVariables(const char* groupName)
