@@ -81,32 +81,30 @@ void MapManager::DebugGUI()
 	ImGui::Text("ShotFlag: %s", isShotFlag_ ? "true" : "false");
 
 
-	std::string line[5];
-
-	// 今のステージの情報を取る
-	for (size_t i = 0; i < currentData_.kMaxStageSize_.y; i++)
-	{
-		line[i] = "y : " + std::to_string(i) + "\n";
-		line[i] += "x:z 0 1 2 3 4 5 6\n";
-		for (size_t j = 0; j < currentData_.kMaxStageSize_.x; j++)
-		{
-			line[i] += std::to_string(j) + ": ";
-			for (size_t k = 0; k < currentData_.kMaxStageSize_.z; k++)
-			{
-				line[i] += " " + std::to_string((size_t)data[j][i][k]);
-			}
-			line[i] += "\n";
-		}
-	}
 
 	ImGui::Separator();
 	if (ImGui::TreeNode("StageInfoAll"))
 	{
+		std::string line = "";
 
-		for (size_t i = 0; i < data.size(); i++)
+		// 今のステージの情報を取る
+		for (size_t i = 0; i < currentData_.kMaxStageSize_.y; i++)
 		{
-			ImGui::Text(line[i].c_str());
+			line += "y : " + std::to_string(i) + "\n";
+			line += "x:z 0 1 2 3 4 5 6\n";
+			for (size_t j = 0; j < currentData_.kMaxStageSize_.x; j++)
+			{
+				line += std::to_string(j) + ": ";
+				for (size_t k = 0; k < currentData_.kMaxStageSize_.z; k++)
+				{
+					line += " " + std::to_string((size_t)data[j][i][k]);
+				}
+				line += "\n";
+			}
+			line += "\n";
 		}
+
+		ImGui::Text(line.c_str());
 
 		ImGui::TreePop();
 	}
