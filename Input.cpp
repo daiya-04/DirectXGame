@@ -99,3 +99,17 @@ bool Input::TriggerButton(int button) const{
 	}
 	return false;
 }
+
+bool Input::LeftTrigger() const {
+	if (joyState.Gamepad.bLeftTrigger && !preJoyState.Gamepad.bLeftTrigger) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::RightTrigger() const {
+	if (joyState.Gamepad.bRightTrigger && !preJoyState.Gamepad.bRightTrigger) {
+		return true;
+	}
+	return false;
+}

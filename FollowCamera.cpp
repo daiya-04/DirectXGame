@@ -25,12 +25,7 @@ void FollowCamera::Update() {
 
 	ImGui::End();
 
-	const float rotateSpeed = 0.02f;
-
-	viewProjection_.rotation_ += Input::GetInstance()->GetCameraRotate() * rotateSpeed;
-
-	viewProjection_.rotation_.x = min(viewProjection_.rotation_.x, 89.99f * (float)std::numbers::pi / 180.0f);
-	viewProjection_.rotation_.x = max(viewProjection_.rotation_.x, -5.0f * (float)std::numbers::pi / 180.0f);
+	
 
 	if (lockOn_->ExistTarget()) {
 		
@@ -45,6 +40,13 @@ void FollowCamera::Update() {
 		viewProjection_.translation_ = target_->translation_ + offset;
 
 	} else {
+
+		const float rotateSpeed = 0.02f;
+
+		viewProjection_.rotation_ += Input::GetInstance()->GetCameraRotate() * rotateSpeed;
+
+		viewProjection_.rotation_.x = min(viewProjection_.rotation_.x, 89.99f * (float)std::numbers::pi / 180.0f);
+		viewProjection_.rotation_.x = max(viewProjection_.rotation_.x, -5.0f * (float)std::numbers::pi / 180.0f);
 
 		if (target_) {
 

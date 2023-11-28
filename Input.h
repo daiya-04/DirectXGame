@@ -51,6 +51,10 @@ public:
 
 	bool TriggerButton(int button) const;
 
+	bool LeftTrigger() const;
+
+	bool RightTrigger() const;
+
 private:
 	Input() = default;
 	~Input() = default;

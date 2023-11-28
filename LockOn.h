@@ -40,6 +40,8 @@ public:
 
 	void Search(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection);
 
+	void ChangeTarget(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection);
+
 	bool OutSideDecision(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection);
 
 	Vector3 GetTargetPos()const;

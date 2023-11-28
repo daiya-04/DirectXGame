@@ -26,6 +26,10 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 			target_ = nullptr;
 		}
 
+		if (Input::GetInstance()->LeftTrigger()) {
+			ChangeTarget(enemies, viewProjection);
+		}
+
 	}else {
 
 		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_Y)) {
@@ -86,9 +90,11 @@ void LockOn::Search(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 
 		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
 
-			float arcTangent = std::atan2(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
+			//float arcTangent = std::atan2(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
 
-			if (std::fabs(arcTangent) <= angleRange_) {
+			float angle = std::acos(positionView.z / std::sqrtf(positionView.x * positionView.x + positionView.z * positionView.z));
+
+			if (std::fabs(angle) <= angleRange_) {
 				targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
 			}
 
@@ -100,6 +106,41 @@ void LockOn::Search(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 			target_ = targets.front().second;
 		}
 
+	}
+
+}
+
+void LockOn::ChangeTarget(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection){
+	std::list<std::pair<float, const Enemy*>> targets;
+
+	for (const std::unique_ptr<Enemy>& enemy : enemies) {
+		Vector3	worldPos = enemy->GetWorldPos();
+
+		Vector3 positionView = Transform(worldPos, viewProjection.matView_);
+
+		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
+
+			//float arcTangent = std::atan2(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
+
+			float angle = std::acos(positionView.z / std::sqrtf(positionView.x * positionView.x + positionView.z * positionView.z));
+
+			if (std::fabs(angle) <= angleRange_) {
+				targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
+			}
+		}
+	}
+
+	if (!targets.empty()) {
+		targets.sort([](auto& pair1, auto& pair2) {return pair1.first < pair2.first; });
+		for (std::list<std::pair<float, const Enemy*>>::iterator itTarget = targets.begin(); itTarget != targets.end();) {
+			if ((*itTarget).second == target_) {
+				itTarget++;
+				continue;
+			}else {
+				target_ = (*itTarget).second;
+			}
+			
+		}
 	}
 
 }

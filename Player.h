@@ -98,8 +98,8 @@ private:
 	Vector3 size_ = { 1.0f,2.0f,1.0f };
 
 	float speed = 0.5f;
-	Vector3 rotate_ = {};
-	Matrix4x4 rotateMat{};
+	Vector3 rotate_ = {0.0f,0.0f,1.0f};
+	Vector3 from_ = { 0.0f,0.0f,1.0f };
 	Vector3 velocity_ = {};
 
 	bool isJamp_ = false;
@@ -113,7 +113,9 @@ private:
 	const ViewProjection* viewProjection_;
 	const LockOn* lockOn_ = nullptr;
 	
-	
+	Matrix4x4 rotateMat_{};
+	Matrix4x4 weaponRotateMat_{};
+	Matrix4x4 weaponCollisionRotateMat_{};
 
 public:
 

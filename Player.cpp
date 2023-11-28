@@ -35,6 +35,7 @@ void Player::Initialize(std::vector<uint32_t> modelHandles) {
 
 	partsWorldTransform_[Body].parent_ = &worldTransform_;
 	partsWorldTransform_[Head].parent_ = &partsWorldTransform_[Body];
+	
 
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "Player";
@@ -74,27 +75,37 @@ void Player::Update() {
 	
 	(this->*BehaviorTable[static_cast<size_t>(behavior_)])();
 	
-//#ifdef _DEBUG
-//	ImGui::Begin("player");
-//
-//	ImGui::DragFloat3("translation", &worldTransform_.translation_.x, 0.01f);
-//	ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x, 0.01f);
-//
-//	ImGui::DragFloat3("stamptrnslation", &weaponCollision_.translation_.x, 0.01f);
-//	ImGui::Text("stamp pos : %f %f %f", weaponCollision_.matWorld_.m[3][0], weaponCollision_.matWorld_.m[3][1], weaponCollision_.matWorld_.m[3][2]);
-//	ImGui::DragFloat3("stamp rotate", &weaponCollision_.rotation_.x, 0.01f);
-//
-//	ImGui::End();
-//#endif // _DEBUG
+#ifdef _DEBUG
+	ImGui::Begin("player");
+
+	ImGui::DragFloat3("translation", &partsWorldTransform_[0].matWorld_.m[3][0], 0.01f);
+	ImGui::DragFloat3("rotate", &rotate_.x, 0.01f);
+
+	/*ImGui::DragFloat3("stamptrnslation", &weaponCollision_.translation_.x, 0.01f);
+	ImGui::Text("stamp pos : %f %f %f", weaponCollision_.matWorld_.m[3][0], weaponCollision_.matWorld_.m[3][1], weaponCollision_.matWorld_.m[3][2]);
+	ImGui::DragFloat3("stamp rotate", &weaponCollision_.rotation_.x, 0.01f);*/
+
+	ImGui::End();
+#endif // _DEBUG
 
 	
 	//行列更新
-	worldTransform_.UpdateMatrix();
+	//worldTransform_.UpdateMatrix();
+	Matrix4x4 S = MakeScaleMatrix(worldTransform_.scale_);
+	Matrix4x4 T = MakeTranslateMatrix(worldTransform_.translation_);
+	worldTransform_.matWorld_ = S * rotateMat_ * T;
+	worldTransform_.matWorld_;
 	for (size_t index = 0; index < partsWorldTransform_.size(); index++) {
 		partsWorldTransform_[index].UpdateMatrix();
 	}
-	weaponCollision_.UpdateMatrix();
-	weaponWorldTransform_.UpdateMatrix();
+	S = MakeScaleMatrix(weaponWorldTransform_.scale_);
+	T = MakeTranslateMatrix(weaponWorldTransform_.translation_);
+	weaponWorldTransform_.matWorld_ = S * weaponRotateMat_ * T;
+	//weaponCollision_.UpdateMatrix();
+	S = MakeScaleMatrix(weaponCollision_.scale_);
+	T = MakeTranslateMatrix(weaponCollision_.translation_);
+	weaponCollision_.matWorld_ = S * weaponCollisionRotateMat_ * T;
+	//weaponWorldTransform_.UpdateMatrix();
 }
 
 void Player::Draw(const ViewProjection& viewProjection) {
@@ -164,18 +175,24 @@ void Player::RootUpdate() {
 		Vector3 lockOnPos = lockOn_->GetTargetPos();
 
 		Vector3 sub = lockOnPos - worldTransform_.translation_;
+		sub.y = 0.0f;
 
 		rotate_ = sub;
-
-		worldTransform_.rotation_.y = std::atan2(sub.x, sub.z);
+		
+		//worldTransform_.rotation_.y = std::atan2(rotate_.x, rotate_.z);
+		
+		rotateMat_ = DirectionToDirection(from_, rotate_);
+		
 
 	}else {
+		
 		if (move != zeroVector) {
 			rotate_ = move;
 		}
 
-		worldTransform_.rotation_.y = std::atan2(rotate_.x, rotate_.z);
-
+		//worldTransform_.rotation_.y = std::atan2(rotate_.x, rotate_.z);
+		
+		rotateMat_ = DirectionToDirection(from_, rotate_);
 
 	}
 
@@ -188,8 +205,8 @@ void Player::AttackInitialize() {
 
 	weaponWorldTransform_.translation_ = worldTransform_.translation_;
 	weaponCollision_.translation_ = worldTransform_.translation_;
-	weaponWorldTransform_.rotation_ = worldTransform_.rotation_;
-	weaponCollision_.rotation_ = worldTransform_.rotation_;
+	/*weaponWorldTransform_.rotation_ = worldTransform_.rotation_;
+	weaponCollision_.rotation_ = worldTransform_.rotation_;*/
 	weaponWorldTransform_.translation_.y = 3.0f;
 	weaponCollision_.translation_.y = 6.0f;
 	workAttack_.attackParameter_ = 0;
@@ -250,15 +267,18 @@ void Player::AttackUpdate() {
 	switch (workAttack_.comboIndex_) {
 	    case 0:
 			workAttack_.theta_ = Lerp(T, 0.0f, (float)std::numbers::pi / 2.0f);
-			weaponWorldTransform_.rotation_.x = workAttack_.theta_;
+			//weaponWorldTransform_.rotation_.x = workAttack_.theta_;
+			weaponRotateMat_ = MakeRotateAxisAngle({ 1.0f,0.0f,0.0f }, workAttack_.theta_);
 			break;
 		case 1:
 			workAttack_.theta_ = Lerp(T, 0.0f, (float)std::numbers::pi / 2.0f);
-			weaponWorldTransform_.rotation_.x = workAttack_.theta_;
+			//weaponWorldTransform_.rotation_.x = workAttack_.theta_;
+			weaponRotateMat_ = MakeRotateAxisAngle({ 1.0f,0.0f,0.0f }, workAttack_.theta_);
 			break;
 		case 2:
 			workAttack_.theta_ = Lerp(T, -(float)std::numbers::pi / 2.0f, (float)std::numbers::pi / 2.0f);
-			weaponWorldTransform_.rotation_.x = workAttack_.theta_;
+			//weaponWorldTransform_.rotation_.x = workAttack_.theta_;
+			weaponRotateMat_ = MakeRotateAxisAngle({ 1.0f,0.0f,0.0f }, workAttack_.theta_);
 			break;
 	}
 	
@@ -268,12 +288,19 @@ void Player::AttackUpdate() {
 
 		Vector3 sub = lockOnPos - worldTransform_.translation_;
 
-		worldTransform_.rotation_.y = std::atan2(sub.x, sub.z);
+		//worldTransform_.rotation_.y = std::atan2(sub.x, sub.z);
+		
+		
+		rotateMat_ = DirectionToDirection(from_, rotate_);
+		
 
-		weaponWorldTransform_.rotation_.y = worldTransform_.rotation_.y;
-		weaponCollision_.rotation_.y = worldTransform_.rotation_.y;
+		//weaponWorldTransform_.rotation_.y = worldTransform_.rotation_.y;
+		//weaponCollision_.rotation_.y = worldTransform_.rotation_.y;
 
 	}
+
+	weaponRotateMat_ = rotateMat_ * weaponRotateMat_;
+	weaponCollisionRotateMat_ = weaponCollisionRotateMat_ * rotateMat_;
 
 	Vector3 distance = { 0.0f,9.0f + weaponWorldTransform_.translation_.y ,0.0f };
 
@@ -283,7 +310,8 @@ void Player::AttackUpdate() {
 		distance.y * std::sinf(workAttack_.theta_) + distance.z * std::cosf(workAttack_.theta_),
 	};
 
-	move = TransformNormal(move, MakeRotateYMatrix(weaponCollision_.rotation_.y));
+	//move = TransformNormal(move, MakeRotateYMatrix(weaponCollision_.rotation_.y));
+	move = TransformNormal(move, rotateMat_);
 
 	weaponCollision_.translation_ = move + worldTransform_.translation_;
 
