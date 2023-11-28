@@ -112,6 +112,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Object\MapManager.cpp" />
     <ClCompile Include="Game\Object\user\Block.cpp" />
     <ClCompile Include="Game\Object\user\Body.cpp" />
+    <ClCompile Include="Game\Object\user\Head.cpp" />
     <ClCompile Include="Game\Object\user\Player.cpp" />
     <ClCompile Include="Game\Scene\IScene.cpp" />
     <ClCompile Include="Game\Scene\SceneManager.cpp" />
@@ -119,6 +120,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\user\TitleScene.cpp" />
     <ClCompile Include="Game\Stage\DebugStage.cpp" />
     <ClCompile Include="GlobalVariables.cpp" />
+    <ClCompile Include="Game\Stage\Stage.cpp" />
     <ClCompile Include="ImGuiManager.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
@@ -151,14 +153,17 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Object\MapManager.h" />
     <ClInclude Include="Game\Object\user\Block.h" />
     <ClInclude Include="Game\Object\user\Body.h" />
+    <ClInclude Include="Game\Object\user\Head.h" />
     <ClInclude Include="Game\Object\user\Player.h" />
     <ClInclude Include="Game\Scene\IScene.h" />
     <ClInclude Include="Game\Scene\SceneList.h" />
     <ClInclude Include="Game\Scene\SceneManager.h" />
     <ClInclude Include="Game\Scene\user\GameScene.h" />
     <ClInclude Include="Game\Scene\user\TitleScene.h" />
-    <ClInclude Include="Game\Stage\DebugStage.h" />
     <ClInclude Include="GlobalVariables.h" />
+
+    <ClInclude Include="Game\Stage\Stage.h" />
+
     <ClInclude Include="ImGuiManager.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Log.h" />

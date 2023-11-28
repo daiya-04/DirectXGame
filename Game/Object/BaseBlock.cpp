@@ -28,7 +28,16 @@ void BaseBlock::Update()
 {
 	modelTransform_.translation_ = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
 	//BaseBlock::Update();
-	if (stagingRequest_) {
+
+	if (!stagingRequest_ && stagingNextRequest_ && staging_ == kSROOT)
+	{
+		stagingRequest_ = stagingNextRequest_;
+		preMapPosition_ = mapPosition_;
+		mapPosition_ = nextMapPosition_;
+		stagingNextRequest_ = std::nullopt;
+	}
+	if (stagingRequest_)
+	{
 		staging_ = stagingRequest_.value();
 		switch (staging_)
 		{
@@ -117,7 +126,8 @@ void BaseBlock::StagingRoot()
 
 
 	// ループさせる
-	if (cStagingFrames_[kSROOT] <= stagingFrame_) {
+	if (cStagingFrames_[kSROOT] <= stagingFrame_)
+	{
 		stagingRequest_ = kSROOT;
 	}
 
@@ -129,7 +139,8 @@ void BaseBlock::StagingMove()
 
 
 	// 体に当たっている場合は積込をしたい
-	if (cStagingFrames_[kSMOVE] <= stagingFrame_) {
+	if (cStagingFrames_[kSMOVE] <= stagingFrame_)
+	{
 		stagingRequest_ = kSROOT;
 	}
 }
@@ -140,7 +151,8 @@ void BaseBlock::StagingStop()
 
 
 
-	if (cStagingFrames_[kSSTOP] <= stagingFrame_) {
+	if (cStagingFrames_[kSSTOP] <= stagingFrame_)
+	{
 		stagingRequest_ = kSROOT;
 	}
 }
@@ -151,7 +163,8 @@ void BaseBlock::StagingLoad()
 
 
 
-	if (cStagingFrames_[kSLOAD] <= stagingFrame_) {
+	if (cStagingFrames_[kSLOAD] <= stagingFrame_)
+	{
 		stagingRequest_ = kSROOT;
 	}
 }
@@ -162,7 +175,8 @@ void BaseBlock::StagingFall()
 
 
 
-	if (cStagingFrames_[kSFALL] <= stagingFrame_) {
+	if (cStagingFrames_[kSFALL] <= stagingFrame_)
+	{
 		stagingRequest_ = kSROOT;
 	}
 }
@@ -173,7 +187,8 @@ void BaseBlock::StagingOver()
 
 
 
-	if (cStagingFrames_[kSOVER] <= stagingFrame_) {
+	if (cStagingFrames_[kSOVER] <= stagingFrame_)
+	{
 		stagingRequest_ = kSROOT;
 	}
 }

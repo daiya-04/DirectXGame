@@ -50,7 +50,7 @@ private:
 	ViewProjection* vp_ = nullptr;
 
 	// マップのサイズ
-	size_t kMapSize = 0;
+	BaseBlock::StageVector kMapSize;
 
 	// 
 	MapManager::StageArray<BaseBlock*> mapBlock_;
@@ -68,12 +68,13 @@ public:
 	void Draw();
 
 	// ステージ情報を設定する関数
-	void SetStageData(const MapManager::StageArray<BaseBlock::Element> data);
+	void SetStageData(const MapManager::StageData& data);
 
 	void SetViewProjection(ViewProjection* view) { vp_ = view; }
 
 	// マップの場所を保存して指定できるようにする
 	void SetBlockPosition(const BaseBlock::StageVector& prePos,const BaseBlock::StageVector& pos);
+	void DeleteBlockPosition(const BaseBlock::StageVector& pos);
 
 	bool GetIsStaging();
 
