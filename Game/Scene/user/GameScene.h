@@ -24,6 +24,8 @@ public:
 
 	void DebugGUI() override;
 
+	void SetStageNum(int num) override { stageNum_ = num; }
+
 private: // プライベート関数
 
 
@@ -33,6 +35,8 @@ private: // プライベート変数
 
 	// ゲームシーン内でデータを保存する
 	std::unique_ptr<ViewProjection> maingCamera_;
+
+	int stageNum_ = 0;
 
 	// ステージを持たせる
 	std::unique_ptr<DebugStage> currentStage_;

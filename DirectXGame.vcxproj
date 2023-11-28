@@ -160,10 +160,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\SceneManager.h" />
     <ClInclude Include="Game\Scene\user\GameScene.h" />
     <ClInclude Include="Game\Scene\user\TitleScene.h" />
+    <ClInclude Include="Game\Stage\DebugStage.h" />
     <ClInclude Include="GlobalVariables.h" />
-
     <ClInclude Include="Game\Stage\Stage.h" />
-
     <ClInclude Include="ImGuiManager.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Log.h" />

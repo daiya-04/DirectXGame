@@ -24,6 +24,7 @@ void GameScene::Reset()
 	maingCamera_->translation_ = kOriginOffset_;
 	maingCamera_->rotation_ = kOriginAngle;
 
+	currentStage_->SetStageNum(stageNum_);
 	currentStage_->Reset();
 
 }

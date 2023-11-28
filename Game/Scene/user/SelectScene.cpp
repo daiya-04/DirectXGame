@@ -51,8 +51,35 @@ void SelectScene::Update()
 {
 	DebugGUI();
 
+
+	if (input_->TriggerKey(DIK_A) || input_->TriggerKey(DIK_LEFT))
+	{
+		selectNum_--;
+	}
+	if (input_->TriggerKey(DIK_D) || input_->TriggerKey(DIK_RIGHT))
+	{
+		selectNum_++;
+	}
+	if (input_->TriggerKey(DIK_W) || input_->TriggerKey(DIK_UP))
+	{
+		selectNum_ -= 4;
+	}
+	if (input_->TriggerKey(DIK_S) || input_->TriggerKey(DIK_DOWN))
+	{
+		selectNum_ += 4;
+	}
+
+	if (selectNum_ < 0)
+	{
+		selectNum_ = 0;
+	}
+	else if (stageNum_ <= selectNum_)
+	{
+		selectNum_ = stageNum_ - 1;
+	}
 	if (input_->TriggerKey(DIK_SPACE)) {
-		SceneManager::GetInstace()->ChegeScene(kGAME);
+		//SceneManager::GetInstace()->ChegeScene(kGAME);
+		SceneManager::GetInstace()->SelectStage(selectNum_);
 	}
 
 	for (size_t index = 0; index < stageNum_; index++) {
@@ -91,7 +118,11 @@ void SelectScene::DebugGUI()
 {
 #ifdef _DEBUG
 	
+	ImGui::Begin("SelectScene");
 
+	ImGui::Text("Select : %d", selectNum_);
+
+	ImGui::End();
 
 #endif // _DEBUG
 }

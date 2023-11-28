@@ -18,10 +18,28 @@ void DebugStage::Initialize(ViewProjection* view)
 {
 	mapManager_ = MapManager::GetInstance();
 	blockManager_ = BlockManager::GetInstance();
+	variables_ = GlobalVariables::GetInstance();
 
 	blockManager_->SetViewProjection(view);
-	LoadStageData();
-	ApplyStageData();
+
+	StageArray<Element>& data = kStageData_.array_;
+	BaseBlock::StageVector size = kStageData_.kMaxStageSize_ = { 5,5,5 };
+	//size = { 5,5,5 };
+	data.resize(size.x);
+	for (size_t i = 0; i < size.x; i++)
+	{
+		data[i].resize(size.y);
+		for (size_t j = 0; j < size.y; j++)
+		{
+			data[i][j].resize(size.z);
+			for (size_t k = 0; k < size.z; k++)
+			{
+				data[i][j][k] = Element::kNone;
+			}
+		}
+	}
+	//LoadStageData();
+	//ApplyStageData();
 }
 
 void DebugStage::Reset()
@@ -55,7 +73,27 @@ void DebugStage::DebugGUI()
 
 	ImGui::Begin("DebugStage");
 
-	if (ImGui::Button("Load")) {
+	ImGui::Text("%d %d %d", kStageData_.kMaxStageSize_.x, kStageData_.kMaxStageSize_.y, kStageData_.kMaxStageSize_.z);
+
+	if (ImGui::Button("Save"))
+	{
+		SaveStageData();
+	}
+
+	if (ImGui::Button("LoadStageSize"))
+	{
+		std::string groupName = "Stage";
+		std::string append = "-" + std::to_string(stageNum_ + 1);
+		Vector3 vecSize{};
+		vecSize = variables_->GetVec3Value(groupName + append, "StageSize");
+		kStageData_.kMaxStageSize_ = { (size_t)vecSize.x,(size_t)vecSize.y,(size_t)vecSize.z };
+	}
+	
+	ImGui::SameLine();
+
+	if (ImGui::Button("LoadAll"))
+	{
+		LoadStageData();
 		Reset();
 	}
 
@@ -67,27 +105,86 @@ void DebugStage::DebugGUI()
 void DebugStage::LoadStageData()
 {
 	// グローバルバリアブルズを使う
+	std::string groupName = "Stage";
+	std::string append = "-" + std::to_string(stageNum_ + 1);
+	Vector3 vecSize{};
+	vecSize = variables_->GetVec3Value(groupName + append, "StageSize");
+	kStageData_.kMaxStageSize_ = { (size_t)vecSize.x,(size_t)vecSize.y,(size_t)vecSize.z };
+	// StageSize
+	// 5,5,5  :  7,7,7
 
+	int index = 0;
 
-
-	// ここでファイルを読み込むので本来とは違う
-	kStageData_.kMaxStageSize_ = { 5,5,5 };
 	StageArray<Element>& data = kStageData_.array_;
 	BaseBlock::StageVector size = kStageData_.kMaxStageSize_;
 	data.resize(size.x);
-	for (size_t i = 0; i < data.size(); i++) {
+	for (size_t i = 0; i < size.x; i++)
+	{
 		data[i].resize(size.y);
-		for (size_t j = 0; j < data[i].size(); j++) {
+		for (size_t j = 0; j < size.y; j++)
+		{
 			data[i][j].resize(size.z);
-			for (size_t k = 0; k < data[i][j].size(); k++) {
-				data[i][j][k] = Element::kNone;
+			for (size_t k = 0; k < size.z; k++)
+			{
+				data[i][j][k] = (Element)variables_->GetIntValue(groupName + append, std::to_string(index));
+				index++;
 			}
 		}
 	}
+	// Element
+	// "0" : 0,
+	// ~  "124" : 0
+
+	// ここでファイルを読み込むので本来とは違う
+	//kStageData_.kMaxStageSize_ = { 5,5,5 };
+	//StageArray<Element>& data = kStageData_.array_;
+	//BaseBlock::StageVector size = kStageData_.kMaxStageSize_;
+	//data.resize(size.x);
+	//for (size_t i = 0; i < data.size(); i++)
+	//{
+	//	data[i].resize(size.y);
+	//	for (size_t j = 0; j < data[i].size(); j++)
+	//	{
+	//		data[i][j].resize(size.z);
+	//		for (size_t k = 0; k < data[i][j].size(); k++)
+	//		{
+	//			data[i][j][k] = Element::kNone;
+	//		}
+	//	}
+	//}
 }
 
 void DebugStage::SaveStageData()
 {
+	std::string groupName = "Stage";
+	std::string append = "-" + std::to_string(stageNum_ + 1);
+
+	variables_->CreateGroup(groupName + append);
+	Vector3 vecSize{};
+
+	vecSize.x = (float)kStageData_.kMaxStageSize_.x;
+	vecSize.y = (float)kStageData_.kMaxStageSize_.y;
+	vecSize.z = (float)kStageData_.kMaxStageSize_.z;
+	variables_->AddItem(groupName + append, "StageSize", vecSize);
+	variables_->SetValue(groupName + append, "StageSize", vecSize);
+
+
+	int index = 0;
+
+	StageArray<Element>& data = kStageData_.array_;
+	BaseBlock::StageVector size = kStageData_.kMaxStageSize_;
+	for (size_t i = 0; i < size.x; i++)
+	{
+		for (size_t j = 0; j < size.y; j++)
+		{
+			for (size_t k = 0; k < size.z; k++)
+			{
+				variables_->AddItem(groupName + append, std::to_string(index), (int32_t)data[i][j][k]);
+				variables_->SetValue(groupName + append, std::to_string(index), (int32_t)data[i][j][k]);
+				index++;
+			}
+		}
+	}
 }
 
 void DebugStage::ApplyStageData()
@@ -95,22 +192,13 @@ void DebugStage::ApplyStageData()
 	StageArray<Element>& data = kStageData_.array_;
 	BaseBlock::StageVector size = kStageData_.kMaxStageSize_;
 	// 地面の位置を設定
-	for (size_t i = 0; i < size.x; i++) {
-		for (size_t j = 0; j < size.z; j++) {
+	for (size_t i = 0; i < size.x; i++)
+	{
+		for (size_t j = 0; j < size.z; j++)
+		{
 			data[i][size.y - 1][j] = Element::kBlock;
 		}
 	}
-	data[2][2][0] = Element::kBlock;
-	data[2][2][4] = Element::kBlock;
-	data[4][3][0] = Element::kBlock;
-
-	data[1][3][4] = Element::kHead;
-
-	data[3][3][4] = Element::kBody;
-	data[0][3][0] = Element::kBody;
-	// プレイヤーの位置を設定
-	data[0][2][0] = Element::kPlayer;
-
 	mapManager_->SetStageData(kStageData_);
 	blockManager_->SetStageData(kStageData_);
 }

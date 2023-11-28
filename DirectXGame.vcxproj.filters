@@ -309,6 +309,9 @@
     <ClInclude Include="GlobalVariables.h">
       <Filter>Engine\GlobalVariable</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Stage\DebugStage.h">
+      <Filter>Engine\Game\Stage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

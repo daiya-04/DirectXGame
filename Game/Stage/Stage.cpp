@@ -18,10 +18,11 @@ void Stage::Initialize(ViewProjection* view)
 {
 	mapManager_ = MapManager::GetInstance();
 	blockManager_ = BlockManager::GetInstance();
+	variables_ = GlobalVariables::GetInstance();
 
 	blockManager_->SetViewProjection(view);
 	LoadStageData();
-	ApplyStageData();
+	//ApplyStageData();
 }
 
 void Stage::Reset()
@@ -37,6 +38,7 @@ void Stage::Update()
 
 	if (Input::GetInstance()->TriggerKey(DIK_R))
 	{
+		LoadStageData();
 		Reset();
 	}
 
@@ -67,27 +69,32 @@ void Stage::DebugGUI()
 void Stage::LoadStageData()
 {
 	// グローバルバリアブルズを使う
+	std::string groupName = "Stage";
+	std::string append = "-" + std::to_string(stageNum_ + 1);
+	Vector3 vecSize{};
+	vecSize = variables_->GetVec3Value(groupName + append, "StageSize");
+	kStageData_.kMaxStageSize_ = { (size_t)vecSize.x,(size_t)vecSize.y,(size_t)vecSize.z };
+	// StageSize
+	// 5,5,5  :  7,7,7
 
+	int index = 0;
 
-
-	// ここでファイルを読み込むので本来とは違う
-	kStageData_.kMaxStageSize_ = { 5,5,5 };
 	StageArray<Element>& data = kStageData_.array_;
 	BaseBlock::StageVector size = kStageData_.kMaxStageSize_;
 	data.resize(size.x);
-	for (size_t i = 0; i < data.size(); i++) {
+	for (size_t i = 0; i < size.x; i++)
+	{
 		data[i].resize(size.y);
-		for (size_t j = 0; j < data[i].size(); j++) {
+		for (size_t j = 0; j < size.y; j++)
+		{
 			data[i][j].resize(size.z);
-			for (size_t k = 0; k < data[i][j].size(); k++) {
-				data[i][j][k] = Element::kNone;
+			for (size_t k = 0; k < size.z; k++)
+			{
+				data[i][j][k] = (Element)variables_->GetIntValue(groupName + append, std::to_string(index));
+				index++;
 			}
 		}
 	}
-}
-
-void Stage::SaveStageData()
-{
 }
 
 void Stage::ApplyStageData()

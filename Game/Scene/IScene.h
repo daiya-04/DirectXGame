@@ -55,6 +55,8 @@ public:
 	// デストラクタ
 	virtual ~IScene();
 
+	virtual void SetStageNum(int num) { num; }
+
 	// シーン番号の取得
 	int GetSceneNo();
 

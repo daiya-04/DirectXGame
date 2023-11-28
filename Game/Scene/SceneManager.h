@@ -27,6 +27,8 @@ public: // パブリック関数
 	void DrawUI();
 
 	void ChegeScene(int num);
+	// ゲームシーンへ
+	void SelectStage(int num);
 
 	void DebugGUI();
 

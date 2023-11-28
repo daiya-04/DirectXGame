@@ -40,4 +40,6 @@ private: // プライベート変数
 	std::unique_ptr<Sprite> header_;
 	std::unique_ptr<Sprite> stageImgFrame_;
 
+	int selectNum_ = 0;
+
 };

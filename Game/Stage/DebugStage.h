@@ -9,16 +9,21 @@
 #include "../Object/MapManager.h"
 #include "../Object/BlockManager.h"
 
+#include "../../GlobalVariables.h"
+
 class DebugStage
 {
 private:
 
 	// 変わらないステージの情報
 	MapManager::StageData kStageData_;
-	
+
 	// マップの管理マネージャー
 	MapManager* mapManager_ = nullptr;
 	BlockManager* blockManager_ = nullptr;
+
+	GlobalVariables* variables_ = nullptr;
+	int stageNum_ = 0;
 
 public:
 
@@ -35,6 +40,8 @@ public:
 	void Draw();
 
 	void DebugGUI();
+
+	void SetStageNum(int num) { stageNum_ = num; }
 
 private:
 

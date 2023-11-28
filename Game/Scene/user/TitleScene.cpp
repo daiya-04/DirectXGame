@@ -21,12 +21,8 @@ void TitleScene::Initialize()
 
 void TitleScene::Reset()
 {
-	
-	
 	title_->Initialize();
 	pushSpace_->Initialize();
-
-	
 	
 }
 

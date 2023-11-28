@@ -57,6 +57,15 @@ void SceneManager::ChegeScene(int num)
 	sceneArray_[currentSceneNo_]->Reset();
 }
 
+void SceneManager::SelectStage(int num)
+{
+	preSceneNo_ = currentSceneNo_;
+	currentSceneNo_ = kGAME;
+
+	sceneArray_[currentSceneNo_]->SetStageNum(num);
+	sceneArray_[currentSceneNo_]->Reset();
+}
+
 void SceneManager::DebugGUI()
 {
 #ifdef _DEBUG
