@@ -14,7 +14,7 @@ void BaseBlock::Initialize()
 	//pStaging[kSLOAD] = &BaseBlock::StagingLoad;
 	for (size_t i = 0; i < kSCOUNT; i++)
 	{
-		cStagingFrames_[i] = 30;
+		cStagingFrames_[i] = 10;
 	}
 }
 
@@ -26,7 +26,8 @@ void BaseBlock::Initialize(const StageVector& pos)
 
 void BaseBlock::Update()
 {
-	preMapPosition_ = mapPosition_;
+	modelTransform_.translation_ = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
+	//BaseBlock::Update();
 	if (stagingRequest_) {
 		staging_ = stagingRequest_.value();
 		switch (staging_)
@@ -43,6 +44,13 @@ void BaseBlock::Update()
 		case BaseBlock::kSLOAD:
 			StagingInitialize();
 			break;
+		case BaseBlock::kSFALL:
+			StagingInitialize();
+			break;
+			break;
+		case BaseBlock::kSOVER:
+			StagingInitialize();
+			break;
 		case BaseBlock::kSCOUNT:
 			StagingInitialize();
 			staging_ = kSROOT;
@@ -52,10 +60,7 @@ void BaseBlock::Update()
 		stagingRequest_ = std::nullopt;
 	}
 	// 演出を更新
-	//(this->*pStaging[staging_])();
-
-	switch (staging_
-)
+	switch (staging_)
 	{
 	case BaseBlock::kSROOT:
 		StagingRoot();
@@ -69,12 +74,19 @@ void BaseBlock::Update()
 	case BaseBlock::kSLOAD:
 		StagingLoad();
 		break;
+	case BaseBlock::kSFALL:
+		StagingFall();
+		break;
+	case BaseBlock::kSOVER:
+		StagingOver();
+		break;
 	case BaseBlock::kSCOUNT:
 		// 呼び出されてはいけない
 		assert(false);
 	default:
 		break;
 	}
+	modelTransform_.UpdateMatrix();
 }
 
 void BaseBlock::ApplyVariables(const char* groupName)
@@ -140,6 +152,28 @@ void BaseBlock::StagingLoad()
 
 
 	if (cStagingFrames_[kSLOAD] <= stagingFrame_) {
+		stagingRequest_ = kSROOT;
+	}
+}
+
+void BaseBlock::StagingFall()
+{
+	stagingFrame_++;
+
+
+
+	if (cStagingFrames_[kSFALL] <= stagingFrame_) {
+		stagingRequest_ = kSROOT;
+	}
+}
+
+void BaseBlock::StagingOver()
+{
+	stagingFrame_++;
+
+
+
+	if (cStagingFrames_[kSOVER] <= stagingFrame_) {
 		stagingRequest_ = kSROOT;
 	}
 }

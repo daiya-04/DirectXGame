@@ -11,7 +11,7 @@ public:
 
 	void Initialize() override;
 
-	void Update() override;
+	//void Update() override;
 
 	void Draw() override;
 
@@ -26,6 +26,7 @@ private:
 	void StagingMove() override;
 	void StagingStop() override;
 	void StagingLoad() override;
+	void StagingFall() override;
 
 private:
 

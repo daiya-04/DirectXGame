@@ -92,21 +92,16 @@ void DebugStage::ApplyStageData()
 			data[i][4][j] = Element::kBlock;
 		}
 	}
-	data[1][3][2] = Element::kBody;
-	data[0][3][3] = Element::kBlock;
-	data[1][3][3] = Element::kBlock;
-	data[1][2][4] = Element::kBlock;
-	data[0][3][1] = Element::kBlock;
-	data[0][2][1] = Element::kBlock;
-	data[1][2][0] = Element::kBlock;
-	data[1][3][0] = Element::kBlock;
-	data[4][3][3] = Element::kBlock;
-	data[3][3][4] = Element::kBlock;
-	data[3][3][0] = Element::kBlock;
-	data[4][3][1] = Element::kBlock;
+	data[4][1][1] = Element::kBlock;
 	data[4][2][1] = Element::kBlock;
+	data[4][3][1] = Element::kBlock;
+
+	data[2][2][1] = Element::kBlock;
+	
+	data[0][3][1] = Element::kBody;
+	data[0][2][1] = Element::kBody;
 	// プレイヤーの位置を設定
-	data[1][3][1] = Element::kPlayer;
+	data[0][1][1] = Element::kPlayer;
 
 	mapManager_->SetStageData(kStageData_.array_);
 	blockManager_->SetStageData(kStageData_.array_);
