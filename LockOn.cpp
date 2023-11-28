@@ -138,6 +138,7 @@ void LockOn::ChangeTarget(const std::list<std::unique_ptr<Enemy>>& enemies, cons
 				continue;
 			}else {
 				target_ = (*itTarget).second;
+				break;
 			}
 			
 		}

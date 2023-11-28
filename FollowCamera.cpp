@@ -32,15 +32,24 @@ void FollowCamera::Update() {
 		Vector3 lockOnPos = lockOn_->GetTargetPos();
 
 		Vector3 sub = lockOnPos - target_->translation_;
+		sub.y = 0.0f;
 
-		viewProjection_.rotation_.y = std::atan2(sub.x, sub.z);
+		//viewProjection_.rotation_.y = std::atan2(sub.x, sub.z);
+		rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, sub);
 
-		Vector3 offset = OffsetCalc();
+		//Vector3 offset = OffsetCalc();
+		Vector3 offset = { 0.0f, 5.0f, -30.0f };
+		Matrix4x4 rotateMatrix;
+		rotateMatrix = MakeRotateXMatrix(viewProjection_.rotation_.x) *
+			          DirectionToDirection({ 0.0f,0.0f,-1.0f }, -sub) *
+			           MakeRotateZMatrix(viewProjection_.rotation_.z);
+
+
+		offset = TransformNormal(offset, rotateMatrix);
 
 		viewProjection_.translation_ = target_->translation_ + offset;
 
 	} else {
-
 		const float rotateSpeed = 0.02f;
 
 		viewProjection_.rotation_ += Input::GetInstance()->GetCameraRotate() * rotateSpeed;
@@ -68,10 +77,17 @@ void FollowCamera::Update() {
 	}
 
 	
-
-
-
-	viewProjection_.UpdateViewMatrix();
+	Matrix4x4 S = MakeScaleMatrix({ 1.0f,1.0f,1.0f });
+	Matrix4x4 R;
+	if (lockOn_->ExistTarget()) {
+		R = MakeRotateXMatrix(viewProjection_.rotation_.x) * rotateMat_ * MakeRotateZMatrix(viewProjection_.rotation_.z);
+	}else {
+		R = MakeRotateXMatrix(viewProjection_.rotation_.x) * MakeRotateYMatrix(viewProjection_.rotation_.y) * MakeRotateZMatrix(viewProjection_.rotation_.z);
+	}
+	
+	Matrix4x4 T = MakeTranslateMatrix(viewProjection_.translation_);
+	viewProjection_.matView_ = (S * R * T).Inverse();
+	//viewProjection_.UpdateViewMatrix();
 }
 
 void FollowCamera::Reset() {
@@ -99,10 +115,13 @@ void FollowCamera::ApplyGlobalVariables() {
 Vector3 FollowCamera::OffsetCalc() const {
 
 	Vector3 offset = { 0.0f, 5.0f, -30.0f };
+	Matrix4x4 rotateMatrix;
+	
+	rotateMatrix = MakeRotateXMatrix(viewProjection_.rotation_.x) *
+		MakeRotateYMatrix(viewProjection_.rotation_.y) *
+		MakeRotateZMatrix(viewProjection_.rotation_.z);
 
-	Matrix4x4 rotateMatrix = MakeRotateXMatrix(viewProjection_.rotation_.x) *
-		                     MakeRotateYMatrix(viewProjection_.rotation_.y) *
-		                     MakeRotateZMatrix(viewProjection_.rotation_.z);
+	
 
 	offset = TransformNormal(offset, rotateMatrix);
 

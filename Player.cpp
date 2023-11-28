@@ -166,11 +166,11 @@ void Player::RootUpdate() {
 	
 	velocity_.y += -0.05f;
 
-	move = TransformNormal(move, MakeRotateYMatrix(viewProjection_->rotation_.y));
-
-	worldTransform_.translation_ += move + velocity_;
-
 	if (lockOn_->ExistTarget()) {
+
+		move = TransformNormal(move, followCamera_->GetRotateYMat());
+
+		worldTransform_.translation_ += move + velocity_;
 
 		Vector3 lockOnPos = lockOn_->GetTargetPos();
 
@@ -185,6 +185,10 @@ void Player::RootUpdate() {
 		
 
 	}else {
+
+		move = TransformNormal(move, MakeRotateYMatrix(viewProjection_->rotation_.y));
+
+		worldTransform_.translation_ += move + velocity_;
 		
 		if (move != zeroVector) {
 			rotate_ = move;
@@ -205,6 +209,8 @@ void Player::AttackInitialize() {
 
 	weaponWorldTransform_.translation_ = worldTransform_.translation_;
 	weaponCollision_.translation_ = worldTransform_.translation_;
+	weaponRotateMat_ = rotateMat_;
+	weaponCollisionRotateMat_ = rotateMat_;
 	/*weaponWorldTransform_.rotation_ = worldTransform_.rotation_;
 	weaponCollision_.rotation_ = worldTransform_.rotation_;*/
 	weaponWorldTransform_.translation_.y = 3.0f;
@@ -263,22 +269,22 @@ void Player::AttackUpdate() {
 		}
 	}
 	float T = Easing::easeInSine(workAttack_.swingParam_);
-
+	Matrix4x4 rotateXMat = MakeIdentity44();
 	switch (workAttack_.comboIndex_) {
 	    case 0:
 			workAttack_.theta_ = Lerp(T, 0.0f, (float)std::numbers::pi / 2.0f);
-			//weaponWorldTransform_.rotation_.x = workAttack_.theta_;
-			weaponRotateMat_ = MakeRotateAxisAngle({ 1.0f,0.0f,0.0f }, workAttack_.theta_);
+			weaponWorldTransform_.rotation_.x = workAttack_.theta_;
+			//rotateXMat = MakeRotateAxisAngle({ 1.0f,0.0f,0.0f }, workAttack_.theta_);
 			break;
 		case 1:
 			workAttack_.theta_ = Lerp(T, 0.0f, (float)std::numbers::pi / 2.0f);
-			//weaponWorldTransform_.rotation_.x = workAttack_.theta_;
-			weaponRotateMat_ = MakeRotateAxisAngle({ 1.0f,0.0f,0.0f }, workAttack_.theta_);
+			weaponWorldTransform_.rotation_.x = workAttack_.theta_;
+			//rotateXMat = MakeRotateAxisAngle({ 1.0f,0.0f,0.0f }, workAttack_.theta_);
 			break;
 		case 2:
 			workAttack_.theta_ = Lerp(T, -(float)std::numbers::pi / 2.0f, (float)std::numbers::pi / 2.0f);
-			//weaponWorldTransform_.rotation_.x = workAttack_.theta_;
-			weaponRotateMat_ = MakeRotateAxisAngle({ 1.0f,0.0f,0.0f }, workAttack_.theta_);
+			weaponWorldTransform_.rotation_.x = workAttack_.theta_;
+			//rotateXMat = MakeRotateAxisAngle({ 1.0f,0.0f,0.0f }, workAttack_.theta_);
 			break;
 	}
 	
@@ -299,8 +305,7 @@ void Player::AttackUpdate() {
 
 	}
 
-	weaponRotateMat_ = rotateMat_ * weaponRotateMat_;
-	weaponCollisionRotateMat_ = weaponCollisionRotateMat_ * rotateMat_;
+	weaponRotateMat_ = MakeRotateXMatrix(weaponWorldTransform_.rotation_.x) * rotateMat_;
 
 	Vector3 distance = { 0.0f,9.0f + weaponWorldTransform_.translation_.y ,0.0f };
 
@@ -314,8 +319,6 @@ void Player::AttackUpdate() {
 	move = TransformNormal(move, rotateMat_);
 
 	weaponCollision_.translation_ = move + worldTransform_.translation_;
-
-	
 
 }
 

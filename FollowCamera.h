@@ -13,6 +13,7 @@ private:
 	const WorldTransform* target_ = nullptr;
 	//追従対象の残像座標
 	Vector3 interTarget_ = {};
+	Matrix4x4 rotateMat_ = MakeIdentity44();
 
 	float num = 0.0f;
 
@@ -36,6 +37,7 @@ public:
 	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
 
 	ViewProjection& GetViewProjection() { return viewProjection_; }
+	Matrix4x4 GetRotateYMat() { return rotateMat_; }
 
 };
 
