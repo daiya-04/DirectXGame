@@ -283,24 +283,24 @@ void MapManager::MoveMainObject(MoveDirect direct)
 	//	}
 
 	// プレイヤーの頭をメインに考える
-	CheckAction(direct);
+	CheckMoveAction(direct);
 
-	InspectAction(direct);
+	InspecMovetAction(direct);
 
-	ApplyAction();
+	ApplyMoveAction();
 
 
 }
 
-void MapManager::CheckAction(MoveDirect direct)
+void MapManager::CheckMoveAction(MoveDirect direct)
 {
 	moveLists_.clear();
 
-	// 頭から検査
+	// 下から動けるか確認する
 	for (size_t i = 0; i < playerChunk_.bodyNum_ + 1; i++)
 	{
 		BaseBlock::StageVector position = playerChunk_.position_;
-		position.y = position.y - (playerChunk_.bodyNum_ - i);
+		position.y = position.y - i;
 		moveLists_.push_back(CheckDirect(position, direct));
 	}
 
@@ -309,7 +309,7 @@ void MapManager::CheckAction(MoveDirect direct)
 	//{
 	//	// 動いたことをプレイヤーに伝える
 	//	blockManager_->SetBlockPosition(temp, playerPosition_);
-
+	//
 	//	// 頭の一個下
 	//	temp.y += 1;
 	//	BaseBlock::StageVector blockPos{};
@@ -319,7 +319,7 @@ void MapManager::CheckAction(MoveDirect direct)
 	//		// 終了条件は体じゃない要素が出てくること
 	//		CheckDirectBody(temp, direct, Element::kBody, playerPosition_, blockPos);
 	//		blockManager_->SetBlockPosition(temp, blockPos);
-
+	//
 	//		// 下が体か確認する
 	//		// 頭の一個下
 	//		temp.y += 1;
@@ -328,57 +328,159 @@ void MapManager::CheckAction(MoveDirect direct)
 
 }
 
-void MapManager::InspectAction(MoveDirect direct)
+void MapManager::InspecMovetAction(MoveDirect direct)
 {
+	StageArray<Element>& data = currentData_.array_;
+	std::list<InspecterMove>::iterator itr = moveLists_.begin();
 	// 実際に動いたときにどうなるか判定する
 	// 頭が動かなかったときは判定しない
-	if (moveLists_.begin()->result_ == MovedResult::kFAIL)
+	if (moveLists_.back().result_ == MovedResult::kFAIL)
 	{
 		return;
 	}
+	// マップの端っこにいる時
+	if (moveLists_.back().result_ == MovedResult::kOVER)
+	{
+		switch (direct)
+		{
+		case MapManager::dFRONT:
+			if (moveLists_.back().end_.z == currentData_.kMaxStageSize_.z - 1)
+			{
+				return;
+			}
+			break;
+		case MapManager::dBACK:
+			if (moveLists_.back().end_.z == 0)
+			{
+				return;
+			}
+			break;
+		case MapManager::dRIGHT:
+			if (moveLists_.back().end_.x == currentData_.kMaxStageSize_.x - 1)
+			{
+				return;
+			}
+			break;
+		case MapManager::dLEFT:
+			if (moveLists_.back().end_.x == 0)
+			{
+				return;
+			}
+			break;
+		case MapManager::dDOWN:
+			break;
+		case MapManager::dNONE:
+			break;
+		default:
+			break;
+		}
+	}
+
+
 	// とりあえず頭が止まったら全部止める
 
-	std::list<InspecterMove>::iterator itr = moveLists_.begin();
+
 	// ブロックの上に乗れるなら乗るようにする
+	size_t x = moveLists_.begin()->end_.x;
+	size_t y = moveLists_.begin()->end_.y;
+	size_t z = moveLists_.begin()->end_.z;
 	switch (direct)
 	{
 	case MapManager::dFRONT:
-
+		// 一番下だけ検知
+		// 体だった時
+		if (data[x][y][z + 1] == Element::kBody)
+		{
+			for (; itr != moveLists_.end(); itr++)
+			{
+				itr->result_ = MovedResult::kSUCCECES;
+				itr->end_ = { x,y - 1,z + 1 };
+			}
+		}
 		break;
 	case MapManager::dBACK:
+		// 体の時
+		if (data[x][y][z - 1] == Element::kBody)
+		{
+			for (; itr != moveLists_.end(); itr++)
+			{
+				itr->result_ = MovedResult::kSUCCECES;
+				itr->end_ = { x,y - 1,z - 1 };
+			}
+		}
 		break;
 	case MapManager::dRIGHT:
+		if (data[x + 1][y][z] == Element::kBody)
+		{
+			for (; itr != moveLists_.end(); itr++)
+			{
+				itr->result_ = MovedResult::kSUCCECES;
+				itr->end_ = { x + 1,y - 1,z };
+			}
+		}
 		break;
 	case MapManager::dLEFT:
+		if (data[x - 1][y][z] == Element::kBody)
+		{
+			for (; itr != moveLists_.end(); itr++)
+			{
+				itr->result_ = MovedResult::kSUCCECES;
+				itr->end_ = { x - 1,y - 1,z };
+			}
+		}
 		break;
 	case MapManager::dDOWN:
 		break;
 	case MapManager::dNONE:
+	default:
 		break;
 	}
 
+	// 終わりの位置が同じ位置の時の処理
+	itr = moveLists_.begin();
+	for (; itr != moveLists_.end(); ++itr)
+	{
+		std::list<InspecterMove>::iterator itrB = itr;
+		itrB++;
+		for (; itrB != moveLists_.end(); ++itrB)
+		{
+			// 二個目の方が小さい時(上にあるはずのもの)
+			if (itr->end_.y <= itrB->end_.y)
+			{
+				itrB->end_.y--;
+			}
+		}
+	}
 
 }
 
-void MapManager::ApplyAction()
+void MapManager::ApplyMoveAction()
 {
-	if (moveLists_.begin()->result_ == MovedResult::kFAIL||
-		moveLists_.begin()->result_ == MovedResult::kOVER)
+	if (moveLists_.back().result_ == MovedResult::kFAIL)
 	{
+		return;
+	}
+	if (moveLists_.back().result_ == MovedResult::kOVER)
+	{
+		// ゲームオーバー演出
 		return;
 	}
 	std::list<InspecterMove>::iterator itr = moveLists_.begin();
 
-	playerPosition_ = itr->end_;
-	SetElement(itr->end_, GetElement(itr->start_));
-	SetElement(itr->start_, Element::kNone);
-	blockManager_->SetBlockPosition(itr->start_, itr->end_);
+	playerPosition_ = moveLists_.back().end_;
+	SetElement(moveLists_.back().end_, GetElement(moveLists_.back().start_));
+	SetElement(moveLists_.back().start_, Element::kNone);
+	blockManager_->SetBlockPosition(moveLists_.back().start_, moveLists_.back().end_);
 
-	itr++;
+	std::list<InspecterMove>::iterator end = moveLists_.begin();
+	for (size_t i = 0; i < moveLists_.size() - 1; i++)
+	{
+		end++;
+	}
 
 	BaseBlock::StageVector blockPosition = playerPosition_;
 
-	for (; itr != moveLists_.end(); itr++)
+	for (; itr != end; itr++)
 	{
 		if (itr->result_ == MovedResult::kOVER)
 		{

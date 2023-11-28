@@ -120,19 +120,25 @@ private:
 	void MoveMainObject(MoveDirect direct);
 
 	// 動く方向の確認
-	void CheckAction(MoveDirect direct);
+	void CheckMoveAction(MoveDirect direct);
 
 	// 動いた結果を精査
-	void InspectAction(MoveDirect direct);
+	void InspecMovetAction(MoveDirect direct);
 
 	// 結果を反映
-	void ApplyAction();
+	void ApplyMoveAction();
+
+
+	
+
+private:
+
 
 	// 方向を確認する
 	InspecterMove CheckDirect(BaseBlock::StageVector position, MoveDirect direct);
 	// プレイヤーの移動のみ対応
 	bool CheckDirectPlayer(BaseBlock::StageVector position, MoveDirect direct, BaseBlock::Element element);
-	bool CheckDirectBody(BaseBlock::StageVector position, MoveDirect direct, BaseBlock::Element element,BaseBlock::StageVector limit,BaseBlock::StageVector& nextPos);
+	bool CheckDirectBody(BaseBlock::StageVector position, MoveDirect direct, BaseBlock::Element element, BaseBlock::StageVector limit, BaseBlock::StageVector& nextPos);
 
 	// 場所を指定して属性変更
 	void SetElement(BaseBlock::StageVector position, BaseBlock::Element element);

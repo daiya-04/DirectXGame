@@ -47,6 +47,10 @@ protected:
 	StageVector preMapPosition_;
 	// マップのどの場所にあるか
 	StageVector mapPosition_;
+	// 次の位置
+	// いまのところ上昇用
+	StageVector nextMapPosition_;
+
 	// モデルの描画場所
 	// ワールドトランスフォームにするかも
 	// マップの位置からの参照
@@ -60,6 +64,7 @@ protected:
 
 	// 次の演出
 	std::optional<Staging> stagingRequest_ = std::nullopt;
+	std::optional<Staging> stagingNextRequest_ = std::nullopt;
 
 	// モデル
 	// 外部で生成されたものを受け取る
@@ -92,15 +97,28 @@ public:
 	const StageVector& GetMapPosition() const { return mapPosition_; }
 	Element GetElement() const { return element_; }
 	void SetModel(Object3d* model) { model_ = model; }
-	void MoveMapPosition(const StageVector& pos) {
+	void MoveMapPosition(const StageVector& pos)
+	{
 		preMapPosition_ = mapPosition_;
 		stagingRequest_ = kSMOVE;
 		mapPosition_ = pos;
 	}
-	void FallMapPosition(const StageVector& pos) {
+	void FallMapPosition(const StageVector& pos)
+	{
 		preMapPosition_ = mapPosition_;
 		stagingRequest_ = kSFALL;
 		mapPosition_ = pos;
+	}
+	void SetMapPosition(const StageVector& pos, Staging staging)
+	{
+		preMapPosition_ = mapPosition_;
+		stagingRequest_ = staging;
+		mapPosition_ = pos;
+	}
+	void SetNextMapPosition(const StageVector& pos)
+	{
+		nextMapPosition_ = pos;
+		stagingNextRequest_ = kSLOAD;
 	}
 	bool GetIsStaging() const { return staging_ != kSROOT; }
 
