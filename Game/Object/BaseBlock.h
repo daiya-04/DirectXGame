@@ -17,6 +17,7 @@ public:
 		kPlayer,
 		kBody,
 		kBlock,
+		kHead,
 
 		kCount,
 	};

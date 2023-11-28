@@ -44,14 +44,14 @@ void BlockManager::Reset()
 	iBodyModel_ = 0;
 	iHeadModel_ = 0;
 	mapBlock_.clear();
-	mapBlock_.resize(kMapSize);
-	for (size_t i = 0; i < kMapSize; i++)
+	mapBlock_.resize(kMapSize.x);
+	for (size_t i = 0; i < kMapSize.x; i++)
 	{
-		mapBlock_[i].resize(kMapSize);
-		for (size_t j = 0; j < kMapSize; j++)
+		mapBlock_[i].resize(kMapSize.y);
+		for (size_t j = 0; j < kMapSize.y; j++)
 		{
-			mapBlock_[i][j].resize(kMapSize);
-			for (size_t k = 0; k < kMapSize; k++)
+			mapBlock_[i][j].resize(kMapSize.z);
+			for (size_t k = 0; k < kMapSize.z; k++)
 			{
 				mapBlock_[i][j][k] = nullptr;
 			}
@@ -77,18 +77,18 @@ void BlockManager::Draw()
 	}
 }
 
-void BlockManager::SetStageData(const MapManager::StageArray<BaseBlock::Element> data)
+void BlockManager::SetStageData(const MapManager::StageData& data)
 {
-	kMapSize = data.size();
+	kMapSize = data.kMaxStageSize_;
 	Reset();
 	BaseBlock* block = nullptr;
-	for (size_t i = 0; i < data.size(); i++)
+	for (size_t i = 0; i < data.array_.size(); i++)
 	{
-		for (size_t j = 0; j < data[i].size(); j++)
+		for (size_t j = 0; j < data.array_[i].size(); j++)
 		{
-			for (size_t k = 0; k < data[i][j].size(); k++)
+			for (size_t k = 0; k < data.array_[i][j].size(); k++)
 			{
-				switch (data[i][j][k])
+				switch (data.array_[i][j][k])
 				{
 				case  Element::kNone:
 					break;

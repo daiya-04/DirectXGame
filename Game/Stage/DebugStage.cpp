@@ -61,16 +61,20 @@ void DebugStage::DebugGUI()
 
 void DebugStage::LoadStageData()
 {
+	// グローバルバリアブルズを使う
+
+
+
+	// ここでファイルを読み込むので本来とは違う
+	kStageData_.kMaxStageSize_ = { 5,5,5 };
 	StageArray<Element>& data = kStageData_.array_;
-	data.resize(5);
-	for (size_t i = 0; i < data.size(); i++)
-	{
-		data[i].resize(5);
-		for (size_t j = 0; j < data[i].size(); j++)
-		{
-			data[i][j].resize(5);
-			for (size_t k = 0; k < data[i][j].size(); k++)
-			{
+	BaseBlock::StageVector size = kStageData_.kMaxStageSize_;
+	data.resize(size.x);
+	for (size_t i = 0; i < data.size(); i++) {
+		data[i].resize(size.y);
+		for (size_t j = 0; j < data[i].size(); j++) {
+			data[i][j].resize(size.z);
+			for (size_t k = 0; k < data[i][j].size(); k++) {
 				data[i][j][k] = Element::kNone;
 			}
 		}
@@ -84,25 +88,22 @@ void DebugStage::SaveStageData()
 void DebugStage::ApplyStageData()
 {
 	StageArray<Element>& data = kStageData_.array_;
+	BaseBlock::StageVector size = kStageData_.kMaxStageSize_;
 	// 地面の位置を設定
-	for (size_t i = 0; i < data.size(); i++)
-	{
-		for (size_t j = 0; j < data[i][4].size(); j++)
-		{
-			data[i][4][j] = Element::kBlock;
+	for (size_t i = 0; i < size.x; i++) {
+		for (size_t j = 0; j < size.z; j++) {
+			data[i][size.y - 1][j] = Element::kBlock;
 		}
 	}
-	data[4][1][1] = Element::kBlock;
-	data[4][2][1] = Element::kBlock;
-	data[4][3][1] = Element::kBlock;
+	data[3][2][0] = Element::kBlock;
+	data[3][3][3] = Element::kBlock;
+	data[4][2][3] = Element::kBlock;
 
-	data[2][2][1] = Element::kBlock;
-	
-	data[0][3][1] = Element::kBody;
-	data[0][2][1] = Element::kBody;
+	data[1][3][3] = Element::kBody;
+	data[1][3][1] = Element::kBody;
 	// プレイヤーの位置を設定
-	data[0][1][1] = Element::kPlayer;
+	data[1][2][3] = Element::kPlayer;
 
-	mapManager_->SetStageData(kStageData_.array_);
-	blockManager_->SetStageData(kStageData_.array_);
+	mapManager_->SetStageData(kStageData_);
+	blockManager_->SetStageData(kStageData_);
 }
