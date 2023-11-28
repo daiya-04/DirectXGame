@@ -154,6 +154,9 @@
     <ClCompile Include="ModelManager.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Scene\user\SelectScene.cpp">
+      <Filter>Engine\Game\Scene\user</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -278,6 +281,9 @@
     </ClInclude>
     <ClInclude Include="Game\Object\BlockList.h">
       <Filter>Engine\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\user\SelectScene.h">
+      <Filter>Engine\Game\Scene\user</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

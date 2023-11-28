@@ -15,6 +15,7 @@ SceneManager* SceneManager::GetInstace()
 void SceneManager::Initialize()
 {
 	sceneArray_[kTITLE] = std::make_unique<TitleScene>();
+	sceneArray_[kSELECT] = std::make_unique<SelectScene>();
 	sceneArray_[kGAME] = std::make_unique<GameScene>();
 
 
