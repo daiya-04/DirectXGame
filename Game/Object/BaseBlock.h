@@ -38,6 +38,8 @@ protected:
 		kSLOAD,		// 積込
 		kSFALL,		// 落下
 
+		kSOVER,		// 超過
+
 		kSCOUNT,	// カウント
 	};
 
@@ -110,5 +112,6 @@ protected:
 	virtual void StagingStop();
 	virtual void StagingLoad();
 	virtual void StagingFall();
+	virtual void StagingOver();
 
 };

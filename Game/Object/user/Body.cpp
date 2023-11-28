@@ -97,6 +97,11 @@ void BodyBlock::StagingMove()
 	stagingFrame_++;
 
 
+	Vector3 start = { preMapPosition_.x * kBlockSize,preMapPosition_.y * -kBlockSize,preMapPosition_.z * kBlockSize };
+	Vector3 end = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
+
+	modelTransform_.translation_ = start + ((end - start) * (stagingFrame_ / (float)cStagingFrames_[kSMOVE]));
+
 	// 体に当たっている場合は積込をしたい
 	if (cStagingFrames_[kSMOVE] <= stagingFrame_) {
 		stagingRequest_ = kSROOT;

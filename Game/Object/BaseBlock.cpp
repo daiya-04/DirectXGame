@@ -44,6 +44,13 @@ void BaseBlock::Update()
 		case BaseBlock::kSLOAD:
 			StagingInitialize();
 			break;
+		case BaseBlock::kSFALL:
+			StagingInitialize();
+			break;
+			break;
+		case BaseBlock::kSOVER:
+			StagingInitialize();
+			break;
 		case BaseBlock::kSCOUNT:
 			StagingInitialize();
 			staging_ = kSROOT;
@@ -69,6 +76,9 @@ void BaseBlock::Update()
 		break;
 	case BaseBlock::kSFALL:
 		StagingFall();
+		break;
+	case BaseBlock::kSOVER:
+		StagingOver();
 		break;
 	case BaseBlock::kSCOUNT:
 		// 呼び出されてはいけない
@@ -153,6 +163,17 @@ void BaseBlock::StagingFall()
 
 
 	if (cStagingFrames_[kSFALL] <= stagingFrame_) {
+		stagingRequest_ = kSROOT;
+	}
+}
+
+void BaseBlock::StagingOver()
+{
+	stagingFrame_++;
+
+
+
+	if (cStagingFrames_[kSOVER] <= stagingFrame_) {
 		stagingRequest_ = kSROOT;
 	}
 }

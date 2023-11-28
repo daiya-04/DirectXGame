@@ -82,6 +82,7 @@ private:
 	void GetPlayerPosition();
 
 	// 動かす為の処理をまとめる
+	// バッファなどを用意して複数の状況に対応したい
 	void MoveMainObject(MoveDirect direct);
 
 	// 方向を確認する
