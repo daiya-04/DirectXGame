@@ -157,6 +157,9 @@
     <ClCompile Include="Game\Object\user\Head.cpp">
       <Filter>Engine\Game\Object\user</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Stage\Stage.cpp">
+      <Filter>Engine\Game\Stage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -284,6 +287,9 @@
     </ClInclude>
     <ClInclude Include="Game\Object\user\Head.h">
       <Filter>Engine\Game\Object\user</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Stage\Stage.h">
+      <Filter>Engine\Game\Stage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
