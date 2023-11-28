@@ -154,6 +154,7 @@
     <ClCompile Include="ModelManager.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Game\Scene\user\SelectScene.cpp">
       <Filter>Engine\Game\Scene\user</Filter>
     </ClCompile>
@@ -282,6 +283,7 @@
     <ClInclude Include="Game\Object\BlockList.h">
       <Filter>Engine\Game\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Audio.h" />
     <ClInclude Include="Game\Scene\user\SelectScene.h">
       <Filter>Engine\Game\Scene\user</Filter>
     </ClInclude>
