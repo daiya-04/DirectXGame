@@ -79,6 +79,10 @@ private:
 	// 動けたかどうかをフラグで判定
 	std::list<InspecterMove> moveLists_;
 
+	// ブロックを射出するモードフラグ
+	// false : 移動, true : 射出
+	bool isShotFlag_ = false;
+
 public:
 
 	static MapManager* GetInstance();
@@ -128,8 +132,17 @@ private:
 	// 結果を反映
 	void ApplyMoveAction();
 
+	// ブロックを射出させる
+	void ShotSubObject(MoveDirect direct);
 
-	
+	// 動く方向の確認
+	void CheckShotAction(MoveDirect direct);
+
+	// 動いた結果を精査
+	void InspectShotAction(MoveDirect direct);
+
+	// 結果を反映
+	void ApplyShotAction();
 
 private:
 

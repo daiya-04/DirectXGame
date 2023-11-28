@@ -99,6 +99,9 @@ void BlockManager::SetStageData(const MapManager::StageData& data)
 				case  Element::kBody:
 					listBlock_.emplace_back(CreateBodyBlock({ i,j,k }));
 					break;
+				case  Element::kHead:
+					listBlock_.emplace_back(CreateHeadBlock({ i,j,k }));
+					break;
 				case  Element::kBlock:
 					listBlock_.emplace_back(CreateNormalBlock({ i,j,k }));
 					break;
@@ -218,7 +221,7 @@ BaseBlock* BlockManager::CreatePlayerBlock(const BaseBlock::StageVector& pos)
 BaseBlock* BlockManager::CreateHeadBlock(const BaseBlock::StageVector& pos)
 {
 
-	BaseBlock* block = new NormalBlock;
+	BaseBlock* block = new HeadBlock;
 	block->Initialize(pos);
 	block->SetViewProjection(vp_);
 	block->SetModel(arrModelHead_[iHeadModel_].get());

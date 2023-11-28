@@ -154,6 +154,9 @@
     <ClCompile Include="ModelManager.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Object\user\Head.cpp">
+      <Filter>Engine\Game\Object\user</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -278,6 +281,9 @@
     </ClInclude>
     <ClInclude Include="Game\Object\BlockList.h">
       <Filter>Engine\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Object\user\Head.h">
+      <Filter>Engine\Game\Object\user</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
