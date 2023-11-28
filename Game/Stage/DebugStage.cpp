@@ -101,12 +101,10 @@ void DebugStage::ApplyStageData()
 		}
 	}
 	data[3][2][0] = Element::kBlock;
-	data[3][3][0] = Element::kBlock;
 
-	data[1][3][1] = Element::kHead;
 
 	data[3][3][3] = Element::kBody;
-	data[1][3][2] = Element::kBody;
+	data[1][3][1] = Element::kBody;
 	// プレイヤーの位置を設定
 	data[1][3][3] = Element::kPlayer;
 
