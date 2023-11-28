@@ -169,7 +169,9 @@
     <ClCompile Include="Audio.cpp">
       <Filter>Engine\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="GlobalVariables.cpp" />
+    <ClCompile Include="GlobalVariables.cpp">
+      <Filter>Engine\GlobalVariable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -195,9 +197,6 @@
     </ClInclude>
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Stage\DebugStage.h">
-      <Filter>Engine\Game\Stage</Filter>
     </ClInclude>
     <ClInclude Include="DirectXCommon.h">
       <Filter>Engine\Base</Filter>
@@ -307,7 +306,9 @@
     <ClInclude Include="Audio.h">
       <Filter>Engine\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="GlobalVariables.h" />
+    <ClInclude Include="GlobalVariables.h">
+      <Filter>Engine\GlobalVariable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
