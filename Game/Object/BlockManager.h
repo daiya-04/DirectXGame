@@ -75,6 +75,14 @@ public:
 	// マップの場所を保存して指定できるようにする
 	void SetBlockPosition(const BaseBlock::StageVector& prePos,const BaseBlock::StageVector& pos);
 
+	bool GetIsStaging();
+
+	void FallFloatingBlock();
+
+	// 再起関数
+	// ブロックの下にブロックがあるか
+	bool ChainFall(const BaseBlock::StageVector& pos);
+
 private:
 
 	BlockManager() = default;

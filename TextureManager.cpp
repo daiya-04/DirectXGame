@@ -27,6 +27,12 @@ void TextureManager::Initialize() {
 	srvDescriptorHandleSize_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
+const D3D12_RESOURCE_DESC TextureManager::GetResouceDesc(uint32_t textureHandle) {
+	assert(textureHandle < kNumTextures);
+
+	return textures_[textureHandle].resource->GetDesc();
+}
+
 void TextureManager::SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex, uint32_t textureHandle) {
 	assert(textureHandle < kNumTextures);
 

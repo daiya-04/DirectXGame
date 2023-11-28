@@ -155,6 +155,9 @@
       <Filter>Engine\Model</Filter>
     </ClCompile>
     <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="Game\Scene\user\SelectScene.cpp">
+      <Filter>Engine\Game\Scene\user</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -281,6 +284,9 @@
       <Filter>Engine\Game\Object</Filter>
     </ClInclude>
     <ClInclude Include="Audio.h" />
+    <ClInclude Include="Game\Scene\user\SelectScene.h">
+      <Filter>Engine\Game\Scene\user</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

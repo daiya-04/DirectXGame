@@ -39,6 +39,8 @@ public:
 
 	void Initialize();
 
+	const D3D12_RESOURCE_DESC GetResouceDesc(uint32_t textureHandle);
+
 	void SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex, uint32_t textureHandle);
 
 	//リソースの生成

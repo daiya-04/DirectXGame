@@ -5,64 +5,65 @@
 void NormalBlock::Initialize()
 {
 	BaseBlock::Initialize();
+	element_ = Element::kBlock;
 }
-
-void NormalBlock::Update()
-{
-	modelPosition_.translation_ = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
-	//BaseBlock::Update();
-	if (stagingRequest_) {
-		staging_ = stagingRequest_.value();
-		switch (staging_)
-		{
-		case BaseBlock::kSROOT:
-			StagingInitialize();
-			break;
-		case BaseBlock::kSMOVE:
-			StagingInitialize();
-			break;
-		case BaseBlock::kSSTOP:
-			StagingInitialize();
-			break;
-		case BaseBlock::kSLOAD:
-			StagingInitialize();
-			break;
-		case BaseBlock::kSCOUNT:
-			StagingInitialize();
-			staging_ = kSROOT;
-		default:
-			break;
-		}
-		stagingRequest_ = std::nullopt;
-	}
-	// 演出を更新
-	switch (staging_)
-	{
-	case BaseBlock::kSROOT:
-		StagingRoot();
-		break;
-	case BaseBlock::kSMOVE:
-		StagingMove();
-		break;
-	case BaseBlock::kSSTOP:
-		StagingStop();
-		break;
-	case BaseBlock::kSLOAD:
-		StagingLoad();
-		break;
-	case BaseBlock::kSCOUNT:
-		// 呼び出されてはいけない
-		assert(false);
-	default:
-		break;
-	}
-
-	modelPosition_.UpdateMatrix();
-}
+//
+//void NormalBlock::Update()
+//{
+//	modelTransform_.translation_ = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
+//	//BaseBlock::Update();
+//	if (stagingRequest_) {
+//		staging_ = stagingRequest_.value();
+//		switch (staging_)
+//		{
+//		case BaseBlock::kSROOT:
+//			StagingInitialize();
+//			break;
+//		case BaseBlock::kSMOVE:
+//			StagingInitialize();
+//			break;
+//		case BaseBlock::kSSTOP:
+//			StagingInitialize();
+//			break;
+//		case BaseBlock::kSLOAD:
+//			StagingInitialize();
+//			break;
+//		case BaseBlock::kSCOUNT:
+//			StagingInitialize();
+//			staging_ = kSROOT;
+//		default:
+//			break;
+//		}
+//		stagingRequest_ = std::nullopt;
+//	}
+//	// 演出を更新
+//	switch (staging_)
+//	{
+//	case BaseBlock::kSROOT:
+//		StagingRoot();
+//		break;
+//	case BaseBlock::kSMOVE:
+//		StagingMove();
+//		break;
+//	case BaseBlock::kSSTOP:
+//		StagingStop();
+//		break;
+//	case BaseBlock::kSLOAD:
+//		StagingLoad();
+//		break;
+//	case BaseBlock::kSCOUNT:
+//		// 呼び出されてはいけない
+//		assert(false);
+//	default:
+//		break;
+//	}
+//
+//	modelTransform_.UpdateMatrix();
+//}
 
 void NormalBlock::Draw()
 {
-	model_->Draw(modelPosition_, *viewProjection_);
+	model_->Draw(modelTransform_, *viewProjection_);
 }
 
 void NormalBlock::ApplyVariables(const char* groupName)

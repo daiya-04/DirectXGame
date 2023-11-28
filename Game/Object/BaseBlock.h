@@ -36,17 +36,20 @@ protected:
 		kSMOVE,		// 移動
 		kSSTOP,		// 停止
 		kSLOAD,		// 積込
+		kSFALL,		// 落下
 
+		kSOVER,		// 超過
 
 		kSCOUNT,	// カウント
 	};
 
+	StageVector preMapPosition_;
 	// マップのどの場所にあるか
 	StageVector mapPosition_;
 	// モデルの描画場所
 	// ワールドトランスフォームにするかも
 	// マップの位置からの参照
-	WorldTransform modelPosition_;
+	WorldTransform modelTransform_;
 
 	Element element_;
 
@@ -88,7 +91,17 @@ public:
 	const StageVector& GetMapPosition() const { return mapPosition_; }
 	Element GetElement() const { return element_; }
 	void SetModel(Object3d* model) { model_ = model; }
-	void SetMapPosition(const StageVector& pos) { mapPosition_ = pos; }
+	void MoveMapPosition(const StageVector& pos) {
+		preMapPosition_ = mapPosition_;
+		stagingRequest_ = kSMOVE;
+		mapPosition_ = pos;
+	}
+	void FallMapPosition(const StageVector& pos) {
+		preMapPosition_ = mapPosition_;
+		stagingRequest_ = kSFALL;
+		mapPosition_ = pos;
+	}
+	bool GetIsStaging() const { return staging_ != kSROOT; }
 
 protected:
 
@@ -98,5 +111,7 @@ protected:
 	virtual void StagingMove();
 	virtual void StagingStop();
 	virtual void StagingLoad();
+	virtual void StagingFall();
+	virtual void StagingOver();
 
 };

@@ -13,12 +13,12 @@ BlockManager* BlockManager::GetInstance()
 
 void BlockManager::Initialize()
 {
-	uint32_t modelHandle = ModelManager::Load("Box");
+	uint32_t modelHandle = ModelManager::Load("Block");
 	for (size_t i = 0; i < kMaxNormalBlockNum_; i++)
 	{
 		arrModelNormal_[i].reset(Object3d::Create(modelHandle));
 	}
-	modelHandle = ModelManager::Load("Box");
+	modelHandle = ModelManager::Load("Head");
 	for (size_t i = 0; i < kMaxPlayerBlockNum_; i++)
 	{
 		arrModelPlayer_[i].reset(Object3d::Create(modelHandle));
@@ -28,7 +28,7 @@ void BlockManager::Initialize()
 	{
 		arrModelHead_[i].reset(Object3d::Create(modelHandle));
 	}
-	modelHandle = ModelManager::Load("Box");
+	modelHandle = ModelManager::Load("Body");
 	for (size_t i = 0; i < kMaxBodyBlockNum_; i++)
 	{
 		arrModelBody_[i].reset(Object3d::Create(modelHandle));
@@ -112,10 +112,67 @@ void BlockManager::SetStageData(const MapManager::StageArray<BaseBlock::Element>
 
 void BlockManager::SetBlockPosition(const BaseBlock::StageVector& prePos, const BaseBlock::StageVector& pos)
 {
+	if (prePos.x == pos.x && prePos.y == pos.y && prePos.z == pos.z) {
+		return;
+	}
 	mapBlock_[pos.x][pos.y][pos.z] = mapBlock_[prePos.x][prePos.y][prePos.z];
 	mapBlock_[prePos.x][prePos.y][prePos.z] = nullptr;
 
-	mapBlock_[pos.x][pos.y][pos.z]->SetMapPosition(pos);
+	mapBlock_[pos.x][pos.y][pos.z]->MoveMapPosition(pos);
+}
+
+bool BlockManager::GetIsStaging()
+{
+	bool result = false;
+	std::list<pBlock>::iterator itr = listBlock_.begin();
+	for (; itr != listBlock_.end(); ++itr)
+	{
+		if (itr->get()->GetIsStaging()) {
+			result = true;
+			break;
+		}
+	}
+
+	return result;
+}
+
+void BlockManager::FallFloatingBlock()
+{
+	if (GetIsStaging()) {
+		return;
+	}
+	std::list<pBlock>::iterator itr = listBlock_.begin();
+	for (; itr != listBlock_.end(); ++itr)
+	{
+		BaseBlock::StageVector pos = itr->get()->GetMapPosition();
+		ChainFall(pos);
+	}
+
+}
+
+bool BlockManager::ChainFall(const BaseBlock::StageVector& pos)
+{
+	// 空気なら落とす
+	BaseBlock* block = mapBlock_[pos.x][pos.y][pos.z];
+	if (block == nullptr) {
+		return true;
+	}
+	// 落下するブロックだったら
+	if (block->GetElement() == Element::kPlayer ||
+		block->GetElement() == Element::kBody) {
+		BaseBlock::StageVector down = pos;
+		down.y += 1;
+		// 落ちるかの判定
+		// 下に落下ブロックが続いているなら再帰
+		if (ChainFall(down)) {
+			block->FallMapPosition(down);
+			mapBlock_[down.x][down.y][down.z] = mapBlock_[pos.x][pos.y][pos.z];
+			mapBlock_[pos.x][pos.y][pos.z] = nullptr;
+			return true;
+		}
+	}
+	// 落ちないブロックなので処理しない
+	return false;
 }
 
 
