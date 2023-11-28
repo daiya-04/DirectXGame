@@ -60,6 +60,10 @@ void MapManager::Update()
 	// 操作を受け取って状態を変える
 	GetOperate();
 
+
+	// クリアできているかの判定
+	CheckClear();
+
 	DebugGUI();
 }
 
@@ -79,6 +83,7 @@ void MapManager::DebugGUI()
 	ImGui::Text("Position: %d,%d,%d", playerChunk_.position_.x, playerChunk_.position_.y, playerChunk_.position_.z);
 	ImGui::Text("Bodys   : %d", playerChunk_.bodyNum_);
 	ImGui::Text("ShotFlag: %s", isShotFlag_ ? "true" : "false");
+	ImGui::Text("Clear?  : %s", isCleared_ ? "true" : "false");
 
 
 
@@ -746,6 +751,90 @@ void MapManager::ApplyShotAction(MoveDirect direct)
 		SetElement(itr->start_, Element::kNone);
 		blockManager_->SetBlockPosition(itr->start_, itr->end_);
 	}
+}
+
+void MapManager::ReserveClear()
+{
+	StageArray<Element>& data = currentData_.array_;
+	// x 軸
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		// y 軸
+		for (size_t j = 0; j < data[i].size(); j++)
+		{
+			// z 軸
+			for (size_t k = 0; k < data[i][j].size(); k++)
+			{
+				if (data[i][j][k] == Element::kHead)
+				{
+					DarumaChunk daruma;
+					daruma.position_ = { i,j,k };
+					daruma.bodyNum_ = 0;
+					darumas_.push_back(daruma);
+				}
+			}
+		}
+	}
+}
+
+void MapManager::CheckClear()
+{
+	StageArray<Element>& data = currentData_.array_;
+	for (size_t index = 0; index < darumas_.size(); index++)
+	{
+		// だるまの下が体かどうか判別
+		for (size_t y = darumas_[index].position_.y - 1; y < currentData_.kMaxStageSize_.y; y++)
+		{
+			if (data[darumas_[index].position_.x][y][darumas_[index].position_.z] == Element::kBody)
+			{
+				//darumas_[index].position_ = playerPosition_;
+				//playerChunk_.position_.y = y - 1;
+				darumas_[index].bodyNum_ = 1;
+
+			}
+		}
+	}
+
+	isCleared_ = true;
+
+	// 体が何かの下にないとダメ
+	// x 軸
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		// y 軸
+		for (size_t j = 0; j < data[i].size(); j++)
+		{
+			// z 軸
+			for (size_t k = 0; k < data[i][j].size(); k++)
+			{
+				if (data[i][j][k] == Element::kBody)
+				{
+					if (data[i][j - 1][k] == Element::kNone ||
+						data[i][j - 1][k] == Element::kBlock)
+					{
+						isCleared_ = false;
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	// 一つでも埋まってないならクリアしてない
+	if (playerChunk_.bodyNum_ == 0)
+	{
+		isCleared_ = false;
+		return;
+	}
+	for (size_t i = 0; i < darumas_.size(); i++)
+	{
+		if (darumas_[i].bodyNum_ == 0)
+		{
+			isCleared_ = false;
+			return;
+		}
+	}
+
 }
 
 MapManager::InspecterMove MapManager::CheckDirect(BaseBlock::StageVector position, MoveDirect direct)

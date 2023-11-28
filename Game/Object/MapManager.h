@@ -59,6 +59,16 @@ private:
 		size_t bodyNum_;
 	};
 
+	struct DarumaChunk
+	{
+		// これは y 座標を考慮しない
+		BaseBlock::StageVector position_;
+		// 一個以上でクリアできる
+		size_t bodyNum_;
+	};
+
+
+
 private:
 
 	StageData preData_;
@@ -82,6 +92,14 @@ private:
 	// ブロックを射出するモードフラグ
 	// false : 移動, true : 射出
 	bool isShotFlag_ = false;
+	
+	
+	// クリアフラグ
+	bool isCleared_ = false;
+
+	// クリア状態かどうかを判定するためのもの
+	// 頭の数だけ用意する
+	std::vector<DarumaChunk> darumas_;
 
 public:
 
@@ -143,6 +161,12 @@ private:
 
 	// 結果を反映
 	void ApplyShotAction(MoveDirect direct);
+
+	// クリア判定する前の条件をわかりやすくする
+	void ReserveClear();
+
+	// クリアしているか
+	void CheckClear();
 
 private:
 
