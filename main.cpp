@@ -1,6 +1,7 @@
 #include "WinApp.h"
 #include "DirectXCommon.h"
 #include "ImGuiManager.h"
+#include "GlobalVariables.h"
 #include <dxgidebug.h>
 #include "Matrix44.h"
 #include "Vec3.h"
@@ -74,6 +75,8 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
 
 	Particle::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
+
+	GlobalVariables::GetInstance()->LoadFiles();
 	////////////////////////////////
 	////	ゲームで使う変数宣言	////
 	////////////////////////////////
@@ -92,6 +95,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		imguiManager->Begin();
 
         input->Update();
+		GlobalVariables::GetInstance()->Update();
 
 		Audio::GetInstance()->Update();
 
