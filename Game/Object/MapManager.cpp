@@ -331,41 +331,38 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 		return;
 	}
 	// マップの端っこにいる時
-	if (moveLists_.back().result_ == MovedResult::kOVER)
+	switch (direct)
 	{
-		switch (direct)
+	case MapManager::dFRONT:
+		if (moveLists_.back().end_.z == currentData_.kMaxStageSize_.z - 1)
 		{
-		case MapManager::dFRONT:
-			if (moveLists_.back().end_.z == currentData_.kMaxStageSize_.z - 1)
-			{
-				return;
-			}
-			break;
-		case MapManager::dBACK:
-			if (moveLists_.back().end_.z == 0)
-			{
-				return;
-			}
-			break;
-		case MapManager::dRIGHT:
-			if (moveLists_.back().end_.x == currentData_.kMaxStageSize_.x - 1)
-			{
-				return;
-			}
-			break;
-		case MapManager::dLEFT:
-			if (moveLists_.back().end_.x == 0)
-			{
-				return;
-			}
-			break;
-		case MapManager::dDOWN:
-			break;
-		case MapManager::dNONE:
-			break;
-		default:
-			break;
+			return;
 		}
+		break;
+	case MapManager::dBACK:
+		if (moveLists_.back().end_.z == 0)
+		{
+			return;
+		}
+		break;
+	case MapManager::dRIGHT:
+		if (moveLists_.back().end_.x == currentData_.kMaxStageSize_.x - 1)
+		{
+			return;
+		}
+		break;
+	case MapManager::dLEFT:
+		if (moveLists_.back().end_.x == 0)
+		{
+			return;
+		}
+		break;
+	case MapManager::dDOWN:
+		break;
+	case MapManager::dNONE:
+		break;
+	default:
+		break;
 	}
 	// ブロックの上に乗れるなら乗るようにする
 	// 上に頭があるときは処理しない
@@ -385,6 +382,17 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 				itr->end_ = { x,y - 1,z + 1 };
 			}
 		}
+		itr = moveLists_.begin();
+		for (; itr != moveLists_.end(); itr++)
+		{
+			// 頭が止まっていた時の処理
+			// 体が頭を越してたら
+			if (moveLists_.back().end_.z < itr->end_.z)
+			{
+				itr->result_ = MovedResult::kSUCCECES;
+				itr->end_.z = moveLists_.back().end_.z;
+			}
+		}
 		break;
 	case MapManager::dBACK:
 		// 体の時
@@ -394,6 +402,17 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 			{
 				itr->result_ = MovedResult::kSUCCECES;
 				itr->end_ = { x,y - 1,z - 1 };
+			}
+		}
+		itr = moveLists_.begin();
+		for (; itr != moveLists_.end(); itr++)
+		{
+			// 頭が止まっていた時の処理
+			// 体が頭を越してたら
+			if (itr->end_.z < moveLists_.back().end_.z)
+			{
+				itr->result_ = MovedResult::kSUCCECES;
+				itr->end_.z = moveLists_.back().end_.z;
 			}
 		}
 		break;
@@ -406,6 +425,17 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 				itr->end_ = { x + 1,y - 1,z };
 			}
 		}
+		itr = moveLists_.begin();
+		for (; itr != moveLists_.end(); itr++)
+		{
+			// 頭が止まっていた時の処理
+			// 体が頭を越してたら
+			if (moveLists_.back().end_.x < itr->end_.x)
+			{
+				itr->result_ = MovedResult::kSUCCECES;
+				itr->end_.x = moveLists_.back().end_.x;
+			}
+		}
 		break;
 	case MapManager::dLEFT:
 		if (data[x - 1][y][z] == Element::kBody && data[x - 1][y - 1][z] == Element::kNone)
@@ -414,6 +444,17 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 			{
 				itr->result_ = MovedResult::kSUCCECES;
 				itr->end_ = { x - 1,y - 1,z };
+			}
+		}
+		itr = moveLists_.begin();
+		for (; itr != moveLists_.end(); itr++)
+		{
+			// 頭が止まっていた時の処理
+			// 体が頭を越してたら
+			if (itr->end_.x < moveLists_.back().end_.x)
+			{
+				itr->result_ = MovedResult::kSUCCECES;
+				itr->end_.x = moveLists_.back().end_.x;
 			}
 		}
 		break;
@@ -518,7 +559,7 @@ void MapManager::InspectShotAction(MoveDirect direct)
 	std::list<InspecterMove>::iterator itr = moveLists_.begin();
 
 	// そもそも動かなかったときは判定しない
-	if (itr->result_ == MovedResult::kFAIL)
+	if (moveLists_.back().result_ == MovedResult::kFAIL)
 	{
 		return;
 	}
@@ -732,13 +773,23 @@ MapManager::InspecterMove MapManager::CheckDirect(BaseBlock::StageVector positio
 			if (data[x][y][i] != Element::kNone)
 			{
 				position = { x,y,i - 1 };
-				result.result_ = MovedResult::kSUCCECES;
 				result.end_ = position;
+				if (result.start_.z == result.end_.z)
+				{
+					result.result_ = MovedResult::kFAIL;
+				}
+				else
+				{
+					result.result_ = MovedResult::kSUCCECES;
+				}
 				return result;
 			}
+			// 止まれなかったとき
+			else
+			{
+				result.result_ = MovedResult::kOVER;
+			}
 		}
-		// 止まれなかったとき
-		result.result_ = MovedResult::kOVER;
 		break;
 	case MapManager::dBACK:
 		// z 軸
@@ -748,13 +799,23 @@ MapManager::InspecterMove MapManager::CheckDirect(BaseBlock::StageVector positio
 			if (data[x][y][i - 1] != Element::kNone)
 			{
 				position = { x,y,i };
-				result.result_ = MovedResult::kSUCCECES;
 				result.end_ = position;
+				if (result.start_.z == result.end_.z)
+				{
+					result.result_ = MovedResult::kFAIL;
+				}
+				else
+				{
+					result.result_ = MovedResult::kSUCCECES;
+				}
 				return result;
 			}
+			// 止まれなかったとき
+			else
+			{
+				result.result_ = MovedResult::kOVER;
+			}
 		}
-		// 止まれなかったとき
-		result.result_ = MovedResult::kOVER;
 		break;
 	case MapManager::dRIGHT:
 		// x 軸
@@ -764,13 +825,23 @@ MapManager::InspecterMove MapManager::CheckDirect(BaseBlock::StageVector positio
 			if (data[i][y][z] != Element::kNone)
 			{
 				position = { i - 1,y,z };
-				result.result_ = MovedResult::kSUCCECES;
 				result.end_ = position;
+				if (result.start_.x == result.end_.x)
+				{
+					result.result_ = MovedResult::kFAIL;
+				}
+				else
+				{
+					result.result_ = MovedResult::kSUCCECES;
+				}
 				return result;
 			}
+			// 止まれなかったとき
+			else
+			{
+				result.result_ = MovedResult::kOVER;
+			}
 		}
-		// 止まれなかったとき
-		result.result_ = MovedResult::kOVER;
 		break;
 	case MapManager::dLEFT:
 		// z 軸
@@ -780,13 +851,23 @@ MapManager::InspecterMove MapManager::CheckDirect(BaseBlock::StageVector positio
 			if (data[i - 1][y][z] != Element::kNone)
 			{
 				position = { i,y,z };
-				result.result_ = MovedResult::kSUCCECES;
 				result.end_ = position;
+				if (result.start_.x == result.end_.x)
+				{
+					result.result_ = MovedResult::kFAIL;
+				}
+				else
+				{
+					result.result_ = MovedResult::kSUCCECES;
+				}
 				return result;
 			}
+			// 止まれなかったとき
+			else
+			{
+				result.result_ = MovedResult::kOVER;
+			}
 		}
-		// 止まれなかったとき
-		result.result_ = MovedResult::kOVER;
 		break;
 	case MapManager::dDOWN:
 		break;
