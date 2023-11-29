@@ -41,6 +41,8 @@ void TitleScene::Reset()
 void TitleScene::Update()
 {
     if (input_->TriggerKey(DIK_SPACE)) {
+        size_t selectSEHandle = Audio::GetInstance()->SoundLoadWave("select.wav");
+        size_t selectSEPlayerHandle = Audio::GetInstance()->SoundPlayWave(selectSEHandle);
         SceneManager::GetInstace()->ChegeScene(kSELECT);
     }
 
