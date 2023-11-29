@@ -191,7 +191,7 @@ bool MapManager::ChainFall(const BaseBlock::StageVector& pos)
 void MapManager::GetOperate()
 {
 	MoveDirect direct = dNONE;
-	if (input_->TriggerKey(DIK_B))
+	if (input_->TriggerKey(DIK_SPACE))
 	{
 		isShotFlag_ = !isShotFlag_;
 	}

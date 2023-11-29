@@ -58,9 +58,9 @@ void GameScene::Update()
 
 	currentStage_->Update();
 
-	if (input_->TriggerKey(DIK_SPACE))
+	if (input_->TriggerKey(DIK_ESCAPE))
 	{
-		SceneManager::GetInstace()->ChegeScene(kTITLE);
+		SceneManager::GetInstace()->ChegeScene(kSELECT);
 	}
 	// カメラ移動
 
