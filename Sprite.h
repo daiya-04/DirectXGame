@@ -116,7 +116,7 @@ public: //メンバ関数
 	//
 	void SetTextureArea(const Vector2& texBase,const Vector2& texSize);
 	//
-	void SetTextureHandle(uint32_t textureHandle);
+	void SetTextureHandle(uint32_t textureHandle) { textureHandle_ = textureHandle; }
 
 	//座標の取得
 	const Vector2& GetPosition() const { return position_; }

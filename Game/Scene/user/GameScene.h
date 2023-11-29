@@ -67,4 +67,18 @@ private: // プライベート変数
 	int32_t cGameOverStagingTime_ = 120;
 	int32_t gameOverStagingTime_ = 0;
 
+	//UI
+	std::unique_ptr<Sprite> movePlayerKey_;
+	std::unique_ptr<Sprite> moveCameraKey_;
+	std::unique_ptr<Sprite> clearCondition_;
+	std::unique_ptr<Sprite> playerMode_;
+	std::unique_ptr<Sprite> spaceKey_;
+	std::unique_ptr<Sprite> stageName_;
+
+	std::array<uint32_t, 2> clearConditionHandle{};
+	std::array<uint32_t, 2> playerMadeHandle{};
+	std::array<uint32_t, 8> stageNameHandle{};
+
+	bool isShot_ = false;
+
 };
