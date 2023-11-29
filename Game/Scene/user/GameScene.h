@@ -52,8 +52,8 @@ private: // プライベート変数
 	std::unique_ptr<Stage> currentStage_;
 
 	// 原点へのオフセット
-	Vector3 kOriginOffset_ = { 0.0f,17.0f,-10.0f };
-	Vector3 kOriginAngle = { 1.0f,0.0f,0.0f, };
+	Vector3 kOriginOffset_ = { 4.0f,5.0f,-15.0f };
+	Vector3 kOriginAngle = { 0.5f,0.0f,0.0f, };
 
 	//Particle
 	std::unique_ptr<Particle> clearParticle_;
