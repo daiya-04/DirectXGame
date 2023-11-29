@@ -5,7 +5,7 @@ void BaseBlock::Initialize()
 
 	StagingInitialize();
 	staging_ = kSROOT;
-
+	variables_ = GlobalVariables::GetInstance();
 
 	// 関数を取得
 	//pStaging[kSROOT] = &BaseBlock::StagingRoot;

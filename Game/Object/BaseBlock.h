@@ -5,6 +5,8 @@
 #include "IObject.h"
 #include "../../Object3d.h"
 
+#include "../../GlobalVariables.h"
+
 class BaseBlock : public IObject
 {
 public:
@@ -43,6 +45,8 @@ protected:
 
 		kSCOUNT,	// カウント
 	};
+
+	GlobalVariables* variables_ = nullptr;
 
 	StageVector preMapPosition_;
 	// マップのどの場所にあるか
