@@ -31,7 +31,7 @@ void SelectScene::Initialize()
 
         stageImages_[index].reset(new Sprite(stageImageTexture, { 940.0f, 400.0f }, { 480.0f, 270.0f }));
         stageImages_[index]->Initialize();
-        stageImages_[index]->SetTextureArea({ 640.0f + (640.0f * index), 0.0f }, { 640.0f, 360.0f });
+        stageImages_[index]->SetTextureArea({ 640.0f * index, 0.0f }, { 640.0f, 360.0f });
         stageImages_[index]->SetAnchorpoint({ 0.5f, 0.5f });
     }
 
@@ -52,7 +52,7 @@ void SelectScene::Reset()
         number_[index]->SetAnchorpoint({ 0.5f,0.5f });
 
         stageImages_[index]->Initialize();
-        stageImages_[index]->SetTextureArea({ 640.0f + (640.0f * index), 0.0f }, { 640.0f, 360.0f });
+        stageImages_[index]->SetTextureArea({ 640.0f * index, 0.0f }, { 640.0f, 360.0f });
         stageImages_[index]->SetAnchorpoint({ 0.5f, 0.5f });
     }
     header_->Initialize();
