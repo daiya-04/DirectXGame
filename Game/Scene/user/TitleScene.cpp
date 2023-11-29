@@ -53,8 +53,8 @@ void TitleScene::Update()
     // 拡縮透明
     auto easeOutCirc = [](float t) { return std::sqrtf(1 - std::powf(t - 1, 2)); };
 
-    pushSpaceScaling_.get()->SetSize(Lerp(easeOutCirc(scaleT), pushSpace_.get()->GetSize(), pushSpace_.get()->GetSize() * 1.2f));
-    pushSpaceScaling_.get()->SetColor({ 1.0f,1.0f,1.0f, Lerp(easeOutCirc(scaleT), 0.8f, 0.0f) });
+    pushSpaceScaling_->SetSize(Lerp(easeOutCirc(scaleT), pushSpace_.get()->GetSize(), pushSpace_.get()->GetSize() * 1.2f));
+    pushSpaceScaling_->SetColor({ 1.0f,1.0f,1.0f, Lerp(easeOutCirc(scaleT), 0.8f, 0.0f) });
 
     scaleT += 0.02f;
     if (scaleT > 0.9f) {

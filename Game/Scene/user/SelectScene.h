@@ -39,8 +39,10 @@ private: // プライベート変数
 	std::array<Vector2, stageNum_> stageNumPos_;
 
 	std::array<std::unique_ptr<Sprite>, stageNum_> number_;
+	std::array<std::unique_ptr<Sprite>, stageNum_> stageImages_;
 	std::unique_ptr<Sprite> header_;
 	std::unique_ptr<Sprite> stageImgFrame_;
+	std::unique_ptr<Sprite> stageImgFrameFace_;
 
 	int selectNum_ = 0;
 
