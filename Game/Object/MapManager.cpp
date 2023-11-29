@@ -331,7 +331,9 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 	// 頭が動かなかったときは判定しない
 	if (moveLists_.back().result_ == MovedResult::kFAIL)
 	{
-		return;
+		// 頭とくっつくときの処理が入らなかった
+
+		//return;
 	}
 	// マップの端っこにいる時
 	switch (direct)
@@ -564,7 +566,7 @@ void MapManager::InspectShotAction(MoveDirect direct)
 	// そもそも動かなかったときは判定しない
 	if (moveLists_.back().result_ == MovedResult::kFAIL)
 	{
-		return;
+		//return;
 	}
 	// マップの端っこにいる時
 	if (itr->result_ == MovedResult::kOVER)
