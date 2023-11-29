@@ -189,6 +189,7 @@ void GameScene::Update()
 			if ((*itParticle).currentTime_ >= (*itParticle).lifeTime_)
 			{
 				SceneManager::GetInstace()->ChegeScene(kSELECT);
+				
 			}
 		}
 	}
@@ -224,8 +225,10 @@ void GameScene::DrawUI()
 	moveCameraKey_->Draw();
 	movePlayerKey_->Draw();
 	clearCondition_->Draw();
-	playerMode_->Draw();
-	spaceKey_->Draw();
+	if (stageNum_ >= 3) {
+		playerMode_->Draw();
+		spaceKey_->Draw();
+	}
 	stageName_->Draw();
 }
 

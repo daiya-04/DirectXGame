@@ -65,18 +65,21 @@ void SelectScene::Reset()
 void SelectScene::Update()
 {
     DebugGUI();
-
+    size_t selectSEHandle = Audio::GetInstance()->SoundLoadWave("select.wav");
 
     if (input_->TriggerKey(DIK_A) || input_->TriggerKey(DIK_LEFT))
     {
+        size_t selectSEPlayerHandle = Audio::GetInstance()->SoundPlayWave(selectSEHandle);
         selectNum_--;
     }
     if (input_->TriggerKey(DIK_D) || input_->TriggerKey(DIK_RIGHT))
     {
+        size_t selectSEPlayerHandle = Audio::GetInstance()->SoundPlayWave(selectSEHandle);
         selectNum_++;
     }
     if (input_->TriggerKey(DIK_W) || input_->TriggerKey(DIK_UP))
     {
+        size_t selectSEPlayerHandle = Audio::GetInstance()->SoundPlayWave(selectSEHandle);
         if (selectNum_ >= 4) {
             selectNum_ -= 4;
         }
@@ -84,6 +87,7 @@ void SelectScene::Update()
     }
     if (input_->TriggerKey(DIK_S) || input_->TriggerKey(DIK_DOWN))
     {
+        size_t selectSEPlayerHandle = Audio::GetInstance()->SoundPlayWave(selectSEHandle);
         if (selectNum_ <= 3) {
             selectNum_ += 4;
         }
