@@ -6,6 +6,9 @@
 #include "./BaseBlock.h"
 #include "../../ImGuiManager.h"
 
+#include "../Scene/IScene.h"
+#include "../Scene/SceneManager.h"
+
 using Element = BaseBlock::Element;
 
 MapManager* MapManager::GetInstance()
@@ -92,6 +95,7 @@ void MapManager::DebugGUI()
 	ImGui::Text("ShotFlag: %s", isShotFlag_ ? "true" : "false");
 	ImGui::Text("Staging : %s", isStaging_ ? "true" : "false");
 	ImGui::Text("Clear?  : %s", isCleared_ ? "true" : "false");
+	ImGui::Text("GameOver: %s", isGameOvered_ ? "true" : "false");
 
 
 
@@ -136,6 +140,7 @@ void MapManager::SetStageData(const StageData& data)
 	moveLists_.clear();
 	isShotFlag_ = false;
 	isCleared_ = false;
+	isGameOvered_ = false;
 }
 
 void MapManager::FallFloatingBlock()
@@ -218,7 +223,9 @@ void MapManager::GetOperate()
 
 	// 演出中でなく
 	// 動いていたら
-	if (!isStaging_)
+	// クリアしていなかったら
+	// ゲームオーバーしていなかったら
+	if (!isStaging_ && !isCleared_ && !isGameOvered_)
 	{
 		if (direct != dNONE)
 		{
@@ -313,7 +320,7 @@ void MapManager::MoveMainObject(MoveDirect direct)
 
 	InspecMovetAction(direct);
 
-	ApplyMoveAction();
+	ApplyMoveAction(direct);
 
 
 }
@@ -345,40 +352,51 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 
 		//return;
 	}
-	// マップの端っこにいる時
-	switch (direct)
+	bool isOver = false;
+	for (; itr != moveLists_.end(); ++itr)
 	{
-	case MapManager::dFRONT:
-		if (moveLists_.back().end_.z == currentData_.kMaxStageSize_.z - 1)
+		// マップの端っこにいる時
+		// 移動した方向がマップ外の時
+		switch (direct)
 		{
-			return;
+		case MapManager::dFRONT:
+			if (itr->end_.z == currentData_.kMaxStageSize_.z - 1)
+			{
+				itr->result_ = MovedResult::kOVER;
+				isOver = true;
+			}
+			break;
+		case MapManager::dBACK:
+			if (itr->end_.z == 0)
+			{
+				itr->result_ = MovedResult::kOVER;
+				isOver = true;
+			}
+			break;
+		case MapManager::dRIGHT:
+			if (itr->end_.x == currentData_.kMaxStageSize_.x - 1)
+			{
+				itr->result_ = MovedResult::kOVER;
+				isOver = true;
+			}
+			break;
+		case MapManager::dLEFT:
+			if (itr->end_.x == 0)
+			{
+				itr->result_ = MovedResult::kOVER;
+				isOver = true;
+			}
+			break;
+		case MapManager::dNONE:
+			break;
+		default:
+			break;
 		}
-		break;
-	case MapManager::dBACK:
-		if (moveLists_.back().end_.z == 0)
-		{
-			return;
-		}
-		break;
-	case MapManager::dRIGHT:
-		if (moveLists_.back().end_.x == currentData_.kMaxStageSize_.x - 1)
-		{
-			return;
-		}
-		break;
-	case MapManager::dLEFT:
-		if (moveLists_.back().end_.x == 0)
-		{
-			return;
-		}
-		break;
-	case MapManager::dDOWN:
-		break;
-	case MapManager::dNONE:
-		break;
-	default:
-		break;
 	}
+	if (isOver) { return; }
+
+	itr = moveLists_.begin();
+
 	// ブロックの上に乗れるなら乗るようにする
 	// 上に頭があるときは処理しない
 	size_t x = moveLists_.begin()->end_.x;
@@ -473,8 +491,6 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 			}
 		}
 		break;
-	case MapManager::dDOWN:
-		break;
 	case MapManager::dNONE:
 	default:
 		break;
@@ -498,18 +514,26 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 
 }
 
-void MapManager::ApplyMoveAction()
+void MapManager::ApplyMoveAction(MoveDirect direct)
 {
+	std::list<InspecterMove>::iterator itr = moveLists_.begin();
 	if (moveLists_.back().result_ == MovedResult::kFAIL)
 	{
 		return;
 	}
 	if (moveLists_.back().result_ == MovedResult::kOVER)
 	{
-		// ゲームオーバー演出
+		// ゲームオーバーフラグを立てる
+		isGameOvered_ = true;
+		for (; itr != moveLists_.end(); ++itr)
+		{
+			if (itr->result_ == MovedResult::kOVER)
+			{
+				blockManager_->SetOverBlock(itr->start_, direct);
+			}
+		}
 		return;
 	}
-	std::list<InspecterMove>::iterator itr = moveLists_.begin();
 
 	playerPosition_ = moveLists_.back().end_;
 	SetElement(moveLists_.back().end_, GetElement(moveLists_.back().start_));
@@ -582,7 +606,7 @@ void MapManager::InspectShotAction(MoveDirect direct)
 	if (itr->result_ == MovedResult::kOVER)
 	{
 		// どうしようもないゲームオーバー
-
+		isGameOvered_ = true;
 		return;
 	}
 	switch (direct)
@@ -610,8 +634,6 @@ void MapManager::InspectShotAction(MoveDirect direct)
 		{
 			return;
 		}
-		break;
-	case MapManager::dDOWN:
 		break;
 	case MapManager::dNONE:
 		break;
@@ -685,8 +707,6 @@ void MapManager::InspectShotAction(MoveDirect direct)
 			}
 		}
 		break;
-	case MapManager::dDOWN:
-		break;
 	case MapManager::dNONE:
 	default:
 		break;
@@ -750,8 +770,6 @@ void MapManager::ApplyShotAction(MoveDirect direct)
 			break;
 		case MapManager::dLEFT:
 			bodyPos.x++;
-			break;
-		case MapManager::dDOWN:
 			break;
 		case MapManager::dNONE:
 			break;
@@ -978,8 +996,6 @@ MapManager::InspecterMove MapManager::CheckDirect(BaseBlock::StageVector positio
 			}
 		}
 		break;
-	case MapManager::dDOWN:
-		break;
 	case MapManager::dNONE:
 	default:
 		break;
@@ -1095,8 +1111,6 @@ bool MapManager::CheckDirectPlayer(BaseBlock::StageVector position, MoveDirect d
 			}
 		}
 		break;
-	case MapManager::dDOWN:
-		break;
 	case MapManager::dNONE:
 	default:
 		break;
@@ -1191,8 +1205,6 @@ bool MapManager::CheckDirectBody(BaseBlock::StageVector position, MoveDirect dir
 		position = { limit.x,y,z };
 		nextPos = position;
 		SetElement(position, element);
-		break;
-	case MapManager::dDOWN:
 		break;
 	case MapManager::dNONE:
 	default:

@@ -32,7 +32,6 @@ public:
 		dBACK,
 		dRIGHT,
 		dLEFT,
-		dDOWN,
 	};
 
 private:
@@ -97,6 +96,9 @@ private:
 	// クリアフラグ
 	bool isCleared_ = false;
 
+	// ゲームオーバーフラグ
+	bool isGameOvered_ = false;
+
 	// クリア状態かどうかを判定するためのもの
 	// 頭の数だけ用意する
 	std::vector<DarumaChunk> darumas_;
@@ -123,7 +125,7 @@ public:
 	
 	bool IsClear() const { return isCleared_; }
 
-
+	bool IsGameOVer() const { return isGameOvered_; }
 
 private:
 
@@ -157,7 +159,7 @@ private:
 	void InspecMovetAction(MoveDirect direct);
 
 	// 結果を反映
-	void ApplyMoveAction();
+	void ApplyMoveAction(MoveDirect direct);
 
 	// ブロックを射出させる
 	void ShotSubObject(MoveDirect direct);

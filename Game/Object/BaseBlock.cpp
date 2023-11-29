@@ -1,5 +1,7 @@
 #include "BaseBlock.h"
 
+#include "MapManager.h"
+
 float BaseBlock::kBlockSize = 2.0f;
 
 void BaseBlock::Initialize()
@@ -18,6 +20,7 @@ void BaseBlock::Initialize()
 	{
 		cStagingFrames_[i] = 10;
 	}
+	cStagingFrames_[kSOVER] = 300;
 }
 
 void BaseBlock::Initialize(const StageVector& pos)
@@ -194,10 +197,40 @@ void BaseBlock::StagingOver()
 {
 	stagingFrame_++;
 
+	Vector3 start = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
+	Vector3 end = overPosition_;
+
+	modelTransform_.translation_ = start + ((end - start) * (stagingFrame_ / (float)cStagingFrames_[kSOVER]));
 
 
 	if (cStagingFrames_[kSOVER] <= stagingFrame_)
 	{
 		stagingRequest_ = kSROOT;
 	}
+}
+
+void BaseBlock::OverMapPosition(size_t direct)
+{
+	modelTransform_.translation_ = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
+	overPosition_ = modelTransform_.translation_;
+	switch (direct)
+	{
+	case MapManager::dFRONT:
+		overPosition_.z = kOverPosition;
+		break;
+	case MapManager::dBACK:
+		overPosition_.z = -kOverPosition;
+		break;
+	case MapManager::dRIGHT:
+		overPosition_.x = kOverPosition;
+		break;
+	case MapManager::dLEFT:
+		overPosition_.x = -kOverPosition;
+		break;
+	case MapManager::dNONE:
+		break;
+	default:
+		break;
+	}
+	stagingRequest_ = kSOVER;
 }

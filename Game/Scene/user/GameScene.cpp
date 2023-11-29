@@ -110,7 +110,11 @@ void GameScene::Update()
 			(*itParticle).currentTime_ = (*itParticle).lifeTime_;
 		}
 	}
-
+	// ゲームオーバー時の演出
+	if (MapManager::GetInstance()->IsGameOVer())
+	{
+		//SceneManager::GetInstace()->ChegeScene(kSELECT);
+	}
 
 }
 

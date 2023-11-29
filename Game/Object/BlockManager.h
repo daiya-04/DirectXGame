@@ -81,6 +81,8 @@ public:
 	// マップの場所を保存して指定できるようにする
 	void SetBlockPosition(const BaseBlock::StageVector& prePos,const BaseBlock::StageVector& pos);
 	void DeleteBlockPosition(const BaseBlock::StageVector& pos);
+	// ぶっ飛ばす
+	void SetOverBlock(const BaseBlock::StageVector& prePos, MapManager::MoveDirect direct);
 
 	bool GetIsStaging();
 

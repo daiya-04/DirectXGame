@@ -119,6 +119,7 @@ void BlockManager::SetStageData(const MapManager::StageData& data)
 
 void BlockManager::SetBlockPosition(const BaseBlock::StageVector& prePos, const BaseBlock::StageVector& pos)
 {
+	// 場所が変わってないなら何もしない
 	if (prePos.x == pos.x && prePos.y == pos.y && prePos.z == pos.z)
 	{
 		return;
@@ -203,6 +204,12 @@ bool BlockManager::ChainFall(const BaseBlock::StageVector& pos)
 	}
 	// 落ちないブロックなので処理しない
 	return false;
+}
+
+void BlockManager::SetOverBlock(const BaseBlock::StageVector& prePos, MapManager::MoveDirect direct)
+{
+	// 範囲外の時、指定されたブロックをぶっ飛ばす
+	mapBlock_[prePos.x][prePos.y][prePos.z]->OverMapPosition(direct);
 }
 
 

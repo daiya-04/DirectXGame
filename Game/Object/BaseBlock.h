@@ -33,6 +33,8 @@ public:
 
 protected:
 
+	// ぶっ飛ばす先
+	const float kOverPosition = 100.0f;
 
 	enum Staging : size_t
 	{
@@ -55,6 +57,9 @@ protected:
 	// 次の位置
 	// いまのところ上昇用
 	StageVector nextMapPosition_;
+
+	// ぶっ飛ばされる場所
+	Vector3 overPosition_ = { 0.0f,0.0f,0.0f };
 
 	// モデルの描画場所
 	// ワールドトランスフォームにするかも
@@ -117,6 +122,9 @@ public:
 		stagingRequest_ = kSFALL;
 		mapPosition_ = pos;
 	}
+	// 画面外にぶっ飛ばす
+	void OverMapPosition(size_t direct);
+
 	void SetMapPosition(const StageVector& pos, Staging staging)
 	{
 		preMapPosition_ = mapPosition_;
@@ -128,6 +136,8 @@ public:
 		nextMapPosition_ = pos;
 		stagingNextRequest_ = kSLOAD;
 	}
+
+
 	bool GetIsStaging() const
 	{
 		// 今待機中じゃないの？
