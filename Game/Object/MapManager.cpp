@@ -766,6 +766,7 @@ void MapManager::ApplyShotAction(MoveDirect direct)
 
 void MapManager::ReserveClear()
 {
+	darumas_.clear();
 	StageArray<Element>& data = currentData_.array_;
 	// x 軸
 	for (size_t i = 0; i < data.size(); i++)
@@ -790,6 +791,8 @@ void MapManager::ReserveClear()
 
 void MapManager::CheckClear()
 {
+	ReserveClear();
+
 	StageArray<Element>& data = currentData_.array_;
 	for (size_t index = 0; index < darumas_.size(); index++)
 	{
