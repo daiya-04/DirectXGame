@@ -23,7 +23,7 @@ public:
 
 	void Update(float stageCenter);
 
-	ViewProjection& GetViewProjection() { return viewProjection_; }
+	ViewProjection* GetViewProjection() { return &viewProjection_; }
 
 };
 

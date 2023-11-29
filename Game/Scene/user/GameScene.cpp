@@ -9,7 +9,9 @@ using MoveDirect = MapManager::MoveDirect;
 
 void GameScene::Initialize()
 {
-	maingCamera_.reset(new ViewProjection());
+	stageCamera_ = std::make_unique<StageCamera>();
+	stageCamera_->Initialize();
+	maingCamera_ = stageCamera_->GetViewProjection();
 	maingCamera_->Initialize();
 
 	/*maingCamera_->translation_ = kOriginOffset_;
@@ -19,13 +21,11 @@ void GameScene::Initialize()
 	clearParticle_ = std::make_unique<Particle>();
 	clearParticle_.reset(Particle::Create(clearParticleHandle_, 16));
 
-	stageCamera_ = std::make_unique<StageCamera>();
-	stageCamera_->Initialize();
 
 #ifdef _DEBUG
 
 	currentStage_.reset(new DebugStage);
-	currentStage_->Initialize(maingCamera_.get());
+	currentStage_->Initialize(maingCamera_);
 
 #endif // _DEBUG
 
@@ -82,7 +82,7 @@ void GameScene::Update()
 
 	stageCamera_->Update(stageCenter);
 
-	maingCamera_->matView_ = stageCamera_->GetViewProjection().matView_;
+	//maingCamera_->matView_ = stageCamera_->GetViewProjection()->matView_;
 
 
 	currentStage_->SetCameraDirection(CameraDirection());
@@ -154,7 +154,7 @@ void GameScene::DrawUI()
 
 void GameScene::DrawParticle()
 {
-	clearParticle_->Draw(clearParticles_, *maingCamera_.get());
+	clearParticle_->Draw(clearParticles_, *maingCamera_);
 }
 
 GameScene::~GameScene() {}
@@ -188,7 +188,7 @@ void GameScene::DebugGUI()
 MapManager::MoveDirect GameScene::CameraDirection()
 {
 	// カメラの方向から今カメラがいる方向を算出
-	float rotateY = stageCamera_->GetViewProjection().rotation_.y;
+	float rotateY = stageCamera_->GetViewProjection()->rotation_.y;
 	float pi4 = static_cast<float>(std::numbers::pi) / 4.0f;
 	MoveDirect cameraDirect = MoveDirect::dFRONT;
 	if (-pi4 < rotateY && rotateY < pi4)

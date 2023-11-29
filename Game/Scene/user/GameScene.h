@@ -46,7 +46,7 @@ private: // プライベート変数
 
 
 	// ゲームシーン内でデータを保存する
-	std::unique_ptr<ViewProjection> maingCamera_;
+	ViewProjection* maingCamera_ = nullptr;;
 
 	int stageNum_ = 0;
 
