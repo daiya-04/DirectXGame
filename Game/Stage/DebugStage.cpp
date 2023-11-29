@@ -54,11 +54,7 @@ void DebugStage::Update()
 {
 	DebugGUI();
 
-	if (Input::GetInstance()->TriggerKey(DIK_R))
-	{
-		Reset();
-	}
-
+	mapManager_->SetCameraDirection(cameraDirect_);
 	mapManager_->Update();
 	blockManager_->Update();
 }

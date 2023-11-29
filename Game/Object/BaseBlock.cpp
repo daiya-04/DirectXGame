@@ -20,6 +20,7 @@ void BaseBlock::Initialize()
 	{
 		cStagingFrames_[i] = 20;
 	}
+	cStagingFrames_[kSSTOP] = 5;
 	cStagingFrames_[kSOVER] = 300;
 }
 

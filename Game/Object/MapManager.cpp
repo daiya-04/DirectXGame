@@ -233,6 +233,9 @@ void MapManager::GetOperate()
 	{
 		if (direct != dNONE)
 		{
+			// ここでカメラの向きに補正する
+			CorrectionDirection(direct);
+
 			if (isShotFlag_)
 			{
 				ShotSubObject(direct);
@@ -247,6 +250,64 @@ void MapManager::GetOperate()
 	}
 
 }
+void MapManager::CorrectionDirection(MoveDirect& direct)
+{
+	if (cameraDirect_ == dBACK)
+	{
+		switch (direct)
+		{
+		case MapManager::dFRONT:
+			direct = dBACK;
+			break;
+		case MapManager::dBACK:
+			direct = dFRONT;
+			break;
+		case MapManager::dRIGHT:
+			direct = dLEFT;
+			break;
+		case MapManager::dLEFT:
+			direct = dRIGHT;
+			break;
+		}
+	}
+	else if (cameraDirect_ == dRIGHT)
+	{
+		switch (direct)
+		{
+		case MapManager::dFRONT:
+			direct = dLEFT;
+			break;
+		case MapManager::dBACK:
+			direct = dRIGHT;
+			break;
+		case MapManager::dRIGHT:
+			direct = dFRONT;
+			break;
+		case MapManager::dLEFT:
+			direct = dBACK;
+			break;
+		}
+	}
+	else if (cameraDirect_ == dLEFT)
+	{
+		switch (direct)
+		{
+		case MapManager::dFRONT:
+			direct = dRIGHT;
+			break;
+		case MapManager::dBACK:
+			direct = dLEFT;
+			break;
+		case MapManager::dRIGHT:
+			direct = dBACK;
+			break;
+		case MapManager::dLEFT:
+			direct = dFRONT;
+			break;
+		}
+	}
+}
+
 void MapManager::GetPlayerInfomation()
 {
 	StageArray<Element>& data = currentData_.array_;

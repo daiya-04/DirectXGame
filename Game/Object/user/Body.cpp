@@ -4,7 +4,6 @@ void BodyBlock::Initialize()
 {
 	BaseBlock::Initialize();
 	element_ = Element::kBody;
-	cStagingFrames_[kSSTOP] = 15;
 	cStagingFrames_[kSLOAD] = 15;
 }
 //

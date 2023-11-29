@@ -82,6 +82,10 @@ private:
 	// 演出中でないことを確認する
 	bool isStaging_ = false;
 
+
+	// カメラの向きを取得しておく
+	MoveDirect cameraDirect_ = dFRONT;
+
 	// 動いた結果を格納する
 	PlayerChunk playerChunk_;
 	// 動かす予定の開始位置と終了位置のリスト
@@ -132,6 +136,8 @@ public:
 
 	void SetCanUseShot(bool flag) { canUseShot_ = flag; }
 
+	void SetCameraDirection(MoveDirect direct) { cameraDirect_ = direct; }
+
 private:
 
 	MapManager() = default;
@@ -147,6 +153,9 @@ private:
 	// 今は変更までしてしまっている
 	// 多分無理
 	void GetOperate();
+
+	// カメラの位置からの補正
+	void CorrectionDirection(MoveDirect& direct);
 
 	// 重くなりそうなので最初の一回のみ
 	void GetPlayerInfomation();

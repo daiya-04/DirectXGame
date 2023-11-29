@@ -5,9 +5,13 @@
 #include <cmath>
 #include <numbers>
 
+using MoveDirect = MapManager::MoveDirect;
+
 void GameScene::Initialize()
 {
-	maingCamera_.reset(new ViewProjection());
+	stageCamera_ = std::make_unique<StageCamera>();
+	stageCamera_->Initialize();
+	maingCamera_ = stageCamera_->GetViewProjection();
 	maingCamera_->Initialize();
 
 	/*maingCamera_->translation_ = kOriginOffset_;
@@ -17,8 +21,6 @@ void GameScene::Initialize()
 	clearParticle_ = std::make_unique<Particle>();
 	clearParticle_.reset(Particle::Create(clearParticleHandle_, 16));
 
-	stageCamera_ = std::make_unique<StageCamera>();
-	stageCamera_->Initialize();
 
 	uint32_t movePlayerKeyHandle = TextureManager::Load("ui1.png");
 	uint32_t moveCameraKeyHandle = TextureManager::Load("cameraUi.png");
@@ -60,7 +62,7 @@ void GameScene::Initialize()
 #ifdef _DEBUG
 
 	currentStage_.reset(new DebugStage);
-	currentStage_->Initialize(maingCamera_.get());
+	currentStage_->Initialize(maingCamera_);
 
 #endif // _DEBUG
 
@@ -116,12 +118,12 @@ void GameScene::Update()
 {
 	DebugGUI();
 
-	currentStage_->Update();
 
 	if (input_->TriggerKey(DIK_ESCAPE))
 	{
 		SceneManager::GetInstace()->ChegeScene(kSELECT);
 	}
+
 
 	if (stageNum_ >= 3) {
 		if (input_->TriggerKey(DIK_SPACE)) {
@@ -136,9 +138,11 @@ void GameScene::Update()
 		}
 	}
 	
-
-	
-
+	if (input_->TriggerKey(DIK_R))
+	{
+		Reset();
+	}
+  
 	// カメラ移動
 
 	// ステージの中央を取得
@@ -147,10 +151,11 @@ void GameScene::Update()
 
 	stageCamera_->Update(stageCenter);
 
-	
+	//maingCamera_->matView_ = stageCamera_->GetViewProjection()->matView_;
 
-	maingCamera_->matView_ = stageCamera_->GetViewProjection().matView_;
-	
+
+	currentStage_->SetCameraDirection(CameraDirection());
+	currentStage_->Update();
 
 	//ClearParticle
 	if (MapManager::GetInstance()->IsClear())
@@ -158,7 +163,7 @@ void GameScene::Update()
 		if (clearParticles_.empty())
 		{
 
-			
+
 
 			for (size_t index = 0; index < clearParticle_->particleMaxNum_; index++)
 			{
@@ -226,7 +231,7 @@ void GameScene::DrawUI()
 
 void GameScene::DrawParticle()
 {
-	clearParticle_->Draw(clearParticles_, *maingCamera_.get());
+	clearParticle_->Draw(clearParticles_, *maingCamera_);
 }
 
 GameScene::~GameScene() {}
@@ -239,6 +244,10 @@ void GameScene::DebugGUI()
 
 	ImGui::DragFloat3("ViewRotate", &maingCamera_->rotation_.x, 0.01f);
 	ImGui::DragFloat3("ViewTranslate", &maingCamera_->translation_.x, 0.1f);
+	ImGui::Text("%d", gameOverStagingTime_);
+
+
+	ImGui::Text("%d", CameraDirection());
 
 	if (ImGui::Button("Reset"))
 	{
@@ -251,4 +260,32 @@ void GameScene::DebugGUI()
 
 #endif // _DEBUG
 
+}
+
+MapManager::MoveDirect GameScene::CameraDirection()
+{
+	// カメラの方向から今カメラがいる方向を算出
+	float rotateY = stageCamera_->GetViewProjection()->rotation_.y;
+	float pi4 = static_cast<float>(std::numbers::pi) / 4.0f;
+	MoveDirect cameraDirect = MoveDirect::dFRONT;
+	if (-pi4 < rotateY && rotateY < pi4)
+	{
+		cameraDirect = MoveDirect::dFRONT;
+	}
+	else if (pi4 * 3 < rotateY && rotateY < pi4 * 5 ||
+		-pi4 * 5 < rotateY && rotateY < -pi4 * 3)
+	{
+		cameraDirect = MoveDirect::dBACK;
+	}
+	else if (pi4 * 5 < rotateY && rotateY < pi4 * 7||
+		-pi4 * 3 < rotateY && rotateY < -pi4 * 1)
+	{
+		cameraDirect = MoveDirect::dRIGHT;
+	}
+	else if (pi4 * 1 < rotateY && rotateY < pi4 * 3 ||
+		-pi4 * 7 < rotateY && rotateY < -pi4 * 5)
+	{
+		cameraDirect = MoveDirect::dLEFT;
+	}
+	return cameraDirect;
 }
