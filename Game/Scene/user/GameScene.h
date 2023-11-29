@@ -4,6 +4,7 @@
 
 #include "../../Stage/Stage.h"
 #include "../../../Particle.h"
+#include "../../../StageCamera.h"
 #ifdef _DEBUG
 
 #include "../../Stage/DebugStage.h"
@@ -51,9 +52,12 @@ private: // プライベート変数
 	// ステージを持たせる
 	std::unique_ptr<Stage> currentStage_;
 
+	//ステージカメラ
+	std::unique_ptr<StageCamera> stageCamera_;
+
 	// 原点へのオフセット
-	Vector3 kOriginOffset_ = { 4.0f,5.0f,-15.0f };
-	Vector3 kOriginAngle = { 0.5f,0.0f,0.0f, };
+	/*Vector3 kOriginOffset_ = { 0.0f,0.0f,0.0f };
+	Vector3 kOriginAngle = { 0.0f,0.0f,0.0f, };*/
 
 	//Particle
 	std::unique_ptr<Particle> clearParticle_;
