@@ -4,6 +4,8 @@ void BodyBlock::Initialize()
 {
 	BaseBlock::Initialize();
 	element_ = Element::kBody;
+	cStagingFrames_[kSSTOP] = 15;
+	cStagingFrames_[kSLOAD] = 15;
 }
 //
 //void BodyBlock::Update()
@@ -128,7 +130,15 @@ void BodyBlock::StagingLoad()
 
 
 
-	if (cStagingFrames_[kSLOAD] <= stagingFrame_) {
+	Vector3 start = { preMapPosition_.x * kBlockSize,preMapPosition_.y * -kBlockSize,preMapPosition_.z * kBlockSize };
+	Vector3 end = { nextMapPosition_.x * kBlockSize,nextMapPosition_.y * -kBlockSize,nextMapPosition_.z * kBlockSize };
+
+	modelTransform_.translation_ = start + ((end - start) * (stagingFrame_ / (float)cStagingFrames_[kSLOAD]));
+	//modelTransform_.scale_ = { 0.98f,0.98f,0.98f };
+
+	if (cStagingFrames_[kSLOAD] <= stagingFrame_)
+	{
 		stagingRequest_ = kSROOT;
+		modelTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	}
 }

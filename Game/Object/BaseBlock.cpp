@@ -18,7 +18,7 @@ void BaseBlock::Initialize()
 	//pStaging[kSLOAD] = &BaseBlock::StagingLoad;
 	for (size_t i = 0; i < kSCOUNT; i++)
 	{
-		cStagingFrames_[i] = 10;
+		cStagingFrames_[i] = 20;
 	}
 	cStagingFrames_[kSOVER] = 300;
 }
