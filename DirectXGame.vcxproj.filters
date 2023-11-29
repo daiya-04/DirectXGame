@@ -173,6 +173,7 @@
       <Filter>Engine\GlobalVariable</Filter>
     </ClCompile>
     <ClCompile Include="StageCamera.cpp" />
+    <ClCompile Include="Easing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -314,6 +315,7 @@
       <Filter>Engine\Game\Stage</Filter>
     </ClInclude>
     <ClInclude Include="StageCamera.h" />
+    <ClInclude Include="Easing.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

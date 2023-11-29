@@ -8,9 +8,10 @@
 void GameScene::Initialize()
 {
 	maingCamera_.reset(new ViewProjection());
+	maingCamera_->Initialize();
 
-	maingCamera_->translation_ = kOriginOffset_;
-	maingCamera_->rotation_ = kOriginAngle;
+	/*maingCamera_->translation_ = kOriginOffset_;
+	maingCamera_->rotation_ = kOriginAngle;*/
 
 	uint32_t clearParticleHandle_ = TextureManager::Load("star.png");
 	clearParticle_ = std::make_unique<Particle>();
@@ -42,8 +43,10 @@ void GameScene::Reset()
 {
 	//viewProjection_.reset(new ViewProjection());
 	maingCamera_->Initialize();
-	maingCamera_->translation_ = kOriginOffset_;
-	maingCamera_->rotation_ = kOriginAngle;
+	//maingCamera_->translation_ = kOriginOffset_;
+	//maingCamera_->rotation_ = kOriginAngle;
+
+	stageCamera_->Initialize();
 
 	Audio::GetInstance()->SoundPlayLoopEnd(playHandle_);
 	size_t bgmHandle = Audio::GetInstance()->SoundLoadWave("inGameBGM.wav");
@@ -67,12 +70,12 @@ void GameScene::Update()
 	}
 	// カメラ移動
 
-	if (input_->TriggerKey(DIK_LEFT)) {
+	stageCamera_->Update();
 
-	}
-	if (input_->TriggerKey(DIK_RIGHT)) {
+	
 
-	}
+	maingCamera_->matView_ = stageCamera_->GetViewProjection().matView_;
+	
 
 	//ClearParticle
 	if (MapManager::GetInstance()->IsClear()) {

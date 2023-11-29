@@ -54,11 +54,10 @@ private: // プライベート変数
 
 	//ステージカメラ
 	std::unique_ptr<StageCamera> stageCamera_;
-	Vector3 stageCenter_ = { 4.0f,-8.0f,4.0f };
 
 	// 原点へのオフセット
-	Vector3 kOriginOffset_ = { 4.0f,5.0f,-15.0f };
-	Vector3 kOriginAngle = { 0.5f,0.0f,0.0f, };
+	/*Vector3 kOriginOffset_ = { 0.0f,0.0f,0.0f };
+	Vector3 kOriginAngle = { 0.0f,0.0f,0.0f, };*/
 
 	//Particle
 	std::unique_ptr<Particle> clearParticle_;
