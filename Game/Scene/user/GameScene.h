@@ -3,6 +3,7 @@
 #include "../IScene.h"
 
 #include "../../Stage/Stage.h"
+#include "../../../Particle.h"
 #ifdef _DEBUG
 
 #include "../../Stage/DebugStage.h"
@@ -25,6 +26,8 @@ public:
 	void DrawModel() override;
 	// UI の描画
 	void DrawUI() override;
+	// Particle の描画
+	void DrawParticle() override;
 
 	// デストラクタ
 	~GameScene() override;
@@ -51,5 +54,9 @@ private: // プライベート変数
 	// 原点へのオフセット
 	Vector3 kOriginOffset_ = { 0.0f,17.0f,-10.0f };
 	Vector3 kOriginAngle = { 1.0f,0.0f,0.0f, };
+
+	//Particle
+	std::unique_ptr<Particle> clearParticle_;
+	std::list<Particle::ParticleData> clearParticles_;
 
 };

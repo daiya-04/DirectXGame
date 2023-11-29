@@ -26,6 +26,8 @@ public: // パブリック関数
 
 	void DrawUI();
 
+	void DrawParticle();
+
 	void ChegeScene(int num);
 	// ゲームシーンへ
 	void SelectStage(int num);

@@ -355,12 +355,12 @@ void Particle::Draw(std::list<ParticleData>& particleData,const ViewProjection& 
 		Matrix4x4 worldMatrix = MakeScaleMatrix({ 1.0f,1.0f,1.0f }) * billboardMat * MakeTranslateMatrix((*itParticle).worldTransform_.translation_);
 
 		Matrix4x4 wvpMatrix = worldMatrix * (viewProjection.matView_ * viewProjection.matProjection_);
-		float alpha = 1.0f - ((*itParticle).currentTime_ / (*itParticle).lifeTime_);
+		//float alpha = 1.0f - ((*itParticle).currentTime_ / (*itParticle).lifeTime_);
 
 		if (particleNum_ < particleMaxNum_) {
 			instancingData[particleNum_].WVP = wvpMatrix;
 			instancingData[particleNum_].color = (*itParticle).color_;
-			instancingData[particleNum_].color.w = alpha;
+			//instancingData[particleNum_].color.w = alpha;
 			particleNum_++;
 		}
 		
