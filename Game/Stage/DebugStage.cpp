@@ -219,4 +219,12 @@ void DebugStage::ApplyStageData()
 	}
 	mapManager_->SetStageData(kStageData_);
 	blockManager_->SetStageData(kStageData_);
+	if (stageNum_ < 3)
+	{
+		mapManager_->SetCanUseShot(false);
+	}
+	else
+	{
+		mapManager_->SetCanUseShot(true);
+	}
 }

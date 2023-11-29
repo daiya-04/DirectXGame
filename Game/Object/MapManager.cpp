@@ -92,9 +92,10 @@ void MapManager::DebugGUI()
 	ImGui::Text("Player  : %d,%d,%d", playerChunk_.position_.x, playerChunk_.position_.y - playerChunk_.bodyNum_, playerChunk_.position_.z);
 	ImGui::Text("Position: %d,%d,%d", playerChunk_.position_.x, playerChunk_.position_.y, playerChunk_.position_.z);
 	ImGui::Text("Bodys   : %d", playerChunk_.bodyNum_);
+	ImGui::Text("CanShot : %s", canUseShot_ ? "true" : "false");
 	ImGui::Text("ShotFlag: %s", isShotFlag_ ? "true" : "false");
 	ImGui::Text("Staging : %s", isStaging_ ? "true" : "false");
-	ImGui::Text("Clear?  : %s", isCleared_ ? "true" : "false");
+	ImGui::Text("Clear   : %s", isCleared_ ? "true" : "false");
 	ImGui::Text("GameOver: %s", isGameOvered_ ? "true" : "false");
 
 
@@ -198,10 +199,13 @@ bool MapManager::ChainFall(const BaseBlock::StageVector& pos)
 void MapManager::GetOperate()
 {
 	MoveDirect direct = dNONE;
-	if (input_->TriggerKey(DIK_SPACE))
+	if (canUseShot_)
 	{
-		isShotFlag_ = !isShotFlag_;
-		blockManager_->ChengePlayerModel(!isShotFlag_);
+		if (input_->TriggerKey(DIK_SPACE))
+		{
+			isShotFlag_ = !isShotFlag_;
+			blockManager_->ChengePlayerModel(!isShotFlag_);
+		}
 	}
 
 	if (input_->TriggerKey(DIK_W))
@@ -420,7 +424,7 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 		{
 			// 頭が止まっていた時の処理
 			// 体が頭を越してたら
-			if (moveLists_.back().result_ == MovedResult::kSUCCECES && 
+			if (moveLists_.back().result_ == MovedResult::kSUCCECES &&
 				moveLists_.back().end_.z < itr->end_.z)
 			{
 				itr->result_ = MovedResult::kSUCCECES;
@@ -443,7 +447,7 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 		{
 			// 頭が止まっていた時の処理
 			// 体が頭を越してたら
-			if (moveLists_.back().result_ == MovedResult::kSUCCECES && 
+			if (moveLists_.back().result_ == MovedResult::kSUCCECES &&
 				itr->end_.z < moveLists_.back().end_.z)
 			{
 				itr->result_ = MovedResult::kSUCCECES;
@@ -487,7 +491,7 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 		{
 			// 頭が止まっていた時の処理
 			// 体が頭を越してたら
-			if (moveLists_.back().result_ == MovedResult::kSUCCECES && 
+			if (moveLists_.back().result_ == MovedResult::kSUCCECES &&
 				itr->end_.x < moveLists_.back().end_.x)
 			{
 				itr->result_ = MovedResult::kSUCCECES;

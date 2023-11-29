@@ -92,12 +92,15 @@ private:
 	// false : 移動, true : 射出
 	bool isShotFlag_ = false;
 	
+	// そもそもの射出できるかどうかのフラグ
+	bool canUseShot_ = false;
 	
 	// クリアフラグ
 	bool isCleared_ = false;
 
 	// ゲームオーバーフラグ
 	bool isGameOvered_ = false;
+
 
 	// クリア状態かどうかを判定するためのもの
 	// 頭の数だけ用意する
@@ -126,6 +129,8 @@ public:
 	bool IsClear() const { return isCleared_; }
 
 	bool IsGameOVer() const { return isGameOvered_; }
+
+	void SetCanUseShot(bool flag) { canUseShot_ = flag; }
 
 private:
 
