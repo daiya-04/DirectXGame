@@ -29,6 +29,7 @@ void Stage::Reset()
 {
 	blockManager_->Reset();
 	// ステージの情報を反映
+	LoadStageData();
 	ApplyStageData();
 }
 
@@ -38,7 +39,6 @@ void Stage::Update()
 
 	if (Input::GetInstance()->TriggerKey(DIK_R))
 	{
-		LoadStageData();
 		Reset();
 	}
 
@@ -99,21 +99,6 @@ void Stage::LoadStageData()
 
 void Stage::ApplyStageData()
 {
-	StageArray<Element>& data = kStageData_.array_;
-	BaseBlock::StageVector size = kStageData_.kMaxStageSize_;
-	// 地面の位置を設定
-	for (size_t i = 0; i < size.x; i++) {
-		for (size_t j = 0; j < size.z; j++) {
-			data[i][size.y - 1][j] = Element::kBlock;
-		}
-	}
-	data[3][3][0] = Element::kBlock;
-
-	data[3][3][3] = Element::kBody;
-	data[1][3][2] = Element::kBody;
-	// プレイヤーの位置を設定
-	data[1][3][3] = Element::kPlayer;
-
 	mapManager_->SetStageData(kStageData_);
 	blockManager_->SetStageData(kStageData_);
 }

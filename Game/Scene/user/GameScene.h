@@ -1,7 +1,14 @@
 #pragma once
 
 #include "../IScene.h"
+
+#include "../../Stage/Stage.h"
+#ifdef _DEBUG
+
 #include "../../Stage/DebugStage.h"
+
+#endif // _DEBUG
+
 
 class GameScene final : public IScene
 {
@@ -39,7 +46,7 @@ private: // プライベート変数
 	int stageNum_ = 0;
 
 	// ステージを持たせる
-	std::unique_ptr<DebugStage> currentStage_;
+	std::unique_ptr<Stage> currentStage_;
 
 	// 原点へのオフセット
 	Vector3 kOriginOffset_ = { 0.0f,17.0f,-10.0f };
