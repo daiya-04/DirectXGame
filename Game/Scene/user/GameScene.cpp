@@ -16,6 +16,9 @@ void GameScene::Initialize()
 	clearParticle_ = std::make_unique<Particle>();
 	clearParticle_.reset(Particle::Create(clearParticleHandle_, 16));
 
+	stageCamera_ = std::make_unique<StageCamera>();
+	stageCamera_->Initialize();
+
 #ifdef _DEBUG
 
 	currentStage_.reset(new DebugStage);
@@ -64,7 +67,12 @@ void GameScene::Update()
 	}
 	// カメラ移動
 
+	if (input_->TriggerKey(DIK_LEFT)) {
 
+	}
+	if (input_->TriggerKey(DIK_RIGHT)) {
+
+	}
 
 	//ClearParticle
 	if (MapManager::GetInstance()->IsClear()) {

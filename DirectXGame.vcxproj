@@ -129,6 +129,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Game\Scene\user\SelectScene.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="StageCamera.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="ViewProjection.cpp" />
     <ClCompile Include="WinApp.cpp" />
@@ -172,6 +173,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Game\Scene\user\SelectScene.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="StageCamera.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec3.h" />
