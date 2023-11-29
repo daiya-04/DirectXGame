@@ -93,6 +93,10 @@ void SelectScene::Update()
         }
     }
 
+    if (input_->TriggerKey(DIK_T)) {
+        SceneManager::GetInstace()->ChegeScene(kTITLE);
+    }
+
     if (selectNum_ < 0)
     {
         selectNum_ = 0;
