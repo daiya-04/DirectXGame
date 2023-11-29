@@ -17,6 +17,8 @@ public:
 	void DrawModel() override;
 	//　UI の描画
 	void DrawUI() override;
+	// Particle の描画
+	void DrawParticle() override;
 
 	// デストラクタ
 	~SelectScene() override;

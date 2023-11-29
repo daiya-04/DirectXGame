@@ -50,6 +50,8 @@ public:
 	virtual void DrawModel() = 0;
 	// UI の描画
 	virtual void DrawUI() = 0;
+	// Particle の描画
+	virtual void DrawParticle() = 0;
 
 	// デバッグ表示
 	virtual void DebugGUI() = 0;

@@ -68,6 +68,11 @@ void TitleScene::DrawUI()
 	pushSpace_->Draw();
 }
 
+void TitleScene::DrawParticle() 
+{
+
+}
+
 TitleScene::~TitleScene() {}
 
 void TitleScene::DebugGUI()

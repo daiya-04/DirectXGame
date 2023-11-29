@@ -48,6 +48,11 @@ void SceneManager::DrawUI()
 	sceneArray_[currentSceneNo_]->DrawUI();
 }
 
+void SceneManager::DrawParticle()
+{
+	sceneArray_[currentSceneNo_]->DrawParticle();
+}
+
 void SceneManager::ChegeScene(int num)
 {
 	assert(num < kCountScene);

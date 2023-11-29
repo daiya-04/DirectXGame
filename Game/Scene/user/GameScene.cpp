@@ -2,6 +2,8 @@
 
 #include "../SceneManager.h"
 #include "../../../ImGuiManager.h"
+#include <cmath>
+#include <numbers>
 
 void GameScene::Initialize()
 {
@@ -9,6 +11,10 @@ void GameScene::Initialize()
 
 	maingCamera_->translation_ = kOriginOffset_;
 	maingCamera_->rotation_ = kOriginAngle;
+
+	uint32_t clearParticleHandle_ = TextureManager::Load("circle.png");
+	clearParticle_ = std::make_unique<Particle>();
+	clearParticle_.reset(Particle::Create(clearParticleHandle_, 16));
 
 #ifdef _DEBUG
 
@@ -58,6 +64,36 @@ void GameScene::Update()
 	}
 	// カメラ移動
 
+
+
+	//ClearParticle
+	if (MapManager::GetInstance()->IsClear()) {
+		if (clearParticles_.empty()) {
+			for (size_t index = 0; index < clearParticle_->particleMaxNum_; index++) {
+				Particle::ParticleData particle;
+				//particle.worldTransform_.translation_ = {0.0f,3.0f,0.0f};
+				particle.worldTransform_.translation_ = MapManager::GetInstance()->GetPlayerPos();
+				Vector3 velocityDir = { 0.0f,0.0f,1.0f };
+				particle.velocity_ = fTransform(velocityDir, MakeRotateYMatrix(index * 22.5f * (std::numbers::pi_v<float> / 180.0f))) * 5.0f;
+				particle.lifeTime_ = 2.0f;
+				particle.color_ = { 1.0f,1.0f,1.0f,1.0f };
+				particle.currentTime_ = 0.0f;
+				clearParticles_.push_back(particle);
+			}
+		}
+		const float kDeltaTime = 1.0f / 60.0f;
+		for (std::list<Particle::ParticleData>::iterator itParticle = clearParticles_.begin(); itParticle != clearParticles_.end(); itParticle++) {
+			(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_ * kDeltaTime;
+			(*itParticle).currentTime_ += kDeltaTime;
+		}
+	}
+	else {
+		for (std::list<Particle::ParticleData>::iterator itParticle = clearParticles_.begin(); itParticle != clearParticles_.end(); itParticle++) {
+			(*itParticle).currentTime_ = (*itParticle).lifeTime_;
+		}
+	}
+	
+
 }
 
 void GameScene::DrawModel()
@@ -68,6 +104,11 @@ void GameScene::DrawModel()
 void GameScene::DrawUI()
 {
 
+}
+
+void GameScene::DrawParticle()
+{
+	clearParticle_->Draw(clearParticles_, *maingCamera_.get());
 }
 
 GameScene::~GameScene() {}
