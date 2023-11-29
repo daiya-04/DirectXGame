@@ -10,6 +10,8 @@
 class BaseBlock : public IObject
 {
 public:
+	static float kBlockSize;
+
 	/// <summary>
 	/// ブロックの種類
 	/// </summary>
@@ -31,7 +33,6 @@ public:
 
 protected:
 
-	const float kBlockSize = 2.0f;
 
 	enum Staging : size_t
 	{
@@ -128,7 +129,18 @@ public:
 	}
 	bool GetIsStaging() const
 	{
-		return		(staging_ != kSROOT  || stagingRequest_ || stagingNextRequest_);
+		// 今待機中じゃないの？
+		bool one = staging_ != kSROOT;
+		// 次の行動が待機じゃないの？
+		bool two = false;
+		if (stagingRequest_)
+		{
+			two = stagingRequest_ != kSROOT;
+		}
+		// 予約している行動があるの？
+		bool three = stagingNextRequest_.has_value();
+
+		return one || two || three;
 	}
 
 	void SetIsDraw(bool flag) { isDraw_ = flag; }

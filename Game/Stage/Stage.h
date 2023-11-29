@@ -43,6 +43,8 @@ public:
 
 	void SetStageNum(int num) { stageNum_ = num; }
 
+	size_t GetStageSize() const { return kStageData_.kMaxStageSize_.x; }
+
 protected:
 
 	// ステージ読み込み

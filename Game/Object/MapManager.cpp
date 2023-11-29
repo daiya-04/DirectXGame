@@ -52,7 +52,7 @@ void MapManager::Update()
 	// まずブロックが空中にあるかどうかを判定する
 	FallFloatingBlock();
 
-	// ブロックが演出中でない
+	// ブロックが演出中かどうか
 	isStaging_ = blockManager_->GetIsStaging();
 
 	// 空中から堕としている(演出している時は操作を受け付けても変更しない)
@@ -89,6 +89,7 @@ void MapManager::DebugGUI()
 	ImGui::Text("Position: %d,%d,%d", playerChunk_.position_.x, playerChunk_.position_.y, playerChunk_.position_.z);
 	ImGui::Text("Bodys   : %d", playerChunk_.bodyNum_);
 	ImGui::Text("ShotFlag: %s", isShotFlag_ ? "true" : "false");
+	ImGui::Text("Staging : %s", isStaging_ ? "true" : "false");
 	ImGui::Text("Clear?  : %s", isCleared_ ? "true" : "false");
 
 
@@ -578,7 +579,7 @@ void MapManager::InspectShotAction(MoveDirect direct)
 	if (itr->result_ == MovedResult::kOVER)
 	{
 		// どうしようもないゲームオーバー
-		
+
 		return;
 	}
 	switch (direct)
@@ -688,6 +689,10 @@ void MapManager::InspectShotAction(MoveDirect direct)
 		break;
 	}
 
+	if (GetMoveLength(itr->start_, itr->end_) == 0)
+	{
+		itr->result_ = MovedResult::kFAIL;
+	}
 	//// 終わりの位置が同じ位置の時の処理
 	//itr = moveLists_.begin();
 	//for (; itr != moveLists_.end(); ++itr)

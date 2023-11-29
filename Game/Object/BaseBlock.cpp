@@ -1,5 +1,7 @@
 #include "BaseBlock.h"
 
+float BaseBlock::kBlockSize = 2.0f;
+
 void BaseBlock::Initialize()
 {
 
@@ -29,7 +31,7 @@ void BaseBlock::Update()
 	modelTransform_.translation_ = { mapPosition_.x * kBlockSize,mapPosition_.y * -kBlockSize,mapPosition_.z * kBlockSize };
 	//BaseBlock::Update();
 
-	if (!stagingRequest_ && stagingNextRequest_ && staging_ == kSROOT)
+	if (stagingNextRequest_ && stagingRequest_ == kSROOT && staging_ == kSROOT)
 	{
 		stagingRequest_ = stagingNextRequest_;
 		preMapPosition_ = mapPosition_;
@@ -101,6 +103,9 @@ void BaseBlock::Update()
 void BaseBlock::ApplyVariables(const char* groupName)
 {
 	// 設定を反映する
+	std::string baseName = "BaseBlock";
+
+	kBlockSize = variables_->GetFloatValue(baseName, "kBlockSize");
 
 	groupName;
 }
@@ -108,6 +113,10 @@ void BaseBlock::ApplyVariables(const char* groupName)
 void BaseBlock::StorageVariables(const char* groupName)
 {
 	// 設定を保存する
+	std::string baseName = "BaseBlock";
+	variables_->CreateGroup(baseName);
+	variables_->AddItem(baseName, "kBlockSize", kBlockSize);
+	variables_->SetValue(baseName, "kBlockSize", kBlockSize);
 
 	groupName;
 }
