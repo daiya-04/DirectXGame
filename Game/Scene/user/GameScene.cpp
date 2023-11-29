@@ -67,12 +67,21 @@ void GameScene::Update()
 
 
 	//ClearParticle
-	if (MapManager::GetInstance()->IsClear()) {
-		if (clearParticles_.empty()) {
-			for (size_t index = 0; index < clearParticle_->particleMaxNum_; index++) {
+	if (MapManager::GetInstance()->IsClear())
+	{
+		if (clearParticles_.empty())
+		{
+
+			// ステージの中央を取得
+			size_t stageSize = currentStage_->GetStageSize();
+			float stageCenter = (float)stageSize / 2.0f * BaseBlock::kBlockSize - BaseBlock::kBlockSize / 2.0f;
+
+			for (size_t index = 0; index < clearParticle_->particleMaxNum_; index++)
+			{
 				Particle::ParticleData particle;
 				//particle.worldTransform_.translation_ = {0.0f,3.0f,0.0f};
-				particle.worldTransform_.translation_ = MapManager::GetInstance()->GetPlayerPos();
+				// ステージの中央から出す
+				particle.worldTransform_.translation_ = { stageCenter,-stageCenter,stageCenter };
 				particle.worldTransform_.scale_ = { 0.5f,0.5f,0.5f };
 				Vector3 velocityDir = { 0.0f,0.0f,1.0f };
 				particle.velocity_ = fTransform(velocityDir, MakeRotateYMatrix(index * 22.5f * (std::numbers::pi_v<float> / 180.0f))) * 5.0f;
@@ -83,21 +92,25 @@ void GameScene::Update()
 			}
 		}
 		const float kDeltaTime = 1.0f / 60.0f;
-		for (std::list<Particle::ParticleData>::iterator itParticle = clearParticles_.begin(); itParticle != clearParticles_.end(); itParticle++) {
+		for (std::list<Particle::ParticleData>::iterator itParticle = clearParticles_.begin(); itParticle != clearParticles_.end(); itParticle++)
+		{
 			(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_ * kDeltaTime;
 			(*itParticle).worldTransform_.rotation_.z += 0.2f;
 			(*itParticle).currentTime_ += kDeltaTime;
-			if ((*itParticle).currentTime_ >= (*itParticle).lifeTime_) {
+			if ((*itParticle).currentTime_ >= (*itParticle).lifeTime_)
+			{
 				SceneManager::GetInstace()->ChegeScene(kSELECT);
 			}
 		}
 	}
-	else {
-		for (std::list<Particle::ParticleData>::iterator itParticle = clearParticles_.begin(); itParticle != clearParticles_.end(); itParticle++) {
+	else
+	{
+		for (std::list<Particle::ParticleData>::iterator itParticle = clearParticles_.begin(); itParticle != clearParticles_.end(); itParticle++)
+		{
 			(*itParticle).currentTime_ = (*itParticle).lifeTime_;
 		}
 	}
-	
+
 
 }
 

@@ -39,6 +39,7 @@ void MapManager::Initialize()
 	}
 }
 
+
 void MapManager::Update()
 {
 	// 前の状態を保持
@@ -134,6 +135,7 @@ void MapManager::SetStageData(const StageData& data)
 	preData_ = currentData_;
 	moveLists_.clear();
 	isShotFlag_ = false;
+	isCleared_ = false;
 }
 
 void MapManager::FallFloatingBlock()
