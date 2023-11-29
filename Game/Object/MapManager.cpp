@@ -60,9 +60,15 @@ void MapManager::Update()
 	// 操作を受け取って状態を変える
 	GetOperate();
 
+	// ブロックが演出中かどうか
+	isStaging_ = blockManager_->GetIsStaging();
 
 	// クリアできているかの判定
-	CheckClear();
+	// 演出中でない時に判定
+	if (!isStaging_)
+	{
+		CheckClear();
+	}
 
 	DebugGUI();
 }

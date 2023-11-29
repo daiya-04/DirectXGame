@@ -126,7 +126,10 @@ public:
 		nextMapPosition_ = pos;
 		stagingNextRequest_ = kSLOAD;
 	}
-	bool GetIsStaging() const { return staging_ != kSROOT; }
+	bool GetIsStaging() const
+	{
+		return		(staging_ != kSROOT  || stagingRequest_ || stagingNextRequest_);
+	}
 
 	void SetIsDraw(bool flag) { isDraw_ = flag; }
 
