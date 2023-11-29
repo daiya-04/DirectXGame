@@ -16,6 +16,9 @@ void TitleScene::Initialize()
 	pushSpace_.reset(new Sprite(pushSpaceTexture,{640.0f,570.0f}, { 500.0f,100.0f },0.0f,{0.5f,0.5f}));
 	pushSpace_->Initialize();
 	
+	size_t bgmHandle = Audio::GetInstance()->SoundLoadWave("outGameBGM.wav");
+	playHandle_ = Audio::GetInstance()->SoundPlayLoopStart(bgmHandle);
+	Audio::GetInstance()->SetValume(playHandle_, 0.4f);
 
 }
 
@@ -23,6 +26,11 @@ void TitleScene::Reset()
 {
 	title_->Initialize();
 	pushSpace_->Initialize();
+
+	Audio::GetInstance()->SoundPlayLoopEnd(playHandle_);
+	size_t bgmHandle = Audio::GetInstance()->SoundLoadWave("outGameBGM.wav");
+	playHandle_ = Audio::GetInstance()->SoundPlayLoopStart(bgmHandle);
+	Audio::GetInstance()->SetValume(playHandle_, 0.4f);
 	
 }
 

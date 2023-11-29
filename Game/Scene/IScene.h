@@ -30,6 +30,8 @@ public:
 
 	static Input* input_;
 
+	static size_t playHandle_;
+
 public:
 
 	static void StaticInitialize(Input* input);
