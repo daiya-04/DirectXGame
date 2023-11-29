@@ -571,39 +571,42 @@ void MapManager::InspectShotAction(MoveDirect direct)
 	// マップの端っこにいる時
 	if (itr->result_ == MovedResult::kOVER)
 	{
-		switch (direct)
+		// どうしようもないゲームオーバー
+		
+		return;
+	}
+	switch (direct)
+	{
+	case MapManager::dFRONT:
+		if (itr->end_.z == currentData_.kMaxStageSize_.z - 1)
 		{
-		case MapManager::dFRONT:
-			if (itr->end_.z == currentData_.kMaxStageSize_.z - 1)
-			{
-				return;
-			}
-			break;
-		case MapManager::dBACK:
-			if (itr->end_.z == 0)
-			{
-				return;
-			}
-			break;
-		case MapManager::dRIGHT:
-			if (itr->end_.x == currentData_.kMaxStageSize_.x - 1)
-			{
-				return;
-			}
-			break;
-		case MapManager::dLEFT:
-			if (itr->end_.x == 0)
-			{
-				return;
-			}
-			break;
-		case MapManager::dDOWN:
-			break;
-		case MapManager::dNONE:
-			break;
-		default:
-			break;
+			return;
 		}
+		break;
+	case MapManager::dBACK:
+		if (itr->end_.z == 0)
+		{
+			return;
+		}
+		break;
+	case MapManager::dRIGHT:
+		if (itr->end_.x == currentData_.kMaxStageSize_.x - 1)
+		{
+			return;
+		}
+		break;
+	case MapManager::dLEFT:
+		if (itr->end_.x == 0)
+		{
+			return;
+		}
+		break;
+	case MapManager::dDOWN:
+		break;
+	case MapManager::dNONE:
+		break;
+	default:
+		break;
 	}
 	// ブロックの上に乗れるなら乗るようにする
 	// 上に頭があるときは処理しない

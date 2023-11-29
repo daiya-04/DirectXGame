@@ -46,6 +46,7 @@ void DebugStage::Reset()
 {
 	blockManager_->Reset();
 	// ステージの情報を反映
+	LoadStageData();
 	ApplyStageData();
 }
 
