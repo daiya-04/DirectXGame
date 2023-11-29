@@ -104,6 +104,7 @@ public:
 	const StageVector& GetMapPosition() const { return mapPosition_; }
 	Element GetElement() const { return element_; }
 	void SetModel(Object3d* model) { model_ = model; }
+	virtual void AddModel(Object3d* model) { model; };
 	void MoveMapPosition(const StageVector& pos)
 	{
 		preMapPosition_ = mapPosition_;

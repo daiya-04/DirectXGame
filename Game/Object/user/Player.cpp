@@ -8,9 +8,15 @@ void PlayerBlock::Initialize()
 
 void PlayerBlock::Draw()
 {
+	// とてもごり押し
+	// よくない
 	if (isDraw_)
 	{
 		model_->Draw(modelTransform_, *viewProjection_);
+	}
+	else
+	{
+		exModel_->Draw(modelTransform_, *viewProjection_);
 	}
 }
 

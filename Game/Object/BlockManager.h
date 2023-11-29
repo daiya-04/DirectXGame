@@ -35,10 +35,16 @@ private:
 
 	std::list<pBlock> listBlock_;
 
+	// プレイヤーのポインタ
+	BaseBlock* player_ = nullptr;
+
+
 	typedef std::unique_ptr<Object3d> pModel;
 
 	std::array<pModel, kMaxNormalBlockNum_> arrModelNormal_;
 	std::array<pModel, kMaxPlayerBlockNum_> arrModelPlayer_;
+	// モードを切り替えた時のモデル
+	std::array<pModel, kMaxPlayerBlockNum_> arrModelPlayer1_;
 	std::array<pModel, kMaxHeadBlockNum_> arrModelHead_;
 	std::array<pModel, kMaxBodyBlockNum_> arrModelBody_;
 
@@ -83,6 +89,9 @@ public:
 	// 再起関数
 	// ブロックの下にブロックがあるか
 	bool ChainFall(const BaseBlock::StageVector& pos);
+
+	// プレイヤーのモデルを切り替える
+	void ChengePlayerModel(bool flag);
 
 private:
 

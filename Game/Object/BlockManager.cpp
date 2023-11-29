@@ -23,6 +23,11 @@ void BlockManager::Initialize()
 	{
 		arrModelPlayer_[i].reset(Object3d::Create(modelHandle));
 	}
+	modelHandle = ModelManager::Load("Head1");
+	for (size_t i = 0; i < kMaxPlayerBlockNum_; i++)
+	{
+		arrModelPlayer1_[i].reset(Object3d::Create(modelHandle));
+	}
 	modelHandle = ModelManager::Load("Head2");
 	for (size_t i = 0; i < kMaxHeadBlockNum_; i++)
 	{
@@ -93,7 +98,6 @@ void BlockManager::SetStageData(const MapManager::StageData& data)
 				case  Element::kNone:
 					break;
 				case  Element::kPlayer:
-					block = new PlayerBlock;
 					listBlock_.emplace_back(CreatePlayerBlock({ i,j,k }));
 					break;
 				case  Element::kBody:
@@ -215,13 +219,19 @@ BaseBlock* BlockManager::CreateNormalBlock(const BaseBlock::StageVector& pos)
 BaseBlock* BlockManager::CreatePlayerBlock(const BaseBlock::StageVector& pos)
 {
 
-	BaseBlock* block = new PlayerBlock;
-	block->Initialize(pos);
-	block->SetViewProjection(vp_);
-	block->SetModel(arrModelPlayer_[iPlayerModel_].get());
-	iNormalModel_++;
-	mapBlock_[pos.x][pos.y][pos.z] = block;
-	return block;
+	player_ = new PlayerBlock;
+	player_->Initialize(pos);
+	player_->SetViewProjection(vp_);
+	player_->SetModel(arrModelPlayer_[iPlayerModel_].get());
+	player_->AddModel(arrModelPlayer1_[iPlayerModel_].get());
+	iPlayerModel_++;
+	mapBlock_[pos.x][pos.y][pos.z] = player_;
+	return player_;
+}
+
+void BlockManager::ChengePlayerModel(bool flag)
+{
+	player_->SetIsDraw(flag);
 }
 
 BaseBlock* BlockManager::CreateHeadBlock(const BaseBlock::StageVector& pos)

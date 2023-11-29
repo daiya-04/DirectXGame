@@ -196,6 +196,7 @@ void MapManager::GetOperate()
 	if (input_->TriggerKey(DIK_SPACE))
 	{
 		isShotFlag_ = !isShotFlag_;
+		blockManager_->ChengePlayerModel(!isShotFlag_);
 	}
 
 	if (input_->TriggerKey(DIK_W))
