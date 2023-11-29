@@ -50,6 +50,7 @@ void GameScene::Reset()
 	currentStage_->SetStageNum(stageNum_);
 	currentStage_->Reset();
 
+	gameOverStagingTime_ = 0;
 }
 
 void GameScene::Update()
@@ -113,7 +114,11 @@ void GameScene::Update()
 	// ゲームオーバー時の演出
 	if (MapManager::GetInstance()->IsGameOVer())
 	{
-		//SceneManager::GetInstace()->ChegeScene(kSELECT);
+		gameOverStagingTime_++;
+		if (cGameOverStagingTime_ < gameOverStagingTime_)
+		{
+			SceneManager::GetInstace()->ChegeScene(kSELECT);
+		}
 	}
 
 }

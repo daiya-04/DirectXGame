@@ -59,4 +59,8 @@ private: // プライベート変数
 	std::unique_ptr<Particle> clearParticle_;
 	std::list<Particle::ParticleData> clearParticles_;
 
+	// ゲームオーバー
+	int32_t cGameOverStagingTime_ = 120;
+	int32_t gameOverStagingTime_ = 0;
+
 };
