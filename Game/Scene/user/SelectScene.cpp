@@ -103,6 +103,8 @@ void SelectScene::Update()
     }
     if (input_->TriggerKey(DIK_SPACE)) {
         //SceneManager::GetInstace()->ChegeScene(kGAME);
+        size_t selectSEHandle = Audio::GetInstance()->SoundLoadWave("select.wav");
+        size_t selectSEPlayerHandle = Audio::GetInstance()->SoundPlayWave(selectSEHandle);
         SceneManager::GetInstace()->SelectStage(selectNum_);
     }
 

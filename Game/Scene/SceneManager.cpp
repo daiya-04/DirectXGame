@@ -57,9 +57,6 @@ void SceneManager::ChegeScene(int num)
 {
 	assert(num < kCountScene);
 
-	size_t selectSEHandle = Audio::GetInstance()->SoundLoadWave("select.wav");
-	size_t selectSEPlayerHandle = Audio::GetInstance()->SoundPlayWave(selectSEHandle);
-
 	preSceneNo_ = currentSceneNo_;
 	currentSceneNo_ = num;
 	sceneArray_[currentSceneNo_]->Reset();
@@ -69,9 +66,6 @@ void SceneManager::SelectStage(int num)
 {
 	preSceneNo_ = currentSceneNo_;
 	currentSceneNo_ = kGAME;
-
-	size_t selectSEHandle = Audio::GetInstance()->SoundLoadWave("select.wav");
-	size_t selectSEPlayerHandle = Audio::GetInstance()->SoundPlayWave(selectSEHandle);
 
 	sceneArray_[currentSceneNo_]->SetStageNum(num);
 	sceneArray_[currentSceneNo_]->Reset();
