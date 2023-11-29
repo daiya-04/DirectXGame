@@ -42,4 +42,7 @@ private: // プライベート変数
 
 	int selectNum_ = 0;
 
+	float scalingParam_ = 0.0f;
+	int cycle = 20;
+
 };
