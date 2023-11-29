@@ -116,7 +116,10 @@ public:
 	// ステージ情報を設定する関数
 	void SetStageData(const StageData& data);
 
-	Vector3 GetPlayerPos() { return { 2.0f * playerChunk_.position_.x,2.0f * playerChunk_.position_.y - 8.0f,2.0f * playerChunk_.position_.z }; }
+	Vector3 GetPlayerPos() { return { 
+		BaseBlock::kBlockSize * playerChunk_.position_.x,
+		BaseBlock::kBlockSize * (playerChunk_.bodyNum_ + 1) - 8.0f,
+		BaseBlock::kBlockSize * playerChunk_.position_.z }; }
 	bool IsClear() const { return isCleared_; }
 
 private:
