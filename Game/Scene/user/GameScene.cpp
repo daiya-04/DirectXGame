@@ -12,7 +12,7 @@ void GameScene::Initialize()
 	maingCamera_->translation_ = kOriginOffset_;
 	maingCamera_->rotation_ = kOriginAngle;
 
-	uint32_t clearParticleHandle_ = TextureManager::Load("circle.png");
+	uint32_t clearParticleHandle_ = TextureManager::Load("star.png");
 	clearParticle_ = std::make_unique<Particle>();
 	clearParticle_.reset(Particle::Create(clearParticleHandle_, 16));
 
@@ -73,10 +73,11 @@ void GameScene::Update()
 				Particle::ParticleData particle;
 				//particle.worldTransform_.translation_ = {0.0f,3.0f,0.0f};
 				particle.worldTransform_.translation_ = MapManager::GetInstance()->GetPlayerPos();
+				particle.worldTransform_.scale_ = { 0.5f,0.5f,0.5f };
 				Vector3 velocityDir = { 0.0f,0.0f,1.0f };
 				particle.velocity_ = fTransform(velocityDir, MakeRotateYMatrix(index * 22.5f * (std::numbers::pi_v<float> / 180.0f))) * 5.0f;
 				particle.lifeTime_ = 2.0f;
-				particle.color_ = { 1.0f,1.0f,1.0f,1.0f };
+				particle.color_ = { 1.0f,1.0f,0.0f,1.0f };
 				particle.currentTime_ = 0.0f;
 				clearParticles_.push_back(particle);
 			}
@@ -84,6 +85,7 @@ void GameScene::Update()
 		const float kDeltaTime = 1.0f / 60.0f;
 		for (std::list<Particle::ParticleData>::iterator itParticle = clearParticles_.begin(); itParticle != clearParticles_.end(); itParticle++) {
 			(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_ * kDeltaTime;
+			(*itParticle).worldTransform_.rotation_.z += 0.2f;
 			(*itParticle).currentTime_ += kDeltaTime;
 			if ((*itParticle).currentTime_ >= (*itParticle).lifeTime_) {
 				SceneManager::GetInstace()->ChegeScene(kSELECT);

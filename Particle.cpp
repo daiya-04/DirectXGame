@@ -352,7 +352,11 @@ void Particle::Draw(std::list<ParticleData>& particleData,const ViewProjection& 
 		billboardMat.m[3][1] = 0.0f;
 		billboardMat.m[3][2] = 0.0f;
 
-		Matrix4x4 worldMatrix = MakeScaleMatrix({ 1.0f,1.0f,1.0f }) * billboardMat * MakeTranslateMatrix((*itParticle).worldTransform_.translation_);
+		Matrix4x4 R = MakeRotateXMatrix((*itParticle).worldTransform_.rotation_.x)
+			        * MakeRotateYMatrix((*itParticle).worldTransform_.rotation_.y)
+			        * MakeRotateZMatrix((*itParticle).worldTransform_.rotation_.z);
+			
+		Matrix4x4 worldMatrix = MakeScaleMatrix((*itParticle).worldTransform_.scale_) * (R * billboardMat) * MakeTranslateMatrix((*itParticle).worldTransform_.translation_);
 
 		Matrix4x4 wvpMatrix = worldMatrix * (viewProjection.matView_ * viewProjection.matProjection_);
 		//float alpha = 1.0f - ((*itParticle).currentTime_ / (*itParticle).lifeTime_);
