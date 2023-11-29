@@ -2,6 +2,8 @@
 
 #include "../SceneManager.h"
 #include "../../../ImGuiManager.h"
+#include <cmath>
+#include <numbers>
 
 //const size_t SelectScene::stageNum_ = 8;
 
@@ -62,11 +64,16 @@ void SelectScene::Update()
 	}
 	if (input_->TriggerKey(DIK_W) || input_->TriggerKey(DIK_UP))
 	{
-		selectNum_ -= 4;
+		if (selectNum_ >= 4) {
+			selectNum_ -= 4;
+		}
+		
 	}
 	if (input_->TriggerKey(DIK_S) || input_->TriggerKey(DIK_DOWN))
 	{
-		selectNum_ += 4;
+		if (selectNum_ <= 3) {
+			selectNum_ += 4;
+		}
 	}
 
 	if (selectNum_ < 0)
@@ -84,6 +91,20 @@ void SelectScene::Update()
 
 	for (size_t index = 0; index < stageNum_; index++) {
 		number_[index]->SetPosition(stageNumPos_[index]);
+		if (selectNum_ == index) {
+			number_[index]->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+			//1フレームでのパラメータ加算値
+			const float step = 1.0f * std::numbers::pi_v<float> / (float)cycle;
+
+			scalingParam_ += step;
+
+			scalingParam_ = std::fmod(scalingParam_, 2.0f * std::numbers::pi_v<float>);
+
+			number_[index]->SetSize({ 96.0f + 32.0f * (std::cosf(scalingParam_) * 0.5f) ,96.0f + 32.0f * (std::cosf(scalingParam_) * 0.5f) });
+		}else {
+			number_[index]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+			number_[index]->SetSize({ 96.0f,96.0f });
+		}
 	}
 
 }
