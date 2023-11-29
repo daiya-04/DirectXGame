@@ -110,7 +110,7 @@ void GameScene::Reset()
 	}else {
 		clearCondition_->SetTextureHandle(clearConditionHandle[0]);
 	}
-	
+	isShot_ = false;
 
 }
 
