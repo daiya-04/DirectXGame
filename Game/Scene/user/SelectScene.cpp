@@ -24,7 +24,7 @@ void SelectScene::Initialize()
 	for (size_t index = 0; index < stageNum_; index++) {
 		number_[index].reset(new Sprite(numberTexture, {stageNumPos_[index]}, {96.0f,96.0f}));
 		number_[index]->Initialize();
-		number_[index]->SetTextureArea({ 32.0f + (32.0f * index),0.0f }, { 32.0f,32.0f });
+		number_[index]->SetTextureArea({ 64.0f + (64.0f * index),0.0f }, { 64.0f,64.0f });
 		number_[index]->SetAnchorpoint({ 0.5f,0.5f });
 	}
 
@@ -40,7 +40,7 @@ void SelectScene::Reset()
 {
 	for (size_t index = 0; index < stageNum_; index++) {
 		number_[index]->Initialize();
-		number_[index]->SetTextureArea({ 32.0f + (32.0f * index),0.0f }, { 32.0f,32.0f });
+		number_[index]->SetTextureArea({ 64.0f + (64.0f * index),0.0f }, { 64.0f,64.0f });
 		number_[index]->SetAnchorpoint({ 0.5f,0.5f });
 	}
 	header_->Initialize();

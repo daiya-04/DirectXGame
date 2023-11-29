@@ -35,8 +35,11 @@ private: // プライベート変数
 	
 	std::unique_ptr<Sprite> title_;
 	std::unique_ptr<Sprite> pushSpace_;
+	std::unique_ptr<Sprite> pushSpaceScaling_;
 
 	//std::unique_ptr<ViewProjection> viewProjection_;
 
+	// イージング関係
+	float scaleT = 0.0f;
 	
 };
