@@ -85,6 +85,9 @@ void GameScene::Update()
 		for (std::list<Particle::ParticleData>::iterator itParticle = clearParticles_.begin(); itParticle != clearParticles_.end(); itParticle++) {
 			(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_ * kDeltaTime;
 			(*itParticle).currentTime_ += kDeltaTime;
+			if ((*itParticle).currentTime_ >= (*itParticle).lifeTime_) {
+				SceneManager::GetInstace()->ChegeScene(kSELECT);
+			}
 		}
 	}
 	else {
