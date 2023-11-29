@@ -420,7 +420,8 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 		{
 			// 頭が止まっていた時の処理
 			// 体が頭を越してたら
-			if (moveLists_.back().end_.z < itr->end_.z)
+			if (moveLists_.back().result_ == MovedResult::kSUCCECES && 
+				moveLists_.back().end_.z < itr->end_.z)
 			{
 				itr->result_ = MovedResult::kSUCCECES;
 				itr->end_.z = moveLists_.back().end_.z;
@@ -442,7 +443,8 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 		{
 			// 頭が止まっていた時の処理
 			// 体が頭を越してたら
-			if (itr->end_.z < moveLists_.back().end_.z)
+			if (moveLists_.back().result_ == MovedResult::kSUCCECES && 
+				itr->end_.z < moveLists_.back().end_.z)
 			{
 				itr->result_ = MovedResult::kSUCCECES;
 				itr->end_.z = moveLists_.back().end_.z;
@@ -463,7 +465,8 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 		{
 			// 頭が止まっていた時の処理
 			// 体が頭を越してたら
-			if (moveLists_.back().end_.x < itr->end_.x)
+			if (moveLists_.back().result_ == MovedResult::kSUCCECES &&
+				moveLists_.back().end_.x < itr->end_.x)
 			{
 				itr->result_ = MovedResult::kSUCCECES;
 				itr->end_.x = moveLists_.back().end_.x;
@@ -484,7 +487,8 @@ void MapManager::InspecMovetAction(MoveDirect direct)
 		{
 			// 頭が止まっていた時の処理
 			// 体が頭を越してたら
-			if (itr->end_.x < moveLists_.back().end_.x)
+			if (moveLists_.back().result_ == MovedResult::kSUCCECES && 
+				itr->end_.x < moveLists_.back().end_.x)
 			{
 				itr->result_ = MovedResult::kSUCCECES;
 				itr->end_.x = moveLists_.back().end_.x;
@@ -527,9 +531,15 @@ void MapManager::ApplyMoveAction(MoveDirect direct)
 		isGameOvered_ = true;
 		for (; itr != moveLists_.end(); ++itr)
 		{
+			// 飛び出したブロックはぶっ飛ばす
 			if (itr->result_ == MovedResult::kOVER)
 			{
 				blockManager_->SetOverBlock(itr->start_, direct);
+			}
+			// それ以外は壁にぶつけたい
+			else
+			{
+				blockManager_->SetBlockPosition(itr->start_, itr->end_);
 			}
 		}
 		return;
@@ -606,7 +616,6 @@ void MapManager::InspectShotAction(MoveDirect direct)
 	if (itr->result_ == MovedResult::kOVER)
 	{
 		// どうしようもないゲームオーバー
-		isGameOvered_ = true;
 		return;
 	}
 	switch (direct)
@@ -614,24 +623,28 @@ void MapManager::InspectShotAction(MoveDirect direct)
 	case MapManager::dFRONT:
 		if (itr->end_.z == currentData_.kMaxStageSize_.z - 1)
 		{
+			itr->result_ = MovedResult::kOVER;
 			return;
 		}
 		break;
 	case MapManager::dBACK:
 		if (itr->end_.z == 0)
 		{
+			itr->result_ = MovedResult::kOVER;
 			return;
 		}
 		break;
 	case MapManager::dRIGHT:
 		if (itr->end_.x == currentData_.kMaxStageSize_.x - 1)
 		{
+			itr->result_ = MovedResult::kOVER;
 			return;
 		}
 		break;
 	case MapManager::dLEFT:
 		if (itr->end_.x == 0)
 		{
+			itr->result_ = MovedResult::kOVER;
 			return;
 		}
 		break;
@@ -743,6 +756,8 @@ void MapManager::ApplyShotAction(MoveDirect direct)
 	if (itr->result_ == MovedResult::kOVER)
 	{
 		// ゲームオーバー演出
+		isGameOvered_ = true;
+		blockManager_->SetOverBlock(itr->start_, direct);
 		return;
 	}
 	if (GetElement(itr->end_) == Element::kHead)
