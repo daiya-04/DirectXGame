@@ -5,6 +5,8 @@
 #include <cmath>
 #include <numbers>
 
+using MoveDirect = MapManager::MoveDirect;
+
 void GameScene::Initialize()
 {
 	maingCamera_.reset(new ViewProjection());
@@ -63,11 +65,14 @@ void GameScene::Update()
 {
 	DebugGUI();
 
-	currentStage_->Update();
 
 	if (input_->TriggerKey(DIK_ESCAPE))
 	{
 		SceneManager::GetInstace()->ChegeScene(kSELECT);
+	}
+	if (input_->TriggerKey(DIK_R))
+	{
+		Reset();
 	}
 	// カメラ移動
 
@@ -77,10 +82,11 @@ void GameScene::Update()
 
 	stageCamera_->Update(stageCenter);
 
-	
-
 	maingCamera_->matView_ = stageCamera_->GetViewProjection().matView_;
-	
+
+
+	currentStage_->SetCameraDirection(CameraDirection());
+	currentStage_->Update();
 
 	//ClearParticle
 	if (MapManager::GetInstance()->IsClear())
@@ -88,7 +94,7 @@ void GameScene::Update()
 		if (clearParticles_.empty())
 		{
 
-			
+
 
 			for (size_t index = 0; index < clearParticle_->particleMaxNum_; index++)
 			{
@@ -161,6 +167,10 @@ void GameScene::DebugGUI()
 
 	ImGui::DragFloat3("ViewRotate", &maingCamera_->rotation_.x, 0.01f);
 	ImGui::DragFloat3("ViewTranslate", &maingCamera_->translation_.x, 0.1f);
+	ImGui::Text("%d", gameOverStagingTime_);
+
+
+	ImGui::Text("%d", CameraDirection());
 
 	if (ImGui::Button("Reset"))
 	{
@@ -173,4 +183,32 @@ void GameScene::DebugGUI()
 
 #endif // _DEBUG
 
+}
+
+MapManager::MoveDirect GameScene::CameraDirection()
+{
+	// カメラの方向から今カメラがいる方向を算出
+	float rotateY = stageCamera_->GetViewProjection().rotation_.y;
+	float pi4 = static_cast<float>(std::numbers::pi) / 4.0f;
+	MoveDirect cameraDirect = MoveDirect::dFRONT;
+	if (-pi4 < rotateY && rotateY < pi4)
+	{
+		cameraDirect = MoveDirect::dFRONT;
+	}
+	else if (pi4 * 3 < rotateY && rotateY < pi4 * 5 ||
+		-pi4 * 5 < rotateY && rotateY < -pi4 * 3)
+	{
+		cameraDirect = MoveDirect::dBACK;
+	}
+	else if (pi4 * 5 < rotateY && rotateY < pi4 * 7||
+		-pi4 * 3 < rotateY && rotateY < -pi4 * 1)
+	{
+		cameraDirect = MoveDirect::dRIGHT;
+	}
+	else if (pi4 * 1 < rotateY && rotateY < pi4 * 3 ||
+		-pi4 * 7 < rotateY && rotateY < -pi4 * 5)
+	{
+		cameraDirect = MoveDirect::dLEFT;
+	}
+	return cameraDirect;
 }

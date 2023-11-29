@@ -25,6 +25,8 @@ protected:
 	GlobalVariables* variables_ = nullptr;
 	int stageNum_ = 0;
 
+	MapManager::MoveDirect cameraDirect_ = MapManager::MoveDirect::dFRONT;
+
 public:
 
 	Stage();
@@ -44,6 +46,8 @@ public:
 	void SetStageNum(int num) { stageNum_ = num; }
 
 	size_t GetStageSize() const { return kStageData_.kMaxStageSize_.x; }
+
+	void SetCameraDirection(MapManager::MoveDirect direct) { cameraDirect_ = direct; }
 
 protected:
 

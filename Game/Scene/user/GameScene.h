@@ -39,6 +39,7 @@ public:
 
 private: // プライベート関数
 
+	MapManager::MoveDirect CameraDirection();
 
 
 private: // プライベート変数
