@@ -22,6 +22,43 @@ void GameScene::Initialize()
 	clearParticle_.reset(Particle::Create(clearParticleHandle_, 16));
 
 
+	uint32_t movePlayerKeyHandle = TextureManager::Load("ui1.png");
+	uint32_t moveCameraKeyHandle = TextureManager::Load("cameraUi.png");
+	
+	clearConditionHandle[0] = TextureManager::Load("condition1.png");
+	clearConditionHandle[1] = TextureManager::Load("condition2.png");
+	
+	playerMadeHandle[0] = TextureManager::Load("moveMode.png");
+	playerMadeHandle[1] = TextureManager::Load("tobashiMode.png");
+	uint32_t spaceKeyHandle = TextureManager::Load("space.png");
+	
+	stageNameHandle[0] = TextureManager::Load("stage1.png");
+	stageNameHandle[1] = TextureManager::Load("stage2.png");
+	stageNameHandle[2] = TextureManager::Load("stage3.png");
+	stageNameHandle[3] = TextureManager::Load("stage4.png");
+	stageNameHandle[4] = TextureManager::Load("stage5.png");
+	stageNameHandle[5] = TextureManager::Load("stage6.png");
+	stageNameHandle[6] = TextureManager::Load("stage7.png");
+	stageNameHandle[7] = TextureManager::Load("stage8.png");
+
+	movePlayerKey_.reset(new Sprite(movePlayerKeyHandle, {120.0f,640.0f}, { 200.0f,120.0f }, 0.0f, { 0.5f,0.5f }));
+	movePlayerKey_->Initialize();
+
+	moveCameraKey_.reset(new Sprite(moveCameraKeyHandle, {1160.0f,640.0f}, { 200.0f,120.0f }, 0.0f, { 0.5f,0.5f }));
+	moveCameraKey_->Initialize();
+
+	clearCondition_.reset(new Sprite(clearConditionHandle[0], {640.0f,625.0f}, { 768.0f,150.0f }, 0.0f, { 0.5f,0.5f }));
+	clearCondition_->Initialize();
+
+	playerMode_.reset(new Sprite(playerMadeHandle[0], {1105.0f,50.0f}, { 350.0f,100.0f }, 0.0f, { 0.5f,0.5f }));
+	playerMode_->Initialize();
+
+	spaceKey_.reset(new Sprite(spaceKeyHandle, {1105.0f,125.0f}, { 150.0f,50.0f }, 0.0f, { 0.5f,0.5f }));
+	spaceKey_->Initialize();
+
+	stageName_.reset(new Sprite(stageNameHandle[0], {200.0f,50.0f}, { 400.0f,100.0f }, 0.0f, { 0.5f,0.5f }));
+	stageName_->Initialize();
+
 #ifdef _DEBUG
 
 	currentStage_.reset(new DebugStage);
@@ -59,6 +96,22 @@ void GameScene::Reset()
 	currentStage_->Reset();
 
 	gameOverStagingTime_ = 0;
+
+	movePlayerKey_->Initialize();
+	moveCameraKey_->Initialize();
+	clearCondition_->Initialize();
+	playerMode_->Initialize();
+	spaceKey_->Initialize();
+	stageName_->Initialize();
+
+	stageName_->SetTextureHandle(stageNameHandle[static_cast<size_t>(stageNum_)]);
+	if (stageNum_ >= 4) {
+		clearCondition_->SetTextureHandle(clearConditionHandle[1]);
+	}else {
+		clearCondition_->SetTextureHandle(clearConditionHandle[0]);
+	}
+	
+
 }
 
 void GameScene::Update()
@@ -70,10 +123,26 @@ void GameScene::Update()
 	{
 		SceneManager::GetInstace()->ChegeScene(kSELECT);
 	}
+
+
+	if (stageNum_ >= 3) {
+		if (input_->TriggerKey(DIK_SPACE)) {
+			if (isShot_) {
+				isShot_ = false;
+				playerMode_->SetTextureHandle(playerMadeHandle[0]);
+			}
+			else {
+				isShot_ = true;
+				playerMode_->SetTextureHandle(playerMadeHandle[1]);
+			}
+		}
+	}
+	
 	if (input_->TriggerKey(DIK_R))
 	{
 		Reset();
 	}
+  
 	// カメラ移動
 
 	// ステージの中央を取得
@@ -140,6 +209,9 @@ void GameScene::Update()
 		}
 	}
 
+	
+	
+
 }
 
 void GameScene::DrawModel()
@@ -149,7 +221,12 @@ void GameScene::DrawModel()
 
 void GameScene::DrawUI()
 {
-
+	moveCameraKey_->Draw();
+	movePlayerKey_->Draw();
+	clearCondition_->Draw();
+	playerMode_->Draw();
+	spaceKey_->Draw();
+	stageName_->Draw();
 }
 
 void GameScene::DrawParticle()
