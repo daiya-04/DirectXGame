@@ -10,12 +10,6 @@ void GameScene::Initialize()
 	maingCamera_->translation_ = kOriginOffset_;
 	maingCamera_->rotation_ = kOriginAngle;
 
-#ifdef _DEBUG
-
-	currentStage_.reset(new DebugStage);
-	currentStage_->Initialize(maingCamera_.get());
-
-#endif // _DEBUG
 
 #ifndef _DEBUG
 
@@ -35,6 +29,11 @@ void GameScene::Reset()
 	maingCamera_->Initialize();
 	maingCamera_->translation_ = kOriginOffset_;
 	maingCamera_->rotation_ = kOriginAngle;
+
+	Audio::GetInstance()->SoundPlayLoopEnd(playHandle_);
+	size_t bgmHandle = Audio::GetInstance()->SoundLoadWave("inGameBGM.wav");
+	playHandle_ = Audio::GetInstance()->SoundPlayLoopStart(bgmHandle);
+	Audio::GetInstance()->SetValume(playHandle_, 0.4f);
 
 	currentStage_->SetStageNum(stageNum_);
 	currentStage_->Reset();
