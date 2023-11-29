@@ -6,11 +6,18 @@
 
 void StageCamera::Initialize()
 {
-
+	viewProjection_.rotation_ = { 0.0f,0.0f,0.0f };
+	start_ = 0.0f;
+	end_ = 0.0f;
+	rotateParam_ = 1.0f;
+	lengthParam_ = 0.0f;
 }
 
-void StageCamera::Update()
+void StageCamera::Update(float stageCenter)
 {
+
+	stageCenter_ = { stageCenter,-stageCenter * 2.0f,stageCenter };
+
 	if (rotateParam_ >= 1.0f) {
 		if (Input::GetInstance()->TriggerKey(DIK_LEFT)) {
 			start_ = viewProjection_.rotation_.y;
@@ -41,7 +48,7 @@ void StageCamera::Update()
 
 	viewProjection_.rotation_.y = std::fmod(viewProjection_.rotation_.y, 2.0f * std::numbers::pi_v<float>);
 
-	Vector3 offset = { 0.0f,2.0f,-20.0f };
+	Vector3 offset = { 0.0f,2.0f,-30.0f };
 	Vector3 interPos = offset.Normalize() * (offset.Length() * 0.8f);
 
 	Matrix4x4 rotateMat = MakeRotateXMatrix(viewProjection_.rotation_.x)

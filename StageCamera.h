@@ -9,7 +9,7 @@ class StageCamera
 private:
 
 	ViewProjection viewProjection_;
-	Vector3 stageCenter_ = { 4.0f,-8.0f,4.0f };
+	Vector3 stageCenter_ = {};
 
 	float rotateParam_ = 1.0f;
 	float lengthParam_ = 0.0f;
@@ -21,7 +21,7 @@ public:
 
 	void Initialize();
 
-	void Update();
+	void Update(float stageCenter);
 
 	ViewProjection& GetViewProjection() { return viewProjection_; }
 

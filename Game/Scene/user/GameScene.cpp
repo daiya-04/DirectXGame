@@ -71,7 +71,11 @@ void GameScene::Update()
 	}
 	// カメラ移動
 
-	stageCamera_->Update();
+	// ステージの中央を取得
+	size_t stageSize = currentStage_->GetStageSize();
+	float stageCenter = (float)stageSize / 2.0f * BaseBlock::kBlockSize - BaseBlock::kBlockSize / 2.0f;
+
+	stageCamera_->Update(stageCenter);
 
 	
 
@@ -84,9 +88,7 @@ void GameScene::Update()
 		if (clearParticles_.empty())
 		{
 
-			// ステージの中央を取得
-			size_t stageSize = currentStage_->GetStageSize();
-			float stageCenter = (float)stageSize / 2.0f * BaseBlock::kBlockSize - BaseBlock::kBlockSize / 2.0f;
+			
 
 			for (size_t index = 0; index < clearParticle_->particleMaxNum_; index++)
 			{
