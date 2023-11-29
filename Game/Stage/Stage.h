@@ -13,7 +13,7 @@
 
 class Stage
 {
-private:
+protected:
 
 	// 変わらないステージの情報
 	MapManager::StageData kStageData_;
@@ -28,27 +28,27 @@ private:
 public:
 
 	Stage();
-	~Stage();
+	virtual ~Stage();
 
 	// ステージ情報の読み込みを行う
-	void Initialize(ViewProjection* view);
+	virtual void Initialize(ViewProjection* view);
 	// ステージ情報をセット
-	void Reset();
+	virtual void Reset();
 
-	void Update();
+	virtual void Update();
 
-	void Draw();
+	virtual void Draw();
 
-	void DebugGUI();
+	virtual void DebugGUI();
 
 	void SetStageNum(int num) { stageNum_ = num; }
 
-private:
+protected:
 
 	// ステージ読み込み
-	void LoadStageData();
+	virtual void LoadStageData();
 
 	// ステージの情報を反映
-	void ApplyStageData();
+	virtual void ApplyStageData();
 
 };

@@ -10,12 +10,16 @@ void GameScene::Initialize()
 	maingCamera_->translation_ = kOriginOffset_;
 	maingCamera_->rotation_ = kOriginAngle;
 
-	currentStage_.reset(new DebugStage);
+
+#ifndef _DEBUG
+
+	currentStage_.reset(new Stage);
 	currentStage_->Initialize(maingCamera_.get());
 
-	
+#endif // !_DEBUG
 
-	
+
+	//Reset();
 
 }
 

@@ -1,57 +1,35 @@
 #pragma once
 
-#include <vector>
-#include <memory>
 
-#include "../Math/Math.h"
+#include "Stage.h"
 
-#include "../Object/BaseBlock.h"
-#include "../Object/MapManager.h"
-#include "../Object/BlockManager.h"
-
-#include "../../GlobalVariables.h"
-
-class DebugStage
+class DebugStage : public Stage
 {
-private:
-
-	// 変わらないステージの情報
-	MapManager::StageData kStageData_;
-
-	// マップの管理マネージャー
-	MapManager* mapManager_ = nullptr;
-	BlockManager* blockManager_ = nullptr;
-
-	GlobalVariables* variables_ = nullptr;
-	int stageNum_ = 0;
-
 public:
 
 	DebugStage();
-	~DebugStage();
+	~DebugStage() override;
 
 	// ステージ情報の読み込みを行う
-	void Initialize(ViewProjection* view);
+	void Initialize(ViewProjection* view) override;
 	// ステージ情報をセット
-	void Reset();
+	void Reset() override;
 
-	void Update();
+	void Update() override;
 
-	void Draw();
+	void Draw() override;
 
-	void DebugGUI();
-
-	void SetStageNum(int num) { stageNum_ = num; }
+	void DebugGUI() override;
 
 private:
 
 	// ステージ読み込み
-	void LoadStageData();
+	void LoadStageData() override;
 
 	// ステージ書き込み
 	void SaveStageData();
 
 	// ステージの情報を反映
-	void ApplyStageData();
+	void ApplyStageData() override;
 
 };

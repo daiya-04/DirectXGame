@@ -95,7 +95,12 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 		imguiManager->Begin();
 
         input->Update();
+
+#ifdef _DEBUG
+
 		GlobalVariables::GetInstance()->Update();
+
+#endif // _DEBUG
 
 		Audio::GetInstance()->Update();
 
