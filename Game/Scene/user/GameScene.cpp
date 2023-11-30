@@ -69,7 +69,7 @@ void GameScene::Initialize()
 #ifndef _DEBUG
 
 	currentStage_.reset(new Stage);
-	currentStage_->Initialize(maingCamera_.get());
+	currentStage_->Initialize(maingCamera_);
 
 #endif // !_DEBUG
 
@@ -207,7 +207,8 @@ void GameScene::Update()
 		gameOverStagingTime_++;
 		if (cGameOverStagingTime_ < gameOverStagingTime_)
 		{
-			SceneManager::GetInstace()->ChegeScene(kSELECT);
+			//SceneManager::GetInstace()->ChegeScene(kSELECT);
+			Reset();
 		}
 	}
 
