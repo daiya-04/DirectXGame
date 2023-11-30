@@ -1,0 +1,110 @@
+#pragma once
+
+#include <vector>
+#include <memory>
+#include <array>
+#include <list>
+
+#include "BaseBlock.h"
+#include "MapManager.h"
+#include "../../ModelManager.h"
+
+/// <summary>
+/// シングルトンパターンにしたい
+/// モデルの切り替えをどうするか悩み中
+/// </summary>
+class BlockManager final
+{
+private:
+
+	typedef std::unique_ptr<BaseBlock> pBlock;
+
+	//std::vector<std::vector<std::vector<pBlock>>> currentData_;
+
+	// おおよそ 65 らしい
+	static const size_t kMaxNormalBlockNum_ = 70;
+	
+	// 動かす頭
+	static const size_t kMaxPlayerBlockNum_ = 1;
+
+	// 分け与えなければいけない頭
+	static const size_t kMaxHeadBlockNum_ = 10;
+	
+	// 配置される予定の体
+	static const size_t kMaxBodyBlockNum_ = 10;
+
+	std::list<pBlock> listBlock_;
+
+	// プレイヤーのポインタ
+	BaseBlock* player_ = nullptr;
+
+
+	typedef std::unique_ptr<Object3d> pModel;
+
+	std::array<pModel, kMaxNormalBlockNum_> arrModelNormal_;
+	std::array<pModel, kMaxPlayerBlockNum_> arrModelPlayer_;
+	// モードを切り替えた時のモデル
+	std::array<pModel, kMaxPlayerBlockNum_> arrModelPlayer1_;
+	std::array<pModel, kMaxHeadBlockNum_> arrModelHead_;
+	std::array<pModel, kMaxBodyBlockNum_> arrModelBody_;
+
+	uint32_t iNormalModel_ = 0;
+	uint32_t iPlayerModel_ = 0;
+	uint32_t iBodyModel_ = 0;
+	uint32_t iHeadModel_ = 0;
+
+	ViewProjection* vp_ = nullptr;
+
+	// マップのサイズ
+	BaseBlock::StageVector kMapSize;
+
+	// 
+	MapManager::StageArray<BaseBlock*> mapBlock_;
+
+public:
+
+	static BlockManager* GetInstance();
+
+	void Initialize();
+
+	void Reset();
+
+	void Update();
+
+	void Draw();
+
+	// ステージ情報を設定する関数
+	void SetStageData(const MapManager::StageData& data);
+
+	void SetViewProjection(ViewProjection* view) { vp_ = view; }
+
+	// マップの場所を保存して指定できるようにする
+	void SetBlockPosition(const BaseBlock::StageVector& prePos,const BaseBlock::StageVector& pos);
+	void DeleteBlockPosition(const BaseBlock::StageVector& pos);
+	// ぶっ飛ばす
+	void SetOverBlock(const BaseBlock::StageVector& prePos, MapManager::MoveDirect direct);
+
+	bool GetIsStaging();
+
+	void FallFloatingBlock();
+
+	// 再起関数
+	// ブロックの下にブロックがあるか
+	bool ChainFall(const BaseBlock::StageVector& pos);
+
+	// プレイヤーのモデルを切り替える
+	void ChengePlayerModel(bool flag);
+
+private:
+
+	BlockManager() = default;
+	~BlockManager() = default;
+	BlockManager(const BlockManager& obj) = delete;
+	const BlockManager& operator=(const BlockManager& obj) = delete;
+
+	BaseBlock* CreateNormalBlock(const BaseBlock::StageVector& pos);
+	BaseBlock* CreatePlayerBlock(const BaseBlock::StageVector& pos);
+	BaseBlock* CreateHeadBlock(const BaseBlock::StageVector& pos);
+	BaseBlock* CreateBodyBlock(const BaseBlock::StageVector& pos);
+
+};

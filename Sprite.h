@@ -76,6 +76,7 @@ private: //メンバ変数
 	ComPtr<ID3D12Resource> wvpResource_;
 	ComPtr<ID3D12Resource> vertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+	D3D12_RESOURCE_DESC resouceDesc_;
 	//座標
 	Vector2 position_{};
 	//サイズ
@@ -88,6 +89,10 @@ private: //メンバ変数
 	Vector4 color_{ 1.0f,1.0f,1.0f,1.0f };
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
+
+	Vector2 texBase_{};
+
+	Vector2 texSize_ = { 100.0f,100.0f };
 
 public: //メンバ関数
 	
@@ -108,6 +113,11 @@ public: //メンバ関数
 	void SetAnchorpoint(const Vector2& anchorpoint);
 	//色の設定
 	void SetColor(const Vector4& color);
+	//
+	void SetTextureArea(const Vector2& texBase,const Vector2& texSize);
+	//
+	void SetTextureHandle(uint32_t textureHandle) { textureHandle_ = textureHandle; }
+
 	//座標の取得
 	const Vector2& GetPosition() const { return position_; }
 	//サイズの取得
@@ -118,6 +128,7 @@ public: //メンバ関数
 	const Vector2& GetAnchorpoint() const { return anchorpoint_; }
 	//色の取得
 	const Vector4& GetColor() const { return color_; }
+	
 	
 
 private:

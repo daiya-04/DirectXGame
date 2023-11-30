@@ -1,6 +1,9 @@
 #include "SceneManager.h"
 
 #include "SceneList.h"
+#include "../Object/BlockManager.h"
+#include "../Object/MapManager.h"
+
 using enum IScene::SCENE;
 
 SceneManager* SceneManager::GetInstace()
@@ -12,12 +15,22 @@ SceneManager* SceneManager::GetInstace()
 void SceneManager::Initialize()
 {
 	sceneArray_[kTITLE] = std::make_unique<TitleScene>();
+	sceneArray_[kSELECT] = std::make_unique<SelectScene>();
 	sceneArray_[kGAME] = std::make_unique<GameScene>();
 
 
 	currentSceneNo_ = kTITLE;
 	preSceneNo_ = kTITLE;
-	sceneArray_[kTITLE]->Initialize();
+
+	for (size_t i = 0; i < IScene::kCountScene; i++)
+	{
+		sceneArray_[i]->Initialize();
+	}
+
+	BlockManager::GetInstance()->Initialize();
+	MapManager::GetInstance()->Initialize();
+
+	//sceneArray_[kTITLE]->Initialize();
 }
 
 void SceneManager::Update()
@@ -35,13 +48,27 @@ void SceneManager::DrawUI()
 	sceneArray_[currentSceneNo_]->DrawUI();
 }
 
+void SceneManager::DrawParticle()
+{
+	sceneArray_[currentSceneNo_]->DrawParticle();
+}
+
 void SceneManager::ChegeScene(int num)
 {
 	assert(num < kCountScene);
 
 	preSceneNo_ = currentSceneNo_;
 	currentSceneNo_ = num;
-	sceneArray_[currentSceneNo_]->Initialize();
+	sceneArray_[currentSceneNo_]->Reset();
+}
+
+void SceneManager::SelectStage(int num)
+{
+	preSceneNo_ = currentSceneNo_;
+	currentSceneNo_ = kGAME;
+
+	sceneArray_[currentSceneNo_]->SetStageNum(num);
+	sceneArray_[currentSceneNo_]->Reset();
 }
 
 void SceneManager::DebugGUI()

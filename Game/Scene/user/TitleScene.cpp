@@ -4,65 +4,85 @@
 
 void TitleScene::Initialize()
 {
-	uint32_t texture = TextureManager::Load("uvChecker.png");
-	sprite_.reset(new Sprite(texture, { 50.0f,50.0f }, { 100.0f,100.0f }));
-	sprite_->Initialize();
-	sprite_->SetAnchorpoint({ 0.5f,0.5f });
 
-	rotate_ = sprite_->GetRotate();
-	pos_ = sprite_->GetPosition();
+    uint32_t titleTexture = TextureManager::Load("darumaModoshi.png");
+    uint32_t pushSpaceTexture = TextureManager::Load("pushSpace.png");
 
-	pot_.reset(Object3d::Create("teapot"));
-	plane_.reset(Object3d::Create("Plane"));
 
-	viewProjection_.reset(new ViewProjection());
-	viewProjection_->Initialize();
 
-	wtPlane_.parent_ = &wt_;
+    title_.reset(new Sprite(titleTexture, { 640.0f,300.0f }, { 800.0f,500.0f }, 0.0f, { 0.5f,0.5f }));
+    title_->Initialize();
+
+    pushSpace_.reset(new Sprite(pushSpaceTexture, { 640.0f,600.0f }, { 500.0f,100.0f }, 0.0f, { 0.5f,0.5f }));
+    pushSpace_->Initialize();
+
+    pushSpaceScaling_.reset(new Sprite(pushSpaceTexture, { 640.0f,600.0f }, { 500.0f,100.0f }, 0.0f, { 0.5f,0.5f }));
+    pushSpaceScaling_->Initialize();
+
+    size_t bgmHandle = Audio::GetInstance()->SoundLoadWave("outGameBGM.wav");
+    playHandle_ = Audio::GetInstance()->SoundPlayLoopStart(bgmHandle);
+    Audio::GetInstance()->SetValume(playHandle_, 0.2f);
+
+}
+
+void TitleScene::Reset()
+{
+    title_->Initialize();
+    pushSpace_->Initialize();
+    pushSpaceScaling_->Initialize();
+
+    Audio::GetInstance()->SoundPlayLoopEnd(playHandle_);
+    size_t bgmHandle = Audio::GetInstance()->SoundLoadWave("outGameBGM.wav");
+    playHandle_ = Audio::GetInstance()->SoundPlayLoopStart(bgmHandle);
+    Audio::GetInstance()->SetValume(playHandle_, 0.2f);
 
 }
 
 void TitleScene::Update()
 {
-
-	if (input_->PushKey(DIK_D)) {
-		OutputDebugStringA("Hit D\n");
-	}
-	if (input_->TriggerKey(DIK_SPACE)) {
-		SceneManager::GetInstace()->ChegeScene(kGAME);
-	}
-
-	XINPUT_STATE joyState{};
-
-	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A)) {
-
-	}
-
-	rotate_ += 0.02f;
-	pos_.x += 1.0f;
-	pos_.y += 1.0f;
-	wt_.translation_.x += 0.01f;
+    if (input_->TriggerKey(DIK_SPACE)) {
+        size_t selectSEHandle = Audio::GetInstance()->SoundLoadWave("select.wav");
+        size_t selectSEPlayerHandle = Audio::GetInstance()->SoundPlayWave(selectSEHandle);
+        SceneManager::GetInstace()->ChegeScene(kSELECT);
+    }
 
 
-	sprite_->SetRotate(rotate_);
-	sprite_->SetPosition(pos_);
 
+    if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A)) {
 
-	wt_.UpdateMatrix();
-	wtPlane_.UpdateMatrix();
+    }
+
+    // 拡縮透明
+    auto easeOutCirc = [](float t) { return std::sqrtf(1 - std::powf(t - 1, 2)); };
+
+    pushSpaceScaling_->SetSize(Lerp(easeOutCirc(scaleT), pushSpace_.get()->GetSize(), pushSpace_.get()->GetSize() * 1.2f));
+    pushSpaceScaling_->SetColor({ 1.0f,1.0f,1.0f, Lerp(easeOutCirc(scaleT), 0.8f, 0.0f) });
+
+    scaleT += 0.02f;
+    if (scaleT > 0.9f) {
+        scaleT = 0.0f;
+    }
+
 
 }
 
 void TitleScene::DrawModel()
 {
-	pot_->Draw(wt_, *viewProjection_.get());
-	plane_->Draw(wtPlane_, *viewProjection_.get());
+
 
 }
 
 void TitleScene::DrawUI()
 {
-	sprite_->Draw();
+
+    pushSpaceScaling_->Draw();
+    title_->Draw();
+    pushSpace_->Draw();
+}
+
+void TitleScene::DrawParticle()
+{
+
 }
 
 TitleScene::~TitleScene() {}

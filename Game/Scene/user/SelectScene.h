@@ -1,0 +1,52 @@
+#pragma once
+
+#include "../IScene.h"
+
+class SelectScene final : public IScene
+{
+public:
+	// 初期化
+	void Initialize() override;
+
+	void Reset()  override;
+
+	// 更新
+	void Update() override;
+
+	// モデルの描画
+	void DrawModel() override;
+	//　UI の描画
+	void DrawUI() override;
+	// Particle の描画
+	void DrawParticle() override;
+
+	// デストラクタ
+	~SelectScene() override;
+
+	void DebugGUI() override;
+
+
+private: // プライベート関数
+
+
+
+public:
+
+	static const size_t stageNum_ = 8;
+
+private: // プライベート変数
+
+	std::array<Vector2, stageNum_> stageNumPos_;
+
+	std::array<std::unique_ptr<Sprite>, stageNum_> number_;
+	std::array<std::unique_ptr<Sprite>, stageNum_> stageImages_;
+	std::unique_ptr<Sprite> header_;
+	std::unique_ptr<Sprite> stageImgFrame_;
+	std::unique_ptr<Sprite> stageImgFrameFace_;
+
+	int selectNum_ = 0;
+
+	float scalingParam_ = 0.0f;
+	int cycle = 20;
+
+};

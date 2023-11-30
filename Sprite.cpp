@@ -109,13 +109,13 @@ void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowH
 	D3D12_BLEND_DESC blendDesc{};
 	//すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	//blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 	
 	//ここをいじるといろいろなブレンドモードを設定できる
 	//ノーマルブレンド
-	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;*/
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 	//加算
 	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
@@ -134,9 +134,9 @@ void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowH
 	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;*/
 	//
 	//α値のブレンド設定で基本的に使わないからいじらない
-	/*blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;*/
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 
 	//RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
@@ -220,12 +220,14 @@ Sprite::Sprite(uint32_t textureHandle, Vector2 position, Vector2 size, float rot
 	rotate_ = rotate;
 	anchorpoint_ = anchorpoint;
 	color_ = color;
-
+	texSize_ = size;
 }
 
 void Sprite::Initialize() {
 
 	assert(device_);
+
+	resouceDesc_ = TextureManager::GetInstance()->GetResouceDesc(textureHandle_);
 
 	//Sprite用の頂点リソースを作る
 	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * 6);
@@ -310,6 +312,13 @@ void Sprite::SetColor(const Vector4& color) {
 	matrialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	materialData->color_ = color;
 
+}
+
+void Sprite::SetTextureArea(const Vector2& texBase, const Vector2& texSize) {
+	texBase_ = texBase;
+	texSize_ = texSize;
+
+	TransferVertex();
 }
 
 void Sprite::Log(const std::string& message) {
@@ -409,20 +418,25 @@ void Sprite::TransferVertex(){
 	float top = (0.0f - anchorpoint_.y) * size_.y;
 	float bottom = (1.0f - anchorpoint_.y) * size_.y;
 
+	float uvLeft = texBase_.x / resouceDesc_.Width;
+	float uvRight = (texBase_.x + texSize_.x) / resouceDesc_.Width;
+	float uvTop = texBase_.y / resouceDesc_.Height;
+	float uvBottom = (texBase_.y + texSize_.y) / resouceDesc_.Height;
+
 	//頂点データを設定する
 	VertexData* vertexData = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//1枚目の三角形
 	vertexData[0].pos_ = { left,bottom,0.0f,1.0f };//左下
-	vertexData[0].uv_ = { 0.0f,1.0f };
+	vertexData[0].uv_ = { uvLeft,uvBottom };
 	vertexData[1].pos_ = { left,top,0.0f,1.0f };//左上
-	vertexData[1].uv_ = { 0.0f,0.0f };
+	vertexData[1].uv_ = { uvLeft,uvTop };
 	vertexData[2].pos_ = { right,bottom,0.0f,1.0f };//右下
-	vertexData[2].uv_ = { 1.0f,1.0f };
+	vertexData[2].uv_ = { uvRight,uvBottom };
 	//2枚目の三角形
 	vertexData[3] = vertexData[1];//左上
 	vertexData[4].pos_ = { right,top,0.0f,1.0f };//右上
-	vertexData[4].uv_ = { 1.0f,0.0f };
+	vertexData[4].uv_ = { uvRight,uvTop };
 	vertexData[5] = vertexData[2];//右下
 	
 

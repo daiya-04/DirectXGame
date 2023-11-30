@@ -24,7 +24,7 @@ private:
 
 	ID3D12Device* device_ = nullptr;
 	UINT srvDescriptorHandleSize_ = 0;
-	std::string directoryPath_ = "Resources/";
+	std::string directoryPath_ = "Resources/texture/";
 	std::array<Texture, kNumTextures> textures_;
 	int32_t useTextureNum_ = 0;
 	std::array<ComPtr<ID3D12Resource>,kNumTextures> intermediateResource_;
@@ -38,6 +38,8 @@ public:
 	static uint32_t LoadUv(const std::string& fileName, const std::string& filePath);
 
 	void Initialize();
+
+	const D3D12_RESOURCE_DESC GetResouceDesc(uint32_t textureHandle);
 
 	void SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex, uint32_t textureHandle);
 
