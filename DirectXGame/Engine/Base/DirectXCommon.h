@@ -5,6 +5,7 @@
 #include <vector>
 #include "WinApp.h"
 #include <chrono>
+#include <thread>
 #include <string>
 
 class DirectXCommon{
