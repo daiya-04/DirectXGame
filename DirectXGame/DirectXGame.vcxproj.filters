@@ -59,7 +59,7 @@
     <ClCompile Include="Engine\Input\Input.cpp">
       <Filter>Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Debug\ImGuiManager.cpp">
+    <ClCompile Include="Engine\DebugText\ImGuiManager.cpp">
       <Filter>Engine\Debug</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Particle\Particle.cpp">
@@ -106,10 +106,10 @@
     <ClInclude Include="Engine\Input\Input.h">
       <Filter>Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Debug\ImGuiManager.h">
+    <ClInclude Include="Engine\DebugText\ImGuiManager.h">
       <Filter>Engine\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Debug\Log.h">
+    <ClInclude Include="Engine\DebugText\Log.h">
       <Filter>Engine\Debug</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Particle\Particle.h">
