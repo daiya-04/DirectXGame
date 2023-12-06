@@ -3,8 +3,8 @@
 #include <wrl.h>
 #include <string>
 #include <array>
-#include "externals/DirectXTex/d3dx12.h"
-#include "externals/DirectXTex/DirectXTex.h"
+#include <d3dx12.h>
+#include <DirectXTex.h>
 
 class TextureManager{
 private:

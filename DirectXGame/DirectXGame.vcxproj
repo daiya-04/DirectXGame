@@ -43,6 +43,16 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)externals\DirectXTex;$(SolutionDir)externals\imgui;$(IncludePath)</IncludePath>
+    <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)externals\DirectXTex;$(SolutionDir)externals\imgui;$(IncludePath)</IncludePath>
+    <IntDir>$(SolutionDir)..\Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)..\Generated\Outputs\$(Configuration)\</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -53,6 +63,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engine\Base;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Debug;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -77,6 +88,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engine\Base;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Debug;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -92,58 +105,43 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DirectXCommon.cpp" />
-    <ClCompile Include="externals\imgui\imgui.cpp" />
-    <ClCompile Include="externals\imgui\imgui_demo.cpp" />
-    <ClCompile Include="externals\imgui\imgui_draw.cpp" />
-    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp" />
-    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="externals\imgui\imgui_tables.cpp" />
-    <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="ImGuiManager.cpp" />
-    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Engine\Base\DirectXCommon.cpp" />
+    <ClCompile Include="Engine\Debug\ImGuiManager.cpp" />
+    <ClCompile Include="Engine\Input\Input.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ModelManager.cpp" />
-    <ClCompile Include="Object3d.cpp" />
-    <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
-    <ClCompile Include="ViewProjection.cpp" />
-    <ClCompile Include="WinApp.cpp" />
-    <ClCompile Include="WorldTransform.cpp" />
+    <ClCompile Include="Engine\3d\ModelManager.cpp" />
+    <ClCompile Include="Engine\3d\Object3d.cpp" />
+    <ClCompile Include="Engine\3d\Particle\Particle.cpp" />
+    <ClCompile Include="Engine\2d\Sprite.cpp" />
+    <ClCompile Include="Engine\Base\TextureManager.cpp" />
+    <ClCompile Include="Engine\Camera\ViewProjection.cpp" />
+    <ClCompile Include="Engine\Base\WinApp.cpp" />
+    <ClCompile Include="Engine\3d\WorldTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectXCommon.h" />
-    <ClInclude Include="externals\imgui\imconfig.h" />
-    <ClInclude Include="externals\imgui\imgui.h" />
-    <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
-    <ClInclude Include="externals\imgui\imgui_impl_win32.h" />
-    <ClInclude Include="externals\imgui\imgui_internal.h" />
-    <ClInclude Include="externals\imgui\imstb_rectpack.h" />
-    <ClInclude Include="externals\imgui\imstb_textedit.h" />
-    <ClInclude Include="externals\imgui\imstb_truetype.h" />
-    <ClInclude Include="ImGuiManager.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="Log.h" />
-    <ClInclude Include="Matrix44.h" />
-    <ClInclude Include="ModelManager.h" />
-    <ClInclude Include="Object3d.h" />
-    <ClInclude Include="Particle.h" />
-    <ClInclude Include="Sprite.h" />
-    <ClInclude Include="TextureManager.h" />
-    <ClInclude Include="Vec2.h" />
-    <ClInclude Include="Vec3.h" />
-    <ClInclude Include="Vec4.h" />
-    <ClInclude Include="ViewProjection.h" />
-    <ClInclude Include="WinApp.h" />
-    <ClInclude Include="WorldTransform.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="externals\imgui\LICENSE.txt" />
+    <ClInclude Include="Engine\Base\DirectXCommon.h" />
+    <ClInclude Include="Engine\Debug\ImGuiManager.h" />
+    <ClInclude Include="Engine\Input\Input.h" />
+    <ClInclude Include="Engine\Debug\Log.h" />
+    <ClInclude Include="Engine\Math\Matrix44.h" />
+    <ClInclude Include="Engine\3d\ModelManager.h" />
+    <ClInclude Include="Engine\3d\Object3d.h" />
+    <ClInclude Include="Engine\3d\Particle\Particle.h" />
+    <ClInclude Include="Engine\2d\Sprite.h" />
+    <ClInclude Include="Engine\Base\TextureManager.h" />
+    <ClInclude Include="Engine\Math\Vec2.h" />
+    <ClInclude Include="Engine\Math\Vec3.h" />
+    <ClInclude Include="Engine\Math\Vec4.h" />
+    <ClInclude Include="Engine\Camera\ViewProjection.h" />
+    <ClInclude Include="Engine\Base\WinApp.h" />
+    <ClInclude Include="Engine\3d\WorldTransform.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
       <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
+    </ProjectReference>
+    <ProjectReference Include="externals\imgui\imgui.vcxproj">
+      <Project>{9e756113-1c15-42db-ae2c-526f435d9174}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
