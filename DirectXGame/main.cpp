@@ -1,30 +1,9 @@
-#include "WinApp.h"
-#include "DirectXCommon.h"
-#include "ImGuiManager.h"
 #include <dxgidebug.h>
-#include "Matrix44.h"
-#include "Vec3.h"
-#include "Vec2.h"
-#include "Vec4.h"
-#include "Quaternion.h"
 #include <wrl.h>
-#include "Input.h"
-#include "Sprite.h"
-#include "Object3d.h"
-#include "WorldTransform.h"
-#include "ViewProjection.h"
-#include "TextureManager.h"
-#include "ModelManager.h"
 #include <memory>
-#include "Particle.h"
-#include <random>
-#include <numbers>
-#include <list>
-
+#include "MyGame.h"
 
 #pragma comment(lib,"dxguid.lib")
-
-
 
 using namespace Microsoft::WRL;
 
@@ -45,67 +24,7 @@ struct D3DResourceLeakChecker {
 int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//D3DResourceLeakChecker leakCheck;
 
-	WinApp* win = nullptr;
-	DirectXCommon* dxCommon = nullptr;
-
-	Input* input = nullptr;
-	
-
-	win = WinApp::GetInstance();
-	win->CreateGameWindow(L"LE2A_12_セト_ダイヤ");
-
-	dxCommon = DirectXCommon::GetInstance();
-	dxCommon->Initialize(win);
-
-	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
-	imguiManager->Initialize(win, dxCommon);
-
-	input = Input::GetInstance();
-	input->Initialize(win);
-
-	TextureManager::GetInstance()->Initialize();
-	ModelManager::GetInstance()->Initialize();
-	//TextureManager::Load("uvChecker.png");
-
-	Sprite::StaticInitialize(dxCommon->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
-	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
-
-	Particle::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
-
-	uint32_t uv = TextureManager::Load("uvChecker.png");
-	uint32_t circle = TextureManager::Load("circle.png");
-
-	Sprite* sprite = new Sprite(uv,{50.0f,50.0f}, { 100.0f,100.0f });
-	sprite->Initialize();
-	sprite->SetAnchorpoint({ 0.5f,0.5f });
-
-	float rotate = sprite->GetRotate();
-	Vector2 pos = sprite->GetPosition();
-
-	/*std::unique_ptr<Model> teapot = std::make_unique<Model>();
-	teapot.reset(Model::LoadOBJ("teapot"));*/
-	uint32_t teapot = ModelManager::Load("teapot");
-	
-	/*std::unique_ptr<Model> plane = std::make_unique<Model>();
-	plane.reset(Model::LoadOBJ("Plane"));*/
-	uint32_t plane = ModelManager::Load("Plane");
-
-	std::unique_ptr<Object3d> obj;
-	obj = std::make_unique<Object3d>();
-	obj.reset(Object3d::Create(teapot));
-
-	std::unique_ptr<Object3d> obj2;
-	obj2 = std::make_unique<Object3d>();
-	obj2.reset(Object3d::Create(plane));
-
-	std::unique_ptr<Object3d> obj3;
-	obj3 = std::make_unique<Object3d>();
-	obj3.reset(Object3d::Create(plane));
-
-	
-
-	
-	
+	std::unique_ptr<DSFramework> game = std::make_unique<MyGame>();
 
 	//
 	//vertexDataCube[0].position = { -1.0f,1.0f,-1.0f,1.0f };    //左上前
@@ -167,127 +86,7 @@ int WINAPI WinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE,_In_ LPSTR,_In_ int) {
 	//vertexDataCube[34].texcoord = { 1.0f,1.0f };
 	//vertexDataCube[35] = vertexDataCube[32];                   //右下奥
 
-	ViewProjection viewProjection;
-	viewProjection.Initialize();
-
+	game->Run();
 	
-
-	
-
-	
-	
-	WorldTransform worldTransform;
-	WorldTransform worldTransform2;
-	WorldTransform worldTransform3;
-	
-
-	
-	//ウィンドウの✕ボタンが押されるまでループ
-	while (true) {
-		
-		if (win->ProcessMessage()) { break; }
-		
-
-		imguiManager->Begin();
-
-		input->Update();
-
-		//更新
-#ifdef _DEBUG
-		ImGui::Begin("window");
-		ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
-
-		ImGui::End();
-
-		ImGui::Begin("OBJ");
-
-		ImGui::DragFloat3("obj1", &worldTransform.translation_.x, 0.01f);
-		ImGui::DragFloat3("obj2", &worldTransform2.translation_.x, 0.01f);
-		ImGui::DragFloat3("obj3", &worldTransform3.translation_.x, 0.01f);
-
-		ImGui::End();
-
-		ImGui::Begin("Camera");
-
-		ImGui::DragFloat3("Postion", &viewProjection.translation_.x, 0.01f);
-		ImGui::DragFloat3("Rotation", &viewProjection.rotation_.x, 0.01f);
-
-		ImGui::End();
-#endif // _DEBUG
-
-		
-		if (input->PushKey(DIK_SPACE)) {
-			obj2->SetModelHandle(teapot);
-			obj3->SetModelHandle(teapot);
-		}
-		else {
-			obj2->SetModelHandle(plane);
-			obj3->SetModelHandle(plane);
-		}
-        
-		
-		rotate += 0.02f;
-		pos.x += 1.0f;
-		pos.y += 1.0f;
-		//worldTransform.translation_.x += 0.01f;
-
-		
-		
-
-		sprite->SetRotate(rotate);
-		sprite->SetPosition(pos);
-		
-		
-		
-
-		worldTransform.UpdateMatrix();
-		worldTransform2.UpdateMatrix();
-		worldTransform3.UpdateMatrix();
-		viewProjection.UpdateMatrix();
-
-
-		imguiManager->End();
-
-		//描画
-
-		dxCommon->preDraw();
-
-		
-		
-		Sprite::preDraw(dxCommon->GetCommandList());
-
-
-		//sprite->Draw();
-
-		Sprite::postDraw();
-
-		Object3d::preDraw();
-
-
-		obj->Draw(worldTransform,viewProjection);
-		obj2->Draw(worldTransform2,viewProjection);
-		obj3->Draw(worldTransform3, viewProjection);
-
-		Object3d::postDraw();
-
-		Particle::preDraw();
-
-		
-
-		Particle::postDraw();
-		
-		imguiManager->Draw();
-
-		dxCommon->postDraw();
-
-	}
-
-	imguiManager->Finalize();
-
-	//解放処理
-
-	delete sprite;
-	win->TerminateGameWindow();
-
 	return 0;
 }

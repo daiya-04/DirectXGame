@@ -32,6 +32,12 @@
     <Filter Include="Engine\3d\Particle">
       <UniqueIdentifier>{05c165ac-f94c-4c9c-b345-1b385a153993}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Framework">
+      <UniqueIdentifier>{92047098-2085-4f1b-9b8e-502b184d64c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{e92a25cf-b30e-4faf-bd81-9d0ed37e9e51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -67,6 +73,12 @@
     </ClCompile>
     <ClCompile Include="Engine\Base\TextureManager.cpp">
       <Filter>Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Framework\Framework.cpp">
+      <Filter>Engine\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\MyGame.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +132,12 @@
     </ClInclude>
     <ClInclude Include="Engine\Math\Quaternion.h">
       <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Framework\Framework.h">
+      <Filter>Engine\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\MyGame.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
