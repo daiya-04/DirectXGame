@@ -31,6 +31,8 @@ void DSFramework::Init(){
 
 	Particle::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
 
+	SceneManager::GetInstance()->Init();
+
 }
 
 void DSFramework::Update(){
@@ -42,12 +44,14 @@ void DSFramework::Update(){
 
 	Input::GetInstance()->Update();
 
+	SceneManager::GetInstance()->Update();
+
 }
 
 void DSFramework::Finalize(){
 
-	win->TerminateGameWindow();
 	ImGuiManager::GetInstance()->Finalize();
+	win->TerminateGameWindow();
 
 }
 

@@ -5,12 +5,13 @@
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
+#include "SceneFactory.h"
 
 void MyGame::Init(){
 
 	DSFramework::Init();
 
-	
+	SceneManager::GetInstance()->ChangeScene("Game");
 
 }
 
@@ -20,7 +21,7 @@ void MyGame::Update(){
 
 	///ゲーム固有処理
 
-
+	
 	
 	///
 
@@ -33,35 +34,9 @@ void MyGame::Draw(){
 
 	dxCommon->preDraw();
 
-	///ここはシーンマネージャへ
+	///ゲーム固有処理
 
-	///背景スプライト
-	Sprite::preDraw(dxCommon->GetCommandList());
-
-
-
-	Sprite::postDraw();
-
-	///3dオブジェクト
-	Object3d::preDraw();
-
-
-
-	Object3d::postDraw();
-
-	///パーティクル
-	Particle::preDraw();
-
-
-
-	Particle::postDraw();
-
-	///UI
-	Sprite::preDraw(dxCommon->GetCommandList());
-
-
-
-	Sprite::postDraw();
+	SceneManager::GetInstance()->Draw(dxCommon->GetCommandList());
 
 	///
 

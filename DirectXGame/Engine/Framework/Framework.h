@@ -1,7 +1,8 @@
 #pragma once
 #include "WinApp.h"
 #include "DirectXCommon.h"
-
+#include "SceneManager.h"
+#include <memory>
 
 class DSFramework{
 private:

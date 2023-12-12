@@ -1,6 +1,6 @@
 #pragma once
 #include "Framework.h"
-
+#include <memory>
 
 class MyGame : public DSFramework {
 public:
@@ -12,6 +12,10 @@ public:
 	void Draw()override;
 
 	void Finalize()override;
+
+private:
+
+	
 
 };
 
