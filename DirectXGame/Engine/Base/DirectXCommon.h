@@ -3,7 +3,7 @@
 #include <dxgi1_6.h>
 #include <wrl.h>
 #include <vector>
-#include "WinApp.h"
+
 #include <chrono>
 #include <thread>
 #include <string>
@@ -16,8 +16,6 @@ private:
 private:
 
 	uint32_t kSrvHeapDescriptorNum = 512;
-
-	WinApp* win_ = nullptr;
 
 	ComPtr<ID3D12Device> device_;
 	ComPtr<IDXGIFactory7> dxgiFactory_;
@@ -41,7 +39,7 @@ public:
 	static DirectXCommon* GetInstance();
 
 	//初期化
-	void Initialize(WinApp* win);
+	void Initialize();
 	//デバイスの初期化
 	void InitializeDevice();
 	//コマンド関連の初期化
@@ -54,6 +52,8 @@ public:
 	void InitializeDepthBuffer();
 	//フェンスの初期化
 	void InitializeFence();
+	//深度バッファクリア
+	void ClearDepthBaffer();
 	//描画前処理
 	void preDraw();
 	//描画後処理

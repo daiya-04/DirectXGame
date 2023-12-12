@@ -9,16 +9,12 @@ class WinApp;
 class DirectXCommon;
 
 class ImGuiManager{
-private:
-
-	DirectXCommon* dxCommon_ = nullptr;
-
 public:
 
 	static ImGuiManager* GetInstance();
 
 	//初期化
-	void Initialize(WinApp* win,DirectXCommon* dxCommon);
+	void Initialize();
 	//ImGuiの受付開始
 	void Begin();
 	//ImGui受付終了

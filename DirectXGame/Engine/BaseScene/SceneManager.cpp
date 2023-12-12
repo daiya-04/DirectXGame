@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "SceneFactory.h"
+#include "DirectXCommon.h"
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
@@ -37,6 +38,8 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 	scene_->DrawBackGround();
 
 	Sprite::postDraw();
+
+	DirectXCommon::GetInstance()->ClearDepthBaffer();
 
 	///3dオブジェクト
 	Object3d::preDraw();

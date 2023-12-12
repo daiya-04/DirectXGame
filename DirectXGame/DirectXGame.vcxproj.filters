@@ -41,7 +41,7 @@
     <Filter Include="Engine\BaseScene">
       <UniqueIdentifier>{a9e99e14-0ce7-4fbb-b7e8-6e7f72e0d4ad}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\BaseScene\Scene">
+    <Filter Include="Game\Scene">
       <UniqueIdentifier>{eca7b166-bb3a-4d22-a963-df1bc14ddaf7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -87,10 +87,10 @@
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scene\GameScene.cpp">
-      <Filter>Engine\BaseScene\Scene</Filter>
+      <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scene\SceneFactory.cpp">
-      <Filter>Engine\BaseScene\Scene</Filter>
+      <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\BaseScene\SceneManager.cpp">
       <Filter>Engine\BaseScene</Filter>
@@ -155,10 +155,10 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scene\GameScene.h">
-      <Filter>Engine\BaseScene\Scene</Filter>
+      <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scene\SceneFactory.h">
-      <Filter>Engine\BaseScene\Scene</Filter>
+      <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\BaseScene\AbstractSceneFactory.h">
       <Filter>Engine\BaseScene</Filter>

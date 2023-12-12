@@ -30,19 +30,17 @@ void MyGame::Update(){
 
 void MyGame::Draw(){
 
-	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
-
-	dxCommon->preDraw();
+	DirectXCommon::GetInstance()->preDraw();
 
 	///ゲーム固有処理
 
-	SceneManager::GetInstance()->Draw(dxCommon->GetCommandList());
+	SceneManager::GetInstance()->Draw(DirectXCommon::GetInstance()->GetCommandList());
 
 	///
 
 	ImGuiManager::GetInstance()->Draw();
 
-	dxCommon->postDraw();
+	DirectXCommon::GetInstance()->postDraw();
 
 }
 

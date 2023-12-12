@@ -1,4 +1,6 @@
 #include "DirectXCommon.h"
+
+#include "WinApp.h"
 #include <cassert>
 #include <format>
 
@@ -11,12 +13,11 @@ DirectXCommon* DirectXCommon::GetInstance() {
 	return &instance;
 }
 
-void DirectXCommon::Initialize(WinApp* win) {
+void DirectXCommon::Initialize() {
 
 	InitializeFixFPS();
 
-	assert(win);
-	win_ = win;
+	
 
 	InitializeDevice();
 
@@ -158,7 +159,7 @@ void DirectXCommon::InitializeSwapChain() {
 	swapChainDesc.BufferCount = 2;   //ダブルバッファ
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;  //モニタに移したら、中身を破壊
 	//コマンドキュー、ウィンドウハンドル、設定を渡して生成する
-	HRESULT hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), win_->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
+	HRESULT hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), WinApp::GetInstance()->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
 }
@@ -255,6 +256,15 @@ void DirectXCommon::InitializeFence() {
 
 }
 
+void DirectXCommon::ClearDepthBaffer(){
+
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetCPUDescriptorHandle(dsvDescriptorHeap_, device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV), 0);
+
+	//指定した深度で画面全体をクリアする
+	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+}
+
 void DirectXCommon::preDraw() {
 
 	//これから書き込むバックバッファのインデックスを取得
@@ -281,8 +291,7 @@ void DirectXCommon::preDraw() {
 	//指定した色で画面全体をクリアする
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };  //RGBAの順
 	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-	//指定した深度で画面全体をクリアする
-	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	ClearDepthBaffer();
 
 	//ビューポート
 	D3D12_VIEWPORT viewport{};

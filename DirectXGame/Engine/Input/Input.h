@@ -1,7 +1,6 @@
 #pragma once
 #include <Windows.h>
 #include <wrl.h>
-#include "WinApp.h"
 #include "Vec3.h"
 
 #include <XInput.h>
@@ -22,14 +21,12 @@ private:
 	XINPUT_STATE joyState;
 	XINPUT_STATE preJoyState;
 
-	WinApp* win_ = nullptr;
-
 public:
 
 	static Input* GetInstance();
 
 	//初期化
-	void Initialize(WinApp* win);
+	void Initialize();
 	//更新
 	void Update();
 
@@ -49,12 +46,16 @@ public:
 		return { (float)joyState.Gamepad.sThumbRY / SHRT_MAX,(float)joyState.Gamepad.sThumbRX / SHRT_MAX,0.0f };
 	}
 
-	bool TriggerButton(int button) {
+	bool TriggerButton(int button) const {
 		if ((joyState.Gamepad.wButtons & button) && !(preJoyState.Gamepad.wButtons & button)) {
 			return true;
 		}
 		return false;
 	}
+
+	bool LeftTrigger() const;
+
+	bool RightTrigger() const;
 
 private:
 	Input() = default;

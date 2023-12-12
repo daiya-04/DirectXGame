@@ -1,4 +1,6 @@
 #include "Input.h"
+
+#include "WinApp.h"
 #include <assert.h>
 #include <cmath>
 
@@ -12,13 +14,12 @@ Input* Input::GetInstance() {
 	return &instance;
 }
 
-void Input::Initialize(WinApp* win) {
+void Input::Initialize() {
 
 	HRESULT hr;
-	win_ = win;
 
 	//DirectInputの初期化
-	hr = DirectInput8Create(win_->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
+	hr = DirectInput8Create(WinApp::GetInstance()->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
 	assert(SUCCEEDED(hr));
 	//キーボードデバイスの生成
 	hr = directInput->CreateDevice(GUID_SysKeyboard, &keyBoard, NULL);
@@ -27,7 +28,7 @@ void Input::Initialize(WinApp* win) {
 	hr = keyBoard->SetDataFormat(&c_dfDIKeyboard); //標準形式
 	assert(SUCCEEDED(hr));
 	//排他制御レベルのセット
-	hr = keyBoard->SetCooperativeLevel(win_->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	hr = keyBoard->SetCooperativeLevel(WinApp::GetInstance()->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(hr));
 
 }
@@ -40,6 +41,8 @@ void Input::Update() {
 	keyBoard->Acquire();
 	//全キーの入力状態を取得する
 	keyBoard->GetDeviceState(sizeof(key), key);
+
+	GetJoystickState();
 
 }
 
@@ -85,5 +88,19 @@ bool Input::GetJoystickState() {
 		return true;
 	}
 
+	return false;
+}
+
+bool Input::LeftTrigger() const {
+	if (joyState.Gamepad.bLeftTrigger && !preJoyState.Gamepad.bLeftTrigger) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::RightTrigger() const {
+	if (joyState.Gamepad.bRightTrigger && !preJoyState.Gamepad.bRightTrigger) {
+		return true;
+	}
 	return false;
 }

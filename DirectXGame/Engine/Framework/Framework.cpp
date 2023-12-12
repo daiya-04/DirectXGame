@@ -11,25 +11,25 @@
 
 void DSFramework::Init(){
 
-	win = WinApp::GetInstance();
-	win->CreateGameWindow(L"LE2A_12_セト_ダイヤ");
-
-	dxCommon = DirectXCommon::GetInstance();
-	dxCommon->Initialize(win);
-
-	ImGuiManager::GetInstance()->Initialize(win, dxCommon);
+	
+	WinApp::GetInstance()->CreateGameWindow(L"LE2A_12_セト_ダイヤ");
 
 	
-	Input::GetInstance()->Initialize(win);
+	DirectXCommon::GetInstance()->Initialize();
+
+	ImGuiManager::GetInstance()->Initialize();
+
+	
+	Input::GetInstance()->Initialize();
 
 	TextureManager::GetInstance()->Initialize();
 	ModelManager::GetInstance()->Initialize();
 	//TextureManager::Load("uvChecker.png");
 
-	Sprite::StaticInitialize(dxCommon->GetDevice(), WinApp::kClientWidth, WinApp::kClientHeight);
-	Object3d::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
+	Sprite::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), WinApp::kClientWidth, WinApp::kClientHeight);
+	Object3d::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 
-	Particle::StaticInitialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
+	Particle::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 
 	SceneManager::GetInstance()->Init();
 
@@ -37,7 +37,7 @@ void DSFramework::Init(){
 
 void DSFramework::Update(){
 
-	if (win->ProcessMessage()) { endRequest_ = true; }
+	if (WinApp::GetInstance()->ProcessMessage()) { endRequest_ = true; }
 
 
 	ImGuiManager::GetInstance()->Begin();
@@ -51,7 +51,7 @@ void DSFramework::Update(){
 void DSFramework::Finalize(){
 
 	ImGuiManager::GetInstance()->Finalize();
-	win->TerminateGameWindow();
+	WinApp::GetInstance()->TerminateGameWindow();
 
 }
 

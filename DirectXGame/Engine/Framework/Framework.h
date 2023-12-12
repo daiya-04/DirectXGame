@@ -7,9 +7,6 @@
 class DSFramework{
 private:
 
-	WinApp* win = nullptr;
-	DirectXCommon* dxCommon = nullptr;
-
 	bool endRequest_ = false;
 
 public:

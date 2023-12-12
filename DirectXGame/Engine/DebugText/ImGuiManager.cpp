@@ -16,25 +16,22 @@ ImGuiManager* ImGuiManager::GetInstance() {
 	return &instance;
 }
 
-void ImGuiManager::Initialize([[maybe_unused]] WinApp* win, [[maybe_unused]] DirectXCommon* dxCommon){
+void ImGuiManager::Initialize(){
 
 #ifdef _DEBUG
-
-	assert(dxCommon);
-	dxCommon_ = dxCommon;
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(win->GetHwnd());
-	ImGui_ImplDX12_Init(dxCommon_->GetDevice(),
-		static_cast<int>(dxCommon_->GetBackBufferCount()),
+	ImGui_ImplWin32_Init(WinApp::GetInstance()->GetHwnd());
+	ImGui_ImplDX12_Init(DirectXCommon::GetInstance()->GetDevice(),
+		static_cast<int>(DirectXCommon::GetInstance()->GetBackBufferCount()),
 		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-		dxCommon_->GetSrvHeap(),
-		dxCommon_->GetSrvHeap()->GetCPUDescriptorHandleForHeapStart(),
-		dxCommon_->GetSrvHeap()->GetGPUDescriptorHandleForHeapStart());
+		DirectXCommon::GetInstance()->GetSrvHeap(),
+		DirectXCommon::GetInstance()->GetSrvHeap()->GetCPUDescriptorHandleForHeapStart(),
+		DirectXCommon::GetInstance()->GetSrvHeap()->GetGPUDescriptorHandleForHeapStart());
 
-	dxCommon_->IncrementSrvHeapCount();
+	DirectXCommon::GetInstance()->IncrementSrvHeapCount();
 
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
@@ -65,7 +62,7 @@ void ImGuiManager::Draw(){
 
 #ifdef _DEBUG
 	ID3D12GraphicsCommandList* commandList_;
-	commandList_ = dxCommon_->GetCommandList();
+	commandList_ = DirectXCommon::GetInstance()->GetCommandList();
 
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_);
 #endif // _DEBUG
