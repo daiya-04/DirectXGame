@@ -103,7 +103,7 @@ public:
 		return result;
 	}
 
-	inline Matrix4x4 Transpose() {
+	inline Matrix4x4 Transpose() const {
 		Matrix4x4 result{};
 		for (size_t row = 0; row < kMatrixNum; row++) {
 			for (size_t column = 0; column < kMatrixNum; column++) {
@@ -141,7 +141,7 @@ public:
 		};
 	}
 
-	inline Vector3 fTransform(const Vector3& vector, const Matrix4x4& matrix) {
+	inline Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
 		Vector3 result{};
 		result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
 		result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
