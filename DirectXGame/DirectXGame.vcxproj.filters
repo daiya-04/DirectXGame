@@ -95,7 +95,7 @@
     <ClCompile Include="Engine\BaseScene\SceneManager.cpp">
       <Filter>Engine\BaseScene</Filter>
     </ClCompile>
-    <ClCompile Include="Hit.cpp" />
+    <ClCompile Include="Engine\Collision\Hit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -170,6 +170,6 @@
     <ClInclude Include="Engine\BaseScene\SceneManager.h">
       <Filter>Engine\BaseScene</Filter>
     </ClInclude>
-    <ClInclude Include="Hit.h" />
+    <ClInclude Include="Engine\Collision\Hit.h" />
   </ItemGroup>
 </Project>
