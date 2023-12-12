@@ -10,33 +10,51 @@ void GameScene::Init(){
 
 	viewProjection_.Initialize();
 
-	backGroundHandle_ = TextureManager::Load("white.png");
-	backGround_.reset(new Sprite(backGroundHandle_, { 0.0f,0.0f }, { 1280.0f,720.0f }));
-	backGround_->Initialize();
-	backGround_->SetColor({ 0.0f,0.0f,0.0f,1.0f });
+	uint32_t circle = TextureManager::Load("circle.png");
+	particle_ = std::make_unique<Particle>();
+	particle_.reset(Particle::Create(circle, 50));
 
-	uint32_t teapotModel = ModelManager::Load("teapot");
+	emitter_.count_ = 3;
+	emitter_.frequency_ = 0.5f;
 
-	teapot_ = std::make_unique<Object3d>();
-	teapot_.reset(Object3d::Create(teapotModel));
-
+	accelerationField_.acceleration_ = { 5.0f,0.0f,0.0f };
+	accelerationField_.area_.min = { -1.0f,-1.0f,-1.0f };
+	accelerationField_.area_.max = { 1.0f,1.0f,1.0f };
+	
 }
 
 void GameScene::Update(){
 	DebugGUI();
 
-	worldTransform_.UpdateMatrix();
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine(seedGenerator());
+
+	emitter_.frequencyTime_ += kDeltaTime;
+	if (emitter_.frequency_ <= emitter_.frequencyTime_) {
+		particles_.splice(particles_.end(), Particle::Emit(emitter_, randomEngine));
+		emitter_.frequencyTime_ -= emitter_.frequency_;
+	}
+	for (std::list<Particle::ParticleData>::iterator itParticle = particles_.begin(); itParticle != particles_.end(); itParticle++) {
+		if (isField_) {
+			if (IsCollision(accelerationField_.area_, (*itParticle).worldTransform_.translation_)) {
+				(*itParticle).velocity_ += accelerationField_.acceleration_ * kDeltaTime;
+			}
+		}
+		(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_ * kDeltaTime;
+		(*itParticle).currentTime_ += kDeltaTime;
+	}
+	
 }
 
 void GameScene::DrawBackGround(){
 
-	backGround_->Draw();
+	
 
 }
 
 void GameScene::DrawModel(){
 
-	teapot_->Draw(worldTransform_, viewProjection_);
+	
 
 }
 
@@ -48,7 +66,7 @@ void GameScene::DrawParticleModel(){
 
 void GameScene::DrawParticle(){
 
-
+	particle_->Draw(particles_, viewProjection_);
 
 }
 
@@ -63,7 +81,7 @@ void GameScene::DebugGUI(){
 
 	ImGui::Begin("teapot");
 
-	ImGui::DragFloat3("transform", &worldTransform_.translation_.x, 0.01f);
+	ImGui::Checkbox("FieldEffect", &isField_);
 
 	ImGui::End();
 

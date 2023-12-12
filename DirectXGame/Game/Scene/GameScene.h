@@ -1,9 +1,12 @@
 #pragma once
 #include "IScene.h"
 #include <memory>
+#include <list>
+#include <random>
 
 #include "Sprite.h"
 #include "Object3d.h"
+#include "Particle.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
@@ -34,11 +37,15 @@ private:
 
 	ViewProjection viewProjection_;
 
-	uint32_t backGroundHandle_ = 0;
-	std::unique_ptr<Sprite> backGround_;
+	std::unique_ptr<Particle> particle_;
+	std::list<Particle::ParticleData> particles_;
+	Particle::Emitter emitter_{};
+	const float kDeltaTime = 1.0f / 60.0f;
 
-	std::unique_ptr<Object3d> teapot_;
-	WorldTransform worldTransform_;
+	bool isField_ = false;
+
+	Particle::AccelerationField accelerationField_;
+
 
 };
 

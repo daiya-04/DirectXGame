@@ -13,6 +13,7 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Log.h"
+#include "Hit.h"
 
 
 
@@ -41,8 +42,8 @@ public:
 		WorldTransform worldTransform_;
 		Vector3 velocity_;
 		Vector4 color_;
-		float lifeTime_;
-		float currentTime_;
+		float lifeTime_ = 0;
+		float currentTime_ = 0;
 	};
 
 	struct Emitter {
@@ -50,6 +51,11 @@ public:
 		uint32_t count_;
 		float frequency_;
 		float frequencyTime_;
+	};
+
+	struct AccelerationField {
+		Vector3 acceleration_;
+		AABB area_;
 	};
 
 private:
