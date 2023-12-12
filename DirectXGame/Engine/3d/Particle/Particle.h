@@ -42,20 +42,20 @@ public:
 		WorldTransform worldTransform_;
 		Vector3 velocity_;
 		Vector4 color_;
-		float lifeTime_ = 0;
-		float currentTime_ = 0;
+		float lifeTime_ = 0; //生存時間
+		float currentTime_ = 0; //生成されてから今の時間
 	};
 
 	struct Emitter {
 		Vector3 translate_;
-		uint32_t count_;
-		float frequency_;
-		float frequencyTime_;
+		uint32_t count_; //一度に生成する数
+		float frequency_; //発生間隔
+		float frequencyTime_; //発生してからの今の時間
 	};
 
 	struct AccelerationField {
-		Vector3 acceleration_;
-		AABB area_;
+		Vector3 acceleration_; //効果(加速度)
+		AABB area_; //効果範囲
 	};
 
 private:
