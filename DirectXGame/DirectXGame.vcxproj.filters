@@ -44,6 +44,9 @@
     <Filter Include="Game\Scene">
       <UniqueIdentifier>{eca7b166-bb3a-4d22-a963-df1bc14ddaf7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Collision">
+      <UniqueIdentifier>{a718f71a-1100-4bcb-9d06-9473b05ba18c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -95,7 +98,9 @@
     <ClCompile Include="Engine\BaseScene\SceneManager.cpp">
       <Filter>Engine\BaseScene</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Collision\Hit.cpp" />
+    <ClCompile Include="Engine\Collision\Hit.cpp">
+      <Filter>Engine\Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -170,6 +175,8 @@
     <ClInclude Include="Engine\BaseScene\SceneManager.h">
       <Filter>Engine\BaseScene</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Collision\Hit.h" />
+    <ClInclude Include="Engine\Collision\Hit.h">
+      <Filter>Engine\Collision</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
