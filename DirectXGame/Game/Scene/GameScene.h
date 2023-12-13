@@ -9,6 +9,7 @@
 #include "Particle.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Quaternion.h"
 
 
 class GameScene : public IScene {
@@ -37,15 +38,14 @@ private:
 
 	ViewProjection viewProjection_;
 
-	std::unique_ptr<Particle> particle_;
-	std::list<Particle::ParticleData> particles_;
-	Particle::Emitter emitter_{};
-	const float kDeltaTime = 1.0f / 60.0f;
+	Quaternion rotation0 = {};
+	Quaternion rotation1 = {};
 
-	bool isField_ = false;
-
-	Particle::AccelerationField accelerationField_;
-
+	Quaternion interpolate0 = {};
+	Quaternion interpolate1 = {};
+	Quaternion interpolate2 = {};
+	Quaternion interpolate3 = {};
+	Quaternion interpolate4 = {};
 
 };
 

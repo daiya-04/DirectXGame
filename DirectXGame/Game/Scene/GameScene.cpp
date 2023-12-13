@@ -10,39 +10,21 @@ void GameScene::Init(){
 
 	viewProjection_.Initialize();
 
-	uint32_t circle = TextureManager::Load("circle.png");
-	particle_ = std::make_unique<Particle>();
-	particle_.reset(Particle::Create(circle, 50));
-
-	emitter_.count_ = 3;
-	emitter_.frequency_ = 0.5f;
-
-	accelerationField_.acceleration_ = { 5.0f,0.0f,0.0f };
-	accelerationField_.area_.min = { -1.0f,-1.0f,-1.0f };
-	accelerationField_.area_.max = { 1.0f,1.0f,1.0f };
+	
 	
 }
 
 void GameScene::Update(){
 	DebugGUI();
 
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
+	rotation0 = MakwRotateAxisAngleQuaternion({ 0.71f,0.71f,0.0f }, 0.3f);
+	rotation1 = MakwRotateAxisAngleQuaternion({ 0.71f,0.0f,0.71f }, 3.141592f);
 
-	emitter_.frequencyTime_ += kDeltaTime;
-	if (emitter_.frequency_ <= emitter_.frequencyTime_) {
-		particles_.splice(particles_.end(), Particle::Emit(emitter_, randomEngine));
-		emitter_.frequencyTime_ -= emitter_.frequency_;
-	}
-	for (std::list<Particle::ParticleData>::iterator itParticle = particles_.begin(); itParticle != particles_.end(); itParticle++) {
-		if (isField_) {
-			if (IsCollision(accelerationField_.area_, (*itParticle).worldTransform_.translation_)) {
-				(*itParticle).velocity_ += accelerationField_.acceleration_ * kDeltaTime;
-			}
-		}
-		(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_ * kDeltaTime;
-		(*itParticle).currentTime_ += kDeltaTime;
-	}
+	interpolate0 = Slerp(rotation0, rotation1, 0.0f);
+	interpolate1 = Slerp(rotation0, rotation1, 0.3f);
+	interpolate2 = Slerp(rotation0, rotation1, 0.5f);
+	interpolate3 = Slerp(rotation0, rotation1, 0.7f);
+	interpolate4 = Slerp(rotation0, rotation1, 1.0f);
 	
 }
 
@@ -66,7 +48,7 @@ void GameScene::DrawParticleModel(){
 
 void GameScene::DrawParticle(){
 
-	particle_->Draw(particles_, viewProjection_);
+	
 
 }
 
@@ -79,9 +61,33 @@ void GameScene::DrawUI(){
 void GameScene::DebugGUI(){
 #ifdef _DEBUG
 
-	ImGui::Begin("teapot");
+	ImGui::Begin("result");
 
-	ImGui::Checkbox("FieldEffect", &isField_);
+	Quaternion result = interpolate0;
+
+	ImGui::Text("%.02f %.02f %.02f %.02f  : rotation", result.x, result.y, result.z, result.w);
+	ImGui::NewLine();
+
+	result = interpolate1;
+
+	ImGui::Text("%.02f %.02f %.02f %.02f  : rotation", result.x, result.y, result.z, result.w);
+	ImGui::NewLine();
+
+	result = interpolate2;
+
+	ImGui::Text("%.02f %.02f %.02f %.02f  : rotation", result.x, result.y, result.z, result.w);
+	ImGui::NewLine();
+
+	result = interpolate3;
+
+	ImGui::Text("%.02f %.02f %.02f %.02f  : rotation", result.x, result.y, result.z, result.w);
+	ImGui::NewLine();
+
+	result = interpolate4;
+
+	ImGui::Text("%.02f %.02f %.02f %.02f  : rotation", result.x, result.y, result.z, result.w);
+	ImGui::NewLine();
+
 
 	ImGui::End();
 
