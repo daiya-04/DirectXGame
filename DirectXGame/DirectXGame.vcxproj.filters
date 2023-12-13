@@ -101,6 +101,7 @@
     <ClCompile Include="Engine\Collision\Hit.cpp">
       <Filter>Engine\Collision</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -178,5 +179,6 @@
     <ClInclude Include="Engine\Collision\Hit.h">
       <Filter>Engine\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h" />
   </ItemGroup>
 </Project>
