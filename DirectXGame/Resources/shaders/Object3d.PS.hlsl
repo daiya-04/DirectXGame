@@ -5,15 +5,15 @@ struct Material {
 	int32_t enableLighting;
 	float32_t4x4 uvTransform;
 };
+ConstantBuffer<Material> gMaterial : register(b0);
 
 struct DirectionalLight {
-    float32_t4 color;
-    float32_t3 direction;
+	float32_t4 color;
+	float32_t3 direction;
 	float intensity;
 };
+ConstantBuffer<DirectionalLight> gDirectionalLight : register(b3);
 
-ConstantBuffer<Material> gMaterial : register(b0);
-ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 struct PixelShaderOutput {
 	float32_t4 color : SV_TARGET0;
 };
