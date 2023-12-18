@@ -59,15 +59,6 @@ public: //静的メンバ関数
 	/// <returns></returns>
 	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
 
-private:
-
-	//ログ
-	static void Log(const std::string& message);
-
-	static std::wstring ConvertString(const std::string& str);
-
-	static std::string ConvertString(const std::wstring& str);
-
 private: //メンバ変数
 
 

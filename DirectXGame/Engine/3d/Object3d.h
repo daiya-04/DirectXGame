@@ -9,7 +9,7 @@
 #include "Matrix44.h"
 #include <vector>
 #include "WorldTransform.h"
-#include "ViewProjection.h"
+#include "Camera.h"
 
 class Object3d{
 private:
@@ -17,9 +17,14 @@ private:
 
 private:
 
-	struct TransformationMatrix {
-		Matrix4x4 WVP;
-		Matrix4x4 World;
+	enum class RootParameter {
+		kMaterial,
+		kWorldTransform,
+		kCamera,
+		kTexture,
+		kDirectionLight,
+		
+		kParamNum,
 	};
 	struct DirectionalLight {
 		Vector4 color;
@@ -57,7 +62,7 @@ private:
 private: //メンバ変数
 
 	
-	ComPtr<ID3D12Resource> wvpResource_;
+	
 	ComPtr<ID3D12Resource> directionalLightResource_;
 
 	uint32_t modelHandle_ = 0;
@@ -67,7 +72,7 @@ public: //メンバ関数
 	//初期化
 	void Initialize(uint32_t modelHandle);
 	//描画
-	void Draw(const WorldTransform& worldTransform,const ViewProjection& viewProjwction);
+	void Draw(const WorldTransform& worldTransform,const Camera& camera);
 	
 	void SetModelHandle(uint32_t modelHandle) { modelHandle_ = modelHandle; }
 

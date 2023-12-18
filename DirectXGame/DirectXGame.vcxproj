@@ -105,7 +105,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Engine\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Base\DirectXCommon.cpp" />
     <ClCompile Include="Engine\DebugText\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Input\Input.cpp" />
@@ -118,7 +118,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Particle\Particle.cpp" />
     <ClCompile Include="Engine\2d\Sprite.cpp" />
     <ClCompile Include="Engine\Base\TextureManager.cpp" />
-    <ClCompile Include="Engine\Camera\ViewProjection.cpp" />
     <ClCompile Include="Engine\Base\WinApp.cpp" />
     <ClCompile Include="Engine\3d\WorldTransform.cpp" />
     <ClCompile Include="Game\MyGame.cpp" />
@@ -126,7 +125,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\BaseScene\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Engine\Camera\Camera.h" />
     <ClInclude Include="Engine\BaseScene\AbstractSceneFactory.h" />
     <ClInclude Include="Engine\Base\DirectXCommon.h" />
     <ClInclude Include="Engine\DebugText\ImGuiManager.h" />
@@ -142,7 +141,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\Vec2.h" />
     <ClInclude Include="Engine\Math\Vec3.h" />
     <ClInclude Include="Engine\Math\Vec4.h" />
-    <ClInclude Include="Engine\Camera\ViewProjection.h" />
     <ClInclude Include="Engine\Base\WinApp.h" />
     <ClInclude Include="Engine\3d\WorldTransform.h" />
     <ClInclude Include="Engine\Framework\Framework.h" />
