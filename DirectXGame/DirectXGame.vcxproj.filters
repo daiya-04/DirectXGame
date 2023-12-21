@@ -26,9 +26,6 @@
     <Filter Include="Engine\Input">
       <UniqueIdentifier>{ff95899c-91a7-4f40-a6e7-e37e1c16c2a8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Debug">
-      <UniqueIdentifier>{4716450b-8a68-4a09-b551-37c545463912}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\3d\Particle">
       <UniqueIdentifier>{05c165ac-f94c-4c9c-b345-1b385a153993}</UniqueIdentifier>
     </Filter>
@@ -46,6 +43,9 @@
     </Filter>
     <Filter Include="Engine\Collision">
       <UniqueIdentifier>{a718f71a-1100-4bcb-9d06-9473b05ba18c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\DebugText">
+      <UniqueIdentifier>{4716450b-8a68-4a09-b551-37c545463912}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -69,7 +69,7 @@
       <Filter>Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DebugText\ImGuiManager.cpp">
-      <Filter>Engine\Debug</Filter>
+      <Filter>Engine\DebugText</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Particle\Particle.cpp">
       <Filter>Engine\3d\Particle</Filter>
@@ -104,6 +104,9 @@
     <ClCompile Include="Engine\3d\DirectionalLight.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DebugText\GlobalVariables.cpp">
+      <Filter>Engine\DebugText</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -137,10 +140,10 @@
       <Filter>Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DebugText\ImGuiManager.h">
-      <Filter>Engine\Debug</Filter>
+      <Filter>Engine\DebugText</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DebugText\Log.h">
-      <Filter>Engine\Debug</Filter>
+      <Filter>Engine\DebugText</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Particle\Particle.h">
       <Filter>Engine\3d\Particle</Filter>
@@ -183,6 +186,9 @@
     </ClInclude>
     <ClInclude Include="Engine\3d\DirectionalLight.h">
       <Filter>Engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DebugText\GlobalVariables.h">
+      <Filter>Engine\DebugText</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
