@@ -26,10 +26,13 @@ private:
 		
 		kParamNum,
 	};
-	struct DirectionalLight {
-		Vector4 color;
-		Vector3 direction;
-		float intensity;
+
+public:
+
+	enum ShapeType {
+		kCube,
+		kSphere,
+		kPlane,
 	};
 
 private: //静的メンバ変数
@@ -55,15 +58,8 @@ private:
 
 	//シェーダのコンパイル
 	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
-	//リソースの生成
-	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
-
 	
 private: //メンバ変数
-
-	
-	
-	ComPtr<ID3D12Resource> directionalLightResource_;
 
 	uint32_t modelHandle_ = 0;
 

@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
+#include "DirectionalLight.h"
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
@@ -31,6 +32,8 @@ void DSFramework::Init(){
 
 	Particle::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 
+	DirectionalLight::GetInstance()->Init();
+
 	SceneManager::GetInstance()->Init();
 
 }
@@ -43,6 +46,8 @@ void DSFramework::Update(){
 	ImGuiManager::GetInstance()->Begin();
 
 	Input::GetInstance()->Update();
+
+	DirectionalLight::GetInstance()->Update();
 
 	SceneManager::GetInstance()->Update();
 
