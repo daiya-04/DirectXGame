@@ -28,6 +28,7 @@ public:
 		int32_t enableLightnig_;
 		float padding_[3];
 		Matrix4x4 uvtransform_;
+		float shininess_;
 	};
 
 	struct Model {

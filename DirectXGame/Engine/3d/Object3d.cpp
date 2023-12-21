@@ -7,6 +7,7 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "Log.h"
+#include "DirectionalLight.h"
 
 #pragma comment(lib,"dxcompiler.lib")
 
@@ -289,55 +290,17 @@ ComPtr<IDxcBlob> Object3d::CompileShader(const std::wstring& filePath, const wch
 
 }
 
-ComPtr<ID3D12Resource> Object3d::CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes) {
-	//リソース用のヒープの設定
-	D3D12_HEAP_PROPERTIES uploadHeapproperties{};
-	uploadHeapproperties.Type = D3D12_HEAP_TYPE_UPLOAD;//UploadHeapを使う
-	//リソースの設定
-	D3D12_RESOURCE_DESC ResourceDesc{};
-	//バッファリソース。テクスチャの場合はまた別の設定をする
-	ResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	ResourceDesc.Width = sizeInBytes; //リソースのサイズ。
-	//バッファの場合はこれにする決まり
-	ResourceDesc.Height = 1;
-	ResourceDesc.DepthOrArraySize = 1;
-	ResourceDesc.MipLevels = 1;
-	ResourceDesc.SampleDesc.Count = 1;
-	//バッファの場合はこれらにする決まり
-	ResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	//実際に頂点リソースを作る
-	ComPtr<ID3D12Resource> Resource = nullptr;
-	HRESULT hr = device->CreateCommittedResource(&uploadHeapproperties, D3D12_HEAP_FLAG_NONE, &ResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&Resource));
-	assert(SUCCEEDED(hr));
-
-	return Resource;
-}
 
 void Object3d::Initialize(uint32_t modelHandle) {
 
 	modelHandle_ = modelHandle;
 
-	
-
-	//DirectionalLighting用のリソースを作る
-	directionalLightResource_ = CreateBufferResource(device_, sizeof(DirectionalLight));
-	//データを書き込む
-	DirectionalLight* directionalLightData = nullptr;
-	//書き込むためのアドレスを取得
-	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
-	directionalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
-	directionalLightData->direction = { 0.0f,-1.0f,0.0f };
-	directionalLightData->intensity = 1.0f;
-
-	
-
 }
 
 void Object3d::Draw(const WorldTransform& worldTransform, const Camera& camera) {
-
 	
 	ModelManager::GetInstance()->SetVertexBuffers(commandList_,modelHandle_);
-	ModelManager::GetInstance()->SetGraphicsRootConstantBufferView(commandList_, 0, modelHandle_);
+	ModelManager::GetInstance()->SetGraphicsRootConstantBufferView(commandList_, (UINT)RootParameter::kMaterial, modelHandle_);
 	//wvp用のCBufferの場所の設定
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kWorldTransform, worldTransform.GetGPUVirtualAddress());
 
@@ -345,7 +308,7 @@ void Object3d::Draw(const WorldTransform& worldTransform, const Camera& camera) 
 	
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, ModelManager::GetInstance()->GetUvHandle(modelHandle_));
 
-	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, directionalLightResource_->GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
 
 	commandList_->DrawInstanced(ModelManager::GetInstance()->GetIndex(modelHandle_), 1, 0, 0);
 

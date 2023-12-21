@@ -6,6 +6,7 @@
 
 struct CBufferDataWorldTransform {
 	Matrix4x4 matWorld;
+	Matrix4x4 WorldInverseTranspose;
 };
 
 class WorldTransform{

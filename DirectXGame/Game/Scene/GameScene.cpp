@@ -23,7 +23,7 @@ void GameScene::Init(){
 	objWT2_.Init();
 
 	particle_ = std::make_unique<Particle>();
-	particle_.reset(Particle::Create(circle, 50));
+	particle_.reset(Particle::Create(circle, 100));
 
 	emitter_.count_ = 5;
 	emitter_.frequency_ = 0.5f;
@@ -88,9 +88,9 @@ void GameScene::DebugGUI(){
 
 	ImGui::Begin("object");
 
-	ImGui::DragFloat3("transform", &objWT_.translation_.x, 0.01f);
-	ImGui::DragFloat3("transform2", &objWT2_.translation_.x, 0.01f);
-	
+	ImGui::DragFloat3("plane transform", &objWT_.translation_.x, 0.01f);
+	ImGui::DragFloat3("teapot transform", &objWT2_.translation_.x, 0.01f);
+	ImGui::DragFloat3("teapot scale", &objWT2_.scale_.x, 0.01f);
 
 	ImGui::End();
 

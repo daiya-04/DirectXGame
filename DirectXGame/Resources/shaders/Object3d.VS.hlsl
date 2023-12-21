@@ -2,6 +2,7 @@
 
 struct WorldTransform {
 	float32_t4x4 world;
+	float32_t4x4 worldInverseTranspose;
 };
 ConstantBuffer<WorldTransform> gWorldTransform : register(b1);
 
@@ -22,6 +23,7 @@ VertexShaderOutput main(VertexShaderInput input) {
 	VertexShaderOutput output;
 	output.position = mul(input.position, mul(gWorldTransform.world, mul(gCamera.view, gCamera.projection)));
 	output.texcoord = input.texcoord;
-	output.normal = normalize(mul(input.normal, (float32_t3x3)gWorldTransform.world));
+	output.normal = normalize(mul(input.normal, (float32_t3x3)gWorldTransform.worldInverseTranspose));
+	output.worldPosition = mul(input.position, gWorldTransform.world).xyz;
 	return output;
 }

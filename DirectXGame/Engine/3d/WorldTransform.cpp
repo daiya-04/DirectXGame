@@ -35,6 +35,7 @@ void WorldTransform::CreateCBuffer() {
 void WorldTransform::Map() {
 	cBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&cMap_));
 	cMap_->matWorld = matWorld_;
+	cMap_->WorldInverseTranspose = (matWorld_.Inverse()).Transpose();
 }
 
 void WorldTransform::UpdateMatrix() {

@@ -1,16 +1,28 @@
-#include "Camera.h"
+#include "DirectionalLight.h"
+
 #include "DirectXCommon.h"
 #include <cassert>
+#include "ImGuiManager.h"
 
-void Camera::Init() {
+DirectionalLight* DirectionalLight::GetInstance() {
+	static DirectionalLight instance;
+
+	return &instance;
+}
+
+void DirectionalLight::Init(){
 
 	CreateCBuffer();
 	Map();
-	UpdateMatrix();
-
 }
 
-void Camera::CreateCBuffer() {
+void DirectionalLight::Update(){
+	DebugGUI();
+
+	Map();
+}
+
+void DirectionalLight::CreateCBuffer(){
 
 	//リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapproperties{};
@@ -19,7 +31,7 @@ void Camera::CreateCBuffer() {
 	D3D12_RESOURCE_DESC ResourceDesc{};
 	//バッファリソース。テクスチャの場合はまた別の設定をする
 	ResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	ResourceDesc.Width = sizeof(CBufferDataCamera); //リソースのサイズ。
+	ResourceDesc.Width = sizeof(CBufferDataDirectionalLight); //リソースのサイズ。
 	//バッファの場合はこれにする決まり
 	ResourceDesc.Height = 1;
 	ResourceDesc.DepthOrArraySize = 1;
@@ -34,27 +46,25 @@ void Camera::CreateCBuffer() {
 
 }
 
-void Camera::Map() {
+void DirectionalLight::Map(){
 
 	cBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&cMap_));
-	cMap_->matView = matView_;
-	cMap_->matProjection = matProjection_;
-	Matrix4x4 matWorld = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotation_, translation_);
-	cMap_->cameraPos = { matWorld.m[3][0],matWorld.m[3][1] ,matWorld.m[3][2] };
+	cMap_->color = color_;
+	cMap_->direction = direction_.Normalize();
+	cMap_->intensity = intensity_;
 
 }
 
-void Camera::UpdateMatrix() {
+void DirectionalLight::DebugGUI() {
+#ifdef _DEBUG
 
-	UpdateViewMatrix();
-	UpdateProjectionMatrix();
-}
+	ImGui::Begin("DirectionalLight");
 
-void Camera::UpdateViewMatrix() {
-	matView_ = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotation_, translation_).Inverse();
-	Map();
-}
+	ImGui::ColorEdit4("DL color", &color_.x);
+	ImGui::SliderFloat3("DL direction", &direction_.x, -1.0f, 1.0f);
+	ImGui::SliderFloat("DL intensity", &intensity_, 0.0f, 1.0f);
 
-void Camera::UpdateProjectionMatrix() {
-	matProjection_ = MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
+	ImGui::End();
+
+#endif // _DEBUG
 }
