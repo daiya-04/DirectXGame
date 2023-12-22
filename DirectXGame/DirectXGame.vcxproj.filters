@@ -113,6 +113,10 @@
     <ClCompile Include="Engine\Audio\Audio.cpp">
       <Filter>Engine\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="Skydome.cpp" />
+    <ClCompile Include="Ground.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="FollowCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -199,5 +203,9 @@
     <ClInclude Include="Engine\Audio\Audio.h">
       <Filter>Engine\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="Skydome.h" />
+    <ClInclude Include="Ground.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="FollowCamera.h" />
   </ItemGroup>
 </Project>

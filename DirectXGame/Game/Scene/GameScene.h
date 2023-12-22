@@ -9,6 +9,11 @@
 #include "Camera.h"
 #include "WorldTransform.h"
 
+#include "Skydome.h"
+#include "Ground.h"
+#include "Player.h"
+#include "FollowCamera.h"
+
 
 class GameScene : public IScene {
 public:
@@ -36,17 +41,14 @@ private:
 
 	Camera camera_;
 
-	uint32_t Model_ = 0;
-	uint32_t Model2_ = 0;
-	std::unique_ptr<Object3d> obj_;
-	std::unique_ptr<Object3d> obj2_;
-	WorldTransform objWT_;
-	WorldTransform objWT2_;
+private: //オブジェクト
 
-	std::unique_ptr<Particle> particle_;
-	std::list<Particle::ParticleData> particleData_;
-	Particle::Emitter emitter_{};
-	const float kDeltaTime = 1.0f / 60.0f;
+	std::unique_ptr<Skydome> skydome_;
+	std::unique_ptr<Ground> ground_;
+
+	std::unique_ptr<Player> player_;
+
+	std::unique_ptr<FollowCamera> followCamera_;
 
 };
 

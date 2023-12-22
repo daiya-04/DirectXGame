@@ -13,8 +13,8 @@ ModelManager* ModelManager::GetInstance() {
 	return &instance;
 }
 
-uint32_t ModelManager::Load(const std::string& modelName) {
-	return ModelManager::GetInstance()->LoadInternal(modelName);
+uint32_t ModelManager::Load(const std::string& modelName, bool isLighting) {
+	return ModelManager::GetInstance()->LoadInternal(modelName,isLighting);
 }
 
 ComPtr<ID3D12Resource> ModelManager::CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes) {
@@ -59,10 +59,11 @@ void ModelManager::SetGraphicsRootConstantBufferView(ID3D12GraphicsCommandList* 
 	commandList->SetGraphicsRootConstantBufferView(rootParamIndex, models_[modelHandle].materialResource_->GetGPUVirtualAddress());
 }
 
-uint32_t ModelManager::LoadInternal(const std::string& modelName) {
+uint32_t ModelManager::LoadInternal(const std::string& modelName, bool isLighting) {
 
 	assert(useModelNum_ < kNumModel);
 	uint32_t handle = useModelNum_;
+	models_[useModelNum_].isLighting_ = isLighting;
 
 	auto it = std::find_if(models_.begin(), models_.end(), [&](const auto& model) {return model.name_ == modelName; });
 
@@ -210,7 +211,7 @@ void ModelManager::CreateBuffer() {
 	//書き込むためのアドレスを取得
 	models_[useModelNum_].materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	materialData->color_ = Vector4(1.0f,1.0f,1.0f,1.0f);
-	materialData->enableLightnig_ = true;
+	materialData->enableLightnig_ = models_[useModelNum_].isLighting_;
 	materialData->uvtransform_ = MakeIdentity44();
 	materialData->shininess_ = 10.0f;
 

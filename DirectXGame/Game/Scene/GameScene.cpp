@@ -3,7 +3,6 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
-#include <random>
 
 GameScene::~GameScene() {}
 
@@ -11,45 +10,55 @@ void GameScene::Init(){
 
 	camera_.Init();
 
-	uint32_t circle = TextureManager::Load("circle.png");
+	/// モデルの読み込み
 
-	Model_ = ModelManager::Load("plane");
-	Model2_ = ModelManager::Load("teapot");
+	uint32_t skydomeModel = ModelManager::Load("skydome",false);
+	uint32_t groundModel = ModelManager::Load("ground");
+	uint32_t playerBodyModel = ModelManager::Load("float_Body");
+	uint32_t playerHeadModel = ModelManager::Load("float_Head");
 
-	obj_.reset(Object3d::Create(Model_));
-	objWT_.Init();
+	///
 
-	obj2_.reset(Object3d::Create(Model2_));
-	objWT2_.Init();
+	///テクスチャの読み込み
 
-	particle_ = std::make_unique<Particle>();
-	particle_.reset(Particle::Create(circle, 100));
 
-	emitter_.count_ = 5;
-	emitter_.frequency_ = 0.5f;
+
+	///
+
+	///オブジェクト初期化
 	
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Init(skydomeModel);
+
+	ground_ = std::make_unique<Ground>();
+	ground_->Init(groundModel);
+
+	player_ = std::make_unique<Player>();
+	player_->Init({ playerBodyModel,playerHeadModel });
+	
+
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Init();
+	followCamera_->SetTarget(&player_->GetWorldTransform());
+	player_->SetCamera(&followCamera_->GetCamera());
+
+	///
+
 }
 
 void GameScene::Update(){
 	DebugGUI();
 
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
+	skydome_->Update();
+	ground_->Update();
 
-	emitter_.frequencyTime_ += kDeltaTime;
-	if (emitter_.frequency_ <= emitter_.frequencyTime_) {
-		particleData_.splice(particleData_.end(), Particle::Emit(emitter_, randomEngine));
-		emitter_.frequencyTime_ -= emitter_.frequency_;
-	}
-	for (std::list<Particle::ParticleData>::iterator itParticle = particleData_.begin(); itParticle != particleData_.end(); itParticle++) {
-		(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_ * kDeltaTime;
-		(*itParticle).currentTime_ += kDeltaTime;
-	}
+	player_->Update();
+	followCamera_->Update();
 
+	camera_.SetMatView(followCamera_->GetCamera().GetMatView());
 
-	camera_.UpdateViewMatrix();
-	objWT_.UpdateMatrix();
-	objWT2_.UpdateMatrix();
+	//camera_.UpdateViewMatrix();
+	camera_.UpdateCameraPos();
 }
 
 void GameScene::DrawBackGround(){
@@ -60,8 +69,9 @@ void GameScene::DrawBackGround(){
 
 void GameScene::DrawModel(){
 
-	obj_->Draw(objWT_, camera_);
-	obj2_->Draw(objWT2_, camera_);
+	skydome_->Draw(camera_);
+	ground_->Draw(camera_);
+	player_->Draw(camera_);
 
 }
 
@@ -73,7 +83,7 @@ void GameScene::DrawParticleModel(){
 
 void GameScene::DrawParticle(){
 
-	particle_->Draw(particleData_, camera_);
+	
 
 }
 
@@ -86,30 +96,7 @@ void GameScene::DrawUI(){
 void GameScene::DebugGUI(){
 #ifdef _DEBUG
 
-	ImGui::Begin("object");
-
-	ImGui::DragFloat3("plane transform", &objWT_.translation_.x, 0.01f);
-	ImGui::DragFloat3("teapot transform", &objWT2_.translation_.x, 0.01f);
-	ImGui::DragFloat3("teapot scale", &objWT2_.scale_.x, 0.01f);
-
-	ImGui::End();
-
-	ImGui::Begin("Particle");
-
-	ImGui::DragFloat3("emitter transform", &emitter_.translate_.x, 0.01f);
-	ImGui::SliderFloat("frequency", &emitter_.frequency_, 0.0f, 5.0f);
-	ImGui::InputInt("create count", reinterpret_cast<int*>(&emitter_.count_));
-
-
-	ImGui::End();
-
-	ImGui::Begin("camera");
-
-	ImGui::DragFloat3("pos", &camera_.translation_.x, 0.01f);
-	ImGui::DragFloat3("rotate", &camera_.rotation_.x, 0.01f);
-
-	ImGui::End();
-
+	
 #endif // _DEBUG
 }
 

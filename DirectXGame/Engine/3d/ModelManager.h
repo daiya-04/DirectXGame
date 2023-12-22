@@ -39,6 +39,7 @@ public:
 		UINT index_ = 0;
 		int32_t uvHandle_ = 0;
 		std::string name_;
+		bool isLighting_ = true;
 	};
 
 private:
@@ -53,7 +54,7 @@ public:
 
 	static ModelManager* GetInstance();
 
-	static uint32_t Load(const std::string& modelName);
+	static uint32_t Load(const std::string& modelName,bool isLighting = true);
 
 	//リソースの生成
 	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
@@ -70,7 +71,7 @@ public:
 
 private:
 
-	uint32_t LoadInternal(const std::string& modelName);
+	uint32_t LoadInternal(const std::string& modelName, bool isLighting);
 
 	void LoadObjFile(const std::string& modelName);
 

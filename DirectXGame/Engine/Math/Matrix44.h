@@ -260,14 +260,18 @@ public:
 		Matrix4x4 result = MakeIdentity44();
 		Vector3 axis{};
 		
-		if (from == -to) {
-			if (from.x != 0 || from.y != 0) {
-				axis = { from.Normalize().y,-from.Normalize().x,0.0f };
+		if (from.Normalize() == -to.Normalize()) {
+			if (from.x != 0 || from.z != 0) {
+				axis = { 0.0f,from.Normalize().z,-from.Normalize().x };
 			}
-			else if (from.x != 0 || from.z != 0) {
-				axis = { from.Normalize().z,0.0f,-from.Normalize().x };
+			else {
+				axis = Cross(from, to).Normalize();
 			}
-		}else {
+		}
+		else if (from.Normalize() == to.Normalize()) {
+			axis = Cross(from, to);
+		}
+		else {
 			axis = Cross(from.Normalize(), to.Normalize()).Normalize();
 		}
 
