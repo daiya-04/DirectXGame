@@ -47,6 +47,9 @@
     <Filter Include="Engine\DebugText">
       <UniqueIdentifier>{4716450b-8a68-4a09-b551-37c545463912}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Audio">
+      <UniqueIdentifier>{951f94c5-20fb-491b-b20e-c5528d356ac4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -106,6 +109,9 @@
     </ClCompile>
     <ClCompile Include="Engine\DebugText\GlobalVariables.cpp">
       <Filter>Engine\DebugText</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Audio\Audio.cpp">
+      <Filter>Engine\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +195,9 @@
     </ClInclude>
     <ClInclude Include="Engine\DebugText\GlobalVariables.h">
       <Filter>Engine\DebugText</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Audio\Audio.h">
+      <Filter>Engine\Audio</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

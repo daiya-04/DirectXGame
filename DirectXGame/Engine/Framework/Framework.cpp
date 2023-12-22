@@ -9,6 +9,7 @@
 #include "Object3d.h"
 #include "Particle.h"
 #include "GlobalVariables.h"
+#include "Audio.h"
 
 
 void DSFramework::Init(){
@@ -20,6 +21,7 @@ void DSFramework::Init(){
 	ImGuiManager::GetInstance()->Initialize();
 	
 	Input::GetInstance()->Initialize();
+	Audio::GetInstance()->Initialize();
 
 	TextureManager::GetInstance()->Initialize();
 	ModelManager::GetInstance()->Initialize();
@@ -45,6 +47,7 @@ void DSFramework::Update(){
 	ImGuiManager::GetInstance()->Begin();
 
 	Input::GetInstance()->Update();
+	Audio::GetInstance()->Update();
 
 	GlobalVariables::GetInstance()->Update();
 
