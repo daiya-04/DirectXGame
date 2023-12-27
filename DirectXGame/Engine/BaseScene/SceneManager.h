@@ -22,7 +22,7 @@ public:
 
 	void Draw(ID3D12GraphicsCommandList* commandList);
 
-	void ChangeScene(const std::string& sceneName);
+	void ChangeScene(AbstractSceneFactory::SceneName sceneName);
 
 private:
 

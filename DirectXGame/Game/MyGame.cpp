@@ -11,7 +11,7 @@ void MyGame::Init(){
 
 	DSFramework::Init();
 
-	SceneManager::GetInstance()->ChangeScene("Title");
+	SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Title);
 
 	
 }

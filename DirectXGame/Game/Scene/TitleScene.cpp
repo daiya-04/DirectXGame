@@ -48,7 +48,7 @@ void TitleScene::Update() {
 	}
 
 	if (input_->TriggerKey(DIK_RETURN)) {
-		SceneManager::GetInstance()->ChangeScene("Game");
+		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Game);
 	}
 }
 

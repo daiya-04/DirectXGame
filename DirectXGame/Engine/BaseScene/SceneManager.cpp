@@ -64,7 +64,7 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 }
 
-void SceneManager::ChangeScene(const std::string& sceneName){
+void SceneManager::ChangeScene(AbstractSceneFactory::SceneName sceneName){
 
 	assert(nextScene_ == nullptr);
 
