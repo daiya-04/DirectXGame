@@ -3,6 +3,7 @@
 #include <cmath>
 #include <numbers>
 #include "ImGuiManager.h"
+#include "Easing.h"
 
 void FollowCamera::Init(){
 
@@ -21,19 +22,48 @@ void FollowCamera::Update(){
 
 	if (target_) {
 
-		Vector3 offset = { 0.0f, 5.0f, -30.0f };
-		Matrix4x4 rotateMatrix;
+		delayParam_ += (float)1 / (float)delayTime_;
 
-		rotateMatrix = MakeRotateXMatrix(camera_.rotation_.x) *
-			MakeRotateYMatrix(camera_.rotation_.y) *
-			MakeRotateZMatrix(camera_.rotation_.z);
+		if (delayParam_ >= 1.0f) {
+			delayParam_ = 1.0f;
+		}
+
+		float T = Easing::easeInSine(delayParam_);
+
+		interTarget_ = Lerp(T, interTarget_, target_->translation_);
+
+		Vector3 offset = OffsetCalc();
 
 
-		offset = TransformNormal(offset, rotateMatrix);
-
-
-		camera_.translation_ = target_->translation_ + offset;
+		camera_.translation_ = interTarget_ + offset;
 	}
 
 	camera_.UpdateViewMatrix();
+}
+
+void FollowCamera::Reset() {
+
+	if (target_) {
+		interTarget_ = target_->translation_;
+		//viewProjection_.rotation_.y = target_->rotation_.y;
+	}
+
+	Vector3 offset = OffsetCalc();
+	camera_.translation_ = interTarget_ + offset;
+	delayParam_ = 0.0f;
+
+}
+
+Vector3 FollowCamera::OffsetCalc() const {
+
+	Vector3 offset = { 0.0f,5.0f,-30.0f };
+	Matrix4x4 rotateMatrix;
+
+	rotateMatrix = MakeRotateXMatrix(camera_.rotation_.x) *
+		           MakeRotateYMatrix(camera_.rotation_.y) *
+		           MakeRotateZMatrix(camera_.rotation_.z);
+
+	offset = TransformNormal(offset, rotateMatrix);
+
+	return offset;
 }

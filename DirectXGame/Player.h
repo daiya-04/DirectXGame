@@ -7,10 +7,47 @@
 #include <memory>
 #include <vector>
 #include <array>
+#include <optional>
+#include "FollowCamera.h"
 
 
 class Player{
+private: //ふるまい用メンバ変数
+
+	enum class Behavior {
+		kRoot,
+		kAttack,
+		kDash,
+	};
+
+	Behavior behavior_ = Behavior::kRoot;
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+	static void(Player::* BehaviorTable[])();
+	static void(Player::* RequestTable[])();
+
+public: //ふるまい用メンバ関数
+
+	//通常行動初期化
+	void RootInit();
+	//通常行動更新
+	void RootUpdate();
+	//攻撃行動初期化
+	void AttackInit();
+	//攻撃行動更新
+	void AttackUpdate();
+	//ダッシュ初期化
+	void DashInit();
+	//ダッシュ更新
+	void DashUpdate();
+
 public:
+
+	struct WorkDash {
+		uint32_t dashParam_ = 0;
+		Vector3 dashDirection_{};
+		uint32_t dashTime_ = 10;
+	};
 
 	enum Parts {
 		Body,
@@ -31,7 +68,9 @@ private:
 	Vector3 from_ = { 0.0f,0.0f,1.0f };
 	//Vector3 velocity_ = {};
 
-	const Camera* camera_;
+	WorkDash workDash_;
+
+	FollowCamera* followCamera_ = nullptr;
 
 public:
 	//初期化
@@ -42,7 +81,7 @@ public:
 	void Draw(const Camera& camera);
 
 	//カメラの設定
-	void SetCamera(const Camera* camera) { camera_ = camera; }
+	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
 
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 	Vector3 GetWorldPos() const;

@@ -1,6 +1,19 @@
 #include "Player.h"
 #include "ImGuiManager.h"
 #include "Input.h"
+#include "Easing.h"
+
+void (Player::* Player::BehaviorTable[])() = {
+	& Player::RootUpdate,
+	& Player::AttackUpdate,
+	& Player::DashUpdate,
+};
+
+void (Player::* Player::RequestTable[])() = {
+	&Player::RootInit,
+	& Player::AttackInit,
+	& Player::DashInit,
+};
 
 void Player::Init(std::vector<uint32_t> modelHandles){
 
@@ -24,24 +37,18 @@ void Player::Init(std::vector<uint32_t> modelHandles){
 
 void Player::Update(){
 
-	Vector3 move{};
-	Vector3 zeroVector{};
-	const float speed = 0.3f;
+	if (behaviorRequest_) {
 
-	move = Input::GetInstance()->GetMoveXZ();
-	move = move / SHRT_MAX * speed;
+		behavior_ = behaviorRequest_.value();
 
-	move = TransformNormal(move, MakeRotateYMatrix(camera_->rotation_.y));
+		(this->*RequestTable[static_cast<size_t>(behavior_)])();
 
-	worldTransform_.translation_ += move;
-
-	if (move != zeroVector) {
-		rotate_ = move;
+		behaviorRequest_ = std::nullopt;
 	}
 
-	//worldTransform_.rotation_.y = std::atan2(rotate_.x, rotate_.z);
+	(this->*BehaviorTable[static_cast<size_t>(behavior_)])();
 
-	rotateMat_ = DirectionToDirection(from_, rotate_);
+	
 
 	//行列更新
 	Matrix4x4 S = MakeScaleMatrix(worldTransform_.scale_);
@@ -57,6 +64,77 @@ void Player::Draw(const Camera& camera){
 
 	obj_[Body]->Draw(partsWorldTransform_[Body], camera);
 	obj_[Head]->Draw(partsWorldTransform_[Head], camera);
+
+}
+
+void Player::RootInit() {
+
+
+
+}
+
+void Player::RootUpdate() {
+
+	Vector3 move{};
+	Vector3 zeroVector{};
+	const float speed = 0.3f;
+
+	move = Input::GetInstance()->GetMoveXZ();
+	move = move / SHRT_MAX * speed;
+
+	//ダッシュ
+	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A)) {
+		behaviorRequest_ = Behavior::kDash;
+	}
+
+	move = TransformNormal(move, MakeRotateYMatrix(followCamera_->GetCamera().rotation_.y));
+
+	worldTransform_.translation_ += move;
+
+	if (move != zeroVector) {
+		rotate_ = move;
+	}
+
+	//worldTransform_.rotation_.y = std::atan2(rotate_.x, rotate_.z);
+
+	rotateMat_ = DirectionToDirection(from_, rotate_);
+
+}
+
+void Player::AttackInit() {
+
+	
+
+}
+
+void Player::AttackUpdate() {
+
+
+
+}
+
+void Player::DashInit() {
+
+	workDash_.dashParam_ = 0;
+	workDash_.dashDirection_ = rotate_;
+	followCamera_->Reset();
+
+}
+
+void Player::DashUpdate() {
+
+	float dashSpeed = 1.5f;
+	Vector3 zeroVector{};
+
+	if (rotate_ == zeroVector) {
+		workDash_.dashDirection_ = { 0.0f,0.0f,1.0f };
+	}
+
+	worldTransform_.translation_ += workDash_.dashDirection_.Normalize() * dashSpeed;
+
+	if (++workDash_.dashParam_ >= workDash_.dashTime_) {
+		behaviorRequest_ = Behavior::kRoot;
+	}
 
 }
 

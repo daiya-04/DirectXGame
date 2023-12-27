@@ -40,7 +40,7 @@ void GameScene::Init(){
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Init();
 	followCamera_->SetTarget(&player_->GetWorldTransform());
-	player_->SetCamera(&followCamera_->GetCamera());
+	player_->SetFollowCamera(followCamera_.get());
 
 	///
 
