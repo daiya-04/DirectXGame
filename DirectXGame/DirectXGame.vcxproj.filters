@@ -96,6 +96,9 @@
       <Filter>Engine\BaseScene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Collision\Hit.cpp" />
+    <ClCompile Include="Game\Scene\TitleScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -171,5 +174,8 @@
       <Filter>Engine\BaseScene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Collision\Hit.h" />
+    <ClInclude Include="Game\Scene\TitleScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
