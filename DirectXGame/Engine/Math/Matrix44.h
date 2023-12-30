@@ -267,9 +267,8 @@ public:
 			else {
 				axis = Cross(from, to).Normalize();
 			}
-		}
-		else if (from.Normalize() == to.Normalize()) {
-			axis = Cross(from, to);
+		}else if (from.Normalize() == to.Normalize()) {
+			return MakeIdentity44();
 		}
 		else {
 			axis = Cross(from.Normalize(), to.Normalize()).Normalize();

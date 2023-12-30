@@ -5,10 +5,12 @@
 #include "Vec3.h"
 #include "Matrix44.h"
 #include <memory>
+#include <list>
 #include <vector>
 #include <array>
 #include <optional>
 #include "FollowCamera.h"
+#include "Particle.h"
 
 
 class Player{
@@ -49,6 +51,31 @@ public:
 		uint32_t dashTime_ = 10;
 	};
 
+	struct WorkAttack {
+		//攻撃中の現在の時間
+		uint32_t attackParam_ = 0;
+		//現在のコンボ数(何段目か)
+		uint32_t comboIndex_ = 0;
+		//一段の中のどのフェーズか
+		uint32_t InComboPhase_ = 0;
+		//コンボが続くか
+		bool comboNext_ = false;
+	};
+
+	struct ComboAttack {
+		//チャージの時間
+		uint32_t chargeTime_;
+		//攻撃(パーティクルの生存)時間
+		uint32_t attackTime_;
+		//攻撃後の硬直時間
+		uint32_t recoveryTime_;
+		
+
+	};
+
+	static const int comboNum_ = 3;
+	static const std::array<ComboAttack, comboNum_> kComboAttacks_;
+
 	enum Parts {
 		Body,
 		Head,
@@ -69,16 +96,33 @@ private:
 	//Vector3 velocity_ = {};
 
 	WorkDash workDash_;
+	WorkAttack workAttack_;
+
+	std::unique_ptr<Particle> magicParticle_;
+
+	std::list<Particle::ParticleData> particles_;
+	Particle::Emitter emitter_{};
+
+	float particleVelocity_ = 0.5;
 
 	FollowCamera* followCamera_ = nullptr;
 
+	const float kDeltaTime_ = 1.0f / 60.0f;
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine;
+
 public:
+
+	Player() :randomEngine(seedGenerator()) {}
+
 	//初期化
 	void Init(std::vector<uint32_t> modelHandles);
 	//更新
 	void Update();
 	//描画
 	void Draw(const Camera& camera);
+
+	void DrawParticle(const Camera& camera);
 
 	//カメラの設定
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }

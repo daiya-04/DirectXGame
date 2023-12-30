@@ -83,7 +83,7 @@ void GameScene::DrawParticleModel(){
 
 void GameScene::DrawParticle(){
 
-	
+	player_->DrawParticle(camera_);
 
 }
 

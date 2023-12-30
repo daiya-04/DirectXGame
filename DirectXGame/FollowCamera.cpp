@@ -17,7 +17,7 @@ void FollowCamera::Update(){
 
 	camera_.rotation_ += Input::GetInstance()->GetCameraRotate() * rotateSpeed;
 
-	camera_.rotation_.x = min(camera_.rotation_.x, 89.99f * (float)std::numbers::pi / 180.0f);
+	camera_.rotation_.x = min(camera_.rotation_.x, 45.0f * (float)std::numbers::pi / 180.0f);
 	camera_.rotation_.x = max(camera_.rotation_.x, -5.0f * (float)std::numbers::pi / 180.0f);
 
 	if (target_) {

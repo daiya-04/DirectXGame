@@ -2,6 +2,7 @@
 #include "ImGuiManager.h"
 #include "Input.h"
 #include "Easing.h"
+#include "TextureManager.h"
 
 void (Player::* Player::BehaviorTable[])() = {
 	& Player::RootUpdate,
@@ -15,7 +16,17 @@ void (Player::* Player::RequestTable[])() = {
 	& Player::DashInit,
 };
 
+const std::array<Player::ComboAttack, Player::comboNum_> Player::kComboAttacks_ = {
+	{
+		{0,20,10},
+		{0,20,10},
+		{0,30,10}
+	}
+};
+
 void Player::Init(std::vector<uint32_t> modelHandles){
+
+	uint32_t particleTex = TextureManager::Load("circle.png");
 
 	worldTransform_.Init();
 	partsWorldTransform_[Body].Init();
@@ -26,6 +37,9 @@ void Player::Init(std::vector<uint32_t> modelHandles){
 		obj_[index] = std::make_unique<Object3d>();
 		obj_[index].reset(Object3d::Create(modelHandles[index]));
 	}
+
+	magicParticle_ = std::make_unique<Particle>();
+	magicParticle_.reset(Particle::Create(particleTex, 100));
 
 	worldTransform_.scale_ = { 0.5f,0.5f,0.5f };
 	partsWorldTransform_[Head].translation_ = { 0.0f,6.5f,0.0f };	
@@ -67,6 +81,12 @@ void Player::Draw(const Camera& camera){
 
 }
 
+void Player::DrawParticle(const Camera& camera) {
+
+	magicParticle_->Draw(particles_, camera);
+
+}
+
 void Player::RootInit() {
 
 
@@ -81,6 +101,11 @@ void Player::RootUpdate() {
 
 	move = Input::GetInstance()->GetMoveXZ();
 	move = move / SHRT_MAX * speed;
+
+	//ダッシュ
+	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_X)) {
+		behaviorRequest_ = Behavior::kAttack;
+	}
 
 	//ダッシュ
 	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A)) {
@@ -103,14 +128,133 @@ void Player::RootUpdate() {
 
 void Player::AttackInit() {
 
-	
+	workAttack_.attackParam_ = 0;
 
 }
 
 void Player::AttackUpdate() {
 
+	if (workAttack_.comboIndex_ < comboNum_ - 1) {
+		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_X)) {
+			workAttack_.comboNext_ = true;
+		}
+	}
+
+	uint32_t totalAttackTime = kComboAttacks_[workAttack_.comboIndex_].attackTime_;
+	totalAttackTime += kComboAttacks_[workAttack_.comboIndex_].chargeTime_;
+	totalAttackTime += kComboAttacks_[workAttack_.comboIndex_].recoveryTime_;
+
+	if (workAttack_.attackParam_ >= totalAttackTime) {
+		if (workAttack_.comboNext_) {
+			workAttack_.comboNext_ = false;
+			workAttack_.comboIndex_++;
+
+			AttackInit();
+		}
+		else {
+			behaviorRequest_ = Behavior::kRoot;
+			//workAttack_.isHit_ = false;
+			workAttack_.comboIndex_ = 0;
+			return;
+		}
+	}
+
+	
+	if (workAttack_.attackParam_ == kComboAttacks_[workAttack_.comboIndex_].chargeTime_) {
+		//パーティクルの要素の削除
+		particles_.clear();
+
+		Vector3 offset = { 0.0f,5.0f,10.0f };
+		offset = TransformNormal(offset, rotateMat_);
+
+		emitter_.translate_ = worldTransform_.translation_ + offset;
+		
+
+		//速度とパーティクルの数の設定と生成
+		switch (workAttack_.comboIndex_) {
+		case 0:
+
+			emitter_.count_ = 50;
+
+			for (size_t count = 0; count < emitter_.count_; count++) {
+
+				std::uniform_real_distribution<float> distVelocity(-particleVelocity_, particleVelocity_);
+				std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+
+				Particle::ParticleData particle;
+				particle.worldTransform_.translation_ = emitter_.translate_;
+				particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine) ,distVelocity(randomEngine) };
+				particle.color_ = { distColor(randomEngine),distColor(randomEngine),distColor(randomEngine),1.0 };
+				particle.lifeTime_ = (float)kComboAttacks_[workAttack_.comboIndex_].attackTime_;
+				particle.currentTime_ = 0.0f;
+
+				particles_.push_back(particle);
+			}
+
+			break;
+		case 1:
+
+			emitter_.count_ = 50;
+
+			for (size_t count = 0; count < emitter_.count_; count++) {
+
+				std::uniform_real_distribution<float> distVelocity(-particleVelocity_, particleVelocity_);
+				std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+
+				Particle::ParticleData particle;
+				particle.worldTransform_.translation_ = emitter_.translate_;
+				particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine) ,distVelocity(randomEngine) };
+				particle.color_ = { distColor(randomEngine),distColor(randomEngine),distColor(randomEngine),1.0 };
+				particle.lifeTime_ = (float)kComboAttacks_[workAttack_.comboIndex_].attackTime_;
+				particle.currentTime_ = 0.0f;
+
+				particles_.push_back(particle);
+			}
+
+			break;
+		case 2:
+
+			emitter_.count_ = 100;
+
+			for (size_t count = 0; count < emitter_.count_; count++) {
+
+				std::uniform_real_distribution<float> distVelocity(-particleVelocity_, particleVelocity_);
+				std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+
+				Particle::ParticleData particle;
+				particle.worldTransform_.translation_ = emitter_.translate_;
+				particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine) ,distVelocity(randomEngine) };
+				particle.color_ = { distColor(randomEngine),distColor(randomEngine),distColor(randomEngine),1.0 };
+				particle.lifeTime_ = (float)kComboAttacks_[workAttack_.comboIndex_].attackTime_;
+				particle.currentTime_ = 0.0f;
+
+				particles_.push_back(particle);
+			}
+
+			break;
+		}
 
 
+	}
+
+	switch (workAttack_.comboIndex_) {
+	case 0:
+		
+		break;
+	case 1:
+		
+		break;
+	case 2:
+		
+		break;
+	}
+
+	for (std::list<Particle::ParticleData>::iterator itParticle = particles_.begin(); itParticle != particles_.end(); itParticle++) {
+		(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_;
+		(*itParticle).currentTime_++;
+	}
+
+	workAttack_.attackParam_++;
 }
 
 void Player::DashInit() {
