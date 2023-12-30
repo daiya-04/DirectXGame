@@ -103,7 +103,7 @@ private:
 	std::list<Particle::ParticleData> particles_;
 	Particle::Emitter emitter_{};
 
-	float particleVelocity_ = 0.5;
+	float particleVelocity_ = 0.3f;
 
 	FollowCamera* followCamera_ = nullptr;
 
@@ -121,7 +121,7 @@ public:
 	void Update();
 	//描画
 	void Draw(const Camera& camera);
-
+	//パーティクル描画
 	void DrawParticle(const Camera& camera);
 
 	//カメラの設定

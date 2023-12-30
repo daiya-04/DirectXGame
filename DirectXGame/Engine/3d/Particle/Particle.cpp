@@ -357,12 +357,12 @@ void Particle::Draw(std::list<ParticleData>& particleData,const Camera& camera) 
 		billboardMat.m[3][2] = 0.0f;*/
 
 		Matrix4x4 worldMatrix = MakeScaleMatrix((*itParticle).worldTransform_.scale_) * camera.GetBillBoadMatrix() * MakeTranslateMatrix((*itParticle).worldTransform_.translation_);
-		//float alpha = 1.0f - ((*itParticle).currentTime_ / (*itParticle).lifeTime_);
+		float alpha = 1.0f - ((*itParticle).currentTime_ / (*itParticle).lifeTime_);
 
 		if (particleNum_ < particleMaxNum_) {
 			instancingData[particleNum_].matWorld = worldMatrix;
 			instancingData[particleNum_].color = (*itParticle).color_;
-			//instancingData[particleNum_].color.w = alpha;
+			instancingData[particleNum_].color.w = alpha;
 			particleNum_++;
 		}
 		itParticle++;

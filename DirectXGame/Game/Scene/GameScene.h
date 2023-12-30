@@ -12,6 +12,7 @@
 #include "Skydome.h"
 #include "Ground.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "FollowCamera.h"
 
 
@@ -35,6 +36,8 @@ public:
 	void DebugGUI()override;
 
 	~GameScene()override;
+
+	Enemy* EnemyPop(std::vector<uint32_t> modelHandles, Vector3 pos);
 	
 
 private:
@@ -47,8 +50,12 @@ private: //オブジェクト
 	std::unique_ptr<Ground> ground_;
 
 	std::unique_ptr<Player> player_;
+	std::list<std::unique_ptr<Enemy>> enemies_;
 
 	std::unique_ptr<FollowCamera> followCamera_;
+
+
+	
 
 };
 

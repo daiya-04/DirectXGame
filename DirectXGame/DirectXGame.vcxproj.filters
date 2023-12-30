@@ -118,6 +118,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="Enemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -209,5 +210,6 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="FollowCamera.h" />
     <ClInclude Include="Easing.h" />
+    <ClInclude Include="Enemy.h" />
   </ItemGroup>
 </Project>
