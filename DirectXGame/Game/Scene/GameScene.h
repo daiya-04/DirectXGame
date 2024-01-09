@@ -81,7 +81,12 @@ private: //オブジェクト
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine;
 
-	
+	std::unique_ptr<Sprite> XButton_;
+	std::unique_ptr<Sprite> char_Attack_;
+	std::unique_ptr<Sprite> finish_;
+
+	Vector2 pos1 = {};
+	Vector2 pos2 = {};
 
 };
 

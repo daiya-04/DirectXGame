@@ -32,8 +32,9 @@ void GameScene::Init(){
 	///テクスチャの読み込み
 
 	uint32_t particleTex = TextureManager::Load("circle.png");
-	
-
+	uint32_t XButtonTex = TextureManager::Load("XButton.png");
+	uint32_t char_AttackTex = TextureManager::Load("char_Attack.png");
+	uint32_t finishTex = TextureManager::Load("finish.png");
 
 
 	///
@@ -88,7 +89,14 @@ void GameScene::Init(){
 
 	//UI
 	
+	XButton_.reset(new Sprite(XButtonTex, {1200.0f,70.0f}, { 100.0f,100.0f }));
+	XButton_->Initialize();
 
+	char_Attack_.reset(new Sprite(char_AttackTex, {1100.0f,70.0f}, { 100.0f,50.0f }));
+	char_Attack_->Initialize();
+
+	finish_.reset(new Sprite(finishTex, { 670.0f,200.0f }, { 1280.0f,400.0f }));
+	finish_->Initialize();
 
 	///
 
@@ -98,7 +106,7 @@ void GameScene::Update(){
 	DebugGUI();
 
 	if (finishCount_ <= 0) {
-		SceneManager::GetInstance()->ChangeScene("Title");
+		//SceneManager::GetInstance()->ChangeScene("Title");
 	}
 	
 	if (gameCount_ > 0) {
@@ -261,9 +269,11 @@ void GameScene::DrawParticle(){
 void GameScene::DrawUI(){
 
 	if (gameCount_ <= 0) {
-
+		finish_->Draw();
 	}
-
+	XButton_->Draw();
+	char_Attack_->Draw();
+	
 }
 
 void GameScene::DebugGUI(){
@@ -276,6 +286,12 @@ void GameScene::DebugGUI(){
 
 	count = finishCount_ / 60;
 	ImGui::InputInt("ScenChangeCount", &count);
+
+	
+	ImGui::DragFloat2("XButton", &pos1.x, 1.0f);
+	
+	ImGui::DragFloat2("char_Attack", &pos2.x, 1.0f);
+	
 
 	ImGui::End();
 	

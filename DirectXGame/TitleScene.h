@@ -32,7 +32,7 @@ public:
 private:
 
 	std::unique_ptr<Sprite> title_;
-	std::unique_ptr<Sprite> button_;
+	std::unique_ptr<Sprite> Abutton_;
 
 };
 

@@ -11,14 +11,14 @@ TitleScene::~TitleScene() {}
 void TitleScene::Init(){
 
 	uint32_t titleTex = TextureManager::Load("title.png");
-	uint32_t buttonTex = TextureManager::Load("button.png");
+	uint32_t buttonTex = TextureManager::Load("AButton.png");
 
 
 	title_.reset(new Sprite(titleTex, { 640.0f,360.0f }, { 1280.0f,720.0f }));
 	title_->Initialize();
 
-	button_.reset(new Sprite(buttonTex, {}, {}));
-	button_->Initialize();
+	Abutton_.reset(new Sprite(buttonTex, {640.0f,520.0f}, {100.0f,100.0f}));
+	Abutton_->Initialize();
 
 }
 
@@ -32,7 +32,7 @@ void TitleScene::Update(){
 
 #endif // _DEBUG
 
-	if (Input::GetInstance()->PushKey(XINPUT_GAMEPAD_A)) {
+	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A)) {
 		SceneManager::GetInstance()->ChangeScene("Game");
 	}
 
@@ -41,7 +41,7 @@ void TitleScene::Update(){
 void TitleScene::DrawBackGround(){
 
 	title_->Draw();
-	button_->Draw();
+	Abutton_->Draw();
 
 }
 
