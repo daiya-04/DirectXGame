@@ -106,7 +106,7 @@ void GameScene::Update(){
 	DebugGUI();
 
 	if (finishCount_ <= 0) {
-		//SceneManager::GetInstance()->ChangeScene("Title");
+		SceneManager::GetInstance()->ChangeScene("Title");
 	}
 	
 	if (gameCount_ > 0) {
