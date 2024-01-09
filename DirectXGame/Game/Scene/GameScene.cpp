@@ -3,6 +3,11 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
+#include "SceneManager.h"
+#include "Input.h"
+#include "Hit.h"
+
+#include <random>
 
 GameScene::~GameScene() {}
 
@@ -10,14 +15,17 @@ void GameScene::Init(){
 
 	camera_.Init();
 
+	finishCount_ = finishTime_;
+
 	/// モデルの読み込み
 
 	uint32_t skydomeModel = ModelManager::Load("skydome",false);
 	uint32_t groundModel = ModelManager::Load("ground");
 	uint32_t playerBodyModel = ModelManager::Load("float_Body");
 	uint32_t playerHeadModel = ModelManager::Load("float_Head");
-	uint32_t enemyBodyModel = ModelManager::Load("EnemyBody");
-	uint32_t enemyHeadModel = ModelManager::Load("EnemyHead");
+	enemyBodyModel_ = ModelManager::Load("EnemyBody");
+	enemyHeadModel_ = ModelManager::Load("EnemyHead");
+	//bulletModel_ = ModelManager::Load("EnemyBullet");
 
 	///
 
@@ -42,19 +50,28 @@ void GameScene::Init(){
 	player_->Init({ playerBodyModel,playerHeadModel });
 
 	//敵
-	uint32_t enemyNum = 3;
+	/*uint32_t enemyNum = 3;
 
-	std::vector<Vector3> enemyPos(enemyNum);
+	std::vector<Vector3> enemyPos(enemyNum);*/
 
-	enemyPos = {
+	/*enemyPos = {
 		{20.0f,0.0f,10.0f},
 		{-15.0f,0.0f,15.0f},
 		{-5.0f,0.0f,-20.0f}
 	};
 
 	for (size_t index = 0; index < enemyNum; index++) {
-		enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel ,enemyHeadModel }, enemyPos[index])));
+		enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, enemyPos[index])));
+	}*/
+
+	for (size_t index = 0; index < spawnNum_; index++) {
+		std::uniform_int_distribution<int> distPosX(-50, 50);
+		std::uniform_int_distribution<int> distPosZ(50, 100);
+		Vector3 spawnPos = { (float)distPosX(randomEngine),0.0f,(float)distPosZ(randomEngine) };
+		enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, spawnPos)));
 	}
+
+	Enemy::SetTarget(&player_->GetWorldTransform());
 
 	//追従カメラ
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -69,14 +86,117 @@ void GameScene::Init(){
 void GameScene::Update(){
 	DebugGUI();
 
+	if (finishCount_ <= 0) {
+		SceneManager::GetInstance()->ChangeScene("Title");
+	}
+	
+	if (gameCount_ > 0) {
+		gameCount_--;
+	}
+
+	if (gameCount_ == 0) {
+		if (!enemies_.empty()) {
+			enemies_.clear();
+		}
+		if (!enemyBullets_.empty()) {
+			enemyBullets_.clear();
+		}
+
+		finishCount_--;
+		
+	}
+
+#ifdef _DEBUG
+
+	if (Input::GetInstance()->PushKey(DIK_1)) {
+		SceneManager::GetInstance()->ChangeScene("Title");
+	}
+
+#endif // _DEBUG
+
+	
+
+
+	if (gameCount_ >= 20) {
+		if (--spawnCount_ <= 0) {
+			spawnCount_ = spawnCoolTime_;
+			for (size_t index = 0; index < spawnNum_; index++) {
+				std::uniform_int_distribution<int> distPos(-50, 50);
+				Vector3 spawnPos = { (float)distPos(randomEngine),0.0f,(float)distPos(randomEngine) };
+				enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, spawnPos)));
+			}
+		}
+	}
+	
+
 	skydome_->Update();
 	ground_->Update();
-
-	player_->Update();
 	for (const auto& enemy : enemies_) {
 		enemy->Update();
 	}
+	player_->Update(enemies_);
+	
+	for (const auto& bullet : enemyBullets_) {
+		bullet->Update();
+	}
 	followCamera_->Update();
+
+	///衝突判定
+
+	AABB player = {
+		player_->GetWorldPos() - player_->GetSize(),
+		player_->GetWorldPos() + player_->GetSize()
+	};
+
+	Sphere magicAttack = { player_->GetAttackPos(),0.0f };
+
+	switch (player_->GetConboIndex()) {
+	    case 0:
+			magicAttack.radius = 2.0f;
+	    	break;
+		case 1:
+			magicAttack.radius = 4.0f;
+			break;
+		case 2:
+			magicAttack.radius = 8.0f;
+			break;
+	}
+
+	//敵弾とプレイヤー
+	for (const auto& bullet : enemyBullets_) {
+		Sphere bulletHitRange = { bullet->GetWorldPos(),0.3f };
+		if (IsCollision(player, bulletHitRange)) {
+			bullet->OnCollision();
+			player_->OnCollision();
+		}
+	}
+
+	//魔法攻撃と敵
+	for (const auto& enemy : enemies_) {
+		AABB enemyBody = {
+			enemy->GetWorldPos() - enemy->GetSize(),
+			enemy->GetWorldPos() + enemy->GetSize()
+		};
+		if (IsCollision(enemyBody, magicAttack)) {
+			enemy->OnCollision();
+		}
+	}
+
+	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
+		if (enemy->IsDead()) {
+			return true;
+		}
+		return false;
+	});
+
+	enemyBullets_.remove_if([](const std::unique_ptr<EnemyBullet>& bullet) {
+		if (bullet->IsDead()) {
+			return true;
+		}
+		return false;
+	});
+
+	///
 
 	camera_.SetMatView(followCamera_->GetCamera().GetMatView());
 
@@ -98,6 +218,9 @@ void GameScene::DrawModel(){
 	for (const auto& enemy : enemies_) {
 		enemy->Draw(camera_);
 	}
+	for (const auto& bullet : enemyBullets_) {
+		bullet->Draw(camera_);
+	}
 
 }
 
@@ -115,13 +238,24 @@ void GameScene::DrawParticle(){
 
 void GameScene::DrawUI(){
 
+	if (gameCount_ <= 0) {
 
+	}
 
 }
 
 void GameScene::DebugGUI(){
 #ifdef _DEBUG
 
+	ImGui::Begin("window");
+
+	int count = gameCount_ / 60;
+	ImGui::InputInt("gameTime", &count);
+
+	count = finishCount_ / 60;
+	ImGui::InputInt("ScenChangeCount", &count);
+
+	ImGui::End();
 	
 #endif // _DEBUG
 }
@@ -131,6 +265,13 @@ Enemy* GameScene::EnemyPop(std::vector<uint32_t> modelHandles, Vector3 pos) {
 	Enemy* enemy = new Enemy();
 	enemy->Init(modelHandles);
 	enemy->SetPos(pos);
+	std::uniform_int_distribution<int> distTime(5, 9);
+	enemy->SetCoolTime(distTime(randomEngine));
+	enemy->SetGameScene(this);
 
 	return enemy;
+}
+
+void GameScene::AddEnemyBullet(EnemyBullet* enemyBullet) {
+	enemyBullets_.push_back(std::unique_ptr<EnemyBullet>(enemyBullet));
 }

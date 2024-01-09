@@ -1,6 +1,10 @@
 #include "Enemy.h"
 #include <cmath>
 #include <numbers>
+#include "GameScene.h"
+#include "ModelManager.h"
+
+const WorldTransform* Enemy::target_ = nullptr;
 
 void Enemy::Init(std::vector<uint32_t> modelHandles){
 
@@ -22,11 +26,37 @@ void Enemy::Init(std::vector<uint32_t> modelHandles){
 
 void Enemy::Update(){
 
-	worldTransform_.rotation_.y += 5.0f * (std::numbers::pi_v<float> / 180.0f);
-	worldTransform_.rotation_.y = std::fmod(worldTransform_.rotation_.y, 2.0f * std::numbers::pi_v<float>);
+	const float speed = 0.1f;
+
+	//worldTransform_.rotation_.y += 5.0f * (std::numbers::pi_v<float> / 180.0f);
+	//worldTransform_.rotation_.y = std::fmod(worldTransform_.rotation_.y, 2.0f * std::numbers::pi_v<float>);
+	worldTransform_.translation_.y = 0.0f;
+
+	Vector3 direction = target_->translation_ - worldTransform_.translation_;
+
+	rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction);
+
+	worldTransform_.translation_ += direction.Normalize() * speed;
+
+	/*if (--attackTimer_ <= 0) {
+		attackTimer_ = coolTime_;
+
+		const float bulletSpeed = 0.2f;
+		Vector3 shotPos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] + 3.4f ,worldTransform_.matWorld_.m[3][2] };
+		Vector3 velocity = TransformNormal({ 0.0f,0.0f,1.0f }, rotateMat_).Normalize() * bulletSpeed;
+
+		EnemyBullet* newBullet = new EnemyBullet();
+		uint32_t bulletModel = ModelManager::Load("EnemyBullet");
+		newBullet->Init(bulletModel, shotPos, velocity);
+		gameScene_->AddEnemyBullet(newBullet);
+
+	}*/
 
 	//行列更新
-	worldTransform_.UpdateMatrix();
+	//worldTransform_.UpdateMatrix();
+	Matrix4x4 S = MakeScaleMatrix(worldTransform_.scale_);
+	Matrix4x4 T = MakeTranslateMatrix(worldTransform_.translation_);
+	worldTransform_.matWorld_ = S * rotateMat_ * T;
 	for (size_t index = 0; index < partsWorldTransform_.size(); index++) {
 		partsWorldTransform_[index].UpdateMatrix();
 	}
@@ -37,5 +67,28 @@ void Enemy::Draw(const Camera& camera){
 	for (size_t index = 0; index < partsWorldTransform_.size(); index++) {
 		obj_[index]->Draw(partsWorldTransform_[index], camera);
 	}
+
+}
+
+void Enemy::OnCollision() {
+	isDead_ = true;
+}
+
+void Enemy::SetCoolTime(uint32_t coolTime) {
+
+	coolTime_ = 60 * coolTime;
+	attackTimer_ = coolTime_;
+
+}
+
+Vector3 Enemy::GetWorldPos() const {
+
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1] + size_.y;
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
 
 }

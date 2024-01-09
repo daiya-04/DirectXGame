@@ -7,7 +7,7 @@ void Ground::Init(uint32_t modelHandle){
 	obj_ = std::make_unique<Object3d>();
 	obj_.reset(Object3d::Create(modelHandle));
 
-	worldTransform_.scale_ = { 5.0f,1.0f,5.0f };
+	worldTransform_.scale_ = { 100.0f,1.0f,100.0f };
 
 }
 

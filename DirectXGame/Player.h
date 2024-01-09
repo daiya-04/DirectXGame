@@ -12,6 +12,7 @@
 #include "FollowCamera.h"
 #include "Particle.h"
 
+class Enemy;
 
 class Player{
 private: //ふるまい用メンバ変数
@@ -24,9 +25,7 @@ private: //ふるまい用メンバ変数
 
 	Behavior behavior_ = Behavior::kRoot;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
-
-	static void(Player::* BehaviorTable[])();
-	static void(Player::* RequestTable[])();
+	
 
 public: //ふるまい用メンバ関数
 
@@ -35,9 +34,9 @@ public: //ふるまい用メンバ関数
 	//通常行動更新
 	void RootUpdate();
 	//攻撃行動初期化
-	void AttackInit();
+	void AttackInit(const std::list<std::unique_ptr<Enemy>>& enemies);
 	//攻撃行動更新
-	void AttackUpdate();
+	void AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies);
 	//ダッシュ初期化
 	void DashInit();
 	//ダッシュ更新
@@ -90,6 +89,12 @@ private:
 	std::array<WorldTransform, kPartsNum> partsWorldTransform_;
 	Vector3 size_ = { 1.0f,2.0f,1.0f };
 
+	uint32_t life = 5;
+
+	Enemy* target_ = nullptr;
+
+	float attackRange_ = 35.0f;
+
 	Matrix4x4 rotateMat_ = MakeIdentity44();
 	Vector3 rotate_ = { 0.0f,0.0f,1.0f };
 	Vector3 from_ = { 0.0f,0.0f,1.0f };
@@ -99,11 +104,13 @@ private:
 	WorkAttack workAttack_;
 
 	std::unique_ptr<Particle> magicParticle_;
+	std::unique_ptr<Particle> magicParticle2_;
 
 	std::list<Particle::ParticleData> particles_;
+	std::list<Particle::ParticleData> particles2_;
 	Particle::Emitter emitter_{};
 
-	float particleVelocity_ = 0.3f;
+	float particleVelocity_ = 0.4f;
 
 	FollowCamera* followCamera_ = nullptr;
 
@@ -118,17 +125,24 @@ public:
 	//初期化
 	void Init(std::vector<uint32_t> modelHandles);
 	//更新
-	void Update();
+	void Update(const std::list<std::unique_ptr<Enemy>>& enemies);
 	//描画
 	void Draw(const Camera& camera);
 	//パーティクル描画
 	void DrawParticle(const Camera& camera);
+
+	void Search(const std::list<std::unique_ptr<Enemy>>& enemies);
+
+	void OnCollision();
 
 	//カメラの設定
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
 
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 	Vector3 GetWorldPos() const;
+	Vector3 GetAttackPos() const { return emitter_.translate_; }
+	Vector3 GetSize() const { return size_; }
+	uint32_t GetConboIndex() const { return workAttack_.comboIndex_; }
 
 };
 

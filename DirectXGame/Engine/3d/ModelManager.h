@@ -15,7 +15,7 @@ private:
 
 public:
 
-	static const size_t kNumModel = 124;
+	static const size_t kNumModel = 256;
 
 	struct VertexData {
 		Vector4 pos_;
