@@ -7,6 +7,7 @@
 #include <vector>
 #include <array>
 #include <optional>
+#include "Particle.h"
 
 class GameScene;
 
@@ -36,11 +37,14 @@ private:
 	uint32_t coolTime_ = 0;
 	uint32_t attackTimer_ = 0;
 
-	
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine;
 
 	GameScene* gameScene_ = nullptr;
 
 public:
+
+	Enemy() :randomEngine(seedGenerator()) {}
 
 	//初期化
 	void Init(std::vector<uint32_t> modelHandles);

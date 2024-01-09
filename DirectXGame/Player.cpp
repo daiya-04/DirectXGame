@@ -109,7 +109,7 @@ void Player::OnCollision() {
 
 void Player::RootInit() {
 
-
+	isAttack_ = false;
 
 }
 
@@ -172,6 +172,20 @@ void Player::AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies) {
 	uint32_t totalAttackTime = kComboAttacks_[workAttack_.comboIndex_].attackTime_;
 	totalAttackTime += kComboAttacks_[workAttack_.comboIndex_].chargeTime_;
 	totalAttackTime += kComboAttacks_[workAttack_.comboIndex_].recoveryTime_;
+
+	if (workAttack_.attackParam_ >= kComboAttacks_[workAttack_.comboIndex_].chargeTime_ + kComboAttacks_[workAttack_.comboIndex_].attackTime_) {
+		workAttack_.InComboPhase_ = 2;
+	}else if (workAttack_.attackParam_ >= kComboAttacks_[workAttack_.comboIndex_].chargeTime_) {
+		workAttack_.InComboPhase_ = 1;
+	}else {
+		workAttack_.InComboPhase_ = 0;
+	}
+
+	if (workAttack_.InComboPhase_ == 1) {
+		isAttack_ = true;
+	}else {
+		isAttack_ = false;
+	}
 
 	if (workAttack_.attackParam_ >= totalAttackTime) {
 		if (workAttack_.comboNext_) {
@@ -302,13 +316,9 @@ void Player::AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies) {
 
 					particles2_.push_back(particle);
 				}
-
 			}
-
 			break;
 		}
-
-
 	}
 
 	switch (workAttack_.comboIndex_) {

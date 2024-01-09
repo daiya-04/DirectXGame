@@ -31,6 +31,9 @@ void GameScene::Init(){
 
 	///テクスチャの読み込み
 
+	uint32_t particleTex = TextureManager::Load("circle.png");
+	
+
 
 
 	///
@@ -65,7 +68,7 @@ void GameScene::Init(){
 	}*/
 
 	for (size_t index = 0; index < spawnNum_; index++) {
-		std::uniform_int_distribution<int> distPosX(-50, 50);
+		std::uniform_int_distribution<int> distPosX(-60, 60);
 		std::uniform_int_distribution<int> distPosZ(50, 100);
 		Vector3 spawnPos = { (float)distPosX(randomEngine),0.0f,(float)distPosZ(randomEngine) };
 		enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, spawnPos)));
@@ -78,6 +81,14 @@ void GameScene::Init(){
 	followCamera_->Init();
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	player_->SetFollowCamera(followCamera_.get());
+
+	//パーティクル
+	particle_ = std::make_unique<Particle>();
+	particle_.reset(Particle::Create(particleTex, 100));
+
+	//UI
+	
+
 
 	///
 
@@ -121,7 +132,7 @@ void GameScene::Update(){
 		if (--spawnCount_ <= 0) {
 			spawnCount_ = spawnCoolTime_;
 			for (size_t index = 0; index < spawnNum_; index++) {
-				std::uniform_int_distribution<int> distPos(-50, 50);
+				std::uniform_int_distribution<int> distPos(-60, 60);
 				Vector3 spawnPos = { (float)distPos(randomEngine),0.0f,(float)distPos(randomEngine) };
 				enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, spawnPos)));
 			}
@@ -140,6 +151,8 @@ void GameScene::Update(){
 		bullet->Update();
 	}
 	followCamera_->Update();
+
+	
 
 	///衝突判定
 
@@ -172,15 +185,18 @@ void GameScene::Update(){
 	}
 
 	//魔法攻撃と敵
-	for (const auto& enemy : enemies_) {
-		AABB enemyBody = {
-			enemy->GetWorldPos() - enemy->GetSize(),
-			enemy->GetWorldPos() + enemy->GetSize()
-		};
-		if (IsCollision(enemyBody, magicAttack)) {
-			enemy->OnCollision();
+	if (player_->IsAttack()) {
+		for (const auto& enemy : enemies_) {
+			AABB enemyBody = {
+				enemy->GetWorldPos() - enemy->GetSize(),
+				enemy->GetWorldPos() + enemy->GetSize()
+			};
+			if (IsCollision(enemyBody, magicAttack)) {
+				enemy->OnCollision();
+			}
 		}
 	}
+	
 
 	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
 		if (enemy->IsDead()) {
@@ -197,6 +213,11 @@ void GameScene::Update(){
 	});
 
 	///
+
+	for (std::list<Particle::ParticleData>::iterator itParticle = particles_.begin(); itParticle != particles_.end(); itParticle++) {
+		(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_;
+		(*itParticle).currentTime_++;
+	}
 
 	camera_.SetMatView(followCamera_->GetCamera().GetMatView());
 
@@ -233,6 +254,7 @@ void GameScene::DrawParticleModel(){
 void GameScene::DrawParticle(){
 
 	player_->DrawParticle(camera_);
+	particle_->Draw(particles_, camera_);
 
 }
 
@@ -274,4 +296,8 @@ Enemy* GameScene::EnemyPop(std::vector<uint32_t> modelHandles, Vector3 pos) {
 
 void GameScene::AddEnemyBullet(EnemyBullet* enemyBullet) {
 	enemyBullets_.push_back(std::unique_ptr<EnemyBullet>(enemyBullet));
+}
+
+void GameScene::AddParticle(Particle::ParticleData particle) {
+	particles_.push_back(particle);
 }

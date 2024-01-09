@@ -72,6 +72,24 @@ void Enemy::Draw(const Camera& camera){
 
 void Enemy::OnCollision() {
 	isDead_ = true;
+
+	for (size_t index = 0; index < 50; index++) {
+
+		float range = 0.5f;
+		std::uniform_real_distribution<float> distPos(0.0, range);
+		std::uniform_real_distribution<float> distVelocityXZ(0.0f, 0.1f);
+		std::uniform_real_distribution<float> distVelocityY(0.2f, 0.4f);
+
+		Particle::ParticleData particle;
+		particle.worldTransform_.translation_ = { worldTransform_.translation_.x + distPos(randomEngine),worldTransform_.translation_.y + distPos(randomEngine) ,worldTransform_.translation_.z + distPos(randomEngine) };
+		particle.velocity_ = { distVelocityXZ(randomEngine), distVelocityY(randomEngine) ,distVelocityXZ(randomEngine) };
+		particle.color_ = { 0.0f,0.0f,0.0f,1.0f };
+		particle.lifeTime_ = 10.0f;
+		particle.currentTime_ = 0.0f;
+
+		gameScene_->AddParticle(particle);
+	}
+
 }
 
 void Enemy::SetCoolTime(uint32_t coolTime) {

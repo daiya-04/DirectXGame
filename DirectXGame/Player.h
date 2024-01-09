@@ -118,6 +118,8 @@ private:
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine;
 
+	bool isAttack_ = false;
+
 public:
 
 	Player() :randomEngine(seedGenerator()) {}
@@ -143,6 +145,7 @@ public:
 	Vector3 GetAttackPos() const { return emitter_.translate_; }
 	Vector3 GetSize() const { return size_; }
 	uint32_t GetConboIndex() const { return workAttack_.comboIndex_; }
+	bool IsAttack() { return isAttack_; }
 
 };
 

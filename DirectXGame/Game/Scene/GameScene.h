@@ -44,6 +44,8 @@ public:
 	
 	void AddEnemyBullet(EnemyBullet* enemyBullet);
 
+	void AddParticle(Particle::ParticleData particle);
+
 private:
 
 	Camera camera_;
@@ -59,7 +61,8 @@ private: //オブジェクト
 
 	std::unique_ptr<FollowCamera> followCamera_;
 
-	
+	std::unique_ptr<Particle> particle_;
+	std::list<Particle::ParticleData> particles_;
 
 	uint32_t enemyBodyModel_ = 0;
 	uint32_t enemyHeadModel_ = 0;
@@ -73,10 +76,12 @@ private: //オブジェクト
 
 	uint32_t spawnCoolTime_ = 60 * 10;
 	uint32_t spawnCount_ = spawnCoolTime_;
-	uint32_t spawnNum_ = 20;
+	uint32_t spawnNum_ = 30;
 
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine;
+
+	
 
 };
 

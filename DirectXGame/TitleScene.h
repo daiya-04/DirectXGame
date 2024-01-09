@@ -29,5 +29,10 @@ public:
 
 	~TitleScene()override;
 
+private:
+
+	std::unique_ptr<Sprite> title_;
+	std::unique_ptr<Sprite> button_;
+
 };
 

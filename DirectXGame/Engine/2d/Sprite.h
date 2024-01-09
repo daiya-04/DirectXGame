@@ -83,7 +83,7 @@ private: //メンバ変数
 public: //メンバ関数
 	
 	Sprite();
-	Sprite(uint32_t textureHandle,Vector2 position, Vector2 size, float rotate = 0.0f, Vector2 anchorpoint = { 0.0f,0.0f }, Vector4 color = { 1.0f,1.0f,1.0f,1.0f });
+	Sprite(uint32_t textureHandle,Vector2 position, Vector2 size, float rotate = 0.0f, Vector2 anchorpoint = { 0.5f,0.5f }, Vector4 color = { 1.0f,1.0f,1.0f,1.0f });
 
 	void Initialize();
 
