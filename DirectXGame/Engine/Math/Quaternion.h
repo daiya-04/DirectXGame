@@ -126,6 +126,10 @@ inline Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t) {
 		dot = -dot;
 	}
 
+	if (dot >= 1.0f - 0.0005f) {
+		return (1.0f - t) * q0_ + t * q1_;
+	}
+
 	float theta = std::acos(dot);
 
 	float scale0 = sinf((1 - t) * theta) / sinf(theta);

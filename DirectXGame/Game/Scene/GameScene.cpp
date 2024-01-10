@@ -18,7 +18,7 @@ void GameScene::Update(){
 	DebugGUI();
 
 	rotation0 = MakwRotateAxisAngleQuaternion({ 0.71f,0.71f,0.0f }, 0.3f);
-	rotation1 = MakwRotateAxisAngleQuaternion({ 0.71f,0.0f,0.71f }, 3.141592f);
+	rotation1 = { -rotation0.x,-rotation0.y ,-rotation0.z ,-rotation0.w };
 
 	interpolate0 = Slerp(rotation0, rotation1, 0.0f);
 	interpolate1 = Slerp(rotation0, rotation1, 0.3f);
@@ -65,27 +65,27 @@ void GameScene::DebugGUI(){
 
 	Quaternion result = interpolate0;
 
-	ImGui::Text("%.02f %.02f %.02f %.02f  : rotation", result.x, result.y, result.z, result.w);
+	ImGui::Text("%.02f %.02f %.02f %.02f  : interpolate0", result.x, result.y, result.z, result.w);
 	ImGui::NewLine();
 
 	result = interpolate1;
 
-	ImGui::Text("%.02f %.02f %.02f %.02f  : rotation", result.x, result.y, result.z, result.w);
+	ImGui::Text("%.02f %.02f %.02f %.02f  : interpolate1", result.x, result.y, result.z, result.w);
 	ImGui::NewLine();
 
 	result = interpolate2;
 
-	ImGui::Text("%.02f %.02f %.02f %.02f  : rotation", result.x, result.y, result.z, result.w);
+	ImGui::Text("%.02f %.02f %.02f %.02f  : interpolate2", result.x, result.y, result.z, result.w);
 	ImGui::NewLine();
 
 	result = interpolate3;
 
-	ImGui::Text("%.02f %.02f %.02f %.02f  : rotation", result.x, result.y, result.z, result.w);
+	ImGui::Text("%.02f %.02f %.02f %.02f  : interpolate3", result.x, result.y, result.z, result.w);
 	ImGui::NewLine();
 
 	result = interpolate4;
 
-	ImGui::Text("%.02f %.02f %.02f %.02f  : rotation", result.x, result.y, result.z, result.w);
+	ImGui::Text("%.02f %.02f %.02f %.02f  : interpolate4", result.x, result.y, result.z, result.w);
 	ImGui::NewLine();
 
 
