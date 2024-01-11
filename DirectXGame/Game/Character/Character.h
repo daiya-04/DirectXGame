@@ -2,7 +2,7 @@
 
 #include "ModelManager.h"
 #include "WorldTransform.h"
-#include "Viewpro.h"
+
 
 class Character
 {
