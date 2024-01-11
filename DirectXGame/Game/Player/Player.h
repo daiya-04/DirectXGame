@@ -4,7 +4,7 @@
 class Player:public Character
 {
 public:
-	void Init(uint32_t model = 0)override;
+	void Init(std::vector<uint32_t> models = { 0 })override;
 	void Update()override;
 	void Draw()override;
 

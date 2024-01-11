@@ -1,6 +1,6 @@
 #include "Player.h"
 
-void Player::Init(uint32_t model)
+void Player::Init(std::vector<uint32_t> models = { 0 })
 {
 }
 
