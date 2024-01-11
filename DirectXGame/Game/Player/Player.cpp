@@ -1,11 +1,13 @@
+#include "Player.h"
 
-
-
-class Player
+void Player::Init(uint32_t model)
 {
-public:
-	
+}
 
-private:
+void Player::Update()
+{
+}
 
-};
+void Player::Draw()
+{
+}

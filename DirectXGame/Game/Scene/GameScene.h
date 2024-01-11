@@ -36,7 +36,7 @@ private:
 
 	Camera camera_;
 
-	
+
 
 };
 

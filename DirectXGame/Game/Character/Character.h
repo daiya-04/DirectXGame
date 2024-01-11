@@ -7,10 +7,13 @@ class Character
 {
 public:
 	
-	virtual void Init() = 0;
+	virtual void Init(uint32_t model = 0) = 0;
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 
 private:
+
+	uint32_t model_;
+	WorldTransform world_;
 
 };
