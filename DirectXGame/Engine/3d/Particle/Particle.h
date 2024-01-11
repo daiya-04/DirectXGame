@@ -11,7 +11,7 @@
 #include <list>
 #include <random>
 #include "WorldTransform.h"
-#include "ViewProjection.h"
+#include "Camera.h"
 #include "Log.h"
 #include "Hit.h"
 
@@ -21,6 +21,15 @@ class Particle{
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 private:
+
+	enum class RootParameter {
+		kMaterial,
+		kParticleGPU,
+		kCamera,
+		kTexture,
+
+		kParamNum,
+	};
 
 	struct VertexData {
 		Vector4 pos_;
@@ -32,7 +41,7 @@ private:
 	};
 
 	struct ParticleGPU {
-		Matrix4x4 WVP;
+		Matrix4x4 matWorld;
 		Vector4 color;
 	};
 
@@ -114,7 +123,7 @@ public:
 
 	void Initialize(uint32_t textureHandle, uint32_t particleNum);
 
-	void Draw(std::list<ParticleData>& particleData,const ViewProjection& viewProjection);
+	void Draw(std::list<ParticleData>& particleData,const Camera& camera);
 
 private:
 

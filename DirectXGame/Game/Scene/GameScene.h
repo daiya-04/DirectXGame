@@ -2,12 +2,11 @@
 #include "IScene.h"
 #include <memory>
 #include <list>
-#include <random>
 
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
-#include "ViewProjection.h"
+#include "Camera.h"
 #include "WorldTransform.h"
 
 
@@ -35,17 +34,19 @@ public:
 
 private:
 
-	ViewProjection viewProjection_;
+	Camera camera_;
+
+	uint32_t Model_ = 0;
+	uint32_t Model2_ = 0;
+	std::unique_ptr<Object3d> obj_;
+	std::unique_ptr<Object3d> obj2_;
+	WorldTransform objWT_;
+	WorldTransform objWT2_;
 
 	std::unique_ptr<Particle> particle_;
-	std::list<Particle::ParticleData> particles_;
+	std::list<Particle::ParticleData> particleData_;
 	Particle::Emitter emitter_{};
 	const float kDeltaTime = 1.0f / 60.0f;
-
-	bool isField_ = false;
-
-	Particle::AccelerationField accelerationField_;
-
 
 };
 

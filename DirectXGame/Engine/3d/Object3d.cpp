@@ -7,6 +7,7 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "Log.h"
+#include "DirectionalLight.h"
 
 #pragma comment(lib,"dxcompiler.lib")
 
@@ -62,23 +63,27 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;   //PixelShaderで使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;   //レジスタ番号0とバインド
+	D3D12_ROOT_PARAMETER rootParameters[(size_t)RootParameter::kParamNum] = {};
+	rootParameters[(size_t)RootParameter::kMaterial].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
+	rootParameters[(size_t)RootParameter::kMaterial].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;   //PixelShaderで使う
+	rootParameters[(size_t)RootParameter::kMaterial].Descriptor.ShaderRegister = 0;   //レジスタ番号0とバインド
 
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;   //VertexShaderで使う
-	rootParameters[1].Descriptor.ShaderRegister = 0;   //レジスタ番号0を使う
+	rootParameters[(size_t)RootParameter::kWorldTransform].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
+	rootParameters[(size_t)RootParameter::kWorldTransform].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;   //VertexShaderで使う
+	rootParameters[(size_t)RootParameter::kWorldTransform].Descriptor.ShaderRegister = 1;   //レジスタ番号0を使う
 
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange; //Tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); //Tableで利用する数
+	rootParameters[(size_t)RootParameter::kCamera].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
+	rootParameters[(size_t)RootParameter::kCamera].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;   //VertexShaderで使う
+	rootParameters[(size_t)RootParameter::kCamera].Descriptor.ShaderRegister = 2;   //レジスタ番号0を使う
 
-	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  //CBVを使う
-	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;  //PixelShaderで使う
-	rootParameters[3].Descriptor.ShaderRegister = 1;  //レジスタ番号1を使う
+	rootParameters[(size_t)RootParameter::kTexture].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	rootParameters[(size_t)RootParameter::kTexture].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //PixelShaderで使う
+	rootParameters[(size_t)RootParameter::kTexture].DescriptorTable.pDescriptorRanges = descriptorRange; //Tableの中身の配列を指定
+	rootParameters[(size_t)RootParameter::kTexture].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); //Tableで利用する数
+
+	rootParameters[(size_t)RootParameter::kDirectionLight].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  //CBVを使う
+	rootParameters[(size_t)RootParameter::kDirectionLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
+	rootParameters[(size_t)RootParameter::kDirectionLight].Descriptor.ShaderRegister = 3;  //レジスタ番号1を使う
 
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
@@ -285,75 +290,25 @@ ComPtr<IDxcBlob> Object3d::CompileShader(const std::wstring& filePath, const wch
 
 }
 
-ComPtr<ID3D12Resource> Object3d::CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes) {
-	//リソース用のヒープの設定
-	D3D12_HEAP_PROPERTIES uploadHeapproperties{};
-	uploadHeapproperties.Type = D3D12_HEAP_TYPE_UPLOAD;//UploadHeapを使う
-	//リソースの設定
-	D3D12_RESOURCE_DESC ResourceDesc{};
-	//バッファリソース。テクスチャの場合はまた別の設定をする
-	ResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	ResourceDesc.Width = sizeInBytes; //リソースのサイズ。
-	//バッファの場合はこれにする決まり
-	ResourceDesc.Height = 1;
-	ResourceDesc.DepthOrArraySize = 1;
-	ResourceDesc.MipLevels = 1;
-	ResourceDesc.SampleDesc.Count = 1;
-	//バッファの場合はこれらにする決まり
-	ResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	//実際に頂点リソースを作る
-	ComPtr<ID3D12Resource> Resource = nullptr;
-	HRESULT hr = device->CreateCommittedResource(&uploadHeapproperties, D3D12_HEAP_FLAG_NONE, &ResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&Resource));
-	assert(SUCCEEDED(hr));
-
-	return Resource;
-}
 
 void Object3d::Initialize(uint32_t modelHandle) {
 
 	modelHandle_ = modelHandle;
 
-	//WVP用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
-	wvpResource_ = CreateBufferResource(device_, sizeof(TransformationMatrix));
-
-	//データを書き込む
-	TransformationMatrix* wvpData = nullptr;
-	//書き込むためのアドレスを取得
-	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	//単位行列を書き込んでおく
-	wvpData->WVP = MakeIdentity44();
-	wvpData->World = MakeIdentity44();
-
-	//DirectionalLighting用のリソースを作る
-	directionalLightResource_ = CreateBufferResource(device_, sizeof(DirectionalLight));
-	//データを書き込む
-	DirectionalLight* directionalLightData = nullptr;
-	//書き込むためのアドレスを取得
-	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
-	directionalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
-	directionalLightData->direction = { 0.0f,-1.0f,0.0f };
-	directionalLightData->intensity = 1.0f;
-
-	
-
 }
 
-void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjwction) {
-	
-	Matrix4x4 wvpMat = worldTransform.matWorld_ * (viewProjwction.matView_ * viewProjwction.matProjection_);
-	TransformationMatrix* wvpData = nullptr;
-	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	wvpData->WVP = wvpMat;
-
+void Object3d::Draw(const WorldTransform& worldTransform, const Camera& camera) {
 	
 	ModelManager::GetInstance()->SetVertexBuffers(commandList_,modelHandle_);
-	ModelManager::GetInstance()->SetGraphicsRootConstantBufferView(commandList_, 0, modelHandle_);
+	ModelManager::GetInstance()->SetGraphicsRootConstantBufferView(commandList_, (UINT)RootParameter::kMaterial, modelHandle_);
 	//wvp用のCBufferの場所の設定
-	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, 2, ModelManager::GetInstance()->GetUvHandle(modelHandle_));
+	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kWorldTransform, worldTransform.GetGPUVirtualAddress());
 
-	commandList_->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kCamera, camera.GetGPUVirtualAddress());
+	
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, ModelManager::GetInstance()->GetUvHandle(modelHandle_));
+
+	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
 
 	commandList_->DrawInstanced(ModelManager::GetInstance()->GetIndex(modelHandle_), 1, 0, 0);
 

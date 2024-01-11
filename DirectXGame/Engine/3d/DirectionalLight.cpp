@@ -1,14 +1,28 @@
-#include "WorldTransform.h"
+#include "DirectionalLight.h"
+
 #include "DirectXCommon.h"
 #include <cassert>
+#include "ImGuiManager.h"
 
-void WorldTransform::Init() {
-	CreateCBuffer();
-	Map();
-	UpdateMatrix();
+DirectionalLight* DirectionalLight::GetInstance() {
+	static DirectionalLight instance;
+
+	return &instance;
 }
 
-void WorldTransform::CreateCBuffer() {
+void DirectionalLight::Init(){
+
+	CreateCBuffer();
+	Map();
+}
+
+void DirectionalLight::Update(){
+	DebugGUI();
+
+	Map();
+}
+
+void DirectionalLight::CreateCBuffer(){
 
 	//リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapproperties{};
@@ -17,7 +31,7 @@ void WorldTransform::CreateCBuffer() {
 	D3D12_RESOURCE_DESC ResourceDesc{};
 	//バッファリソース。テクスチャの場合はまた別の設定をする
 	ResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	ResourceDesc.Width = sizeof(CBufferDataWorldTransform); //リソースのサイズ。
+	ResourceDesc.Width = sizeof(CBufferDataDirectionalLight); //リソースのサイズ。
 	//バッファの場合はこれにする決まり
 	ResourceDesc.Height = 1;
 	ResourceDesc.DepthOrArraySize = 1;
@@ -32,19 +46,25 @@ void WorldTransform::CreateCBuffer() {
 
 }
 
-void WorldTransform::Map() {
+void DirectionalLight::Map(){
+
 	cBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&cMap_));
-	cMap_->matWorld = matWorld_;
-	cMap_->WorldInverseTranspose = (matWorld_.Inverse()).Transpose();
+	cMap_->color = color_;
+	cMap_->direction = direction_.Normalize();
+	cMap_->intensity = intensity_;
+
 }
 
-void WorldTransform::UpdateMatrix() {
+void DirectionalLight::DebugGUI() {
+#ifdef _DEBUG
 
-	matWorld_ = MakeAffineMatrix(scale_, rotation_, translation_);
+	ImGui::Begin("DirectionalLight");
 
-	if (parent_) {
-		matWorld_ = matWorld_ * parent_->matWorld_;
-	}
+	ImGui::ColorEdit4("DL color", &color_.x);
+	ImGui::SliderFloat3("DL direction", &direction_.x, -1.0f, 1.0f);
+	ImGui::SliderFloat("DL intensity", &intensity_, 0.0f, 1.0f);
 
-	Map();
+	ImGui::End();
+
+#endif // _DEBUG
 }
