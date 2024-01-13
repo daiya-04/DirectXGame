@@ -1,7 +1,10 @@
 #include "Player.h"
 
-void Player::Init(std::vector<uint32_t> models)
+void Player::Init(std::vector<Object3d*> models)
 {
+	models_ = models;
+
+
 }
 
 void Player::Update()
