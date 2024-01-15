@@ -7,7 +7,7 @@
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
-#include "ViewProjection.h"
+#include "Camera.h"
 #include "WorldTransform.h"
 
 class TitleScene: public IScene{
@@ -33,7 +33,6 @@ public:
 
 private:
 
-	ViewProjection viewProjection_;
 
 	std::unique_ptr<Particle> particle_;
 	std::list<Particle::ParticleData> particles_;

@@ -1,14 +1,16 @@
-#include "WorldTransform.h"
+#include "Camera.h"
 #include "DirectXCommon.h"
 #include <cassert>
 
-void WorldTransform::Init() {
+void Camera::Init() {
+
 	CreateCBuffer();
 	Map();
 	UpdateMatrix();
+
 }
 
-void WorldTransform::CreateCBuffer() {
+void Camera::CreateCBuffer() {
 
 	//リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapproperties{};
@@ -17,7 +19,7 @@ void WorldTransform::CreateCBuffer() {
 	D3D12_RESOURCE_DESC ResourceDesc{};
 	//バッファリソース。テクスチャの場合はまた別の設定をする
 	ResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	ResourceDesc.Width = sizeof(CBufferDataWorldTransform); //リソースのサイズ。
+	ResourceDesc.Width = sizeof(CBufferDataCamera); //リソースのサイズ。
 	//バッファの場合はこれにする決まり
 	ResourceDesc.Height = 1;
 	ResourceDesc.DepthOrArraySize = 1;
@@ -32,19 +34,27 @@ void WorldTransform::CreateCBuffer() {
 
 }
 
-void WorldTransform::Map() {
+void Camera::Map() {
+
 	cBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&cMap_));
-	cMap_->matWorld = matWorld_;
-	cMap_->WorldInverseTranspose = (matWorld_.Inverse()).Transpose();
+	cMap_->matView = matView_;
+	cMap_->matProjection = matProjection_;
+	Matrix4x4 matWorld = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotation_, translation_);
+	cMap_->cameraPos = { matWorld.m[3][0],matWorld.m[3][1] ,matWorld.m[3][2] };
+
 }
 
-void WorldTransform::UpdateMatrix() {
+void Camera::UpdateMatrix() {
 
-	matWorld_ = MakeAffineMatrix(scale_, rotation_, translation_);
+	UpdateViewMatrix();
+	UpdateProjectionMatrix();
+}
 
-	if (parent_) {
-		matWorld_ = matWorld_ * parent_->matWorld_;
-	}
-
+void Camera::UpdateViewMatrix() {
+	matView_ = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotation_, translation_).Inverse();
 	Map();
+}
+
+void Camera::UpdateProjectionMatrix() {
+	matProjection_ = MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
 }

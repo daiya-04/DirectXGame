@@ -1,5 +1,6 @@
 #pragma once
 #include "Vec3.h"
+#include "Matrix44.h"
 #include "cmath"
 
 class Quaternion {
@@ -18,6 +19,17 @@ public:
 	Quaternion() {};
 	Quaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {};
 	Quaternion(const Quaternion& quaternion) : x(quaternion.x), y(quaternion.y), z(quaternion.z), w(quaternion.w) {};
+
+	inline Quaternion operator-() const { return { -x,-y,-z,-w }; }
+
+	friend inline Quaternion operator+(const Quaternion& q1, const Quaternion& q2) {
+		return { q1.x + q2.x,q1.y + q2.y ,q1.z + q2.z ,q1.w + q2.w };
+	}
+
+	friend inline Quaternion operator-(const Quaternion& q1, const Quaternion& q2) {
+		return { q1.x - q2.x,q1.y - q2.y ,q1.z - q2.z ,q1.w - q2.w };
+	}
+
 
 	friend inline Quaternion operator*(float scalar, const Quaternion& q) {
 		return { q.x * scalar,q.y * scalar ,q.z * scalar ,q.w * scalar };
@@ -97,4 +109,31 @@ inline Vector3 RotateVector(const Vector3& v, const Quaternion& q) {
 	Quaternion rotated = q * r * q.Conjugation();
 
 	return { rotated.x,rotated.y,rotated.z };
+}
+
+inline float Dot(const Quaternion& q1, const Quaternion& q2) {
+	return { q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w };
+}
+
+inline Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t) {
+
+	Quaternion q0_ = q0;
+	Quaternion q1_ = q1;
+
+	float dot = Dot(q0_, q1_);
+	if (dot < 0) {
+		q0_ = -q0_;
+		dot = -dot;
+	}
+
+	if (dot >= 1.0f - 0.0005f) {
+		return (1.0f - t) * q0_ + t * q1_;
+	}
+
+	float theta = std::acos(dot);
+
+	float scale0 = sinf((1 - t) * theta) / sinf(theta);
+	float scale1 = sinf(t * theta) / sinf(theta);
+
+	return scale0 * q0 + scale1 * q1;
 }

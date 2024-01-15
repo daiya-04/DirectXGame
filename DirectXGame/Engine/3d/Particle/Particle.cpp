@@ -39,7 +39,7 @@ void Particle::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	descriptorRange[0].BaseShaderRegister = 0; //0から始まる
+	descriptorRange[0].BaseShaderRegister = 1; //0から始まる
 	descriptorRange[0].NumDescriptors = 1; //数は1つ
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
@@ -64,20 +64,24 @@ void Particle::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[3] = {};
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;   //PixelShaderで使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;   //レジスタ番号0とバインド
+	D3D12_ROOT_PARAMETER rootParameters[(size_t)RootParameter::kParamNum] = {};
+	rootParameters[(size_t)RootParameter::kMaterial].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
+	rootParameters[(size_t)RootParameter::kMaterial].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;   //PixelShaderで使う
+	rootParameters[(size_t)RootParameter::kMaterial].Descriptor.ShaderRegister = 0;   //レジスタ番号とバインド
 	
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; //VertexShaderで使う
-	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing; //Tableの中身の配列を指定
-	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing); //Tableで利用する数
+	rootParameters[(size_t)RootParameter::kParticleGPU].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	rootParameters[(size_t)RootParameter::kParticleGPU].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //VertexShaderで使う
+	rootParameters[(size_t)RootParameter::kParticleGPU].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing; //Tableの中身の配列を指定
+	rootParameters[(size_t)RootParameter::kParticleGPU].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing); //Tableで利用する数
 
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange; //Tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); //Tableで利用する数
+	rootParameters[(size_t)RootParameter::kCamera].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
+	rootParameters[(size_t)RootParameter::kCamera].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;   //PixelShaderで使う
+	rootParameters[(size_t)RootParameter::kCamera].Descriptor.ShaderRegister = 1;   //レジスタ番号とバインド
+
+	rootParameters[(size_t)RootParameter::kTexture].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	rootParameters[(size_t)RootParameter::kTexture].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //PixelShaderで使う
+	rootParameters[(size_t)RootParameter::kTexture].DescriptorTable.pDescriptorRanges = descriptorRange; //Tableの中身の配列を指定
+	rootParameters[(size_t)RootParameter::kTexture].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); //Tableで利用する数
 
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
@@ -335,7 +339,7 @@ void Particle::Initialize(uint32_t textureHandle, uint32_t particleNum) {
 	CreateMesh();
 }
 
-void Particle::Draw(std::list<ParticleData>& particleData,const ViewProjection& viewProjection) {
+void Particle::Draw(std::list<ParticleData>& particleData,const Camera& camera) {
 
 	ParticleGPU* instancingData = nullptr;
 	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
@@ -346,19 +350,17 @@ void Particle::Draw(std::list<ParticleData>& particleData,const ViewProjection& 
 			continue;
 		}
 
-		Matrix4x4 billboardMat = viewProjection.matView_;
+		/*Matrix4x4 billboardMat = camera.matView_;
 		billboardMat = billboardMat.Inverse();
 		billboardMat.m[3][0] = 0.0f;
 		billboardMat.m[3][1] = 0.0f;
-		billboardMat.m[3][2] = 0.0f;
+		billboardMat.m[3][2] = 0.0f;*/
 
-		Matrix4x4 worldMatrix = MakeScaleMatrix({ 1.0f,1.0f,1.0f }) * billboardMat * MakeTranslateMatrix((*itParticle).worldTransform_.translation_);
-
-		Matrix4x4 wvpMatrix = worldMatrix * (viewProjection.matView_ * viewProjection.matProjection_);
+		Matrix4x4 worldMatrix = MakeScaleMatrix((*itParticle).worldTransform_.scale_) * camera.GetBillBoadMatrix() * MakeTranslateMatrix((*itParticle).worldTransform_.translation_);
 		//float alpha = 1.0f - ((*itParticle).currentTime_ / (*itParticle).lifeTime_);
 
 		if (particleNum_ < particleMaxNum_) {
-			instancingData[particleNum_].WVP = wvpMatrix;
+			instancingData[particleNum_].matWorld = worldMatrix;
 			instancingData[particleNum_].color = (*itParticle).color_;
 			//instancingData[particleNum_].color.w = alpha;
 			particleNum_++;
@@ -374,12 +376,13 @@ void Particle::Draw(std::list<ParticleData>& particleData,const ViewProjection& 
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	commandList_->IASetIndexBuffer(&indexBufferView_);
 	//マテリアルCBufferの場所を設定
-	commandList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kMaterial, materialResource_->GetGPUVirtualAddress());
 	//wvp用のCBufferの場所の設定
 	//commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	commandList_->SetGraphicsRootDescriptorTable(1, particleSrvHandleGPU_);
+	commandList_->SetGraphicsRootDescriptorTable((UINT)RootParameter::kParticleGPU, particleSrvHandleGPU_);
+	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kCamera, camera.GetGPUVirtualAddress());
 	//SRVのDescriptorTableの先頭を設定。
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, 2, uvHandle_);
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, uvHandle_);
 
 	commandList_->DrawIndexedInstanced(6, (UINT)particleNum_, 0, 0, 0);
 
@@ -433,20 +436,7 @@ void Particle::CreateMesh() {
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&material));
 	material->color_ = color_;
 
-	//wvpResource_ = CreateBufferResource(device_, sizeof(TransformationMatrix));
-
-	/*TransformationMatrix* wvpData = nullptr;
-	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	wvpData->WVP = MakeIdentity44();*/
-
 	instancingResource_ = CreateBufferResource(device_, sizeof(ParticleGPU) * particleMaxNum_);
-
-	/*ParticleGPU* instancingData = nullptr;
-	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
-	for (size_t index = 0; index < particleMaxNum_; ++index) {
-		instancingData[index].WVP = MakeIdentity44();
-		instancingData[index].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	}*/
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc{};
 	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;

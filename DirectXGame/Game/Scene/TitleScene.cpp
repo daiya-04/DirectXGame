@@ -10,7 +10,7 @@ TitleScene::~TitleScene(){
 }
 
 void TitleScene::Init() {
-	viewProjection_.Initialize();
+	
 
 	uint32_t circle = TextureManager::Load("circle.png");
 	particle_ = std::make_unique<Particle>();
@@ -65,7 +65,7 @@ void TitleScene::DrawParticleModel() {
 }
 
 void TitleScene::DrawParticle() {
-	particle_->Draw(particles_, viewProjection_);
+	
 }
 
 void TitleScene::DrawUI() {

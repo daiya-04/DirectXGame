@@ -26,9 +26,6 @@
     <Filter Include="Engine\Input">
       <UniqueIdentifier>{ff95899c-91a7-4f40-a6e7-e37e1c16c2a8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Debug">
-      <UniqueIdentifier>{4716450b-8a68-4a09-b551-37c545463912}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\3d\Particle">
       <UniqueIdentifier>{05c165ac-f94c-4c9c-b345-1b385a153993}</UniqueIdentifier>
     </Filter>
@@ -43,6 +40,15 @@
     </Filter>
     <Filter Include="Game\Scene">
       <UniqueIdentifier>{eca7b166-bb3a-4d22-a963-df1bc14ddaf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Collision">
+      <UniqueIdentifier>{a718f71a-1100-4bcb-9d06-9473b05ba18c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\DebugText">
+      <UniqueIdentifier>{4716450b-8a68-4a09-b551-37c545463912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Audio">
+      <UniqueIdentifier>{951f94c5-20fb-491b-b20e-c5528d356ac4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -62,17 +68,11 @@
     <ClCompile Include="Engine\2d\Sprite.cpp">
       <Filter>Engine\2d</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\WorldTransform.cpp">
-      <Filter>Engine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Camera\ViewProjection.cpp">
-      <Filter>Engine\Camera</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Input\Input.cpp">
       <Filter>Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="Engine\DebugText\ImGuiManager.cpp">
-      <Filter>Engine\Debug</Filter>
+      <Filter>Engine\DebugText</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Particle\Particle.cpp">
       <Filter>Engine\3d\Particle</Filter>
@@ -95,6 +95,25 @@
     <ClCompile Include="Engine\BaseScene\SceneManager.cpp">
       <Filter>Engine\BaseScene</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Collision\Hit.cpp">
+      <Filter>Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Camera\Camera.cpp">
+      <Filter>Engine\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\WorldTransform.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\DirectionalLight.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DebugText\GlobalVariables.cpp">
+      <Filter>Engine\DebugText</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Audio\Audio.cpp">
+      <Filter>Engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Player\Player.cpp" />
     <ClCompile Include="Engine\Collision\Hit.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp">
       <Filter>Game\Scene</Filter>
@@ -110,17 +129,11 @@
     <ClInclude Include="Engine\3d\ModelManager.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Object3d.h">
-      <Filter>Engine\3d</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\2d\Sprite.h">
       <Filter>Engine\2d</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\WorldTransform.h">
       <Filter>Engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Camera\ViewProjection.h">
-      <Filter>Engine\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Math\Vec2.h">
       <Filter>Engine\Math</Filter>
@@ -138,10 +151,10 @@
       <Filter>Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DebugText\ImGuiManager.h">
-      <Filter>Engine\Debug</Filter>
+      <Filter>Engine\DebugText</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DebugText\Log.h">
-      <Filter>Engine\Debug</Filter>
+      <Filter>Engine\DebugText</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Particle\Particle.h">
       <Filter>Engine\3d\Particle</Filter>
@@ -173,6 +186,26 @@
     <ClInclude Include="Engine\BaseScene\SceneManager.h">
       <Filter>Engine\BaseScene</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Collision\Hit.h">
+      <Filter>Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Camera\Camera.h">
+      <Filter>Engine\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Object3d.h">
+      <Filter>Engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\DirectionalLight.h">
+      <Filter>Engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DebugText\GlobalVariables.h">
+      <Filter>Engine\DebugText</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Audio\Audio.h">
+      <Filter>Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Player\Player.h" />
+    <ClInclude Include="Game\Character\Character.h" />
     <ClInclude Include="Engine\Collision\Hit.h" />
     <ClInclude Include="Game\Scene\TitleScene.h">
       <Filter>Game\Scene</Filter>
