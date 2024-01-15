@@ -10,6 +10,7 @@
 #include <vector>
 #include "WorldTransform.h"
 #include "Camera.h"
+#include "PointLight.h"
 
 class Object3d{
 private:
@@ -23,6 +24,7 @@ private:
 		kCamera,
 		kTexture,
 		kDirectionLight,
+		kPointLight,
 		
 		kParamNum,
 	};
@@ -62,6 +64,7 @@ private:
 private: //メンバ変数
 
 	uint32_t modelHandle_ = 0;
+	PointLight* pointLight_ = nullptr;
 
 public: //メンバ関数
 
@@ -71,6 +74,8 @@ public: //メンバ関数
 	void Draw(const WorldTransform& worldTransform,const Camera& camera);
 	
 	void SetModelHandle(uint32_t modelHandle) { modelHandle_ = modelHandle; }
+
+	void SetPointLight(PointLight* pointLight) { pointLight_ = pointLight; }
 
 private:
 	

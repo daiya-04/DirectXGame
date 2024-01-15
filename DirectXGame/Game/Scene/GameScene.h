@@ -8,6 +8,7 @@
 #include "Particle.h"
 #include "Camera.h"
 #include "WorldTransform.h"
+#include "PointLight.h"
 
 
 class GameScene : public IScene {
@@ -47,6 +48,12 @@ private:
 	std::list<Particle::ParticleData> particleData_;
 	Particle::Emitter emitter_{};
 	const float kDeltaTime = 1.0f / 60.0f;
+
+	uint32_t terrainModel_ = 0;
+	std::unique_ptr<Object3d> terrain_;
+	WorldTransform terrainWT_;
+
+	PointLight pointLight_;
 
 };
 

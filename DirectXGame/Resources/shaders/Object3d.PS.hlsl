@@ -22,6 +22,16 @@ struct DirectionalLight {
 };
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b3);
 
+struct PointLight{
+	float32_t4 color;
+	float32_t3 position;
+	float intensity;
+	float radius;
+	float decay;
+};
+
+ConstantBuffer<PointLight> gPointLight : register(b4);
+
 struct PixelShaderOutput {
 	float32_t4 color : SV_TARGET0;
 };
@@ -55,10 +65,27 @@ PixelShaderOutput main(VertexShaderOutput input){
 	    float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
 	    float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
 
-		float32_t3 diffuse = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
-		float32_t3 specular = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f);
+		float32_t3 diffuseDL = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
+		float32_t3 specularDL = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f);
+
+		float32_t3 pointLightDirection = normalize(input.worldPosition - gPointLight.position);
+
+		reflectLight = reflect(pointLightDirection,normalize(input.normal));
+		halfVector = normalize(-pointLightDirection + toEye);
+
+		NdotH = dot(normalize(input.normal), halfVector);
+		specularPow = pow(saturate(NdotH), gMaterial.shininess);
+
+		NdotL = dot(normalize(input.normal), -pointLightDirection);
+		cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
+
+		float distance = length(gPointLight.position - input.worldPosition);
+		float factor = pow(saturate(-distance / gPointLight.radius + 1.0f), gPointLight.decay);
+
+		float32_t3 diffusePL = gMaterial.color.rgb * textureColor.rgb * gPointLight.color.rgb * cos * gPointLight.intensity * factor;
+		float32_t3 specularPL = gPointLight.color.rgb * gPointLight.intensity * factor * specularPow * float32_t3(1.0f,1.0f,1.0f);
 		
-		output.color.rgb = diffuse + specular;
+		output.color.rgb = diffuseDL + specularDL + diffusePL + specularPL;
         output.color.a = gMaterial.color.a * textureColor.a;
 	} else {
 	    output.color = gMaterial.color * textureColor;

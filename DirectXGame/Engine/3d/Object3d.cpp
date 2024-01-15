@@ -85,6 +85,10 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	rootParameters[(size_t)RootParameter::kDirectionLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
 	rootParameters[(size_t)RootParameter::kDirectionLight].Descriptor.ShaderRegister = 3;  //レジスタ番号1を使う
 
+	rootParameters[(size_t)RootParameter::kPointLight].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  //CBVを使う
+	rootParameters[(size_t)RootParameter::kPointLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
+	rootParameters[(size_t)RootParameter::kPointLight].Descriptor.ShaderRegister = 4;  //レジスタ番号1を使う
+
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
 
@@ -309,6 +313,8 @@ void Object3d::Draw(const WorldTransform& worldTransform, const Camera& camera) 
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, ModelManager::GetInstance()->GetUvHandle(modelHandle_));
 
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
+
+	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kPointLight, pointLight_->GetGPUVirtualAddress());
 
 	commandList_->DrawInstanced(ModelManager::GetInstance()->GetIndex(modelHandle_), 1, 0, 0);
 

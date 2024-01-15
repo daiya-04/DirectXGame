@@ -113,6 +113,9 @@
     <ClCompile Include="Engine\Audio\Audio.cpp">
       <Filter>Engine\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -198,6 +201,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Audio\Audio.h">
       <Filter>Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Engine\3d</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
