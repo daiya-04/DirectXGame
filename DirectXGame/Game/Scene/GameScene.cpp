@@ -18,12 +18,6 @@ void GameScene::Init(){
 	Model_ = ModelManager::Load("plane");
 	Model2_ = ModelManager::Load("teapot");
 
-	se1 = Audio::LoadWave("fanfare.wav");
-	se2 = Audio::LoadWave("mokugyo.wav");
-	se3 = Audio::LoadWave("shot.wav");
-
-	Audio::GetInstance()->SoundPlayWave(se1,1.0f,true);
-
 	obj_.reset(Object3d::Create(Model_));
 	objWT_.Init();
 
@@ -40,16 +34,6 @@ void GameScene::Init(){
 
 void GameScene::Update(){
 	DebugGUI();
-
-	if (Input::GetInstance()->TriggerKey(DIK_1)) {
-		
-	}
-	if (Input::GetInstance()->TriggerKey(DIK_2)) {
-		Audio::GetInstance()->SoundPlayWave(se2);
-	}
-	if (Input::GetInstance()->TriggerKey(DIK_3)) {
-		Audio::GetInstance()->SoundPlayWave(se3);
-	}
 
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine(seedGenerator());
