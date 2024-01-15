@@ -48,3 +48,17 @@ void WorldTransform::UpdateMatrix() {
 
 	Map();
 }
+
+void WorldTransform::UpdateMatrixQua(const Matrix4x4 QuaMatrix)
+{
+	Matrix4x4 scaleMatrix = MakeScaleMatrix(scale_);
+	Matrix4x4 translateMatrix = MakeTranslateMatrix(translation_);
+
+	matWorld_ = scaleMatrix * QuaMatrix * translateMatrix;
+
+	if (parent_) {
+		matWorld_ = matWorld_ * parent_->matWorld_;
+	}
+
+	Map();
+}

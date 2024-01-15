@@ -9,6 +9,13 @@
 #include "Camera.h"
 #include "WorldTransform.h"
 
+#pragma region
+
+#include "Game/Player/Player.h"
+#include "Game/FollowCamera/FollowCamera.h"
+
+#pragma endregion gameObject
+
 
 class GameScene : public IScene {
 public:
@@ -34,12 +41,17 @@ public:
 
 private:
 
-	Camera camera_;
+	FollowCamera camera_;
 
 	uint32_t Model_ = 0;
 	uint32_t Model2_ = 0;
 	std::unique_ptr<Object3d> obj_;
 	std::unique_ptr<Object3d> obj2_;
+
+	std::unique_ptr<Object3d> playerModel_;
+	std::unique_ptr<Player> player_;
+
+
 	WorldTransform objWT_;
 	WorldTransform objWT2_;
 

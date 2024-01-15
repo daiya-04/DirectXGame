@@ -28,11 +28,23 @@ void GameScene::Init(){
 	emitter_.count_ = 5;
 	emitter_.frequency_ = 0.5f;
 
-	
+#pragma region
+	uint32_t playerModelHundle = ModelManager::Load("SeaHorse");
+	playerModel_.reset(Object3d::Create(playerModelHundle));
+	std::vector<Object3d*> playerModels = {
+		playerModel_.get(),
+	};
+	player_ = std::make_unique<Player>();
+	player_->Init(playerModels);
+	player_->SetViewProjection(&camera_.GetViewProjection());
+	camera_.SetTarget(&player_->GetWorldTransform());
+#pragma endregion
 }
 
 void GameScene::Update(){
 	DebugGUI();
+
+	Input::GetInstance()->Update();
 
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine(seedGenerator());
@@ -48,7 +60,10 @@ void GameScene::Update(){
 	}
 
 
-	camera_.UpdateViewMatrix();
+	camera_.Update();
+
+	player_->Update();
+
 	objWT_.UpdateMatrix();
 	objWT2_.UpdateMatrix();
 
@@ -61,9 +76,10 @@ void GameScene::DrawBackGround(){
 }
 
 void GameScene::DrawModel(){
-	obj_->Draw(objWT_, camera_);
-	obj2_->Draw(objWT2_, camera_);
+	obj_->Draw(objWT_, camera_.GetViewProjection());
+	obj2_->Draw(objWT2_, camera_.GetViewProjection());
 
+	player_->Draw(camera_.GetViewProjection());
 }
 
 void GameScene::DrawParticleModel(){
@@ -74,7 +90,7 @@ void GameScene::DrawParticleModel(){
 
 void GameScene::DrawParticle(){
 
-	particle_->Draw(particleData_, camera_);
+	particle_->Draw(particleData_, camera_.GetViewProjection());
 
 }
 
@@ -85,16 +101,8 @@ void GameScene::DrawUI(){
 }
 
 void GameScene::DebugGUI(){
-#ifdef _DEBUG
 
-	ImGui::Begin("camera");
-
-	ImGui::DragFloat3("pos", &camera_.translation_.x, 0.01f);
-	ImGui::DragFloat3("rotate", &camera_.rotation_.x, 0.01f);
-
-	ImGui::End();
-
-#endif // _DEBUG
+	player_->ImGui();
 }
 
 
