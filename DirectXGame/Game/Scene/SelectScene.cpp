@@ -16,6 +16,7 @@ void SelectScene::Init() {
 	camera_.rotation_ = { 0.33f,0.0f,0.0f };
 
 	Model_ = ModelManager::Load("box");
+	seaHorseModel_ = ModelManager::Load("SeaHorse");
 	
 
 	obj_.reset(Object3d::Create(Model_));
@@ -30,6 +31,15 @@ void SelectScene::Init() {
 	objWT3_.Init();
 	objWT3_.translation_ = { 14.0f,0.0f,0.0f };
 
+	playerObj_.reset(Object3d::Create(seaHorseModel_));
+	playerWT_.Init();
+	seaHorseWT_.Init();
+	playerWT_.translation_ = { 0.0f,0.0f,-3.0f };
+	playerWT_.rotation_ = { 0.0f,3.14f,0.0f };
+	playerWT_.scale_ = { 0.2f,0.2f,0.2f };
+
+	seaHorseWT_.parent_ = &playerWT_;
+
 	input_ = Input::GetInstance();
 }
 
@@ -42,6 +52,9 @@ void SelectScene::Update() {
 	SelectStage();
 	
 	camera_.UpdateViewMatrix();
+
+	
+	playerWT_.UpdateMatrix();
 	objWT_.UpdateMatrix();
 	objWT2_.UpdateMatrix();
 	objWT3_.UpdateMatrix();
@@ -53,29 +66,46 @@ void SelectScene::Update() {
 }
 
 void SelectScene::SelectStage(){
+	
 	if (input_->TriggerKey(DIK_RIGHT) || input_->TriggerButton(XINPUT_GAMEPAD_DPAD_RIGHT)) {
+		rotate_ = { 1.0f,0.0f,0.0f };
 		if (selectNum_ < maxStage_ - 1) {
 			startPos_ = camera_.translation_.x;
+			startRotate_ = 1.57f;
+			
 			selectNum_++;
 			easeT_ = 0;
+			easeRotateT_ = 0;
 		}
 	}
 	else if (input_->TriggerKey(DIK_LEFT) || input_->TriggerButton(XINPUT_GAMEPAD_DPAD_LEFT)) {
+		rotate_ = { -1.0f,0.0f,0.0f };
 		if (selectNum_ > 0) {
 			startPos_ = camera_.translation_.x;
+			startRotate_ = 1.57f * 3.0f;
+			
 			selectNum_--;
 			easeT_ = 0;
+			easeRotateT_ = 0;
 		}
 	}
-
+	
 
 	endPos_ = selectNum_ * movePos_;
 	easeT_ += addEase_;
+	
 	if (easeT_ > 1.0f) {
+		easeRotateT_ += addRotateEase_;
 		easeT_ = 1.0f;
+	}
+	if (easeRotateT_>1.0f){
+		easeRotateT_ = 1.0f;
+		endRotate_ = 3.14f;
 	}
 
 	camera_.translation_.x = Ease::Easing(Ease::EaseName::EaseOutSine, startPos_, endPos_, easeT_);
+	playerWT_.translation_.x = Ease::Easing(Ease::EaseName::EaseNone, startPos_, endPos_, easeT_);
+	playerWT_.rotation_.y = Ease::Easing(Ease::EaseName::EaseNone, startRotate_, endRotate_, easeRotateT_);
 }
 
 void SelectScene::DrawBackGround() {
@@ -85,6 +115,7 @@ void SelectScene::DrawBackGround() {
 }
 
 void SelectScene::DrawModel() {
+	playerObj_->Draw(playerWT_, camera_);
 	obj_->Draw(objWT_, camera_);
 	obj2_->Draw(objWT2_, camera_);
 	obj3_->Draw(objWT3_, camera_);
