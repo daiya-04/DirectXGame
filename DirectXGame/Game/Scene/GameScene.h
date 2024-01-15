@@ -48,5 +48,9 @@ private:
 	Particle::Emitter emitter_{};
 	const float kDeltaTime = 1.0f / 60.0f;
 
+	size_t se1 = 0;
+	size_t se2 = 0;
+	size_t se3 = 0;
+
 };
 
