@@ -11,6 +11,7 @@
 #include "WorldTransform.h"
 #include "Camera.h"
 #include "PointLight.h"
+#include "ModelManager.h"
 
 class Object3d{
 private:
@@ -55,6 +56,13 @@ public: //静的メンバ関数
 	//描画後処理
 	static void postDraw();
 
+	static void SetPointLight(PointLight* pointLight) { pointLight_ = pointLight; }
+
+
+public:
+
+	static PointLight* pointLight_;
+
 	
 private:
 
@@ -64,7 +72,6 @@ private:
 private: //メンバ変数
 
 	uint32_t modelHandle_ = 0;
-	PointLight* pointLight_ = nullptr;
 
 public: //メンバ関数
 
@@ -75,7 +82,7 @@ public: //メンバ関数
 	
 	void SetModelHandle(uint32_t modelHandle) { modelHandle_ = modelHandle; }
 
-	void SetPointLight(PointLight* pointLight) { pointLight_ = pointLight; }
+	
 
 private:
 	

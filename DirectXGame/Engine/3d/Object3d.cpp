@@ -5,7 +5,6 @@
 #include <fstream>
 #include <sstream>
 #include "TextureManager.h"
-#include "ModelManager.h"
 #include "Log.h"
 #include "DirectionalLight.h"
 
@@ -17,6 +16,7 @@ ID3D12Device* Object3d::device_ = nullptr;
 ID3D12GraphicsCommandList* Object3d::commandList_ = nullptr;
 ComPtr<ID3D12RootSignature> Object3d::rootSignature_;
 ComPtr<ID3D12PipelineState> Object3d::graphicsPipelineState_;
+PointLight* Object3d::pointLight_ = nullptr;
 
 void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
 

@@ -27,7 +27,7 @@ void GameScene::Init(){
 	terrain_.reset(Object3d::Create(terrainModel_));
 	terrainWT_.Init();
 	terrainWT_.rotation_.y = -1.57f;
-	terrain_->SetPointLight(&pointLight_);
+	Object3d::SetPointLight(&pointLight_);
 
 	particle_ = std::make_unique<Particle>();
 	particle_.reset(Particle::Create(circle, 100));
@@ -70,7 +70,7 @@ void GameScene::DrawBackGround(){
 void GameScene::DrawModel(){
 
 	//obj_->Draw(objWT_, camera_);
-	//obj2_->Draw(objWT2_, camera_);
+	obj2_->Draw(objWT2_, camera_);
 	terrain_->Draw(terrainWT_, camera_);
 
 }
