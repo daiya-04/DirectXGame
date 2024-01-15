@@ -73,15 +73,15 @@ void Player::ImGui()
 
 void Player::QuaternionUpdate()
 {
+	moveQua_ = moveQua_.Normalize();
+
 	moveQua_ = Slerp(playerQua_, moveQua_, 0.3f);
 }
 
 void Player::WorldUpdate()
 {
 	QuaternionUpdate();
-	moveQua_ = moveQua_.Normalize();
 	playerQua_ = moveQua_;
-	playerQua_ = playerQua_.Normalize();
 	world_.UpdateMatrixQua(moveQua_.MakeRotateMatrix());
 }
 
