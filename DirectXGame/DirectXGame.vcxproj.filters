@@ -50,6 +50,9 @@
     <Filter Include="Engine\Audio">
       <UniqueIdentifier>{951f94c5-20fb-491b-b20e-c5528d356ac4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Ease">
+      <UniqueIdentifier>{d200f97c-e7ef-4970-abef-3f932e6e39e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -117,6 +120,12 @@
     <ClCompile Include="Engine\Collision\Hit.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp">
       <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\SelectScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Ease\Ease.cpp">
+      <Filter>Game\Ease</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -209,6 +218,12 @@
     <ClInclude Include="Engine\Collision\Hit.h" />
     <ClInclude Include="Game\Scene\TitleScene.h">
       <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SelectScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Ease\Ease.h">
+      <Filter>Game\Ease</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

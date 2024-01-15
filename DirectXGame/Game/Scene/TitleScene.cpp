@@ -47,8 +47,8 @@ void TitleScene::Update() {
 		(*itParticle).currentTime_ += kDeltaTime;
 	}
 
-	if (input_->TriggerKey(DIK_RETURN)) {
-		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Game);
+	if (input_->TriggerKey(DIK_RETURN)|| input_->TriggerButton(XINPUT_GAMEPAD_A)) {
+		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
 	}
 }
 
