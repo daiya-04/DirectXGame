@@ -11,6 +11,10 @@ void GameScene::Init(){
 
 	camera_.Init();
 	pointLight_.Init();
+	spotLight_.Init();
+
+	Object3d::SetPointLight(&pointLight_);
+	Object3d::SetSpotLight(&spotLight_);
 
 	uint32_t circle = TextureManager::Load("circle.png");
 
@@ -27,7 +31,7 @@ void GameScene::Init(){
 	terrain_.reset(Object3d::Create(terrainModel_));
 	terrainWT_.Init();
 	terrainWT_.rotation_.y = -1.57f;
-	Object3d::SetPointLight(&pointLight_);
+	
 
 	particle_ = std::make_unique<Particle>();
 	particle_.reset(Particle::Create(circle, 100));
@@ -59,6 +63,7 @@ void GameScene::Update(){
 	objWT2_.UpdateMatrix();
 	terrainWT_.UpdateMatrix();
 	pointLight_.Update();
+	spotLight_.Update();
 }
 
 void GameScene::DrawBackGround(){
@@ -127,6 +132,19 @@ void GameScene::DebugGUI(){
 	ImGui::SliderFloat("intensity", &pointLight_.intensity_, 0.0f, 1.0f);
 	ImGui::SliderFloat("radius", &pointLight_.radius_, 0.0f, 10.0f);
 	ImGui::SliderFloat("decay", &pointLight_.decay_, 0.01f, 2.0f);
+
+	ImGui::End();
+
+	ImGui::Begin("SpotLight");
+
+	ImGui::ColorEdit4("color", &spotLight_.color_.x);
+	ImGui::DragFloat3("position", &spotLight_.position_.x, 0.01f);
+	ImGui::SliderFloat("intensity", &spotLight_.intensity_, 0.0f, 1.0f);
+	ImGui::SliderFloat3("direction", &spotLight_.direction_.x, -1.0f, 1.0f);
+	ImGui::SliderFloat("distance", &spotLight_.distance_, 0.0f, 10.0f);
+	ImGui::SliderFloat("decay", &spotLight_.decay_, 0.01f, 2.0f);
+	ImGui::SliderFloat("cosAngle", &spotLight_.cosAngle_, 0.0f, spotLight_.cosFalloffStart_ - 0.001f);
+	ImGui::SliderFloat("cosFalloffStart", &spotLight_.cosFalloffStart_, spotLight_.cosAngle_, 1.0f);
 
 	ImGui::End();
 
