@@ -10,6 +10,9 @@
 #include <vector>
 #include "WorldTransform.h"
 #include "Camera.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+#include "ModelManager.h"
 
 class Object3d{
 private:
@@ -23,6 +26,8 @@ private:
 		kCamera,
 		kTexture,
 		kDirectionLight,
+		kPointLight,
+		kSpotLight,
 		
 		kParamNum,
 	};
@@ -52,6 +57,15 @@ public: //静的メンバ関数
 	static void preDraw();
 	//描画後処理
 	static void postDraw();
+
+	static void SetPointLight(PointLight* pointLight) { pointLight_ = pointLight; }
+
+	static void SetSpotLight(SpotLight* spotLight) { spotLight_ = spotLight; }
+
+public:
+
+	static PointLight* pointLight_;
+	static SpotLight* spotLight_;
 
 	
 private:
