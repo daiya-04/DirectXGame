@@ -16,9 +16,7 @@ public:
 
 	void Init()override;
 
-	void Update()override;
-
-	void SelectStage();
+	void Update()override;	
 
 	void DrawBackGround()override;
 
@@ -35,10 +33,16 @@ public:
 	~SelectScene()override;
 
 private:
+	void SelectStage();
+
+	void EnterTheStage();
+
+private:
+	//ステージセレクト用の変数
 	int selectNum_ = 0;
 	int oldSelectNum_ = 0;
 	const int maxStage_ = 3;
-
+	//補完の変数群
 	const float addEase_ = 0.04f;
 	float easeT_ = 0.0f;
 
@@ -50,26 +54,26 @@ private:
 	float startPos_ = 0.0f;
 	float endPos_ = 3.14f;
 
-	float startPlayerPos_ = 0.0f;
-	float endPlayerPos_ = 3.14f;
+	Vector3 startPlayerPos_ = { 0.0f ,0.0f,0.0f };
+	Vector3 endPlayerPos_ = { 3.14f ,0.0f ,0.0f };
 
 	float startRotate_ = 3.14f;
 	float endRotate_ = 3.14f;
+	//振り向いた後ちょっと待つためのタイマー
+	int cooltime_ = 30;
 
 	Camera camera_;
-
+	//モデルデータの入れ物
 	uint32_t Model_ = 0;
 	uint32_t seaHorseModel_ = 0;
 	uint32_t floorModel_ = 0;
 	uint32_t rockModel_ = 0;
 	uint32_t stageSelectModel_ = 0;
 	uint32_t skyModel_ = 0;
-
 	uint32_t loadModel_ = 0;
 
-	std::unique_ptr<Object3d> obj_;
-	std::unique_ptr<Object3d> obj2_;
-	std::unique_ptr<Object3d> obj3_;
+	//オブジェクト
+	std::unique_ptr<Object3d> obj_[3];	
 
 	std::unique_ptr<Object3d> loadObj_;
 
@@ -81,9 +85,8 @@ private:
 
 	std::unique_ptr<Object3d> skyDomeObj_;
 
-	WorldTransform objWT_;
-	WorldTransform objWT2_;
-	WorldTransform objWT3_;
+	//ワールドトランスフォーム
+	WorldTransform objWT_[3];	
 
 	WorldTransform loadWT_;
 
@@ -96,14 +99,16 @@ private:
 
 	WorldTransform skyDomeWT_;
 
+	//自キャラの回転に使う予定だったものたち
 	Matrix4x4 rotateMat_;
 
 	Vector3 from_ = { 0.0f,0.0f,1.0f };
 	Vector3 rotate_ = { 0.0f,0.0f,1.0f };
 
-
 	Quaternion quater_;
 
 	Input* input_ = nullptr;
+
+	bool isSceneNext_ = false;
 };
 
