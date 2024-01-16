@@ -17,9 +17,12 @@ void SelectScene::Init() {
 
 	Model_ = ModelManager::Load("box");
 	seaHorseModel_ = ModelManager::Load("SeaHorse");
-	rockModel_ = ModelManager::Load("Rock");
+	rockModel_ = ModelManager::Load("StageSelect");
+	stageSelectModel_ = ModelManager::Load("Coral");
 	floorModel_ = ModelManager::Load("Firld");
 	skyModel_ = ModelManager::Load("skyDome");
+
+	loadModel_ = ModelManager::Load("Wall");
 
 	obj_.reset(Object3d::Create(Model_));
 	objWT_.Init();
@@ -37,6 +40,8 @@ void SelectScene::Init() {
 	skyDomeWT_.Init();
 	skyDomeWT_.scale_ = { 100.0f,100.0f,100.0f };
 
+	
+
 	floorObj_.reset(Object3d::Create(floorModel_));
 	floorWT_.Init();
 	floorWT_.translation_ = { 0.0f,-5.0f,0.0f };
@@ -44,10 +49,18 @@ void SelectScene::Init() {
 	for (int i = 0; i < maxStage_; i++){
 		rockObj_[i].reset(Object3d::Create(rockModel_));
 		rockWT_[i].Init();
-		rockWT_[i].translation_ = { i * 7.0f,-1.25f,-3.0f };
-		rockWT_[i].scale_ = { 0.2f,0.2f,0.2f };
-	}
+		rockWT_[i].translation_ = { i * 7.0f,-1.34f,-3.0f };
+		rockWT_[i].scale_ = { 0.3f,0.2f,0.3f };
 
+		stageSelectObj_[i].reset(Object3d::Create(stageSelectModel_));
+		stageSelectWT_[i].Init();
+		stageSelectWT_[i].translation_ = { i * 7.0f,-1.23f,-3.0f };
+		stageSelectWT_[i].scale_ = { 0.3f,0.2f,0.3f };
+	}
+	loadObj_.reset(Object3d::Create(loadModel_));
+	loadWT_.Init();
+	loadWT_.translation_ = rockWT_[1].translation_;
+	loadWT_.scale_ = { 2.32f,0.01f,0.01f };
 
 	playerObj_.reset(Object3d::Create(seaHorseModel_));
 	playerWT_.Init();
@@ -76,10 +89,12 @@ void SelectScene::Update() {
 	objWT_.UpdateMatrix();
 	objWT2_.UpdateMatrix();
 	objWT3_.UpdateMatrix();
+	loadWT_.UpdateMatrix();
 	skyDomeWT_.UpdateMatrix();
 	floorWT_.UpdateMatrix();
 	for (int i = 0; i < 3; i++){
 		rockWT_[i].UpdateMatrix();
+		stageSelectWT_[i].UpdateMatrix();
 	}
 
 	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(XINPUT_GAMEPAD_A)) {
@@ -145,11 +160,12 @@ void SelectScene::DrawModel() {
 	obj_->Draw(objWT_, camera_);
 	obj2_->Draw(objWT2_, camera_);
 	obj3_->Draw(objWT3_, camera_);
-
+	loadObj_->Draw(loadWT_, camera_);
 	floorObj_->Draw(floorWT_, camera_);
 	skyDomeObj_->Draw(skyDomeWT_, camera_);
 	for (int i = 0; i < maxStage_; i++){
 		rockObj_[i]->Draw(rockWT_[i], camera_);
+		stageSelectObj_[i]->Draw(stageSelectWT_[i], camera_);
 	}
 }
 
@@ -187,9 +203,18 @@ void SelectScene::DebugGUI() {
 	ImGui::DragFloat3("3", &objWT3_.translation_.x, 0.01f);
 
 	ImGui::DragFloat3("Floor", &floorWT_.translation_.x, 0.01f);
-	ImGui::DragFloat3("Rock", &rockWT_[0].translation_.x, 0.01f);
+	
 	ImGui::DragFloat3("skyScale", &skyDomeWT_.scale_.x, 1.0f);
 
+	ImGui::End();
+
+	ImGui::Begin("StageSelect");
+	ImGui::DragFloat3("Rock", &rockWT_[0].translation_.x, 0.01f);
+	ImGui::DragFloat3("Rock_Scale", &rockWT_[0].scale_.x, 0.01f);
+	ImGui::DragFloat3("StageSelect_Trans", &stageSelectWT_[0].translation_.x, 0.01f);
+	ImGui::DragFloat3("StageSelect_Scale", &stageSelectWT_[0].scale_.x, 0.01f);
+	ImGui::DragFloat3("Load_Trans", &loadWT_.translation_.x, 0.01f);
+	ImGui::DragFloat3("Load_Scale", &loadWT_.scale_.x, 0.01f);
 	ImGui::End();
 
 	ImGui::Begin("SelectNum");

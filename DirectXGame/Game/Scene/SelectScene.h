@@ -62,14 +62,20 @@ private:
 	uint32_t seaHorseModel_ = 0;
 	uint32_t floorModel_ = 0;
 	uint32_t rockModel_ = 0;
+	uint32_t stageSelectModel_ = 0;
 	uint32_t skyModel_ = 0;
+
+	uint32_t loadModel_ = 0;
 
 	std::unique_ptr<Object3d> obj_;
 	std::unique_ptr<Object3d> obj2_;
 	std::unique_ptr<Object3d> obj3_;
 
+	std::unique_ptr<Object3d> loadObj_;
+
 	std::unique_ptr<Object3d> floorObj_;
 	std::unique_ptr<Object3d> rockObj_[3];
+	std::unique_ptr<Object3d> stageSelectObj_[3];
 
 	std::unique_ptr<Object3d> playerObj_;
 
@@ -79,8 +85,11 @@ private:
 	WorldTransform objWT2_;
 	WorldTransform objWT3_;
 
+	WorldTransform loadWT_;
+
 	WorldTransform floorWT_;
 	WorldTransform rockWT_[3];
+	WorldTransform stageSelectWT_[3];
 
 	WorldTransform playerWT_;
 	WorldTransform seaHorseWT_;
