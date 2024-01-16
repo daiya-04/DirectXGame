@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "WorldTransform.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 
 
 class GameScene : public IScene {
@@ -54,6 +55,7 @@ private:
 	WorldTransform terrainWT_;
 
 	PointLight pointLight_;
+	SpotLight spotLight_;
 
 };
 

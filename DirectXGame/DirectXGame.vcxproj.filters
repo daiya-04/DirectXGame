@@ -101,9 +101,6 @@
     <ClCompile Include="Engine\Camera\Camera.cpp">
       <Filter>Engine\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\WorldTransform.cpp">
-      <Filter>Engine\3d</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\3d\DirectionalLight.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
@@ -113,7 +110,13 @@
     <ClCompile Include="Engine\Audio\Audio.cpp">
       <Filter>Engine\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="PointLight.cpp">
+    <ClCompile Include="Engine\3d\WorldTransform.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\PointLight.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\SpotLight.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
   </ItemGroup>
@@ -202,7 +205,10 @@
     <ClInclude Include="Engine\Audio\Audio.h">
       <Filter>Engine\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="PointLight.h">
+    <ClInclude Include="Engine\3d\PointLight.h">
+      <Filter>Engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\SpotLight.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
   </ItemGroup>

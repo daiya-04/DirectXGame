@@ -11,6 +11,7 @@
 #include "WorldTransform.h"
 #include "Camera.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 #include "ModelManager.h"
 
 class Object3d{
@@ -26,6 +27,7 @@ private:
 		kTexture,
 		kDirectionLight,
 		kPointLight,
+		kSpotLight,
 		
 		kParamNum,
 	};
@@ -58,10 +60,12 @@ public: //静的メンバ関数
 
 	static void SetPointLight(PointLight* pointLight) { pointLight_ = pointLight; }
 
+	static void SetSpotLight(SpotLight* spotLight) { spotLight_ = spotLight; }
 
 public:
 
 	static PointLight* pointLight_;
+	static SpotLight* spotLight_;
 
 	
 private:
@@ -81,8 +85,6 @@ public: //メンバ関数
 	void Draw(const WorldTransform& worldTransform,const Camera& camera);
 	
 	void SetModelHandle(uint32_t modelHandle) { modelHandle_ = modelHandle; }
-
-	
 
 private:
 	

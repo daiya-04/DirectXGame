@@ -17,6 +17,7 @@ ID3D12GraphicsCommandList* Object3d::commandList_ = nullptr;
 ComPtr<ID3D12RootSignature> Object3d::rootSignature_;
 ComPtr<ID3D12PipelineState> Object3d::graphicsPipelineState_;
 PointLight* Object3d::pointLight_ = nullptr;
+SpotLight* Object3d::spotLight_ = nullptr;
 
 void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
 
@@ -88,6 +89,10 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	rootParameters[(size_t)RootParameter::kPointLight].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  //CBVを使う
 	rootParameters[(size_t)RootParameter::kPointLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
 	rootParameters[(size_t)RootParameter::kPointLight].Descriptor.ShaderRegister = 4;  //レジスタ番号1を使う
+
+	rootParameters[(size_t)RootParameter::kSpotLight].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  //CBVを使う
+	rootParameters[(size_t)RootParameter::kSpotLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
+	rootParameters[(size_t)RootParameter::kSpotLight].Descriptor.ShaderRegister = 5;  //レジスタ番号1を使う
 
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
@@ -315,6 +320,8 @@ void Object3d::Draw(const WorldTransform& worldTransform, const Camera& camera) 
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
 
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kPointLight, pointLight_->GetGPUVirtualAddress());
+
+	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kSpotLight, spotLight_->GetGPUVirtualAddress());
 
 	commandList_->DrawInstanced(ModelManager::GetInstance()->GetIndex(modelHandle_), 1, 0, 0);
 
