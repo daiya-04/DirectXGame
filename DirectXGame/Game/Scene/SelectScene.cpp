@@ -118,7 +118,7 @@ void SelectScene::Update() {
 		
 	}
 	if (input_->TriggerKey(DIK_0)){
-		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Game);
+		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Title);
 	}
 
 }
