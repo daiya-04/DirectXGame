@@ -30,6 +30,16 @@ public:
 		camera_ = camera;
 	}
 
+	void HitFloor(float PosY) {
+		world_.translation_.y = PosY + 2.0f;
+		world_.UpdateMatrixQua(moveQua_.MakeRotateMatrix());
+		IsOnGraund = true;
+	}
+	void HitSango(Vector3 Pos) {
+		grapPoint = Pos;
+		canGrap = true;
+	}
+	bool Test = false;
 	void ImGui();
 
 #pragma region
@@ -42,13 +52,16 @@ private:
 	//ビュープロジェクション
 	const Camera* camera_;
 
-
 	void QuaternionUpdate();
 	void WorldUpdate();
 
+#pragma region
+	void Gravity();
+	bool IsOnGraund = false;
+#pragma endregion 重力
 
 #pragma region
-	Input* input = nullptr;
+	//Input* input = nullptr;
 #pragma endregion 入力
 
 #pragma region
@@ -94,7 +107,9 @@ private:
 	Vector3 moveVector;
 	float jumpPower = 0.0f;
 #pragma endregion GrapBehavior
-
+#pragma region
+	WorldTransform world_Arrow_;
+#pragma endregion 矢印
 #pragma region
 	void Move();
 	Quaternion playerQua_;

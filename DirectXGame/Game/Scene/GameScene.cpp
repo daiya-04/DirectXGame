@@ -13,9 +13,12 @@ void GameScene::Init(){
 
 #pragma region
 	uint32_t playerModelHundle = ModelManager::Load("SeaHorse");
+	uint32_t arrowModelHundle = ModelManager::Load("Line");
 	playerModel_.reset(Object3d::Create(playerModelHundle));
+	arrowModel_.reset(Object3d::Create(arrowModelHundle));
 	std::vector<Object3d*> playerModels = {
 		playerModel_.get(),
+		arrowModel_.get(),
 	};
 	player_ = std::make_unique<Player>();
 	player_->Init(playerModels);
@@ -33,6 +36,16 @@ void GameScene::Init(){
 	floor_->SetPos({0.0f,-2.0f,0.0f});
 	floor_->SetScale({5.0f,1.0f,5.0f});
 #pragma endregion Plane
+#pragma region
+	uint32_t sangoModelHundle = ModelManager::Load("sango");
+	sangoModel_.reset(Object3d::Create(sangoModelHundle));
+	std::vector<Object3d*> sangoModels = {
+		sangoModel_.get(),
+	};
+	sango_ = std::make_unique<Sango>();
+	sango_->Init(sangoModels);
+	sango_->SetPos({0.0f,0.0f,0.0f});
+#pragma endregion Plane
 }
 
 void GameScene::Update(){
@@ -46,14 +59,27 @@ void GameScene::Update(){
 
 	floor_->Update();
 
+	sango_->Update();
+
+
+#pragma region 
 	if (IsCollision(player_->GetAABB(), floor_->GetAABB())) {
 #ifdef _DEBUG
 		ImGui::Begin("Hello");
 
 		ImGui::End();
 #endif
+		player_->HitFloor(floor_->GetPosition().y);
 	}
+	if (IsCollision(player_->GetAABB(), sango_->GetAABB())) {
+#ifdef _DEBUG
+		ImGui::Begin("Sango");
 
+		ImGui::End();
+		player_->HitSango(sango_->GetPosition());
+#endif
+	}
+#pragma endregion 当たり判定
 }
 
 void GameScene::DrawBackGround(){
@@ -65,6 +91,8 @@ void GameScene::DrawModel(){
 	player_->Draw(camera_.GetViewProjection());
 
 	floor_->Draw(camera_.GetViewProjection());
+
+	sango_->Draw(camera_.GetViewProjection());
 }
 
 void GameScene::DrawParticleModel(){

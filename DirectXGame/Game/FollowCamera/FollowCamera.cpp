@@ -23,14 +23,17 @@ void FollowCamera::Update() {
 		//オフセット分と追従座標の補間分ずらす
 		viewProjection_.translation_ = workInter.interTarget_ + offset;
 	}
+	viewProjection_.UpdateMatrix();
 
 	//スティックでのカメラ回転
-	if (input->GetJoystickState()) {
+	if (Input::GetInstance()->GetCameraRotate().x == 0 && Input::GetInstance()->GetCameraRotate().y == 0) {
+		return;
+	}
 
 		const float kRadian = 0.02f;
 
-		rotate_.y -= input->GetCameraRotate().x * kRadian;
-		rotate_.x += input->GetCameraRotate().y * kRadian;
+		rotate_.y -= Input::GetInstance()->GetCameraRotate().x * kRadian;
+		rotate_.x += Input::GetInstance()->GetCameraRotate().y * kRadian;
 		if (rotate_.y > 1.0f) {
 			rotate_.y = 1.0f;
 		}
@@ -40,7 +43,9 @@ void FollowCamera::Update() {
 
 
 		parameter_t = 1.0f;
-	}
+
+
+
 	viewProjection_.rotation_.y = LerpShortAngle(viewProjection_.rotation_.y, rotate_.x, parameter_t);
 	viewProjection_.rotation_.x = LerpShortAngle(viewProjection_.rotation_.x, rotate_.y, parameter_t);
 	viewProjection_.UpdateMatrix();

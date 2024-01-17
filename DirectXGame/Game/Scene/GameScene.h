@@ -13,6 +13,7 @@
 #include "Game/FollowCamera/FollowCamera.h"
 #include "Game/Player/Player.h"
 #include "Game/Floor/Floor.h"
+#include "Game/Sango/Sango.h"
 
 #pragma endregion gameObject
 
@@ -44,10 +45,14 @@ private:
 	FollowCamera camera_;
 
 	std::unique_ptr<Object3d> playerModel_;
+	std::unique_ptr<Object3d> arrowModel_;
 	std::unique_ptr<Player> player_;
 
 	std::unique_ptr<Object3d> floorModel_;
 	std::unique_ptr<Floor> floor_;
+
+	std::unique_ptr<Object3d> sangoModel_;
+	std::unique_ptr<Sango> sango_;
 
 };
 

@@ -25,6 +25,9 @@ public:
 		collider.max.y = world_.translation_.y + colliderSize.y;
 		collider.max.z = world_.translation_.z + colliderSize.z;
 	};
+#pragma region
+	Vector3 GetPosition()const { return world_.translation_; }
+#pragma endregion getter
 protected:
 
 	std::vector<Object3d*> models_;
