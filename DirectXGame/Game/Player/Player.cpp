@@ -56,7 +56,9 @@ void Player::Update()
 	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_X)) {
 		Test = true;
 	}
-
+	if (Input::GetInstance()->PushKey(DIK_1)) {
+		Test = true;
+	}
 	if (Test) {
 #ifdef _DEBUG
 		ImGui::Begin("Button A");
@@ -109,15 +111,7 @@ void Player::WorldUpdate()
 
 void Player::Gravity()
 {
-	if (IsOnGraund) {
-		IsOnGraund = false;
-		behaviorRequest_ = Behavior::kRoot;
-		return;
-	}
-
 	world_.translation_.y -= 0.98f;
-
-
 }
 
 #pragma region

@@ -51,8 +51,6 @@ void GameScene::Init(){
 void GameScene::Update(){
 	DebugGUI();
 
-	Input::GetInstance()->Update();
-
 	camera_.Update();
 
 	player_->Update();
