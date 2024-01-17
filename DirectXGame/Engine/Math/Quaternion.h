@@ -120,8 +120,8 @@ inline float Dot(const Quaternion& q1, const Quaternion& q2) {
 
 inline Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t) {
 
-	Quaternion q0_ = q0;
-	Quaternion q1_ = q1;
+	Quaternion q0_ = q0.Normalize();
+	Quaternion q1_ = q1.Normalize();
 
 	float dot = Dot(q0_, q1_);
 	if (dot < 0.0f) {
