@@ -51,10 +51,10 @@ void WorldTransform::UpdateMatrix() {
 
 void WorldTransform::UpdateMatrixQua(const Matrix4x4 QuaMatrix)
 {
-	Matrix4x4 scaleMatrix = MakeScaleMatrix(scale_);
+	Matrix4x4 scaleMatrix = MakeScaleMatrix(scale_) * QuaMatrix;
 	Matrix4x4 translateMatrix = MakeTranslateMatrix(translation_);
 
-	matWorld_ = scaleMatrix * QuaMatrix * translateMatrix;
+	matWorld_ = scaleMatrix * translateMatrix;
 
 	if (parent_) {
 		matWorld_ = matWorld_ * parent_->matWorld_;

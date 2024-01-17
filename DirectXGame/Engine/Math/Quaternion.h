@@ -62,6 +62,9 @@ public:
 	}
 
 	inline Quaternion Normalize() const {
+		if (Length() == 0.0f) {
+			return *this;
+		}
 		return *this / Length();
 	}
 

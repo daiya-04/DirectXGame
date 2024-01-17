@@ -10,6 +10,8 @@ void Player::Init(std::vector<Object3d*> models)
 
 	playerQua_ = IdentityQuaternion();
 	moveQua_ = IdentityQuaternion();
+
+	Character::SetColliderSize({1.0f,2.0f,1.0f});
 }
 
 void Player::Update()
@@ -50,7 +52,7 @@ void Player::Update()
 	}
 
 	WorldUpdate();
-
+	Character::ColliderUpdate();
 
 }
 
@@ -74,7 +76,7 @@ void Player::ImGui()
 void Player::QuaternionUpdate()
 {
 	moveQua_ = moveQua_.Normalize();
-
+	playerQua_ = playerQua_.Normalize();
 	moveQua_ = Slerp(playerQua_, moveQua_, 0.3f);
 }
 
@@ -135,6 +137,7 @@ void Player::Move()
 		move = input->GetMoveXZ();
 		//正規化をして斜めの移動量を正しくする
 		move = move.Normalize();
+
 		move.x = move.x * speed;
 		move.y = move.y * speed;
 		move.z = move.z * speed;

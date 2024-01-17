@@ -11,23 +11,6 @@ void GameScene::Init(){
 
 	camera_.Init();
 
-	uint32_t circle = TextureManager::Load("circle.png");
-
-	Model_ = ModelManager::Load("plane");
-	Model2_ = ModelManager::Load("teapot");
-
-	obj_.reset(Object3d::Create(Model_));
-	objWT_.Init();
-
-	obj2_.reset(Object3d::Create(Model2_));
-	objWT2_.Init();
-
-	particle_ = std::make_unique<Particle>();
-	particle_.reset(Particle::Create(circle, 100));
-
-	emitter_.count_ = 5;
-	emitter_.frequency_ = 0.5f;
-
 #pragma region
 	uint32_t playerModelHundle = ModelManager::Load("SeaHorse");
 	playerModel_.reset(Object3d::Create(playerModelHundle));
@@ -38,7 +21,18 @@ void GameScene::Init(){
 	player_->Init(playerModels);
 	player_->SetViewProjection(&camera_.GetViewProjection());
 	camera_.SetTarget(&player_->GetWorldTransform());
-#pragma endregion
+#pragma endregion Player
+#pragma region
+	uint32_t floorModelHundle = ModelManager::Load("floor");
+	floorModel_.reset(Object3d::Create(floorModelHundle));
+	std::vector<Object3d*> planeModels = {
+		floorModel_.get(),
+	};
+	floor_ = std::make_unique<Floor>();
+	floor_->Init(planeModels);
+	floor_->SetPos({0.0f,-2.0f,0.0f});
+	floor_->SetScale({2.0f,1.0f,2.0f});
+#pragma endregion Plane
 }
 
 void GameScene::Update(){
@@ -46,40 +40,31 @@ void GameScene::Update(){
 
 	Input::GetInstance()->Update();
 
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
-
-	emitter_.frequencyTime_ += kDeltaTime;
-	if (emitter_.frequency_ <= emitter_.frequencyTime_) {
-		particleData_.splice(particleData_.end(), Particle::Emit(emitter_, randomEngine));
-		emitter_.frequencyTime_ -= emitter_.frequency_;
-	}
-	for (std::list<Particle::ParticleData>::iterator itParticle = particleData_.begin(); itParticle != particleData_.end(); itParticle++) {
-		(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_ * kDeltaTime;
-		(*itParticle).currentTime_ += kDeltaTime;
-	}
-
-
 	camera_.Update();
 
 	player_->Update();
 
-	objWT_.UpdateMatrix();
-	objWT2_.UpdateMatrix();
+	floor_->Update();
+
+	if (IsCollision(player_->GetAABB(), floor_->GetAABB())) {
+#ifdef _DEBUG
+		ImGui::Begin("Hello");
+
+		ImGui::End();
+#endif
+	}
 
 }
 
 void GameScene::DrawBackGround(){
 
-	
-
 }
 
 void GameScene::DrawModel(){
-	obj_->Draw(objWT_, camera_.GetViewProjection());
-	obj2_->Draw(objWT2_, camera_.GetViewProjection());
 
 	player_->Draw(camera_.GetViewProjection());
+
+	floor_->Draw(camera_.GetViewProjection());
 }
 
 void GameScene::DrawParticleModel(){
@@ -89,8 +74,6 @@ void GameScene::DrawParticleModel(){
 }
 
 void GameScene::DrawParticle(){
-
-	particle_->Draw(particleData_, camera_.GetViewProjection());
 
 }
 

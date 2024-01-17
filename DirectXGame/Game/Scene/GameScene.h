@@ -10,9 +10,9 @@
 #include "WorldTransform.h"
 
 #pragma region
-
-#include "Game/Player/Player.h"
 #include "Game/FollowCamera/FollowCamera.h"
+#include "Game/Player/Player.h"
+#include "Game/Floor/Floor.h"
 
 #pragma endregion gameObject
 
@@ -43,22 +43,11 @@ private:
 
 	FollowCamera camera_;
 
-	uint32_t Model_ = 0;
-	uint32_t Model2_ = 0;
-	std::unique_ptr<Object3d> obj_;
-	std::unique_ptr<Object3d> obj2_;
-
 	std::unique_ptr<Object3d> playerModel_;
 	std::unique_ptr<Player> player_;
 
-
-	WorldTransform objWT_;
-	WorldTransform objWT2_;
-
-	std::unique_ptr<Particle> particle_;
-	std::list<Particle::ParticleData> particleData_;
-	Particle::Emitter emitter_{};
-	const float kDeltaTime = 1.0f / 60.0f;
+	std::unique_ptr<Object3d> floorModel_;
+	std::unique_ptr<Floor> floor_;
 
 };
 

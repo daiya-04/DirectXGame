@@ -115,6 +115,7 @@
     </ClCompile>
     <ClCompile Include="Game\Player\Player.cpp" />
     <ClCompile Include="Game\FollowCamera\FollowCamera.cpp" />
+    <ClCompile Include="Game\Floor\Floor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -204,5 +205,6 @@
     <ClInclude Include="Game\Player\Player.h" />
     <ClInclude Include="Game\Character\Character.h" />
     <ClInclude Include="Game\FollowCamera\FollowCamera.h" />
+    <ClInclude Include="Game\Floor\Floor.h" />
   </ItemGroup>
 </Project>
