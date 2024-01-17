@@ -62,6 +62,9 @@ public:
 	}
 
 	inline Quaternion Normalize() const {
+		if (Length() == 0) {
+			return *this;
+		}
 		return *this / Length();
 	}
 
@@ -135,5 +138,5 @@ inline Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t) {
 	float scale0 = sinf((1 - t) * theta) / sinf(theta);
 	float scale1 = sinf(t * theta) / sinf(theta);
 
-	return scale0 * q0 + scale1 * q1;
+	return scale0 * q0_ + scale1 * q1_;
 }
