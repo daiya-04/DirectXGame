@@ -24,13 +24,13 @@ void GameScene::Init(){
 	Model2_ = ModelManager::Load("teapot");
 	terrainModel_ = ModelManager::Load("terrain");
 
-	obj_.reset(Object3d::Create(Model_));
+	obj_.reset(Object3d::Create(Model2_.get()));
 	objWT_.Init();
 
-	obj2_.reset(Object3d::Create(Model2_));
+	obj2_.reset(Object3d::Create(Model2_.get()));
 	objWT2_.Init();
 
-	terrain_.reset(Object3d::Create(terrainModel_));
+	terrain_.reset(Object3d::Create(terrainModel_.get()));
 	terrainWT_.Init();
 	terrainWT_.rotation_.y = -1.57f;
 	
@@ -76,7 +76,7 @@ void GameScene::DrawBackGround(){
 
 void GameScene::DrawModel(){
 
-	//obj_->Draw(objWT_, camera_);
+	obj_->Draw(objWT_, camera_);
 	obj2_->Draw(objWT2_, camera_);
 	terrain_->Draw(terrainWT_, camera_);
 
