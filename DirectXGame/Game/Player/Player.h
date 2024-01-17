@@ -31,7 +31,7 @@ public:
 	}
 
 	void HitFloor(float PosY) {
-		world_.translation_.y = PosY + 2.0f;
+		world_.translation_.y = PosY;
 		world_.UpdateMatrixQua(moveQua_.MakeRotateMatrix());
 		IsOnGraund = true;
 	}
@@ -40,7 +40,6 @@ public:
 		grapPoint.y += 2.0f;
 		canGrap = true;
 	}
-	bool Test = false;
 	void ImGui();
 
 #pragma region
@@ -105,11 +104,13 @@ private:
 	Quaternion lerpQua;
 	float angle = 1.0f;
 	float angleParam = 0.0f;
+	float kParam = 0.005f;
 	Vector3 moveVector;
-	float jumpPower = 0.0f;
+
 #pragma endregion GrapBehavior
 #pragma region
 	WorldTransform world_Arrow_;
+	Quaternion ArrowQua_;
 #pragma endregion 矢印
 #pragma region
 	void Move();

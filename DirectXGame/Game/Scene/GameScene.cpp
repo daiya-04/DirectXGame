@@ -33,7 +33,7 @@ void GameScene::Init(){
 	};
 	floor_ = std::make_unique<Floor>();
 	floor_->Init(planeModels);
-	floor_->SetPos({0.0f,-2.0f,0.0f});
+	floor_->SetPos({0.0f,0.0f,0.0f});
 	floor_->SetScale({5.0f,1.0f,5.0f});
 #pragma endregion Plane
 #pragma region
@@ -44,8 +44,8 @@ void GameScene::Init(){
 	};
 	sango_ = std::make_unique<Sango>();
 	sango_->Init(sangoModels);
-	sango_->SetPos({0.0f,0.0f,0.0f});
-#pragma endregion Plane
+	sango_->SetPos({0.0f,2.0f,0.0f});
+#pragma endregion Sango
 }
 
 void GameScene::Update(){
@@ -63,7 +63,7 @@ void GameScene::Update(){
 #pragma region 
 	if (IsCollision(player_->GetAABB(), floor_->GetAABB())) {
 #ifdef _DEBUG
-		ImGui::Begin("Hello");
+		ImGui::Begin("Floor");
 
 		ImGui::End();
 #endif
@@ -74,8 +74,8 @@ void GameScene::Update(){
 		ImGui::Begin("Sango");
 
 		ImGui::End();
-		player_->HitSango(sango_->GetPosition());
 #endif
+		player_->HitSango(sango_->GetPosition());
 	}
 #pragma endregion 当たり判定
 }

@@ -6,15 +6,14 @@ void Player::Init(std::vector<Object3d*> models)
 
 	world_.Init();
 	world_Arrow_.Init();
-	world_Arrow_.parent_ = &world_;
-
-	//input = Input::GetInstance();
 
 	playerQua_ = IdentityQuaternion();
 	moveQua_ = IdentityQuaternion();
+	ArrowQua_ = IdentityQuaternion();
+	rotateQua = IdentityQuaternion();
 
 	Character::SetColliderSize({1.0f,2.0f,1.0f});
-	Test = false;
+
 }
 
 void Player::Update()
@@ -53,21 +52,6 @@ void Player::Update()
 	}
 
 
-	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_X)) {
-		Test = true;
-	}
-	if (Input::GetInstance()->PushKey(DIK_1)) {
-		Test = true;
-	}
-	if (Test) {
-#ifdef _DEBUG
-		ImGui::Begin("Button A");
-
-		ImGui::End();
-#endif
-	}
-
-	Gravity();
 
 	WorldUpdate();
 	Character::ColliderUpdate();
@@ -79,8 +63,11 @@ void Player::Draw(const Camera& camera)
 {
 	//プレイヤー		
 	models_[0]->Draw(world_, camera);
+
 	//矢印
-	models_[1]->Draw(world_Arrow_, camera);
+	if (behavior_ == Behavior::kGrap) {
+		models_[1]->Draw(world_Arrow_, camera);
+	}
 
 }
 
@@ -90,6 +77,11 @@ void Player::ImGui()
 	ImGui::Begin("Player");
 	ImGui::InputFloat3("translate",&world_.translation_.x);
 	ImGui::End();
+	if (ImGui::Button("Reset")) {
+		world_.translation_ = { 0.0f,0.0f,0.0f };
+		world_.UpdateMatrix();
+		behaviorRequest_ = Behavior::kRoot;
+	}
 #endif
 }
 
@@ -98,6 +90,7 @@ void Player::QuaternionUpdate()
 	moveQua_ = moveQua_.Normalize();
 	playerQua_ = playerQua_.Normalize();
 	moveQua_ = Slerp(playerQua_, moveQua_, 0.3f);
+	moveQua_ = moveQua_ * rotateQua.Normalize();
 }
 
 void Player::WorldUpdate()
@@ -106,7 +99,7 @@ void Player::WorldUpdate()
 	playerQua_ = moveQua_;
 	world_.UpdateMatrixQua(moveQua_.MakeRotateMatrix());
 
-	world_Arrow_.UpdateMatrix();
+	world_Arrow_.UpdateMatrixQua(ArrowQua_.MakeRotateMatrix());
 }
 
 void Player::Gravity()
@@ -117,6 +110,8 @@ void Player::Gravity()
 #pragma region
 void Player::BehaviorRootInit()
 {
+	ArrowQua_ = IdentityQuaternion();
+	rotateQua = IdentityQuaternion();
 }
 
 void Player::BehaviorRootUpdate()
@@ -132,6 +127,8 @@ void Player::BehaviorRootUpdate()
 			}
 	}
 	Move();
+
+	//Gravity();
 }
 
 void Player::BehaviorJumpInit()
@@ -147,12 +144,13 @@ void Player::BehaviorJumpUpdate()
 void Player::GrapInit()
 {
 	world_.translation_ = grapPoint;
-	world_.translation_.z -= 2.0f;
 	world_.UpdateMatrix();
+	world_Arrow_.translation_ = grapPoint;
+	world_Arrow_.UpdateMatrix();
 	rotateQua = IdentityQuaternion();
 	moveQua_ = IdentityQuaternion();
 	playerQua_ = IdentityQuaternion();
-	world_Arrow_.translation_ = grapPoint;
+
 	beginVecQua = IdentityQuaternion();
 	endVecQua = IdentityQuaternion();
 	lerpQua = IdentityQuaternion();
@@ -162,13 +160,12 @@ void Player::GrapInit()
 	grapJump = false;
 	grapJumpAnime = 0;
 	angle = 1.0f;
-	GrapBehaviorRequest_ = GrapBehavior::kRight;
-	jumpPower = 0.0f;
+	GrapBehaviorRequest_ = GrapBehavior::kLeft;
 	canGrap = false;
 }
 void Player::GrapUpdate()
 {
-	if (Input::GetInstance()->GetMoveXZ().x != 0) {
+	if (Input::GetInstance()->GetMoveXZ().x != 0 && grapJump == false) {
 		if (Input::GetInstance()->GetMoveXZ().x > 0 && GrapBehavior_ != GrapBehavior::kRight) {
 			GrapBehaviorRequest_ = GrapBehavior::kRight;
 		}
@@ -210,24 +207,145 @@ void Player::GrapUpdate()
 		GrapJumpRightUpdate();
 		break;
 	}
-	moveQua_ = moveQua_ * rotateQua;
 
-	world_Arrow_.scale_.x = jumpPower;
-	world_Arrow_.UpdateMatrix();
-
+	if (IsOnGraund) {
+		behaviorRequest_ = Behavior::kRoot;
+	}
 
 }
 void Player::GrapJumpLeftInitalize()
 {
+	rotateQua = IdentityQuaternion();
+	moveQua_ = IdentityQuaternion();
+	playerQua_ = IdentityQuaternion();
+	beginVecQua = IdentityQuaternion();
+	endVecQua = IdentityQuaternion();
+	lerpQua = IdentityQuaternion();
+	angleParam = 0.0f;
+	grapJumpAnime = 0;
+	angle = 1.0f;
+	Vector3 cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
+	cross = cross.Normalize();
+	beginVecQua = MakwRotateAxisAngleQuaternion(cross, std::acos(-1.0f));
+	ArrowQua_ = beginVecQua.Normalize();
+	beginVecQua = beginVecQua.Normalize();
+	endVecQua = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
+	endVecQua = endVecQua.Normalize();
 }
 void Player::GrapJumpLeftUpdate()
 {
+	grapJumpVec = { 1.0f,0.0f,0.0f };
+	//////回転行列を作る
+	lerpQua = lerpQua.Normalize();
+	Matrix4x4 rotateMatrix = lerpQua.MakeRotateMatrix();
+	//移動ベクトルをカメラの角度だけ回転
+	grapJumpVec = TransformNormal(grapJumpVec, rotateMatrix);
+	grapJumpVec = grapJumpVec.Normalize();
+	Vector3 cross = Cross(Vector3{ -1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
+	cross = cross.Normalize();
+	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
+		//前のフレームでは押していない
+			if (grapJump == false) {
+				behaviorRequest_ = Behavior::kRoot;
+			}
+	}
+	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
+		if (angle > 0.9f) {
+			angle -= 0.001f;
+		}
+		else {
+			angle = 0.9f;
+		}
+		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
+		rotateQua = rotateQua.Normalize();
+
+		angleParam += kParam;
+		if (0.0f > angleParam || angleParam > 1.0f) {
+			kParam *= -1;
+		}
+		lerpQua = Slerp(beginVecQua, endVecQua, angleParam);
+
+		ArrowQua_ = lerpQua.Normalize();
+
+	}
+	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
+			grapJump = true;
+			moveVector = grapJumpVec;
+	}
+	if (grapJump == true) {
+		moveVector.y -= 0.03f;
+		world_.translation_.x += moveVector.x;
+		world_.translation_.y += moveVector.y;
+		world_.translation_.z += moveVector.z;
+		grapJumpAnime++;
+	}
 }
 void Player::GrapJumpRightInitalize()
 {
+	rotateQua = IdentityQuaternion();
+	moveQua_ = IdentityQuaternion();
+	playerQua_ = IdentityQuaternion();
+	beginVecQua = IdentityQuaternion();
+	endVecQua = IdentityQuaternion();
+	lerpQua = IdentityQuaternion();
+	angleParam = 0.0f;
+	grapJumpAnime = 0;
+	angle = 1.0f;
+	Vector3 cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
+	cross = cross.Normalize();
+	beginVecQua = MakwRotateAxisAngleQuaternion(cross, std::acos(1.0f));
+	ArrowQua_ = beginVecQua.Normalize();
+	beginVecQua = beginVecQua.Normalize();
+	endVecQua = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
+	endVecQua = endVecQua.Normalize();
 }
 void Player::GrapJumpRightUpdate()
 {
+	grapJumpVec = { 1.0f,0.0f,0.0f };
+	//////回転行列を作る
+	lerpQua = lerpQua.Normalize();
+	Matrix4x4 rotateMatrix = lerpQua.MakeRotateMatrix();
+	//移動ベクトルをカメラの角度だけ回転
+	grapJumpVec = TransformNormal(grapJumpVec, rotateMatrix);
+	grapJumpVec = grapJumpVec.Normalize();
+	Vector3 cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
+	cross = cross.Normalize();
+	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
+		//前のフレームでは押していない
+		if (grapJump == false) {
+			behaviorRequest_ = Behavior::kRoot;
+		}
+	}
+	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
+		if (angle > 0.9f) {
+			angle -= 0.001f;
+		}
+		else {
+			angle = 0.9f;
+		}
+		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
+		rotateQua = rotateQua.Normalize();
+
+		angleParam += kParam;
+		if (0.0f > angleParam || angleParam > 1.0f) {
+			kParam *= -1;
+		}
+		lerpQua = Slerp(beginVecQua, endVecQua, angleParam);
+
+		ArrowQua_ = lerpQua.Normalize();
+
+	}
+	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
+		grapJump = true;
+		moveVector = grapJumpVec;
+	}
+	if (grapJump == true) {
+		moveVector.y -= 0.03f;
+		world_.translation_.x += moveVector.x;
+		world_.translation_.y += moveVector.y;
+		world_.translation_.z += moveVector.z;
+		grapJumpAnime++;
+	}
 }
 #pragma endregion Grap
 

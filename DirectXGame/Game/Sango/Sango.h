@@ -9,7 +9,10 @@ public:
 	void Update()override;
 	void Draw(const Camera& camera)override;
 #pragma region
-	void SetPos(Vector3 Pos) { world_.translation_ = Pos; }
+	void SetPos(Vector3 Pos) {
+		world_.translation_ = Pos; world_
+			.UpdateMatrix();
+	}
 	void SetDirection(Vector3 Direction) { Direction_ = Direction;};
 #pragma region
 private:

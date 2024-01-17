@@ -52,6 +52,18 @@ public:
 		}
 		return false;
 	}
+	bool PushButton(int button) const {
+		if ((joyState.Gamepad.wButtons & button)) {
+			return true;
+		}
+		return false;
+	}
+	bool ReleaseButton(int button) const {
+		if (!(joyState.Gamepad.wButtons & button) && (preJoyState.Gamepad.wButtons & button)) {
+			return true;
+		}
+		return false;
+	}
 
 	bool LeftTrigger() const;
 
