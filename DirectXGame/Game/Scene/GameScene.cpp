@@ -44,7 +44,8 @@ void GameScene::Init(){
 	};
 	sango_ = std::make_unique<Sango>();
 	sango_->Init(sangoModels);
-	sango_->SetPos({0.0f,3.0f,0.0f});
+	sango_->SetPos({0.0f,2.0f,0.0f});
+	sango_->SetDirection({0.0f,0.0f,1.0f});
 #pragma endregion Sango
 }
 
@@ -64,7 +65,6 @@ void GameScene::Update(){
 	if (IsCollision(player_->GetAABB(), floor_->GetAABB())) {
 #ifdef _DEBUG
 		ImGui::Begin("Floor");
-
 		ImGui::End();
 #endif
 		player_->HitFloor(floor_->GetPosition().y);
@@ -72,9 +72,9 @@ void GameScene::Update(){
 	if (IsCollision(player_->GetAABB(), sango_->GetAABB())) {
 #ifdef _DEBUG
 		ImGui::Begin("Sango");
-
 		ImGui::End();
 #endif
+		player_->setsangoDirection(sango_->GetDirection());
 		player_->HitSango(sango_->GetPosition());
 	}
 #pragma endregion 当たり判定

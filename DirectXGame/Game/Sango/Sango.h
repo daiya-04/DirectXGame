@@ -14,7 +14,11 @@ public:
 			.UpdateMatrix();
 	}
 	void SetDirection(Vector3 Direction) { Direction_ = Direction;};
+#pragma region setter
 #pragma region
+
+	Vector3 GetDirection()const { return Direction_; };
+#pragma region getter
 private:
 	Vector3 Direction_ = {0.0f,0.0f,0.0f};
 };
