@@ -215,11 +215,11 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 }
 
-Object3d* Object3d::Create(uint32_t modelHandle) {
+Object3d* Object3d::Create(std::shared_ptr<Model> model) {
 	
 
 	Object3d* obj = new Object3d();
-	obj->Initialize(modelHandle);
+	obj->Initialize(model);
 
 	return obj;
 
@@ -300,22 +300,20 @@ ComPtr<IDxcBlob> Object3d::CompileShader(const std::wstring& filePath, const wch
 }
 
 
-void Object3d::Initialize(uint32_t modelHandle) {
-
-	modelHandle_ = modelHandle;
-
+void Object3d::Initialize(std::shared_ptr<Model> model) {
+	model_ = model;
 }
 
 void Object3d::Draw(const WorldTransform& worldTransform, const Camera& camera) {
 	
-	ModelManager::GetInstance()->SetVertexBuffers(commandList_,modelHandle_);
-	ModelManager::GetInstance()->SetGraphicsRootConstantBufferView(commandList_, (UINT)RootParameter::kMaterial, modelHandle_);
+	model_->SetVertexBuffers(commandList_);
+	model_->SetGraphicsRootConstantBufferView(commandList_, (UINT)RootParameter::kMaterial);
 	//wvp用のCBufferの場所の設定
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kWorldTransform, worldTransform.GetGPUVirtualAddress());
 
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kCamera, camera.GetGPUVirtualAddress());
 	
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, ModelManager::GetInstance()->GetUvHandle(modelHandle_));
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, model_->GetUvHandle());
 
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
 
@@ -323,7 +321,7 @@ void Object3d::Draw(const WorldTransform& worldTransform, const Camera& camera) 
 
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kSpotLight, spotLight_->GetGPUVirtualAddress());
 
-	commandList_->DrawInstanced(ModelManager::GetInstance()->GetIndex(modelHandle_), 1, 0, 0);
+	commandList_->DrawInstanced(model_->GetVertices(), 1, 0, 0);
 
 }
 

@@ -38,8 +38,8 @@ private:
 
 	Camera camera_;
 
-	uint32_t Model_ = 0;
-	uint32_t Model2_ = 0;
+	std::shared_ptr<Model> Model_ = 0;
+	std::shared_ptr<Model> Model2_ = 0;
 	std::unique_ptr<Object3d> obj_;
 	std::unique_ptr<Object3d> obj2_;
 	WorldTransform objWT_;
@@ -50,7 +50,7 @@ private:
 	Particle::Emitter emitter_{};
 	const float kDeltaTime = 1.0f / 60.0f;
 
-	uint32_t terrainModel_ = 0;
+	std::shared_ptr<Model> terrainModel_ = 0;
 	std::unique_ptr<Object3d> terrain_;
 	WorldTransform terrainWT_;
 

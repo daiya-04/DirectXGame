@@ -4,18 +4,16 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <memory>
 #include "Vec2.h"
 #include "Vec3.h"
 #include "Vec4.h"
 #include "Matrix44.h"
 
-class ModelManager{
+class Model {
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-
 public:
-
-	static const size_t kNumModel = 124;
 
 	struct VertexData {
 		Vector4 pos_;
@@ -31,53 +29,71 @@ public:
 		float shininess_;
 	};
 
-	struct Model {
-		D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
-		ComPtr<ID3D12Resource> vertexResource_;
-		std::vector<VertexData> vertices_;
-		ComPtr<ID3D12Resource> materialResource_;
-		UINT index_ = 0;
-		int32_t uvHandle_ = 0;
-		std::string name_;
-	};
+private:
+
+	//リソースの生成
+	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
+
+public:
+
+	static void SetDevice();
+
+	void CreateBuffer();
+
+	void SetVertexBuffers(ID3D12GraphicsCommandList* commandList);
+
+	void SetGraphicsRootConstantBufferView(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex);
+
+	uint32_t GetUvHandle() const { return uvHandle_; }
+
+	UINT GetVertices() const { return (UINT)vertices_.size(); }
+
+public:
+
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
+	ComPtr<ID3D12Resource> vertexResource_;
+	std::vector<VertexData> vertices_;
+	ComPtr<ID3D12Resource> materialResource_;
+	//uv
+	int32_t uvHandle_ = 0;
+	//modelファイルの名前
+	std::string name_;
 
 private:
 
-	ID3D12Device* device_ = nullptr;
+	static ID3D12Device* device_;
+
+};
+
+class ModelManager{
+private:
+	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+public:
+
+	static const size_t kNumModel = 124;
+
+private:
+
+	
 	std::string filename_;
 	std::string directoryPath_;
-	std::array<Model, kNumModel> models_;
+	std::vector<std::shared_ptr<Model>> models_;
 	uint32_t useModelNum_= 0;
 
 public:
 
 	static ModelManager* GetInstance();
 
-	static uint32_t Load(const std::string& modelName);
-
-	//リソースの生成
-	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
-
-	void Initialize();
-
-	void SetVertexBuffers(ID3D12GraphicsCommandList* commandList, uint32_t modelHandle);
-
-	void SetGraphicsRootConstantBufferView(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex, uint32_t modelHandle);
-
-	uint32_t GetUvHandle(uint32_t modelHandle) { return models_[modelHandle].uvHandle_; }
-
-	UINT GetIndex(uint32_t modelHandle) { return models_[modelHandle].index_; }
+	static std::shared_ptr<Model> Load(const std::string& modelName);
 
 private:
 
-	uint32_t LoadInternal(const std::string& modelName);
+	std::shared_ptr<Model> LoadInternal(const std::string& modelName);
 
 	void LoadObjFile(const std::string& modelName);
 
 	void LoadMaterialTemplateFile(const std::string& fileName);
-
-	void CreateBuffer();
-
 
 private:
 
