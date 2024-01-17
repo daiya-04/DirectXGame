@@ -141,7 +141,31 @@ bool IsCollision(const AABB& aabb, const Line& segment);
 /// <param name="segment">半直線</param>
 /// <returns></returns>
 bool IsCollision(const AABB& aabb, const Ray& segment);
-
+/// <summary>
+/// AABBと点との衝突判定
+/// </summary>
+/// <param name="aabb">AABB</param>
+/// <param name="point">点</param>
+/// <returns></returns>
 bool IsCollision(const AABB& aabb, const Vector3& point);
-
+/// <summary>
+/// OBBと球との衝突判定
+/// </summary>
+/// <param name="obb"></param>
+/// <param name="sphere"></param>
+/// <returns></returns>
 bool IsCollision(const OBB& obb, const Sphere& sphere);
+/// <summary>
+/// OBBと線分との衝突判定
+/// </summary>
+/// <param name="obb">OBB</param>
+/// <param name="segment">線分</param>
+/// <returns></returns>
+bool IsCollision(const OBB& obb, const Segment& segment);
+/// <summary>
+/// OBB同士の衝突判定
+/// </summary>
+/// <param name="obb1"></param>
+/// <param name="obb2"></param>
+/// <returns></returns>
+bool IsCollision(const OBB& obb1, const OBB& obb2);
