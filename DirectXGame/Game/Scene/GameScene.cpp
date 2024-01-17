@@ -31,7 +31,7 @@ void GameScene::Init(){
 	floor_ = std::make_unique<Floor>();
 	floor_->Init(planeModels);
 	floor_->SetPos({0.0f,-2.0f,0.0f});
-	floor_->SetScale({2.0f,1.0f,2.0f});
+	floor_->SetScale({5.0f,1.0f,5.0f});
 #pragma endregion Plane
 }
 
