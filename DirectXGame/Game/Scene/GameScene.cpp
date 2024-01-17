@@ -34,7 +34,7 @@ void GameScene::Init(){
 	floor_ = std::make_unique<Floor>();
 	floor_->Init(planeModels);
 	floor_->SetPos({0.0f,0.0f,0.0f});
-	floor_->SetScale({5.0f,1.0f,5.0f});
+	floor_->SetScale({10.0f,1.0f,10.0f});
 #pragma endregion Plane
 #pragma region
 	uint32_t sangoModelHundle = ModelManager::Load("sango");
@@ -44,7 +44,7 @@ void GameScene::Init(){
 	};
 	sango_ = std::make_unique<Sango>();
 	sango_->Init(sangoModels);
-	sango_->SetPos({0.0f,2.0f,0.0f});
+	sango_->SetPos({0.0f,3.0f,0.0f});
 #pragma endregion Sango
 }
 

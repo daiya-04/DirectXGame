@@ -37,7 +37,7 @@ public:
 	}
 	void HitSango(Vector3 Pos) {
 		grapPoint = Pos;
-		grapPoint.y += 2.0f;
+		//grapPoint.y += 2.0f;
 		canGrap = true;
 	}
 	void ImGui();

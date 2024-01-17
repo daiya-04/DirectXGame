@@ -128,7 +128,7 @@ void Player::BehaviorRootUpdate()
 	}
 	Move();
 
-	//Gravity();
+	Gravity();
 }
 
 void Player::BehaviorJumpInit()
