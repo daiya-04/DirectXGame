@@ -152,9 +152,13 @@ void Player::Move()
 		//プレイヤーの向きを移動方向に合わせる
 		move = move.Normalize();
 		move.y = 0.0f;
-		Vector3 cross = Cross({ 0.0f,0.0f,1.0f }, move);
+		Vector3 cross = Cross({ 1.0f,0.0f,1.0f }, move);
 		cross = cross.Normalize();
 		float dot = Dot({ 0.0f,0.0f,1.0f }, move);
 		moveQua_ = MakwRotateAxisAngleQuaternion(cross, std::acos(dot));
-
+#ifdef _DEBUG
+		ImGui::Begin("Move");
+		ImGui::InputFloat3("Dot",&cross.x);
+		ImGui::End();
+#endif
 }
