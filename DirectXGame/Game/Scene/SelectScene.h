@@ -41,7 +41,7 @@ private:
 	//ステージセレクト用の変数
 	int selectNum_ = 0;
 	int oldSelectNum_ = 0;
-	const int maxStage_ = 3;
+	static const int maxStage_ = 3;
 	//補完の変数群
 	const float addEase_ = 0.04f;
 	float easeT_ = 0.0f;
@@ -73,26 +73,29 @@ private:
 	uint32_t loadModel_ = 0;
 
 	//オブジェクト
-	std::unique_ptr<Object3d> obj_[3];	
+	std::unique_ptr<Object3d> obj_[maxStage_];	
 
 	std::unique_ptr<Object3d> loadObj_;
 
+	std::unique_ptr<Object3d> sLoadObj_[maxStage_ - 1];
+
 	std::unique_ptr<Object3d> floorObj_;
-	std::unique_ptr<Object3d> rockObj_[3];
-	std::unique_ptr<Object3d> stageSelectObj_[3];
+	std::unique_ptr<Object3d> rockObj_[maxStage_];
+	std::unique_ptr<Object3d> stageSelectObj_[maxStage_];
 
 	std::unique_ptr<Object3d> playerObj_;
 
 	std::unique_ptr<Object3d> skyDomeObj_;
 
 	//ワールドトランスフォーム
-	WorldTransform objWT_[3];	
+	WorldTransform objWT_[maxStage_];	
 
 	WorldTransform loadWT_;
+	WorldTransform sloadWT_[maxStage_ - 1];
 
 	WorldTransform floorWT_;
-	WorldTransform rockWT_[3];
-	WorldTransform stageSelectWT_[3];
+	WorldTransform rockWT_[maxStage_];
+	WorldTransform stageSelectWT_[maxStage_];
 
 	WorldTransform playerWT_;
 	WorldTransform seaHorseWT_;
@@ -110,5 +113,7 @@ private:
 	Input* input_ = nullptr;
 
 	bool isSceneNext_ = false;
+
+	bool isStageClear_[maxStage_];
 };
 
