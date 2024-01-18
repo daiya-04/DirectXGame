@@ -64,6 +64,46 @@ bool Input::TriggerKey(BYTE keyNumber) const{
 	return false;
 }
 
+bool Input::GetTiltJoyStickRight(){
+	if ((float)(joyState.Gamepad.sThumbLX) > 20000 && (float)(preJoyState.Gamepad.sThumbLX) <= 20000) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool Input::GetTiltJoyStickLeft()
+{
+	if ((float)(joyState.Gamepad.sThumbLX) < -20000 && (float)(preJoyState.Gamepad.sThumbLX) >= -20000) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool Input::GetTiltJoyStickUp()
+{
+	if ((float)(joyState.Gamepad.sThumbLY) > 20000 && (float)(preJoyState.Gamepad.sThumbLY) <= 20000) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool Input::GetTiltJoyStickDown()
+{
+	if ((float)(joyState.Gamepad.sThumbLY) < -20000 && (float)(preJoyState.Gamepad.sThumbLY) >= -20000) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+
 bool Input::GetJoystickState() {
 
 	DWORD dwResult;

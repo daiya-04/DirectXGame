@@ -144,7 +144,7 @@ void SelectScene::SelectStage(){
 		return;
 
 	
-	if (input_->TriggerKey(DIK_RIGHT) || input_->TriggerButton(XINPUT_GAMEPAD_DPAD_RIGHT)) {
+	if (input_->TriggerKey(DIK_RIGHT) || input_->TriggerButton(XINPUT_GAMEPAD_DPAD_RIGHT)||input_->GetTiltJoyStickRight()) {
 		
 		if (selectNum_ < maxStage_ - 1) {
 			if (isStageClear_[selectNum_]) {
@@ -158,7 +158,7 @@ void SelectScene::SelectStage(){
 			}
 		}
 	}
-	else if (input_->TriggerKey(DIK_LEFT) || input_->TriggerButton(XINPUT_GAMEPAD_DPAD_LEFT)) {
+	else if (input_->TriggerKey(DIK_LEFT) || input_->TriggerButton(XINPUT_GAMEPAD_DPAD_LEFT) || input_->GetTiltJoyStickLeft()) {
 		
 		if (selectNum_ > 0) {
 			startPos_ = camera_.translation_.x;
@@ -232,7 +232,9 @@ void SelectScene::DrawModel() {
 	for (int i = 0; i < maxStage_; i++){
 		obj_[i]->Draw(objWT_[i], camera_);
 		rockObj_[i]->Draw(rockWT_[i], camera_);
-		stageSelectObj_[i]->Draw(stageSelectWT_[i], camera_);
+		if (isStageClear_[i]) {
+			stageSelectObj_[i]->Draw(stageSelectWT_[i], camera_);
+		}
 	}
 }
 
@@ -293,6 +295,11 @@ void SelectScene::DebugGUI() {
 			ImGui::Checkbox("stage2", &isStageClear_[1]);
 			ImGui::Checkbox("stage3", &isStageClear_[2]);
 			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("nextScene")){
+			if (ImGui::Button("Go NextScene")){
+				SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Title);
+			}
 		}
 		ImGui::EndMenuBar();
 	}
