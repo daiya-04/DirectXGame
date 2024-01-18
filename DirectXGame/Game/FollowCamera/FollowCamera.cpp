@@ -5,7 +5,12 @@ void FollowCamera::Init() {
 
 	input = Input::GetInstance();
 
-	workInter.interParameter_ = 1.0f;
+	workInter.interParameter_ = 0.2f;
+
+	const float kRadian = 0.02f;
+
+	viewProjection_.rotation_.x = 10 * kRadian;
+	viewProjection_.UpdateMatrix();
 }
 
 void FollowCamera::Update() {
@@ -23,31 +28,6 @@ void FollowCamera::Update() {
 		//オフセット分と追従座標の補間分ずらす
 		viewProjection_.translation_ = workInter.interTarget_ + offset;
 	}
-	viewProjection_.UpdateMatrix();
-
-	//スティックでのカメラ回転
-	if (Input::GetInstance()->GetCameraRotate().x == 0 && Input::GetInstance()->GetCameraRotate().y == 0) {
-		return;
-	}
-
-		const float kRadian = 0.02f;
-
-		rotate_.y -= Input::GetInstance()->GetCameraRotate().x * kRadian;
-		rotate_.x += Input::GetInstance()->GetCameraRotate().y * kRadian;
-		if (rotate_.y > 1.0f) {
-			rotate_.y = 1.0f;
-		}
-		else if (rotate_.y < -1.0f) {
-			rotate_.y = -1.0f;
-		}
-
-
-		parameter_t = 1.0f;
-
-
-
-	viewProjection_.rotation_.y = LerpShortAngle(viewProjection_.rotation_.y, rotate_.x, parameter_t);
-	viewProjection_.rotation_.x = LerpShortAngle(viewProjection_.rotation_.x, rotate_.y, parameter_t);
 	viewProjection_.UpdateMatrix();
 }
 
@@ -74,7 +54,7 @@ void FollowCamera::Reset()
 
 Vector3 FollowCamera::OffsetCalc()
 {
-	Vector3 offset = { 0.0f, 2.0f, -15.0f };
+	Vector3 offset = { 0.0f, 5.0f, -25.0f };
 	//回転行列の合成
 	Matrix4x4 rotateMatrix = MakeRotateXMatrix(viewProjection_.rotation_.x) * MakeRotateYMatrix(viewProjection_.rotation_.y) * MakeRotateZMatrix(viewProjection_.rotation_.z);
 
