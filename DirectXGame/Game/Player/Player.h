@@ -46,6 +46,12 @@ public:
 	const WorldTransform& GetWorldTransform() {
 		return world_;
 	}
+	GrapBehavior GetGrapBehavior()const {
+		return GrapBehavior_;
+	}
+	Behavior GetBehavior()const {
+		return behavior_;
+	}
 #pragma endregion getter
 #pragma region
 	void setsangoDirection(Vector3 sangoDirection) {

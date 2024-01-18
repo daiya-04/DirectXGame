@@ -24,6 +24,7 @@ void GameScene::Init(){
 	player_->Init(playerModels);
 	player_->SetViewProjection(&camera_.GetViewProjection());
 	camera_.SetTarget(&player_->GetWorldTransform());
+	camera_.SetPlayer(player_.get());
 #pragma endregion Player
 #pragma region
 	uint32_t floorModelHundle = ModelManager::Load("floor");

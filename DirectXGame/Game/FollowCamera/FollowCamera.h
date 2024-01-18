@@ -14,15 +14,20 @@ struct WorkInterpolation {
 	//カメラ補間の媒介変数
 	float interParameter_;
 };
+class Player;
 
 class FollowCamera {
 public:
 	void Init();
 	void Update();
-
+#pragma region
 	void SetTarget(const WorldTransform* target);
+	void SetFocusTarget() {};
+	void SetPlayer(Player* player) { player_ = player; }
+#pragma endregion Setter
+#pragma region
 	const Camera& GetViewProjection() { return viewProjection_; }
-
+#pragma endregion Getter
 private:
 	//ビュープロジェクション
 	Camera viewProjection_;
@@ -31,7 +36,7 @@ private:
 	// ゲームパッド
 	Input* input = nullptr;
 
-	Vector2 rotate_ = { 0.0f,0.0f };
+	float rotate_ = { 0.0f };
 
 	float parameter_t = 0.0f;
 	float GrapParameter_t = 0.0f;
@@ -44,4 +49,6 @@ private:
 
 	//球面線形補間
 	float LerpShortAngle(float a, float b, float t);
+	bool IsGrap = false;
+	Player* player_;
 };

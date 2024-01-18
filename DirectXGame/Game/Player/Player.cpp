@@ -7,6 +7,8 @@ void Player::Init(std::vector<Object3d*> models)
 	world_.Init();
 	world_Arrow_.Init();
 
+	behavior_ = Behavior::kRoot;
+
 	playerQua_ = IdentityQuaternion();
 	moveQua_ = IdentityQuaternion();
 	ArrowQua_ = IdentityQuaternion();
