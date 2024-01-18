@@ -12,7 +12,7 @@ void Player::Init(std::vector<Object3d*> models)
 	ArrowQua_ = IdentityQuaternion();
 	rotateQua = IdentityQuaternion();
 	directionQua_ = IdentityQuaternion();
-
+	moveParam = 0.3f;
 	Character::SetColliderSize({1.0f,1.0f,1.0f});
 }
 
@@ -94,7 +94,10 @@ void Player::QuaternionUpdate()
 {
 	moveQua_ = moveQua_.Normalize();
 	playerQua_ = playerQua_.Normalize();
-	moveQua_ = Slerp(playerQua_, moveQua_, 0.3f);
+	if (behavior_ == Behavior::kRoot) {
+		moveQua_ = Slerp(playerQua_, moveQua_, moveParam);
+	}
+
 	moveQua_ = moveQua_.Normalize() * rotateQua.Normalize();
 }
 void Player::WorldUpdate()
@@ -112,6 +115,7 @@ void Player::Gravity()
 #pragma region
 void Player::BehaviorRootInit()
 {
+	moveParam = 0.3f;
 	ArrowQua_ = IdentityQuaternion();
 	rotateQua = IdentityQuaternion();
 	directionQua_ = IdentityQuaternion();
@@ -142,6 +146,7 @@ void Player::BehaviorJumpUpdate()
 #pragma region
 void Player::GrapInit()
 {
+	moveParam = 1.0f;
 	PreSangoId_ = sangoId_;
 	world_.translation_ = grapPoint;
 	world_.UpdateMatrix();
@@ -240,9 +245,21 @@ void Player::GrapJumpLeftInitalize()
 	beginVecQua = beginVecQua.Normalize();
 	endVecQua = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
 	endVecQua = endVecQua.Normalize();
+	sangoDirection_.x = -1.0f;
+	cross = Cross(Vector3{ -1.0f,0.0f,0.0f }, Vector3{ 0.0f,0.0f,1.0f });
+	cross = cross.Normalize();
+	directionQua_ = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
+	moveQua_ = directionQua_.Normalize();
+
 }
 void Player::GrapJumpLeftUpdate()
 {
+	float Norm = moveQua_.Norm();
+#ifdef _DEBUG
+	ImGui::Begin("Player");
+	ImGui::InputFloat("Norm", &Norm);
+	ImGui::End();
+#endif
 	grapJumpVec = { 1.0f,0.0f,0.0f };
 	//////回転行列を作る
 	lerpQua = lerpQua.Normalize();
@@ -250,7 +267,7 @@ void Player::GrapJumpLeftUpdate()
 	//移動ベクトルをカメラの角度だけ回転
 	grapJumpVec = TransformNormal(grapJumpVec, rotateMatrix);
 	grapJumpVec = grapJumpVec.Normalize();
-	Vector3 cross = Cross(Vector3{ -1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
+	Vector3 cross = Cross(Vector3{ sangoDirection_ }, Vector3{ 0.0f,1.0f,0.0f });
 	cross = cross.Normalize();
 	
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
@@ -308,7 +325,8 @@ void Player::GrapJumpRightInitalize()
 	endVecQua = endVecQua.Normalize();
 	cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,0.0f,1.0f });
 	cross = cross.Normalize();
-
+	directionQua_ = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
+	moveQua_ = directionQua_.Normalize();
 }
 void Player::GrapJumpRightUpdate()
 {
@@ -319,7 +337,7 @@ void Player::GrapJumpRightUpdate()
 	//移動ベクトルをカメラの角度だけ回転
 	grapJumpVec = TransformNormal(grapJumpVec, rotateMatrix);
 	grapJumpVec = grapJumpVec.Normalize();
-	Vector3 cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
+	Vector3 cross = Cross(Vector3{ sangoDirection_ }, Vector3{ 0.0f,1.0f,0.0f });
 	cross = cross.Normalize();
 
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {

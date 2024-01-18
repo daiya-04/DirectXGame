@@ -56,6 +56,9 @@ public:
 	inline Quaternion Conjugation() const{
 		return { -x,-y,-z,w };
 	}
+	inline float Norm() const{
+		return sqrt(x * x + y * y + z * z + w * w);;
+	}
 
 	inline float Length() const {
 		return sqrtf(powf(x, 2.0f) + powf(y, 2.0f) + powf(z, 2.0f) + powf(w, 2.0f));

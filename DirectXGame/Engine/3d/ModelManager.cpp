@@ -210,6 +210,7 @@ void ModelManager::CreateBuffer() {
 	//書き込むためのアドレスを取得
 	models_[useModelNum_].materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	materialData->color_ = Vector4(1.0f,1.0f,1.0f,1.0f);
+	//TODO :　ライト
 	materialData->enableLightnig_ = true;
 	materialData->uvtransform_ = MakeIdentity44();
 	materialData->shininess_ = 10.0f;
