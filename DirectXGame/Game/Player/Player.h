@@ -113,9 +113,13 @@ private:
 	float kParam = 0.005f;
 	Vector3 moveVector;
 	Vector3 sangoDirection_ = { 0.0f,0.0f,0.0f };
+
+	float jumpParam = 1.0f;
+	//当たり判定の履歴
 	int sangoId_ = 0;
 	int PreSangoId_ = -1;
-	float jumpParam = 1.0f;
+	const float kDeletePreIdTime_ = 20.0f;
+	float DeletePreIdTime_ = 0.0f;
 #pragma endregion GrapBehavior
 #pragma region
 	WorldTransform world_Arrow_;

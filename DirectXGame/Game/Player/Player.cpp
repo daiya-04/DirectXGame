@@ -161,6 +161,7 @@ void Player::GrapInit()
 	angle = 1.0f;
 	GrapBehaviorRequest_ = GrapBehavior::kLeft;
 	canGrap = false;
+	DeletePreIdTime_ = 0.0f;
 }
 void Player::GrapUpdate()
 {
@@ -207,10 +208,20 @@ void Player::GrapUpdate()
 		break;
 	}
 
+	if (grapJump) {
+		if (DeletePreIdTime_ < kDeletePreIdTime_) {
+		DeletePreIdTime_+= 1.0f;
+		}
+		if (DeletePreIdTime_ >= kDeletePreIdTime_) {
+		PreSangoId_ = -1;
+		}
+	}
+	
+
 	if (IsOnGraund) {
 		behaviorRequest_ = Behavior::kRoot;
 	}
-
+	canGrap = false;
 }
 void Player::GrapJumpLeftInitalize()
 {
