@@ -55,7 +55,6 @@ void Player::Update()
 	Character::ColliderUpdate();
 
 	IsOnGraund = false;
-	canGrap = false;
 }
 void Player::Draw(const Camera& camera)
 {
@@ -73,14 +72,24 @@ void Player::ImGui()
 #ifdef _DEBUG
 	ImGui::Begin("Player");
 	ImGui::InputFloat3("translate",&world_.translation_.x);
-	ImGui::End();
+
 	if (ImGui::Button("Reset")) {
+		world_.translation_ = { 0.0f,0.0f,0.0f };
+		world_.UpdateMatrix();
+		behaviorRequest_ = Behavior::kRoot;
+	}
+	ImGui::InputInt("sangoId", &sangoId_);
+	ImGui::InputInt("sangoId", &PreSangoId_);
+	ImGui::End();
+	if (world_.translation_.y < -20.0f) {
 		world_.translation_ = { 0.0f,0.0f,0.0f };
 		world_.UpdateMatrix();
 		behaviorRequest_ = Behavior::kRoot;
 	}
 #endif
 }
+
+
 void Player::QuaternionUpdate()
 {
 	moveQua_ = moveQua_.Normalize();
@@ -121,6 +130,7 @@ void Player::BehaviorRootUpdate()
 	}
 	Move();
 	Gravity();
+	canGrap = false;
 }
 void Player::BehaviorJumpInit()
 {
@@ -132,6 +142,7 @@ void Player::BehaviorJumpUpdate()
 #pragma region
 void Player::GrapInit()
 {
+	PreSangoId_ = sangoId_;
 	world_.translation_ = grapPoint;
 	world_.UpdateMatrix();
 	world_Arrow_.translation_ = grapPoint;
@@ -147,7 +158,6 @@ void Player::GrapInit()
 	angleParam = 0.0f;
 	moveVector = { 0.0f,0.0f,0.0f };
 	grapJump = false;
-	grapJumpAnime = 0;
 	angle = 1.0f;
 	GrapBehaviorRequest_ = GrapBehavior::kLeft;
 	canGrap = false;
@@ -163,9 +173,9 @@ void Player::GrapUpdate()
 		}
 	}
 
-	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
-		//前のフレームでは押していない
-			if (canGrap == true && grapJump == true) {
+	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
+		//前のフレームでで押していてもOK
+			if (canGrap == true && grapJump == true && PreSangoId_ != sangoId_) {
 				behaviorRequest_ = Behavior::kGrap;
 			}
 	}
@@ -211,7 +221,6 @@ void Player::GrapJumpLeftInitalize()
 	endVecQua = IdentityQuaternion();
 	lerpQua = IdentityQuaternion();
 	angleParam = 0.0f;
-	grapJumpAnime = 0;
 	angle = 1.0f;
 	Vector3 cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
 	cross = cross.Normalize();
@@ -232,12 +241,7 @@ void Player::GrapJumpLeftUpdate()
 	grapJumpVec = grapJumpVec.Normalize();
 	Vector3 cross = Cross(Vector3{ -1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
 	cross = cross.Normalize();
-	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
-		//前のフレームでは押していない
-			if (grapJump == false) {
-				behaviorRequest_ = Behavior::kRoot;
-			}
-	}
+	
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
 		if (angle > 0.9f) {
 			angle -= 0.001f;
@@ -259,14 +263,19 @@ void Player::GrapJumpLeftUpdate()
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
 			grapJump = true;
-			moveVector = grapJumpVec;
+			moveVector = grapJumpVec * jumpParam;
 	}
 	if (grapJump == true) {
-		moveVector.y -= 0.03f;
+		if (moveVector.y > -0.98f) {
+			moveVector.y -= 0.03f;
+		}
+		else if (moveVector.y < -0.98f) {
+			moveVector.y = -0.98f;
+		}
+
 		world_.translation_.x += moveVector.x;
 		world_.translation_.y += moveVector.y;
 		world_.translation_.z += moveVector.z;
-		grapJumpAnime++;
 	}
 }
 void Player::GrapJumpRightInitalize()
@@ -278,7 +287,6 @@ void Player::GrapJumpRightInitalize()
 	endVecQua = IdentityQuaternion();
 	lerpQua = IdentityQuaternion();
 	angleParam = 0.0f;
-	grapJumpAnime = 0;
 	angle = 1.0f;
 	Vector3 cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
 	cross = cross.Normalize();
@@ -302,12 +310,7 @@ void Player::GrapJumpRightUpdate()
 	grapJumpVec = grapJumpVec.Normalize();
 	Vector3 cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
 	cross = cross.Normalize();
-	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
-		//前のフレームでは押していない
-		if (grapJump == false) {
-			behaviorRequest_ = Behavior::kRoot;
-		}
-	}
+
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
 		if (angle > 0.9f) {
 			angle -= 0.001f;
@@ -329,14 +332,13 @@ void Player::GrapJumpRightUpdate()
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
 		grapJump = true;
-		moveVector = grapJumpVec;
+		moveVector = grapJumpVec * jumpParam;
 	}
 	if (grapJump == true) {
 		moveVector.y -= 0.03f;
 		world_.translation_.x += moveVector.x;
 		world_.translation_.y += moveVector.y;
 		world_.translation_.z += moveVector.z;
-		grapJumpAnime++;
 	}
 }
 #pragma endregion Grap

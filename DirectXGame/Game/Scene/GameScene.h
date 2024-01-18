@@ -52,7 +52,9 @@ private:
 	std::unique_ptr<Floor> floor_;
 
 	std::unique_ptr<Object3d> sangoModel_;
+
 	std::unique_ptr<Sango> sango_;
+	std::unique_ptr<Sango> sango2_;
 
 };
 

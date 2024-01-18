@@ -38,6 +38,7 @@ public:
 	void HitSango(Vector3 Pos) {
 		grapPoint = Pos;
 		canGrap = true;
+
 	}
 	void ImGui();
 
@@ -50,6 +51,7 @@ public:
 	void setsangoDirection(Vector3 sangoDirection) {
 		sangoDirection_ = sangoDirection;
 	}
+	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
 #pragma endregion setter
 
 private:
@@ -102,7 +104,6 @@ private:
 	Quaternion rotateQua;
 	Quaternion directionQua_;
 	bool grapJump = false;
-	uint32_t grapJumpAnime = 0;
 	Vector3 grapJumpVec;
 	Quaternion endVecQua;
 	Quaternion beginVecQua;
@@ -112,6 +113,9 @@ private:
 	float kParam = 0.005f;
 	Vector3 moveVector;
 	Vector3 sangoDirection_ = { 0.0f,0.0f,0.0f };
+	int sangoId_ = 0;
+	int PreSangoId_ = -1;
+	float jumpParam = 1.0f;
 #pragma endregion GrapBehavior
 #pragma region
 	WorldTransform world_Arrow_;

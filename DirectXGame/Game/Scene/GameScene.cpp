@@ -46,6 +46,10 @@ void GameScene::Init(){
 	sango_->Init(sangoModels);
 	sango_->SetPos({0.0f,2.0f,0.0f});
 	sango_->SetDirection({0.0f,0.0f,1.0f});
+	sango2_ = std::make_unique<Sango>();
+	sango2_->Init(sangoModels);
+	sango2_->SetPos({0.0f,10.0f,0.0f});
+	sango2_->SetDirection({0.0f,0.0f,1.0f});
 #pragma endregion Sango
 }
 
@@ -59,6 +63,7 @@ void GameScene::Update(){
 	floor_->Update();
 
 	sango_->Update();
+	sango2_->Update();
 
 
 #pragma region 
@@ -76,6 +81,28 @@ void GameScene::Update(){
 #endif
 		player_->setsangoDirection(sango_->GetDirection());
 		player_->HitSango(sango_->GetPosition());
+		if (sango_->GetIsAlreadyHit() == false) {
+			sango_->HitPlayer();
+			player_->SetSangoId(sango_->GetSangoId());
+		}
+	}
+	else {
+		sango_->NotHitPlayer();
+	}
+	if (IsCollision(player_->GetAABB(), sango2_->GetAABB())) {
+#ifdef _DEBUG
+		ImGui::Begin("Sango");
+		ImGui::End();
+#endif
+		player_->setsangoDirection(sango2_->GetDirection());
+		player_->HitSango(sango2_->GetPosition());
+		if (sango2_->GetIsAlreadyHit() == false) {
+			sango2_->HitPlayer();
+			player_->SetSangoId(sango2_->GetSangoId());
+		}
+	}
+	else {
+		sango2_->NotHitPlayer();
 	}
 #pragma endregion 当たり判定
 }
@@ -91,6 +118,7 @@ void GameScene::DrawModel(){
 	floor_->Draw(camera_.GetViewProjection());
 
 	sango_->Draw(camera_.GetViewProjection());
+	sango2_->Draw(camera_.GetViewProjection());
 }
 
 void GameScene::DrawParticleModel(){

@@ -2,11 +2,12 @@
 
 void Sango::Init(std::vector<Object3d*> models)
 {
+	Id = sangoId++;
 	models_ = models;
 
 	world_.Init();
 
-	Character::SetColliderSize({ 5.0f,5.0f,5.0f });
+	Character::SetColliderSize({ 3.0f,3.0f,5.0f });
 }
 
 void Sango::Update()
