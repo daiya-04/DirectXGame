@@ -61,7 +61,9 @@ void FollowCamera::Update() {
 	}
 	else {
 		rotate_ = 0.0f;
-		parameter_t = 1.0f;
+
+		parameter_t = 0.1f;
+
 		const float kRadian = 0.02f;
 
 		viewProjection_.rotation_.x = 10 * kRadian;

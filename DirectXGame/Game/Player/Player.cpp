@@ -91,7 +91,6 @@ void Player::ImGui()
 #endif
 }
 
-
 void Player::QuaternionUpdate()
 {
 	moveQua_ = moveQua_.Normalize();
@@ -99,8 +98,6 @@ void Player::QuaternionUpdate()
 	if (behavior_ == Behavior::kRoot) {
 		moveQua_ = Slerp(playerQua_, moveQua_, moveParam);
 	}
-
-	moveQua_ = moveQua_.Normalize() * rotateQua.Normalize();
 }
 void Player::WorldUpdate()
 {
@@ -169,6 +166,8 @@ void Player::GrapInit()
 	GrapBehaviorRequest_ = GrapBehavior::kLeft;
 	canGrap = false;
 	DeletePreIdTime_ = 0.0f;
+
+	secondJump = false;
 }
 void Player::GrapUpdate()
 {
@@ -216,14 +215,27 @@ void Player::GrapUpdate()
 	}
 
 	if (grapJump) {
+		//当たり判定履歴を削除するまでの時間
 		if (DeletePreIdTime_ < kDeletePreIdTime_) {
 		DeletePreIdTime_+= 1.0f;
 		}
 		if (DeletePreIdTime_ >= kDeletePreIdTime_) {
 		PreSangoId_ = -1;
 		}
+
+		if (secondJump == false && Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
+			moveVector += grapJumpVec * jumpParam;
+			secondJump = true;
+		}
+		
 	}
-	
+	if (secondJump == false) {
+	moveQua_ = moveQua_.Normalize() * rotateQua.Normalize();
+	}
+	if (secondJump) {
+		Move();
+	}
+
 
 	if (IsOnGraund) {
 		behaviorRequest_ = Behavior::kRoot;

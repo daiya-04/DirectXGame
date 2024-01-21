@@ -73,10 +73,6 @@ private:
 #pragma endregion 重力
 
 #pragma region
-	//Input* input = nullptr;
-#pragma endregion 入力
-
-#pragma region
 	//ふるまい
 	Behavior behavior_ = Behavior::kRoot;
 	//次のふるまいリクエスト
@@ -126,6 +122,7 @@ private:
 	const float kDeletePreIdTime_ = 20.0f;
 	float DeletePreIdTime_ = 0.0f;
 	Quaternion PlayerDirectionQua_;
+	bool secondJump = false;
 #pragma endregion GrapBehavior
 #pragma region
 	WorldTransform world_Arrow_;
