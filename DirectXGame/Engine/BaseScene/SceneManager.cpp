@@ -24,10 +24,10 @@ void SceneManager::Init() {
 
 	uint32_t circle = TextureManager::Load("circle.png");
 	particle_ = std::make_unique<Particle>();
-	particle_.reset(Particle::Create(circle, 600));
+	particle_.reset(Particle::Create(circle, 800));
 
 	emitter_.count_ = 15;
-	emitter_.frequency_ = 0.07f;
+	emitter_.frequency_ = 0.05f;
 	emitter_.translate_ = { 0.0f,-8.0f,0.0f };
 
 
@@ -74,7 +74,7 @@ void SceneManager::Update(){
 	}
 	
 
-	if (nextScene_ && nextSceneName_ == chackSelectName_ &&particleNum_ > 599) {
+	if (nextScene_ && nextSceneName_ == chackSelectName_ &&particleNum_ > 799) {
 		scene_ = std::move(nextScene_);
 		nowSceneName_ = std::move(nextSceneName_);
 		nextSceneName_ = AbstractSceneFactory::SceneName::NONE;

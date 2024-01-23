@@ -221,7 +221,7 @@ void Particle::postDraw() {}
 
 Particle::ParticleData Particle::MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate){
 
-	std::uniform_real_distribution<float> distPosX(-7.0f, 7.0f);
+	std::uniform_real_distribution<float> distPosX(-9.0f, 9.0f);
 	std::uniform_real_distribution<float> distPosY(-2.0f, 2.0f);
 	std::uniform_real_distribution<float> distVelocity(-1.0f, 1.0f);
 	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
