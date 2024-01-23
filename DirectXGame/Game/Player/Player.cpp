@@ -227,7 +227,15 @@ void Player::GrapUpdate()
 			moveVector += secondJumpVec/2;
 			secondJump = true;
 		}
-		
+		if (angle < 0.9f) {
+			angle += 0.01f;
+		}
+		else {
+			angle = 0.9f;
+		}
+		Vector3 cross = Cross(Vector3{ 0.0f,0.0f,1.0f }, Vector3{ 0.0f,1.0f,0.0f });
+		cross = cross.Normalize();
+		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 	}
 	if (secondJump == false) {
 	moveQua_ = moveQua_.Normalize() * rotateQua.Normalize();
@@ -284,11 +292,11 @@ void Player::GrapJumpLeftUpdate()
 	cross = cross.Normalize();
 	
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
-		if (angle > 0.9f) {
+		if (angle > kAngleMax) {
 			angle -= 0.001f;
 		}
 		else {
-			angle = 0.9f;
+			angle = kAngleMax;
 		}
 		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 		rotateQua = rotateQua.Normalize();
@@ -355,11 +363,11 @@ void Player::GrapJumpRightUpdate()
 	cross = cross.Normalize();
 
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
-		if (angle > 0.9f) {
+		if (angle > kAngleMax) {
 			angle -= 0.001f;
 		}
 		else {
-			angle = 0.9f;
+			angle = kAngleMax;
 		}
 		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 		rotateQua = rotateQua.Normalize();
