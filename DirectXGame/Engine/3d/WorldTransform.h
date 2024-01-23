@@ -26,6 +26,8 @@ public:
 
 	void Init();
 	void UpdateMatrix();
+	void UpdateMatrixQua(const Matrix4x4 QuaMatrix);
+	void TransferMatrix() { cMap_->matWorld = matWorld_; };
 
 	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {
 		return cBuffer_->GetGPUVirtualAddress();

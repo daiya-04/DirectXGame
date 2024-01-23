@@ -11,59 +11,115 @@ void GameScene::Init(){
 
 	camera_.Init();
 
-	uint32_t circle = TextureManager::Load("circle.png");
-
-	Model_ = ModelManager::Load("plane");
-	Model2_ = ModelManager::Load("teapot");
-
-	obj_.reset(Object3d::Create(Model_));
-	objWT_.Init();
-
-	obj2_.reset(Object3d::Create(Model2_));
-	objWT2_.Init();
-
-	particle_ = std::make_unique<Particle>();
-	particle_.reset(Particle::Create(circle, 100));
-
-	emitter_.count_ = 5;
-	emitter_.frequency_ = 0.5f;
-
-	
+#pragma region
+	uint32_t playerModelHundle = ModelManager::Load("SeaHorse");
+	uint32_t arrowModelHundle = ModelManager::Load("Line");
+	playerModel_.reset(Object3d::Create(playerModelHundle));
+	arrowModel_.reset(Object3d::Create(arrowModelHundle));
+	std::vector<Object3d*> playerModels = {
+		playerModel_.get(),
+		arrowModel_.get(),
+	};
+	player_ = std::make_unique<Player>();
+	player_->Init(playerModels);
+	player_->SetViewProjection(&camera_.GetViewProjection());
+	camera_.SetTarget(&player_->GetWorldTransform());
+	camera_.SetPlayer(player_.get());
+#pragma endregion Player
+#pragma region
+	uint32_t floorModelHundle = ModelManager::Load("floor");
+	floorModel_.reset(Object3d::Create(floorModelHundle));
+	std::vector<Object3d*> planeModels = {
+		floorModel_.get(),
+	};
+	floor_ = std::make_unique<Floor>();
+	floor_->Init(planeModels);
+	floor_->SetPos({0.0f,0.0f,0.0f});
+	floor_->SetScale({10.0f,1.0f,10.0f});
+#pragma endregion Plane
+#pragma region
+	uint32_t sangoModelHundle = ModelManager::Load("sango");
+	sangoModel_.reset(Object3d::Create(sangoModelHundle));
+	std::vector<Object3d*> sangoModels = {
+		sangoModel_.get(),
+	};
+	sango_ = std::make_unique<Sango>();
+	sango_->Init(sangoModels);
+	sango_->SetPos({0.0f,2.0f,0.0f});
+	sango_->SetDirection({0.0f,0.0f,1.0f});
+	sango2_ = std::make_unique<Sango>();
+	sango2_->Init(sangoModels);
+	sango2_->SetPos({10.0f,10.0f,0.0f});
+	sango2_->SetDirection({0.0f,0.0f,1.0f});
+#pragma endregion Sango
 }
 
 void GameScene::Update(){
 	DebugGUI();
 
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
+	camera_.Update();
 
-	emitter_.frequencyTime_ += kDeltaTime;
-	if (emitter_.frequency_ <= emitter_.frequencyTime_) {
-		particleData_.splice(particleData_.end(), Particle::Emit(emitter_, randomEngine));
-		emitter_.frequencyTime_ -= emitter_.frequency_;
+	player_->Update();
+
+	floor_->Update();
+
+	sango_->Update();
+	sango2_->Update();
+
+
+#pragma region 
+	if (IsCollision(player_->GetAABB(), floor_->GetAABB())) {
+#ifdef _DEBUG
+		ImGui::Begin("Floor");
+		ImGui::End();
+#endif
+		player_->HitFloor(floor_->GetPosition().y);
 	}
-	for (std::list<Particle::ParticleData>::iterator itParticle = particleData_.begin(); itParticle != particleData_.end(); itParticle++) {
-		(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_ * kDeltaTime;
-		(*itParticle).currentTime_ += kDeltaTime;
+	if (IsCollision(player_->GetAABB(), sango_->GetAABB())) {
+#ifdef _DEBUG
+		ImGui::Begin("Sango");
+		ImGui::End();
+#endif
+		player_->setsangoDirection(sango_->GetDirection());
+		player_->HitSango(sango_->GetPosition());
+		if (sango_->GetIsAlreadyHit() == false) {
+			sango_->HitPlayer();
+			player_->SetSangoId(sango_->GetSangoId());
+		}
 	}
-
-
-	camera_.UpdateViewMatrix();
-	objWT_.UpdateMatrix();
-	objWT2_.UpdateMatrix();
-
+	else {
+		sango_->NotHitPlayer();
+	}
+	if (IsCollision(player_->GetAABB(), sango2_->GetAABB())) {
+#ifdef _DEBUG
+		ImGui::Begin("Sango");
+		ImGui::End();
+#endif
+		player_->setsangoDirection(sango2_->GetDirection());
+		player_->HitSango(sango2_->GetPosition());
+		if (sango2_->GetIsAlreadyHit() == false) {
+			sango2_->HitPlayer();
+			player_->SetSangoId(sango2_->GetSangoId());
+		}
+	}
+	else {
+		sango2_->NotHitPlayer();
+	}
+#pragma endregion 当たり判定
 }
 
 void GameScene::DrawBackGround(){
 
-	
-
 }
 
 void GameScene::DrawModel(){
-	obj_->Draw(objWT_, camera_);
-	obj2_->Draw(objWT2_, camera_);
 
+	player_->Draw(camera_.GetViewProjection());
+
+	floor_->Draw(camera_.GetViewProjection());
+
+	sango_->Draw(camera_.GetViewProjection());
+	sango2_->Draw(camera_.GetViewProjection());
 }
 
 void GameScene::DrawParticleModel(){
@@ -74,8 +130,6 @@ void GameScene::DrawParticleModel(){
 
 void GameScene::DrawParticle(){
 
-	particle_->Draw(particleData_, camera_);
-
 }
 
 void GameScene::DrawUI(){
@@ -85,16 +139,8 @@ void GameScene::DrawUI(){
 }
 
 void GameScene::DebugGUI(){
-#ifdef _DEBUG
 
-	ImGui::Begin("camera");
-
-	ImGui::DragFloat3("pos", &camera_.translation_.x, 0.01f);
-	ImGui::DragFloat3("rotate", &camera_.rotation_.x, 0.01f);
-
-	ImGui::End();
-
-#endif // _DEBUG
+	player_->ImGui();
 }
 
 

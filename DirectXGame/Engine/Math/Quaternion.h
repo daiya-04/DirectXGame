@@ -56,12 +56,18 @@ public:
 	inline Quaternion Conjugation() const{
 		return { -x,-y,-z,w };
 	}
+	inline float Norm() const{
+		return sqrt(x * x + y * y + z * z + w * w);;
+	}
 
 	inline float Length() const {
 		return sqrtf(powf(x, 2.0f) + powf(y, 2.0f) + powf(z, 2.0f) + powf(w, 2.0f));
 	}
 
 	inline Quaternion Normalize() const {
+		if (Length() == 0.0f) {
+			return *this;
+		}
 		return *this / Length();
 	}
 
@@ -117,16 +123,16 @@ inline float Dot(const Quaternion& q1, const Quaternion& q2) {
 
 inline Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t) {
 
-	Quaternion q0_ = q0;
-	Quaternion q1_ = q1;
+	Quaternion q0_ = q0.Normalize();
+	Quaternion q1_ = q1.Normalize();
 
 	float dot = Dot(q0_, q1_);
-	if (dot < 0) {
+	if (dot < 0.0f) {
 		q0_ = -q0_;
 		dot = -dot;
 	}
 
-	if (dot >= 1.0f - 0.0005f) {
+	if (dot >= 1.0f - std::numeric_limits<float>::epsilon()) {
 		return (1.0f - t) * q0_ + t * q1_;
 	}
 
@@ -135,5 +141,5 @@ inline Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t) {
 	float scale0 = sinf((1 - t) * theta) / sinf(theta);
 	float scale1 = sinf(t * theta) / sinf(theta);
 
-	return scale0 * q0 + scale1 * q1;
+	return scale0 * q0_ + scale1 * q1_;
 }
