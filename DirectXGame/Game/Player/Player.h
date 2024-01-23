@@ -19,7 +19,7 @@ enum audioHundle {
 	GrapJump,
 };
 
-class Player:public Character
+class Player :public Character
 {
 public:
 	void Init(std::vector<Object3d*> models)override;
@@ -38,6 +38,8 @@ public:
 	void HitSango(Vector3 Pos) {
 		grapPoint = Pos;
 		canGrap = true;
+	}
+	void hitBox() {
 
 	}
 	void ImGui();
@@ -54,10 +56,7 @@ public:
 	}
 #pragma endregion getter
 #pragma region
-	void setsangoDirection(Vector3 sangoDirection) {
-		sangoDirection_ = sangoDirection;
-	}
-	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
+	void SetSangoId(int sangoId) { sangoId_ = sangoId; }
 #pragma endregion setter
 
 private:
@@ -111,6 +110,8 @@ private:
 	Quaternion beginVecQua;
 	Quaternion lerpQua;
 	float angle = 1.0f;
+	const float kAngleMax = 0.6f;
+	int JumpFlame;
 	float angleParam = 0.0f;
 	float kParam = 0.005f;
 	Vector3 moveVector;
@@ -123,6 +124,7 @@ private:
 	float DeletePreIdTime_ = 0.0f;
 	Quaternion PlayerDirectionQua_;
 	bool secondJump = false;
+	Vector3 secondJumpVec;
 #pragma endregion GrapBehavior
 #pragma region
 	WorldTransform world_Arrow_;
