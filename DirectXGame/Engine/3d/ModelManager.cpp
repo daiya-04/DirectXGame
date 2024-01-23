@@ -20,14 +20,12 @@ void Model::CreateBuffer() {
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);  //1頂点当たりのサイズ
 
 	//頂点リソースにデータを書き込む
-	VertexData* vertexData = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));  //書き込むためのアドレスを取得
 	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * vertices_.size());  //頂点データをリソースにコピー
 
 	//マテリアル用のリソースを作る。
 	materialResource_ = CreateBufferResource(device_, sizeof(Material));
 	//マテリアルにデータを書き込む
-	Material* materialData = nullptr;
 	//書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	materialData->color_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -79,11 +77,11 @@ ModelManager* ModelManager::GetInstance() {
 	return &instance;
 }
 
-std::shared_ptr<Model> ModelManager::Load(const std::string& modelName) {
+Model* ModelManager::Load(const std::string& modelName) {
 	return ModelManager::GetInstance()->LoadInternal(modelName);
 }
 
-std::shared_ptr<Model> ModelManager::LoadInternal(const std::string& modelName) {
+Model* ModelManager::LoadInternal(const std::string& modelName) {
 
 	assert(useModelNum_ < kNumModel);
 	uint32_t handle = useModelNum_;
@@ -92,10 +90,10 @@ std::shared_ptr<Model> ModelManager::LoadInternal(const std::string& modelName) 
 
 	if (it != models_.end()) {
 		handle = static_cast<uint32_t>(std::distance(models_.begin(), it));
-		return models_[handle];
+		return models_[handle].get();
 	}
 
-	models_.push_back(std::shared_ptr<Model>(new Model()));
+	models_.push_back(std::unique_ptr<Model>(new Model()));
 
 	models_[handle]->name_ = modelName;
 
@@ -104,7 +102,7 @@ std::shared_ptr<Model> ModelManager::LoadInternal(const std::string& modelName) 
 	models_[handle]->CreateBuffer();
 
 	useModelNum_++;
-	return models_[handle];
+	return models_[handle].get();
 }
 
 void ModelManager::LoadObjFile(const std::string& modelName) {

@@ -24,13 +24,13 @@ void GameScene::Init(){
 	Model2_ = ModelManager::Load("teapot");
 	terrainModel_ = ModelManager::Load("terrain");
 
-	obj_.reset(Object3d::Create(Model2_.get()));
+	obj_.reset(Object3d::Create(Model2_));
 	objWT_.Init();
 
-	obj2_.reset(Object3d::Create(Model2_.get()));
+	obj2_.reset(Object3d::Create(Model2_));
 	objWT2_.Init();
 
-	terrain_.reset(Object3d::Create(terrainModel_.get()));
+	terrain_.reset(Object3d::Create(terrainModel_));
 	terrainWT_.Init();
 	terrainWT_.rotation_.y = -1.57f;
 	
@@ -45,6 +45,8 @@ void GameScene::Init(){
 
 void GameScene::Update(){
 	DebugGUI();
+
+	obj_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine(seedGenerator());
