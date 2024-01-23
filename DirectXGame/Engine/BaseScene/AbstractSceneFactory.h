@@ -5,9 +5,18 @@
 
 class AbstractSceneFactory {
 public:
+	enum class SceneName {
+		Title,
+		Select,
+		Game,
+		Result,
+		GameOver,
+		NONE
+	};
+public:
 
 	virtual ~AbstractSceneFactory() = default;
 
-	virtual std::unique_ptr<IScene> CreateScene(const std::string& sceneName) = 0;
+	virtual std::unique_ptr<IScene> CreateScene(AbstractSceneFactory::SceneName scaneName) = 0;
 
 };
