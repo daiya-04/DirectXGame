@@ -34,15 +34,11 @@ public:
 private:
 
 
-	Camera camera_;
-	std::unique_ptr<Particle> particle_;
-	std::list<Particle::ParticleData> particles_;
-	Particle::Emitter emitter_{};
-	const float kDeltaTime = 1.0f / 60.0f;
+	
 
-	bool isField_ = false;
+	std::unique_ptr<Sprite> background_;
 
-	Particle::AccelerationField accelerationField_;
+
 
 	Input* input_ = nullptr;
 

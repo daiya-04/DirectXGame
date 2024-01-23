@@ -296,11 +296,7 @@ void SelectScene::DebugGUI() {
 			ImGui::Checkbox("stage3", &isStageClear_[2]);
 			ImGui::EndMenu();
 		}
-		if (ImGui::BeginMenu("nextScene")){
-			if (ImGui::Button("Go NextScene")){
-				SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Title);
-			}
-		}
+		
 		ImGui::EndMenuBar();
 	}
 	
