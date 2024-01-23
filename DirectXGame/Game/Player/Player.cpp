@@ -168,6 +168,8 @@ void Player::GrapInit()
 	DeletePreIdTime_ = 0.0f;
 
 	secondJump = false;
+
+	JumpFlame = 0;
 }
 void Player::GrapUpdate()
 {
@@ -227,11 +229,9 @@ void Player::GrapUpdate()
 			moveVector += secondJumpVec/2;
 			secondJump = true;
 		}
-		if (angle < 0.9f) {
-			angle += 0.01f;
-		}
-		else {
-			angle = 0.9f;
+		JumpFlame++;
+		if (JumpFlame == 60) {
+			angle = 0.99f;
 		}
 		Vector3 cross = Cross(Vector3{ 0.0f,0.0f,1.0f }, Vector3{ 0.0f,1.0f,0.0f });
 		cross = cross.Normalize();

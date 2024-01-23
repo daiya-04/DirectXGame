@@ -111,6 +111,7 @@ private:
 	Quaternion lerpQua;
 	float angle = 1.0f;
 	const float kAngleMax = 0.6f;
+	int JumpFlame;
 	float angleParam = 0.0f;
 	float kParam = 0.005f;
 	Vector3 moveVector;
