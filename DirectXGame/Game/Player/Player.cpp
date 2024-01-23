@@ -122,9 +122,9 @@ void Player::BehaviorRootInit()
 void Player::BehaviorRootUpdate()
 {
 	//Bでジャンプ
-	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A) && IsOnGraund == true) {
+	/*if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A) && IsOnGraund == true) {
 		behaviorRequest_ = Behavior::kJump;
-	}
+	}*/
 	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
 		//前のフレームでは押していない
 			if (canGrap) {
