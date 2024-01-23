@@ -46,11 +46,9 @@ void GameScene::Init(){
 	sango_ = std::make_unique<Sango>();
 	sango_->Init(sangoModels);
 	sango_->SetPos({0.0f,2.0f,0.0f});
-	sango_->SetDirection({0.0f,0.0f,1.0f});
 	sango2_ = std::make_unique<Sango>();
 	sango2_->Init(sangoModels);
 	sango2_->SetPos({10.0f,10.0f,0.0f});
-	sango2_->SetDirection({0.0f,0.0f,1.0f});
 #pragma endregion Sango
 }
 
@@ -80,7 +78,6 @@ void GameScene::Update(){
 		ImGui::Begin("Sango");
 		ImGui::End();
 #endif
-		player_->setsangoDirection(sango_->GetDirection());
 		player_->HitSango(sango_->GetPosition());
 		if (sango_->GetIsAlreadyHit() == false) {
 			sango_->HitPlayer();
@@ -95,7 +92,6 @@ void GameScene::Update(){
 		ImGui::Begin("Sango");
 		ImGui::End();
 #endif
-		player_->setsangoDirection(sango2_->GetDirection());
 		player_->HitSango(sango2_->GetPosition());
 		if (sango2_->GetIsAlreadyHit() == false) {
 			sango2_->HitPlayer();

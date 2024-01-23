@@ -115,6 +115,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DebugText\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Input\Input.cpp" />
     <ClCompile Include="Engine\Framework\Framework.cpp" />
+    <ClCompile Include="Game\Box\Box.cpp" />
     <ClCompile Include="Game\Ease\Ease.cpp" />
     <ClCompile Include="Game\FollowCamera\FollowCamera.cpp" />
     <ClCompile Include="Game\Player\Player.cpp" />
@@ -159,6 +160,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\WinApp.h" />
     <ClInclude Include="Engine\3d\WorldTransform.h" />
     <ClInclude Include="Engine\Framework\Framework.h" />
+    <ClInclude Include="Game\Box\Box.h" />
     <ClInclude Include="Game\Character\Character.h" />
     <ClInclude Include="Game\Ease\Ease.h" />
     <ClInclude Include="Game\FollowCamera\FollowCamera.h" />

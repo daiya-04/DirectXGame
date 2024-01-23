@@ -224,7 +224,7 @@ void Player::GrapUpdate()
 		}
 
 		if (secondJump == false && Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
-			moveVector += grapJumpVec * jumpParam;
+			moveVector += secondJumpVec/2;
 			secondJump = true;
 		}
 		
@@ -259,12 +259,11 @@ void Player::GrapJumpLeftInitalize()
 	beginVecQua = beginVecQua.Normalize();
 	endVecQua = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
 	endVecQua = endVecQua.Normalize();
-	sangoDirection_.x = -1.0f;
-	cross = Cross(Vector3{ -1.0f,0.0f,0.0f }, Vector3{ 0.0f,0.0f,1.0f });
+	cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,0.0f,1.0f });
 	cross = cross.Normalize();
 	directionQua_ = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
 	moveQua_ = directionQua_.Normalize();
-
+	secondJumpVec = {-1.0f,1.0f,0.0f};
 }
 void Player::GrapJumpLeftUpdate()
 {
@@ -281,7 +280,7 @@ void Player::GrapJumpLeftUpdate()
 	//移動ベクトルをカメラの角度だけ回転
 	grapJumpVec = TransformNormal(grapJumpVec, rotateMatrix);
 	grapJumpVec = grapJumpVec.Normalize();
-	Vector3 cross = Cross(Vector3{ sangoDirection_ }, Vector3{ 0.0f,1.0f,0.0f });
+	Vector3 cross = Cross(Vector3{ 0.0f,0.0f,1.0f }, Vector3{ 0.0f,1.0f,0.0f });
 	cross = cross.Normalize();
 	
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
@@ -337,10 +336,11 @@ void Player::GrapJumpRightInitalize()
 	beginVecQua = beginVecQua.Normalize();
 	endVecQua = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
 	endVecQua = endVecQua.Normalize();
-	cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,0.0f,1.0f });
+	cross = Cross(Vector3{ -1.0f,0.0f,0.0f }, Vector3{ 0.0f,0.0f,1.0f });
 	cross = cross.Normalize();
 	directionQua_ = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
 	moveQua_ = directionQua_.Normalize();
+	secondJumpVec = { 1.0f,1.0f,0.0f };
 }
 void Player::GrapJumpRightUpdate()
 {
@@ -351,7 +351,7 @@ void Player::GrapJumpRightUpdate()
 	//移動ベクトルをカメラの角度だけ回転
 	grapJumpVec = TransformNormal(grapJumpVec, rotateMatrix);
 	grapJumpVec = grapJumpVec.Normalize();
-	Vector3 cross = Cross(Vector3{ sangoDirection_ }, Vector3{ 0.0f,1.0f,0.0f });
+	Vector3 cross = Cross(Vector3{ 0.0f,0.0f,1.0f }, Vector3{ 0.0f,1.0f,0.0f });
 	cross = cross.Normalize();
 
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {

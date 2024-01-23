@@ -38,6 +38,8 @@ public:
 	void HitSango(Vector3 Pos) {
 		grapPoint = Pos;
 		canGrap = true;
+	}
+	void hitBox() {
 
 	}
 	void ImGui();
@@ -54,9 +56,6 @@ public:
 	}
 #pragma endregion getter
 #pragma region
-	void setsangoDirection(Vector3 sangoDirection) {
-		sangoDirection_ = sangoDirection;
-	}
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
 #pragma endregion setter
 
@@ -123,6 +122,7 @@ private:
 	float DeletePreIdTime_ = 0.0f;
 	Quaternion PlayerDirectionQua_;
 	bool secondJump = false;
+	Vector3 secondJumpVec;
 #pragma endregion GrapBehavior
 #pragma region
 	WorldTransform world_Arrow_;
