@@ -109,7 +109,7 @@ void Player::WorldUpdate()
 }
 void Player::Gravity()
 {
-	world_.translation_.y -= 0.1f;
+	world_.translation_.y += kGravity;
 }
 #pragma region
 void Player::BehaviorRootInit()
@@ -315,11 +315,11 @@ void Player::GrapJumpLeftUpdate()
 			moveVector = grapJumpVec * jumpParam;
 	}
 	if (grapJump == true) {
-		if (moveVector.y > -0.98f) {
-			moveVector.y -= 0.03f;
+		if (moveVector.y > kGravity) {
+			moveVector.y -= 0.02f;
 		}
-		else if (moveVector.y < -0.98f) {
-			moveVector.y = -0.98f;
+		else if (moveVector.y < kGravity) {
+			moveVector.y = kGravity;
 		}
 
 		world_.translation_.x += moveVector.x;
