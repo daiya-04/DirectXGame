@@ -12,7 +12,7 @@ void GameScene::Init(){
 	camera_.Init();
 
 #pragma region
-	uint32_t playerModelHundle = ModelManager::Load("SeaHorse");
+	uint32_t playerModelHundle = ModelManager::Load("InGameSeaHorse");
 	uint32_t arrowModelHundle = ModelManager::Load("Line");
 	playerModel_.reset(Object3d::Create(playerModelHundle));
 	arrowModel_.reset(Object3d::Create(arrowModelHundle));
