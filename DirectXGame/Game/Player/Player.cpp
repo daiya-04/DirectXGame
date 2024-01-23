@@ -109,7 +109,7 @@ void Player::WorldUpdate()
 }
 void Player::Gravity()
 {
-	world_.translation_.y -= 0.98f;
+	world_.translation_.y -= 0.1f;
 }
 #pragma region
 void Player::BehaviorRootInit()
@@ -226,12 +226,12 @@ void Player::GrapUpdate()
 		}
 
 		if (secondJump == false && Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
-			moveVector += secondJumpVec/2;
+			moveVector = secondJumpVec/2;
 			secondJump = true;
 		}
 		JumpFlame++;
-		if (JumpFlame == 60) {
-			angle = 0.99f;
+		if (JumpFlame == 45) {
+			angle = 0.9f;
 		}
 		Vector3 cross = Cross(Vector3{ 0.0f,0.0f,1.0f }, Vector3{ 0.0f,1.0f,0.0f });
 		cross = cross.Normalize();
