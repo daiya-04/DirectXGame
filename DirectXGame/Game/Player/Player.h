@@ -110,13 +110,14 @@ private:
 	Quaternion beginVecQua;
 	Quaternion lerpQua;
 	float angle = 1.0f;
-	const float kAngleMax = 0.6f;
+	const float kAngleMax = 0.5f;
 	int JumpFlame;
 	float angleParam = 0.0f;
 	float kParam = 0.005f;
 	Vector3 moveVector;
 	Vector3 sangoDirection_ = { 0.0f,0.0f,0.0f };
-	float jumpParam = 1.0f;
+	float jumpParam = 0.8f;
+	const float kGravity = -0.7f;
 	//当たり判定の履歴
 	int sangoId_ = 0;
 	int PreSangoId_ = -1;
