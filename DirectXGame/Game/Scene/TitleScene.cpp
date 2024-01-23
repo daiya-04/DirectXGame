@@ -20,6 +20,7 @@ void TitleScene::Init() {
 
 	input_ = Input::GetInstance();
 	
+	isNext_ = false;
 }
 
 void TitleScene::Update() {
@@ -27,7 +28,8 @@ void TitleScene::Update() {
 
 	
 
-	if ((input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(XINPUT_GAMEPAD_A))) {
+	if ((input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(XINPUT_GAMEPAD_A)) && !isNext_) {
+		isNext_ = true;
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
 	}
 	

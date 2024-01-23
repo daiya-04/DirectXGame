@@ -33,12 +33,9 @@ public:
 
 private:
 
-
-	
-
 	std::unique_ptr<Sprite> background_;
 
-
+	bool isNext_ = false;
 
 	Input* input_ = nullptr;
 

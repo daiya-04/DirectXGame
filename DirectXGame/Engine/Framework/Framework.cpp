@@ -14,7 +14,7 @@
 
 void DSFramework::Init(){
 	
-	WinApp::GetInstance()->CreateGameWindow(L"LE2A_12_セト_ダイヤ");
+	WinApp::GetInstance()->CreateGameWindow(L"2306_タツノオトシGO!");
 
 	
 	DirectXCommon::GetInstance()->Initialize();
