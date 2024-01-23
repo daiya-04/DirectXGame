@@ -1,5 +1,8 @@
 #include "ModelManager.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 #include "DirectXCommon.h"
 #include <fstream>
 #include <sstream>
