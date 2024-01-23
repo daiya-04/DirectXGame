@@ -210,6 +210,10 @@ void SelectScene::EnterTheStage(){
 	}
 	playerWT_.translation_ = Ease::Easing(Ease::EaseName::EaseNone, startPlayerPos_, endPlayerPos_, easeT_);
 	playerWT_.rotation_.y = Ease::Easing(Ease::EaseName::EaseOutSine, startRotate_, endRotate_, easeRotateT_);
+
+	if (cooltime_>=80){
+		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Game);
+	}
 }
 
 void SelectScene::DrawBackGround() {
