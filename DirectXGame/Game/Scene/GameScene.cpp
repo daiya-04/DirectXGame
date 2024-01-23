@@ -7,12 +7,12 @@
 
 GameScene::~GameScene() {}
 
-void GameScene::Init(){
+void GameScene::Init() {
 
 	camera_.Init();
 
 #pragma region
-	uint32_t playerModelHundle = ModelManager::Load("SeaHorse");
+	uint32_t playerModelHundle = ModelManager::Load("InGameSeaHorse");
 	uint32_t arrowModelHundle = ModelManager::Load("Line");
 	playerModel_.reset(Object3d::Create(playerModelHundle));
 	arrowModel_.reset(Object3d::Create(arrowModelHundle));
@@ -34,8 +34,8 @@ void GameScene::Init(){
 	};
 	floor_ = std::make_unique<Floor>();
 	floor_->Init(planeModels);
-	floor_->SetPos({0.0f,0.0f,0.0f});
-	floor_->SetScale({10.0f,1.0f,10.0f});
+	floor_->SetPos({ 0.0f,0.0f,0.0f });
+	floor_->SetScale({ 10.0f,1.0f,10.0f });
 #pragma endregion Plane
 #pragma region
 	uint32_t sangoModelHundle = ModelManager::Load("sango");
@@ -45,16 +45,14 @@ void GameScene::Init(){
 	};
 	sango_ = std::make_unique<Sango>();
 	sango_->Init(sangoModels);
-	sango_->SetPos({0.0f,2.0f,0.0f});
-	sango_->SetDirection({0.0f,0.0f,1.0f});
+	sango_->SetPos({ 0.0f,2.0f,0.0f });
 	sango2_ = std::make_unique<Sango>();
 	sango2_->Init(sangoModels);
-	sango2_->SetPos({10.0f,10.0f,0.0f});
-	sango2_->SetDirection({0.0f,0.0f,1.0f});
+	sango2_->SetPos({ 10.0f,10.0f,0.0f });
 #pragma endregion Sango
 }
 
-void GameScene::Update(){
+void GameScene::Update() {
 	DebugGUI();
 
 	camera_.Update();
@@ -80,7 +78,6 @@ void GameScene::Update(){
 		ImGui::Begin("Sango");
 		ImGui::End();
 #endif
-		player_->setsangoDirection(sango_->GetDirection());
 		player_->HitSango(sango_->GetPosition());
 		if (sango_->GetIsAlreadyHit() == false) {
 			sango_->HitPlayer();
@@ -95,7 +92,6 @@ void GameScene::Update(){
 		ImGui::Begin("Sango");
 		ImGui::End();
 #endif
-		player_->setsangoDirection(sango2_->GetDirection());
 		player_->HitSango(sango2_->GetPosition());
 		if (sango2_->GetIsAlreadyHit() == false) {
 			sango2_->HitPlayer();
@@ -108,11 +104,11 @@ void GameScene::Update(){
 #pragma endregion 当たり判定
 }
 
-void GameScene::DrawBackGround(){
+void GameScene::DrawBackGround() {
 
 }
 
-void GameScene::DrawModel(){
+void GameScene::DrawModel() {
 
 	player_->Draw(camera_.GetViewProjection());
 
@@ -122,23 +118,23 @@ void GameScene::DrawModel(){
 	sango2_->Draw(camera_.GetViewProjection());
 }
 
-void GameScene::DrawParticleModel(){
+void GameScene::DrawParticleModel() {
 
 
 
 }
 
-void GameScene::DrawParticle(){
+void GameScene::DrawParticle() {
 
 }
 
-void GameScene::DrawUI(){
+void GameScene::DrawUI() {
 
 
 
 }
 
-void GameScene::DebugGUI(){
+void GameScene::DebugGUI() {
 
 	player_->ImGui();
 }
