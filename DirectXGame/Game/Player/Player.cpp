@@ -118,6 +118,7 @@ void Player::BehaviorRootInit()
 	ArrowQua_ = IdentityQuaternion();
 	rotateQua = IdentityQuaternion();
 	directionQua_ = IdentityQuaternion();
+	angle = 1.0f;
 }
 void Player::BehaviorRootUpdate()
 {
@@ -151,8 +152,7 @@ void Player::GrapInit()
 	world_.UpdateMatrix();
 	world_Arrow_.translation_ = grapPoint;
 	world_Arrow_.UpdateMatrix();
-	rotateQua = IdentityQuaternion();
-	moveQua_ = IdentityQuaternion();
+
 	playerQua_ = IdentityQuaternion();
 
 	beginVecQua = IdentityQuaternion();
@@ -162,7 +162,6 @@ void Player::GrapInit()
 	angleParam = 0.0f;
 	moveVector = { 0.0f,0.0f,0.0f };
 	grapJump = false;
-	angle = 1.0f;
 	GrapBehaviorRequest_ = GrapBehavior::kLeft;
 	canGrap = false;
 	DeletePreIdTime_ = 0.0f;
@@ -231,11 +230,11 @@ void Player::GrapUpdate()
 		}
 		JumpFlame++;
 		if (JumpFlame == 60) {
-			angle = 0.99f;
+			//angle = 0.99f;
 		}
 		Vector3 cross = Cross(Vector3{ 0.0f,0.0f,1.0f }, Vector3{ 0.0f,1.0f,0.0f });
 		cross = cross.Normalize();
-		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
+		//rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 	}
 	if (secondJump == false) {
 		moveQua_ = moveQua_.Normalize() * rotateQua.Normalize();
@@ -252,14 +251,11 @@ void Player::GrapUpdate()
 }
 void Player::GrapJumpLeftInitalize()
 {
-	rotateQua = IdentityQuaternion();
-	moveQua_ = IdentityQuaternion();
 	playerQua_ = IdentityQuaternion();
 	beginVecQua = IdentityQuaternion();
 	endVecQua = IdentityQuaternion();
 	lerpQua = IdentityQuaternion();
 	angleParam = 0.0f;
-	angle = 1.0f;
 	Vector3 cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
 	cross = cross.Normalize();
 	beginVecQua = MakwRotateAxisAngleQuaternion(cross, std::acos(-1.0f));
@@ -314,6 +310,16 @@ void Player::GrapJumpLeftUpdate()
 		grapJump = true;
 		moveVector = grapJumpVec * jumpParam;
 	}
+	else if(grapJump == false) {
+		if (angle < 1.0f) {
+			angle += 0.001f;
+		}
+		else {
+			angle = 1.0f;
+		}
+		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
+	}
+
 	if (grapJump == true) {
 		if (moveVector.y > -0.98f) {
 			moveVector.y -= 0.03f;
@@ -329,14 +335,12 @@ void Player::GrapJumpLeftUpdate()
 }
 void Player::GrapJumpRightInitalize()
 {
-	rotateQua = IdentityQuaternion();
 	moveQua_ = IdentityQuaternion();
 	playerQua_ = IdentityQuaternion();
 	beginVecQua = IdentityQuaternion();
 	endVecQua = IdentityQuaternion();
 	lerpQua = IdentityQuaternion();
 	angleParam = 0.0f;
-	angle = 1.0f;
 	Vector3 cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
 	cross = cross.Normalize();
 	beginVecQua = MakwRotateAxisAngleQuaternion(cross, std::acos(1.0f));
@@ -385,6 +389,17 @@ void Player::GrapJumpRightUpdate()
 		grapJump = true;
 		moveVector = grapJumpVec * jumpParam;
 	}
+	else if (grapJump == false) {
+		if (angle < 1.0f) {
+			angle += 0.001f;
+		}
+		else {
+			angle = 1.0f;
+		}
+		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
+	}
+
+
 	if (grapJump == true) {
 		moveVector.y -= 0.03f;
 		world_.translation_.x += moveVector.x;
