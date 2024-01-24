@@ -11,8 +11,9 @@ void MyGame::Init(){
 
 	DSFramework::Init();
 
-	SceneManager::GetInstance()->ChangeScene("Game");
+	SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Title);
 
+	
 }
 
 void MyGame::Update(){
@@ -20,7 +21,7 @@ void MyGame::Update(){
 	DSFramework::Update();
 
 	///ゲーム固有処理
-
+	
 	
 	
 	///

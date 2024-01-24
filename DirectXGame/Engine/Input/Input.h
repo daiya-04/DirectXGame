@@ -36,6 +36,15 @@ public:
 	//キーのトリガーをチェック
 	bool TriggerKey(BYTE keyNumber) const;
 
+	//Lスティックを傾けた瞬間をチェック
+	bool GetTiltJoyStickRight();
+
+	bool GetTiltJoyStickLeft();
+
+	bool GetTiltJoyStickUp();
+
+	bool GetTiltJoyStickDown();
+
 	bool GetJoystickState();
 
 	Vector3 GetMoveXZ() {

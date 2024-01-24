@@ -109,7 +109,7 @@ void Player::WorldUpdate()
 }
 void Player::Gravity()
 {
-	world_.translation_.y -= 0.98f;
+	world_.translation_.y += kGravity;
 }
 #pragma region
 void Player::BehaviorRootInit()
@@ -123,9 +123,9 @@ void Player::BehaviorRootInit()
 void Player::BehaviorRootUpdate()
 {
 	//Bでジャンプ
-	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A) && IsOnGraund == true) {
+	/*if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A) && IsOnGraund == true) {
 		behaviorRequest_ = Behavior::kJump;
-	}
+	}*/
 	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
 		//前のフレームでは押していない
 		if (canGrap) {
@@ -225,16 +225,16 @@ void Player::GrapUpdate()
 		}
 
 		if (secondJump == false && Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
-			moveVector += secondJumpVec / 2;
+			moveVector = secondJumpVec/2;
 			secondJump = true;
 		}
 		JumpFlame++;
-		if (JumpFlame == 60) {
-			//angle = 0.99f;
+		if (JumpFlame == 45) {
+			angle = 0.9f;
 		}
 		Vector3 cross = Cross(Vector3{ 0.0f,0.0f,1.0f }, Vector3{ 0.0f,1.0f,0.0f });
 		cross = cross.Normalize();
-		//rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
+		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 	}
 	if (secondJump == false) {
 		moveQua_ = moveQua_.Normalize() * rotateQua.Normalize();
@@ -267,7 +267,7 @@ void Player::GrapJumpLeftInitalize()
 	cross = cross.Normalize();
 	directionQua_ = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
 	moveQua_ = directionQua_.Normalize();
-	secondJumpVec = { -1.0f,1.0f,0.0f };
+	secondJumpVec = {-1.0f,1.0f,0.0f};
 }
 void Player::GrapJumpLeftUpdate()
 {
@@ -321,11 +321,11 @@ void Player::GrapJumpLeftUpdate()
 	}
 
 	if (grapJump == true) {
-		if (moveVector.y > -0.98f) {
-			moveVector.y -= 0.03f;
+		if (moveVector.y > kGravity) {
+			moveVector.y -= 0.02f;
 		}
-		else if (moveVector.y < -0.98f) {
-			moveVector.y = -0.98f;
+		else if (moveVector.y < kGravity) {
+			moveVector.y = kGravity;
 		}
 
 		world_.translation_.x += moveVector.x;

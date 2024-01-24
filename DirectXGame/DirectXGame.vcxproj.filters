@@ -50,6 +50,9 @@
     <Filter Include="Engine\Audio">
       <UniqueIdentifier>{951f94c5-20fb-491b-b20e-c5528d356ac4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Ease">
+      <UniqueIdentifier>{d200f97c-e7ef-4970-abef-3f932e6e39e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -114,9 +117,20 @@
       <Filter>Engine\Audio</Filter>
     </ClCompile>
     <ClCompile Include="Game\Player\Player.cpp" />
+    <ClCompile Include="Engine\Collision\Hit.cpp" />
+    <ClCompile Include="Game\Scene\TitleScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\SelectScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Ease\Ease.cpp">
+      <Filter>Game\Ease</Filter>
+    </ClCompile>
     <ClCompile Include="Game\FollowCamera\FollowCamera.cpp" />
     <ClCompile Include="Game\Floor\Floor.cpp" />
     <ClCompile Include="Game\Sango\Sango.cpp" />
+    <ClCompile Include="Game\Box\Box.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -205,8 +219,19 @@
     </ClInclude>
     <ClInclude Include="Game\Player\Player.h" />
     <ClInclude Include="Game\Character\Character.h" />
+    <ClInclude Include="Engine\Collision\Hit.h" />
+    <ClInclude Include="Game\Scene\TitleScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SelectScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Ease\Ease.h">
+      <Filter>Game\Ease</Filter>
+    </ClInclude>
     <ClInclude Include="Game\FollowCamera\FollowCamera.h" />
     <ClInclude Include="Game\Floor\Floor.h" />
     <ClInclude Include="Game\Sango\Sango.h" />
+    <ClInclude Include="Game\Box\Box.h" />
   </ItemGroup>
 </Project>

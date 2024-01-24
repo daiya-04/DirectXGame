@@ -125,6 +125,8 @@ public:
 
 	void Draw(std::list<ParticleData>& particleData,const Camera& camera);
 
+	int const GetParticleNum() { return static_cast<int>(particleNum_); }
+
 private:
 
 	void CreateMesh();

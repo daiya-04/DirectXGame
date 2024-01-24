@@ -16,7 +16,6 @@ public:
 		world_.translation_ = Pos; world_
 			.UpdateMatrix();
 	}
-	void SetDirection(Vector3 Direction) { Direction_ = Direction;};
 	void HitPlayer() { IsAlreadyHit = true; }
 	void NotHitPlayer() { IsAlreadyHit = false; }
 #pragma region setter
@@ -24,11 +23,9 @@ public:
 #pragma region
 	bool GetIsAlreadyHit()const { return IsAlreadyHit; }
 	int GetSangoId()const { return Id; }
-	Vector3 GetDirection()const { return Direction_; }
 #pragma region getter
 
 private:
-	Vector3 Direction_ = {0.0f,0.0f,0.0f};
 	
 	bool IsAlreadyHit = false;
 	int Id;

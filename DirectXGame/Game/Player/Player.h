@@ -56,7 +56,7 @@ public:
 	}
 #pragma endregion getter
 #pragma region
-	void SetSangoId(int sangoId) { sangoId_ = sangoId; }
+	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
 #pragma endregion setter
 
 private:
