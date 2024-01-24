@@ -119,6 +119,7 @@
     <ClCompile Include="Engine\3d\SpotLight.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
+    <ClCompile Include="LevelLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -211,5 +212,6 @@
     <ClInclude Include="Engine\3d\SpotLight.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
+    <ClInclude Include="LevelLoader.h" />
   </ItemGroup>
 </Project>

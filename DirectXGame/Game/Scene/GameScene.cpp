@@ -14,6 +14,9 @@ void GameScene::Init(){
 	camera_.Init();
 	pointLight_.Init();
 	spotLight_.Init();
+	for (auto& wt : WTs_) {
+		wt.Init();
+	}
 
 	Object3d::SetPointLight(&pointLight_);
 	Object3d::SetSpotLight(&spotLight_);
@@ -23,6 +26,25 @@ void GameScene::Init(){
 	Model_ = ModelManager::Load("plane");
 	Model2_ = ModelManager::Load("teapot");
 	terrainModel_ = ModelManager::Load("terrain");
+
+	levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("stage"));
+
+	//レベルデータからオブジェクトを生成、配置
+	for (auto& objectData : levelData_->objects) {
+		Model* model = ModelManager::Load(objectData.fileName);
+
+		Object3d* newObject = Object3d::Create(model);
+
+		WorldTransform wt;
+		wt.Init();
+
+		wt.translation_ = objectData.translation;
+		wt.rotation_ = objectData.rotation;
+		wt.scale_ = objectData.scaling;
+
+		WTs_.push_back(wt);
+		objects_.push_back(std::unique_ptr<Object3d>(newObject));
+	}
 
 	obj_.reset(Object3d::Create(Model2_));
 	objWT_.Init();
@@ -66,6 +88,9 @@ void GameScene::Update(){
 	objWT_.UpdateMatrix();
 	objWT2_.UpdateMatrix();
 	terrainWT_.UpdateMatrix();
+	for (auto& wt : WTs_) {
+		wt.UpdateMatrix();
+	}
 	pointLight_.Update();
 	spotLight_.Update();
 }
@@ -78,9 +103,13 @@ void GameScene::DrawBackGround(){
 
 void GameScene::DrawModel(){
 
-	obj_->Draw(objWT_, camera_);
-	obj2_->Draw(objWT2_, camera_);
-	terrain_->Draw(terrainWT_, camera_);
+	//obj_->Draw(objWT_, camera_);
+	//obj2_->Draw(objWT2_, camera_);
+	//terrain_->Draw(terrainWT_, camera_);
+
+	for (size_t index = 0; index < objects_.size(); index++) {
+		objects_[index]->Draw(WTs_[index], camera_);
+	}
 
 }
 

@@ -2,6 +2,7 @@
 #include "IScene.h"
 #include <memory>
 #include <list>
+#include <vector>
 
 #include "Sprite.h"
 #include "Object3d.h"
@@ -10,6 +11,7 @@
 #include "WorldTransform.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "LevelLoader.h"
 
 
 class GameScene : public IScene {
@@ -56,6 +58,10 @@ private:
 
 	PointLight pointLight_;
 	SpotLight spotLight_;
+
+	std::unique_ptr<LevelData> levelData_;
+	std::vector<std::unique_ptr<Object3d>> objects_;
+	std::vector<WorldTransform> WTs_;
 
 };
 
