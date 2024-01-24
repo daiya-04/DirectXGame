@@ -19,7 +19,7 @@ enum audioHundle {
 	GrapJump,
 };
 
-class Player:public Character
+class Player :public Character
 {
 public:
 	void Init(std::vector<Object3d*> models)override;

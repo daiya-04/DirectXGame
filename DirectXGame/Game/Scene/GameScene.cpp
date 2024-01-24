@@ -7,7 +7,7 @@
 
 GameScene::~GameScene() {}
 
-void GameScene::Init(){
+void GameScene::Init() {
 
 	camera_.Init();
 
@@ -34,8 +34,8 @@ void GameScene::Init(){
 	};
 	floor_ = std::make_unique<Floor>();
 	floor_->Init(planeModels);
-	floor_->SetPos({0.0f,0.0f,0.0f});
-	floor_->SetScale({10.0f,1.0f,10.0f});
+	floor_->SetPos({ 0.0f,0.0f,0.0f });
+	floor_->SetScale({ 10.0f,1.0f,10.0f });
 #pragma endregion Plane
 #pragma region
 	uint32_t sangoModelHundle = ModelManager::Load("sango");
@@ -52,7 +52,7 @@ void GameScene::Init(){
 #pragma endregion Sango
 }
 
-void GameScene::Update(){
+void GameScene::Update() {
 	DebugGUI();
 
 	camera_.Update();
@@ -104,11 +104,11 @@ void GameScene::Update(){
 #pragma endregion 当たり判定
 }
 
-void GameScene::DrawBackGround(){
+void GameScene::DrawBackGround() {
 
 }
 
-void GameScene::DrawModel(){
+void GameScene::DrawModel() {
 
 	player_->Draw(camera_.GetViewProjection());
 
@@ -118,23 +118,23 @@ void GameScene::DrawModel(){
 	sango2_->Draw(camera_.GetViewProjection());
 }
 
-void GameScene::DrawParticleModel(){
+void GameScene::DrawParticleModel() {
 
 
 
 }
 
-void GameScene::DrawParticle(){
+void GameScene::DrawParticle() {
 
 }
 
-void GameScene::DrawUI(){
+void GameScene::DrawUI() {
 
 
 
 }
 
-void GameScene::DebugGUI(){
+void GameScene::DebugGUI() {
 
 	player_->ImGui();
 }
