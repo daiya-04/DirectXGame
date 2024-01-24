@@ -44,16 +44,15 @@ public:
 
 	void SetGraphicsRootConstantBufferView(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex);
 
+	void SetColor(const Vector4& color) { materialData->color_ = color; }
+
 	uint32_t GetUvHandle() const { return uvHandle_; }
 
 	UINT GetVertices() const { return (UINT)vertices_.size(); }
 
 public:
 
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
-	ComPtr<ID3D12Resource> vertexResource_;
 	std::vector<VertexData> vertices_;
-	ComPtr<ID3D12Resource> materialResource_;
 	//uv
 	int32_t uvHandle_ = 0;
 	//modelファイルの名前
@@ -62,6 +61,13 @@ public:
 private:
 
 	static ID3D12Device* device_;
+
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
+	ComPtr<ID3D12Resource> vertexResource_;
+	VertexData* vertexData = nullptr;
+	
+	ComPtr<ID3D12Resource> materialResource_;
+	Material* materialData = nullptr;
 
 };
 
@@ -78,18 +84,18 @@ private:
 	
 	std::string filename_;
 	std::string directoryPath_;
-	std::vector<std::shared_ptr<Model>> models_;
+	std::vector<std::unique_ptr<Model>> models_;
 	uint32_t useModelNum_= 0;
 
 public:
 
 	static ModelManager* GetInstance();
 
-	static std::shared_ptr<Model> Load(const std::string& modelName);
+	static Model* Load(const std::string& modelName);
 
 private:
 
-	std::shared_ptr<Model> LoadInternal(const std::string& modelName);
+	Model* LoadInternal(const std::string& modelName);
 
 	void LoadObjFile(const std::string& modelName);
 

@@ -87,6 +87,8 @@ public: //メンバ関数
 	
 	void SetModelHandle(Model* model) { model_ = model; }
 
+	void SetColor(const Vector4& color) { model_->SetColor(color); }
+
 private:
 	
 
