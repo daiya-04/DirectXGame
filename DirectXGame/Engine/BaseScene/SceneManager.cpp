@@ -76,13 +76,13 @@ void SceneManager::Update(){
 
 	if (nextScene_ && nextSceneName_ == chackSelectName_ &&particleNum_ > 799) {
 		scene_ = std::move(nextScene_);
-		nowSceneName_ = std::move(nextSceneName_);
+		nowSceneName_ = nextSceneName_;
 		nextSceneName_ = AbstractSceneFactory::SceneName::NONE;
 		scene_->Init();
 	}
 	else if(nextScene_&& nextSceneName_ != chackSelectName_){
 		scene_ = std::move(nextScene_);
-		nowSceneName_ = std::move(nextSceneName_);
+		nowSceneName_ = nextSceneName_;
 		nextSceneName_ = AbstractSceneFactory::SceneName::NONE;
 		scene_->Init();
 	}

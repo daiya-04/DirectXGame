@@ -35,6 +35,14 @@ private:
 
 	std::unique_ptr<Sprite> background_;
 
+	std::unique_ptr<Sprite> title_;
+
+	std::unique_ptr<Sprite> press_;
+
+	WorldTransform titleTrnas_;
+
+	WorldTransform pressTrnas_;
+
 	bool isNext_ = false;
 
 	Input* input_ = nullptr;
