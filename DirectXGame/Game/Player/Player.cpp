@@ -119,6 +119,7 @@ void Player::BehaviorRootInit()
 	rotateQua = IdentityQuaternion();
 	directionQua_ = IdentityQuaternion();
 	angle = 1.0f;
+	jumpParam = 0.0f;
 }
 void Player::BehaviorRootUpdate()
 {
@@ -165,9 +166,7 @@ void Player::GrapInit()
 	GrapBehaviorRequest_ = GrapBehavior::kLeft;
 	canGrap = false;
 	DeletePreIdTime_ = 0.0f;
-
 	secondJump = false;
-
 	JumpFlame = 0;
 }
 void Player::GrapUpdate()
@@ -181,12 +180,12 @@ void Player::GrapUpdate()
 		}
 	}
 
-	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
-		//前のフレームでで押していてもOK
+	//if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
+		//自動でつかむ
 		if (canGrap == true && grapJump == true && PreSangoId_ != sangoId_) {
 			behaviorRequest_ = Behavior::kGrap;
 		}
-	}
+	
 
 	if (GrapBehaviorRequest_) {
 		//ふるまいの変更
@@ -242,7 +241,25 @@ void Player::GrapUpdate()
 	if (secondJump) {
 		Move();
 	}
-
+	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
+		if (jumpParam < 0.8f) {
+		jumpParam += 0.01f;
+		}
+		else if (jumpParam >= 0.8f) {
+		jumpParam = 0.8f;
+		}
+	}
+	else if (jumpParam > 0.0f) {
+		jumpParam -= 0.001f;
+	}
+	else if (jumpParam < 0.0f) {
+		jumpParam = 0.0f;
+	}
+#ifdef _DEBUG
+	ImGui::Begin("Player");
+	ImGui::InputFloat("JumpParameter",&jumpParam);
+	ImGui::End();
+#endif
 
 	if (IsOnGraund) {
 		behaviorRequest_ = Behavior::kRoot;
@@ -271,12 +288,7 @@ void Player::GrapJumpLeftInitalize()
 }
 void Player::GrapJumpLeftUpdate()
 {
-	float Norm = moveQua_.Norm();
-#ifdef _DEBUG
-	ImGui::Begin("Player");
-	ImGui::InputFloat("Norm", &Norm);
-	ImGui::End();
-#endif
+
 	grapJumpVec = { 1.0f,0.0f,0.0f };
 	//////回転行列を作る
 	lerpQua = lerpQua.Normalize();

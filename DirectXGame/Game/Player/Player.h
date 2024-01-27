@@ -116,7 +116,8 @@ private:
 	float kParam = 0.005f;
 	Vector3 moveVector;
 	Vector3 sangoDirection_ = { 0.0f,0.0f,0.0f };
-	float jumpParam = 0.8f;
+	float jumpParam = 0.0f;
+	float kjumpParam = 0.8f;
 	const float kGravity = -0.7f;
 	//当たり判定の履歴
 	int sangoId_ = 0;
