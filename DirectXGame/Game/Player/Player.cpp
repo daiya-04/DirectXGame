@@ -171,14 +171,14 @@ void Player::GrapInit()
 }
 void Player::GrapUpdate()
 {
-	if (Input::GetInstance()->GetMoveXZ().x != 0 && grapJump == false) {
+	/*if (Input::GetInstance()->GetMoveXZ().x != 0 && grapJump == false) {
 		if (Input::GetInstance()->GetMoveXZ().x > 0 && GrapBehavior_ != GrapBehavior::kRight) {
 			GrapBehaviorRequest_ = GrapBehavior::kRight;
 		}
 		else if (Input::GetInstance()->GetMoveXZ().x < 0 && GrapBehavior_ != GrapBehavior::kLeft) {
 			GrapBehaviorRequest_ = GrapBehavior::kLeft;
 		}
-	}
+	}*/
 
 	//if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
 		//自動でつかむ
@@ -213,6 +213,8 @@ void Player::GrapUpdate()
 		GrapJumpRightUpdate();
 		break;
 	}
+
+	GrapSelectDirection();
 
 	if (grapJump) {
 		//当たり判定履歴を削除するまでの時間
@@ -266,6 +268,35 @@ void Player::GrapUpdate()
 	}
 	canGrap = false;
 }
+void Player::GrapSelectDirection()
+{
+	if (Input::GetInstance()->GetMoveXZ().x == 0 && Input::GetInstance()->GetMoveXZ().z == 0) {
+		return;
+	}
+
+	move = Input::GetInstance()->GetMoveXZ();
+	//正規化をして斜めの移動量を正しくする
+	move = move.Normalize();
+
+	//プレイヤーの向きを移動方向に合わせる
+	move = move.Normalize();
+	Vector3 Direction;
+	Vector3 dotVec;
+	if (move.z > 0) {
+		Direction = {0.0f,-1.0f,0.0f};
+	}else if(move.z < 0) {
+		Direction = { 0.0f,1.0f,0.0f };
+	}
+	Vector3 cross = Cross(Direction, Vector3{ 1.0f,0.0f,0.0f });
+	cross = cross.Normalize();
+	float dot = Dot({ 1.0f,0.0f,0.0f }, move);
+	//後ろを向いたら後ろ向きにする
+	/*if (move.z == -1.0f) {
+		cross.y = -1.0f;
+	}*/
+	ArrowQua_ = MakwRotateAxisAngleQuaternion(cross, std::acos(dot));
+
+}
 void Player::GrapJumpLeftInitalize()
 {
 	playerQua_ = IdentityQuaternion();
@@ -315,7 +346,7 @@ void Player::GrapJumpLeftUpdate()
 		}
 		lerpQua = Slerp(beginVecQua, endVecQua, angleParam);
 
-		ArrowQua_ = lerpQua.Normalize();
+		//ArrowQua_ = lerpQua.Normalize();
 
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
@@ -394,7 +425,7 @@ void Player::GrapJumpRightUpdate()
 		}
 		lerpQua = Slerp(beginVecQua, endVecQua, angleParam);
 
-		ArrowQua_ = lerpQua.Normalize();
+		//ArrowQua_ = lerpQua.Normalize();
 
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {

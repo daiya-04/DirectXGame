@@ -95,6 +95,7 @@ private:
 	std::optional<GrapBehavior> GrapBehaviorRequest_ = std::nullopt;
 	void GrapInit();
 	void GrapUpdate();
+	void GrapSelectDirection();
 	void GrapJumpLeftInitalize();
 	void GrapJumpLeftUpdate();
 	void GrapJumpRightInitalize();
