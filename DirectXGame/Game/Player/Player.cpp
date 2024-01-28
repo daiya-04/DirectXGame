@@ -153,14 +153,8 @@ void Player::GrapInit()
 	world_.UpdateMatrix();
 	world_Arrow_.translation_ = grapPoint;
 	world_Arrow_.UpdateMatrix();
-
 	playerQua_ = IdentityQuaternion();
-
-	beginVecQua = IdentityQuaternion();
-	endVecQua = IdentityQuaternion();
-	lerpQua = IdentityQuaternion();
 	IsOnGraund = false;
-	angleParam = 0.0f;
 	moveVector = { 0.0f,0.0f,0.0f };
 	grapJump = false;
 	GrapBehaviorRequest_ = GrapBehavior::kLeft;
@@ -171,14 +165,14 @@ void Player::GrapInit()
 }
 void Player::GrapUpdate()
 {
-	/*if (Input::GetInstance()->GetMoveXZ().x != 0 && grapJump == false) {
+	if (Input::GetInstance()->GetMoveXZ().x != 0 && grapJump == false) {
 		if (Input::GetInstance()->GetMoveXZ().x > 0 && GrapBehavior_ != GrapBehavior::kRight) {
 			GrapBehaviorRequest_ = GrapBehavior::kRight;
 		}
 		else if (Input::GetInstance()->GetMoveXZ().x < 0 && GrapBehavior_ != GrapBehavior::kLeft) {
 			GrapBehaviorRequest_ = GrapBehavior::kLeft;
 		}
-	}*/
+	}
 
 	//if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
 		//自動でつかむ
@@ -291,27 +285,16 @@ void Player::GrapSelectDirection()
 	cross = cross.Normalize();
 	float dot = Dot({ 1.0f,0.0f,0.0f }, move);
 	//後ろを向いたら後ろ向きにする
-	/*if (move.z == -1.0f) {
-		cross.y = -1.0f;
-	}*/
+	if (move.x == -1.0f) {
+		cross.y = 1.0f;
+	}
 	ArrowQua_ = MakwRotateAxisAngleQuaternion(cross, std::acos(dot));
 
 }
 void Player::GrapJumpLeftInitalize()
 {
 	playerQua_ = IdentityQuaternion();
-	beginVecQua = IdentityQuaternion();
-	endVecQua = IdentityQuaternion();
-	lerpQua = IdentityQuaternion();
-	angleParam = 0.0f;
-	Vector3 cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
-	cross = cross.Normalize();
-	beginVecQua = MakwRotateAxisAngleQuaternion(cross, std::acos(-1.0f));
-	ArrowQua_ = beginVecQua.Normalize();
-	beginVecQua = beginVecQua.Normalize();
-	endVecQua = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
-	endVecQua = endVecQua.Normalize();
-	cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,0.0f,1.0f });
+	Vector3 cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,0.0f,1.0f });
 	cross = cross.Normalize();
 	directionQua_ = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
 	moveQua_ = directionQua_.Normalize();
@@ -322,8 +305,8 @@ void Player::GrapJumpLeftUpdate()
 
 	grapJumpVec = { 1.0f,0.0f,0.0f };
 	//////回転行列を作る
-	lerpQua = lerpQua.Normalize();
-	Matrix4x4 rotateMatrix = lerpQua.MakeRotateMatrix();
+	ArrowQua_ = ArrowQua_.Normalize();
+	Matrix4x4 rotateMatrix = ArrowQua_.MakeRotateMatrix();
 	//移動ベクトルをカメラの角度だけ回転
 	grapJumpVec = TransformNormal(grapJumpVec, rotateMatrix);
 	grapJumpVec = grapJumpVec.Normalize();
@@ -339,15 +322,6 @@ void Player::GrapJumpLeftUpdate()
 		}
 		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 		rotateQua = rotateQua.Normalize();
-
-		angleParam += kParam;
-		if (0.0f > angleParam || angleParam > 1.0f) {
-			kParam *= -1;
-		}
-		lerpQua = Slerp(beginVecQua, endVecQua, angleParam);
-
-		//ArrowQua_ = lerpQua.Normalize();
-
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
 		grapJump = true;
@@ -362,7 +336,6 @@ void Player::GrapJumpLeftUpdate()
 		}
 		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 	}
-
 	if (grapJump == true) {
 		if (moveVector.y > kGravity) {
 			moveVector.y -= 0.02f;
@@ -380,18 +353,7 @@ void Player::GrapJumpRightInitalize()
 {
 	moveQua_ = IdentityQuaternion();
 	playerQua_ = IdentityQuaternion();
-	beginVecQua = IdentityQuaternion();
-	endVecQua = IdentityQuaternion();
-	lerpQua = IdentityQuaternion();
-	angleParam = 0.0f;
-	Vector3 cross = Cross(Vector3{ 1.0f,0.0f,0.0f }, Vector3{ 0.0f,1.0f,0.0f });
-	cross = cross.Normalize();
-	beginVecQua = MakwRotateAxisAngleQuaternion(cross, std::acos(1.0f));
-	ArrowQua_ = beginVecQua.Normalize();
-	beginVecQua = beginVecQua.Normalize();
-	endVecQua = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
-	endVecQua = endVecQua.Normalize();
-	cross = Cross(Vector3{ -1.0f,0.0f,0.0f }, Vector3{ 0.0f,0.0f,1.0f });
+	Vector3 cross = Cross(Vector3{ -1.0f,0.0f,0.0f }, Vector3{ 0.0f,0.0f,1.0f });
 	cross = cross.Normalize();
 	directionQua_ = MakwRotateAxisAngleQuaternion(cross, std::acos(0.0f));
 	moveQua_ = directionQua_.Normalize();
@@ -401,8 +363,8 @@ void Player::GrapJumpRightUpdate()
 {
 	grapJumpVec = { 1.0f,0.0f,0.0f };
 	//////回転行列を作る
-	lerpQua = lerpQua.Normalize();
-	Matrix4x4 rotateMatrix = lerpQua.MakeRotateMatrix();
+	ArrowQua_ = ArrowQua_.Normalize();
+	Matrix4x4 rotateMatrix = ArrowQua_.MakeRotateMatrix();
 	//移動ベクトルをカメラの角度だけ回転
 	grapJumpVec = TransformNormal(grapJumpVec, rotateMatrix);
 	grapJumpVec = grapJumpVec.Normalize();
@@ -418,14 +380,6 @@ void Player::GrapJumpRightUpdate()
 		}
 		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 		rotateQua = rotateQua.Normalize();
-
-		angleParam += kParam;
-		if (0.0f > angleParam || angleParam > 1.0f) {
-			kParam *= -1;
-		}
-		lerpQua = Slerp(beginVecQua, endVecQua, angleParam);
-
-		//ArrowQua_ = lerpQua.Normalize();
 
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {

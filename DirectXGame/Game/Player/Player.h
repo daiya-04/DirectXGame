@@ -107,14 +107,9 @@ private:
 	Quaternion directionQua_;
 	bool grapJump = false;
 	Vector3 grapJumpVec;
-	Quaternion endVecQua;
-	Quaternion beginVecQua;
-	Quaternion lerpQua;
 	float angle = 1.0f;
 	const float kAngleMax = 0.5f;
 	int JumpFlame;
-	float angleParam = 0.0f;
-	float kParam = 0.005f;
 	Vector3 moveVector;
 	Vector3 sangoDirection_ = { 0.0f,0.0f,0.0f };
 	float jumpParam = 0.0f;
