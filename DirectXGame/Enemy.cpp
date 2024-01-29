@@ -23,6 +23,8 @@ void Enemy::Init(std::vector<uint32_t> modelHandles){
 	partsWorldTransform_[Body].parent_ = &worldTransform_;
 	partsWorldTransform_[Head].parent_ = &partsWorldTransform_[Body];
 
+	FloatingGimmickInit();
+
 	//行列更新
 	//worldTransform_.UpdateMatrix();
 	Matrix4x4 S = MakeScaleMatrix(worldTransform_.scale_);
@@ -61,6 +63,8 @@ void Enemy::Update(){
 
 	}*/
 
+	FloatingGimmickUpdate();
+
 	//行列更新
 	//worldTransform_.UpdateMatrix();
 	Matrix4x4 S = MakeScaleMatrix(worldTransform_.scale_);
@@ -98,6 +102,25 @@ void Enemy::OnCollision() {
 
 		gameScene_->AddParticle(particle);
 	}
+
+}
+
+void Enemy::FloatingGimmickInit() {
+
+	floatingParameter_ = 0.0f;
+
+}
+
+void Enemy::FloatingGimmickUpdate() {
+
+	//1フレームでのパラメータ加算値
+	const float step = 2.0f * (float)std::numbers::pi / (float)cycle;
+
+	floatingParameter_ += step;
+
+	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * (float)std::numbers::pi);
+
+	partsWorldTransform_[Head].translation_.y = std::sinf(floatingParameter_) * amplitude;
 
 }
 

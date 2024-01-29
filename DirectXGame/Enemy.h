@@ -42,6 +42,12 @@ private:
 
 	GameScene* gameScene_ = nullptr;
 
+	float floatingParameter_ = 0.0f;
+	// 浮遊の振幅
+	float amplitude = 0.5f;
+	// 浮遊移動のサイクル<frame>
+	int cycle = 60;
+
 public:
 
 	Enemy() :randomEngine(seedGenerator()) {}
@@ -54,6 +60,10 @@ public:
 	void Draw(const Camera& camera);
 
 	void OnCollision();
+
+	void FloatingGimmickInit();
+
+	void FloatingGimmickUpdate();
 
 	void SetPos(const Vector3& pos) { worldTransform_.translation_ = pos; }
 

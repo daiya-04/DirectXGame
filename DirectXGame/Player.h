@@ -120,6 +120,12 @@ private:
 
 	bool isAttack_ = false;
 
+	float floatingParameter_ = 0.0f;
+	// 浮遊の振幅
+	float amplitude = 0.5f;
+	// 浮遊移動のサイクル<frame>
+	int cycle = 60;
+
 public:
 
 	Player() :randomEngine(seedGenerator()) {}
@@ -136,6 +142,10 @@ public:
 	void Search(const std::list<std::unique_ptr<Enemy>>& enemies);
 
 	void OnCollision();
+
+	void FloatingGimmickInit();
+
+	void FloatingGimmickUpdate();
 
 	//カメラの設定
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
