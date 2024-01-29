@@ -68,7 +68,7 @@ private: //オブジェクト
 	uint32_t enemyHeadModel_ = 0;
 	uint32_t bulletModel_ = 0;
 
-	uint32_t gameTime_ = 60 * 90;
+	uint32_t gameTime_ = 60 * 60;
 	uint32_t gameCount_ = gameTime_;
 
 	uint32_t finishTime_ = 60 * 5;

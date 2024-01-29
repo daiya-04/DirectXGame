@@ -100,6 +100,8 @@ void GameScene::Init(){
 
 	///
 
+
+	Update();
 }
 
 void GameScene::Update(){

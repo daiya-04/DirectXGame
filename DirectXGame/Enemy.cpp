@@ -22,6 +22,15 @@ void Enemy::Init(std::vector<uint32_t> modelHandles){
 
 	partsWorldTransform_[Body].parent_ = &worldTransform_;
 	partsWorldTransform_[Head].parent_ = &partsWorldTransform_[Body];
+
+	//行列更新
+	//worldTransform_.UpdateMatrix();
+	Matrix4x4 S = MakeScaleMatrix(worldTransform_.scale_);
+	Matrix4x4 T = MakeTranslateMatrix(worldTransform_.translation_);
+	worldTransform_.matWorld_ = S * rotateMat_ * T;
+	for (size_t index = 0; index < partsWorldTransform_.size(); index++) {
+		partsWorldTransform_[index].UpdateMatrix();
+	}
 }
 
 void Enemy::Update(){

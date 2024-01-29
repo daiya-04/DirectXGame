@@ -9,6 +9,7 @@ void Ground::Init(uint32_t modelHandle){
 
 	worldTransform_.scale_ = { 100.0f,1.0f,100.0f };
 
+	worldTransform_.UpdateMatrix();
 }
 
 void Ground::Update(){

@@ -7,6 +7,7 @@ void Skydome::Init(uint32_t modelHandle) {
 	obj_ = std::make_unique<Object3d>();
 	obj_.reset(Object3d::Create(modelHandle));
 
+	worldTransform_.UpdateMatrix();
 }
 
 void Skydome::Update() {

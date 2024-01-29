@@ -9,6 +9,7 @@ void FollowCamera::Init(){
 
 	camera_.Init();
 
+	camera_.UpdateViewMatrix();
 }
 
 void FollowCamera::Update(){

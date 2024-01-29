@@ -42,6 +42,15 @@ void Player::Init(std::vector<uint32_t> modelHandles){
 	partsWorldTransform_[Body].parent_ = &worldTransform_;
 	partsWorldTransform_[Head].parent_ = &partsWorldTransform_[Body];
 
+
+	//行列更新
+	Matrix4x4 S = MakeScaleMatrix(worldTransform_.scale_);
+	Matrix4x4 T = MakeTranslateMatrix(worldTransform_.translation_);
+	worldTransform_.matWorld_ = S * rotateMat_ * T;
+	//worldTransform_.UpdateMatrix();
+	for (size_t index = 0; index < partsWorldTransform_.size(); index++) {
+		partsWorldTransform_[index].UpdateMatrix();
+	}
 }
 
 void Player::Update(const std::list<std::unique_ptr<Enemy>>& enemies){
