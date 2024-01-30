@@ -11,6 +11,7 @@ public:
 		Game,
 		Result,
 		GameOver,
+		Tutorial,
 		NONE
 	};
 public:
