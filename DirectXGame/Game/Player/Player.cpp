@@ -96,14 +96,6 @@ void Player::ImGui()
 	ImGui::InputInt("sangoId", &sangoId_);
 	ImGui::InputInt("sangoId", &PreSangoId_);
 	ImGui::End();
-		world_.translation_ = { 0.0f,0.0f,0.0f };
-		world_.UpdateMatrix();
-		behaviorRequest_ = Behavior::kRoot;
-	}
-		world_.translation_ = { 0.0f,0.0f,0.0f };
-		world_.UpdateMatrix();
-		behaviorRequest_ = Behavior::kRoot;
-	}
 #endif
 }
 
