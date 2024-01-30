@@ -99,6 +99,9 @@ void Player::QuaternionUpdate()
 	if (behavior_ == Behavior::kRoot) {
 		moveQua_ = Slerp(playerQua_, moveQua_, moveParam);
 	}
+	/*if (behavior_ == Behavior::kGrap) {
+		moveQua_ = Slerp(playerQua_, moveQua_, moveParam);
+	}*/
 }
 void Player::WorldUpdate()
 {
