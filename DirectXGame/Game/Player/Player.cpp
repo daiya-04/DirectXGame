@@ -56,6 +56,12 @@ void Player::Update()
 	WorldUpdate();
 	Character::ColliderUpdate();
 
+	if (world_.translation_.y < -20.0f) {
+		world_.translation_ = { 0.0f,0.0f,0.0f };
+		world_.UpdateMatrix();
+		behaviorRequest_ = Behavior::kRoot;
+	}
+
 	IsOnGraund = false;
 }
 void Player::Draw(const Camera& camera)
@@ -83,11 +89,6 @@ void Player::ImGui()
 	ImGui::InputInt("sangoId", &sangoId_);
 	ImGui::InputInt("sangoId", &PreSangoId_);
 	ImGui::End();
-	if (world_.translation_.y < -20.0f) {
-		world_.translation_ = { 0.0f,0.0f,0.0f };
-		world_.UpdateMatrix();
-		behaviorRequest_ = Behavior::kRoot;
-	}
 #endif
 }
 
@@ -246,7 +247,7 @@ void Player::GrapUpdate()
 		}
 	}
 	else if (jumpParam > 0.0f) {
-		jumpParam -= 0.001f;
+		jumpParam -= 0.004f;
 	}
 	else if (jumpParam < 0.0f) {
 		jumpParam = 0.0f;
