@@ -132,6 +132,12 @@
     <ClCompile Include="Game\Sango\Sango.cpp" />
     <ClCompile Include="Game\Box\Box.cpp" />
     <ClCompile Include="Game\Goal\Goal.cpp" />
+    <ClCompile Include="Game\Scene\ResultScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\TutorialScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -235,5 +241,11 @@
     <ClInclude Include="Game\Sango\Sango.h" />
     <ClInclude Include="Game\Box\Box.h" />
     <ClInclude Include="Game\Goal\Goal.h" />
+    <ClInclude Include="Game\Scene\ResultScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\TutorialScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
