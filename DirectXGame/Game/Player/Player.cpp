@@ -56,6 +56,12 @@ void Player::Update()
 	WorldUpdate();
 	Character::ColliderUpdate();
 
+	if (world_.translation_.y < -20.0f) {
+		world_.translation_ = { 0.0f,0.0f,0.0f };
+		world_.UpdateMatrix();
+		behaviorRequest_ = Behavior::kRoot;
+	}
+
 	IsOnGraund = false;
 }
 void Player::Draw(const Camera& camera)
@@ -64,7 +70,7 @@ void Player::Draw(const Camera& camera)
 	models_[0]->Draw(world_, camera);
 
 	//矢印
-	if (behavior_ == Behavior::kGrap) {
+	if ((behavior_ == Behavior::kGrap) && grapJump == false) {
 		models_[1]->Draw(world_Arrow_, camera);
 	}
 
@@ -83,11 +89,6 @@ void Player::ImGui()
 	ImGui::InputInt("sangoId", &sangoId_);
 	ImGui::InputInt("sangoId", &PreSangoId_);
 	ImGui::End();
-	if (world_.translation_.y < -20.0f) {
-		world_.translation_ = { 0.0f,0.0f,0.0f };
-		world_.UpdateMatrix();
-		behaviorRequest_ = Behavior::kRoot;
-	}
 #endif
 }
 
@@ -98,6 +99,9 @@ void Player::QuaternionUpdate()
 	if (behavior_ == Behavior::kRoot) {
 		moveQua_ = Slerp(playerQua_, moveQua_, moveParam);
 	}
+	/*if (behavior_ == Behavior::kGrap) {
+		moveQua_ = Slerp(playerQua_, moveQua_, moveParam);
+	}*/
 }
 void Player::WorldUpdate()
 {
@@ -246,7 +250,7 @@ void Player::GrapUpdate()
 		}
 	}
 	else if (jumpParam > 0.0f) {
-		jumpParam -= 0.001f;
+		jumpParam -= 0.004f;
 	}
 	else if (jumpParam < 0.0f) {
 		jumpParam = 0.0f;
@@ -338,7 +342,7 @@ void Player::GrapJumpLeftUpdate()
 	}
 	if (grapJump == true) {
 		if (moveVector.y > kGravity) {
-			moveVector.y -= 0.02f;
+			moveVector.y -= 0.03f;
 		}
 		else if (moveVector.y < kGravity) {
 			moveVector.y = kGravity;
@@ -415,7 +419,8 @@ void Player::Move()
 	move = Input::GetInstance()->GetMoveXZ();
 	//正規化をして斜めの移動量を正しくする
 	move = move.Normalize();
-
+	move.y = 0.0f;
+	move.z = 0.0f;
 	move.x = move.x * speed;
 	move.y = move.y * speed;
 	move.z = move.z * speed;
@@ -425,16 +430,19 @@ void Player::Move()
 	//移動ベクトルをカメラの角度だけ回転
 	move = TransformNormal(move, rotateMatrix);
 	//移動
-	move.y = 0.0f;
+
 	world_.translation_ = world_.translation_ + move;
 	//プレイヤーの向きを移動方向に合わせる
 	move = move.Normalize();
-	Vector3 cross = Cross({ 0.0f,0.0f,1.0f }, move);
+	if (move.x > 0) {
+		direction.x = 1.0f;
+	}
+	else if (move.x < 0) {
+		direction.x = -1.0f;
+	}
+	Vector3 cross = Cross(Vector3{ 0.0f,0.0f,1.0f }, direction);
 	cross = cross.Normalize();
 	float dot = Dot({ 0.0f,0.0f,1.0f }, move);
-	//後ろを向いたら後ろ向きにする
-	if (move.z == -1.0f) {
-		cross.y = -1.0f;
-	}
+
 	moveQua_ = MakwRotateAxisAngleQuaternion(cross, std::acos(dot));
 }

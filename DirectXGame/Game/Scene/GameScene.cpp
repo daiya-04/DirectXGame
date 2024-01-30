@@ -56,6 +56,9 @@ void GameScene::Init() {
 	sango4_->Init(sangoModels);
 	sango4_->SetPos({ 10.0f,20.0f,0.0f });
 #pragma endregion Sango
+#pragma region
+
+#pragma endregion Box
 }
 
 void GameScene::Update() {

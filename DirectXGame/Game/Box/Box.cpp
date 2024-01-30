@@ -6,7 +6,7 @@ void Box::Init(std::vector<Object3d*> models)
 
 	world_.Init();
 
-	Character::SetColliderSize({ 1.0f,0.0f,1.0f });
+	Character::SetColliderSize({ 1.0f,1.0f,1.0f });
 }
 
 void Box::Update()

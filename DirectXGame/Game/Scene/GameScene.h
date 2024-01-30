@@ -14,6 +14,7 @@
 #include "Game/Player/Player.h"
 #include "Game/Floor/Floor.h"
 #include "Game/Sango/Sango.h"
+#include "Game/Box/Box.h"
 
 #pragma endregion gameObject
 
@@ -58,5 +59,6 @@ private:
 	std::unique_ptr<Sango> sango3_;
 	std::unique_ptr<Sango> sango4_;
 
+	std::list<Box*>box_;
 };
 
