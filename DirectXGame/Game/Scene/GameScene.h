@@ -2,12 +2,16 @@
 #include "IScene.h"
 #include <memory>
 #include <list>
+#include <vector>
 
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
 #include "Camera.h"
 #include "WorldTransform.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+#include "LevelLoader.h"
 
 #pragma region
 #include "Game/FollowCamera/FollowCamera.h"

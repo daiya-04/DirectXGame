@@ -3,6 +3,8 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
+#include "Audio.h"
+#include "Input.h"
 #include <random>
 
 GameScene::~GameScene() {}
@@ -12,8 +14,8 @@ void GameScene::Init() {
 	camera_.Init();
 
 #pragma region
-	uint32_t playerModelHundle = ModelManager::Load("InGameSeaHorse");
-	uint32_t arrowModelHundle = ModelManager::Load("Line");
+	Model* playerModelHundle = ModelManager::Load("InGameSeaHorse");
+	Model* arrowModelHundle = ModelManager::Load("Line");
 	playerModel_.reset(Object3d::Create(playerModelHundle));
 	arrowModel_.reset(Object3d::Create(arrowModelHundle));
 	std::vector<Object3d*> playerModels = {
@@ -27,7 +29,7 @@ void GameScene::Init() {
 	camera_.SetPlayer(player_.get());
 #pragma endregion Player
 #pragma region
-	uint32_t floorModelHundle = ModelManager::Load("floor");
+	Model* floorModelHundle = ModelManager::Load("floor");
 	floorModel_.reset(Object3d::Create(floorModelHundle));
 	std::vector<Object3d*> planeModels = {
 		floorModel_.get(),
@@ -38,7 +40,7 @@ void GameScene::Init() {
 	floor_->SetScale({ 10.0f,1.0f,10.0f });
 #pragma endregion Plane
 #pragma region
-	uint32_t sangoModelHundle = ModelManager::Load("sango");
+	Model* sangoModelHundle = ModelManager::Load("sango");
 	sangoModel_.reset(Object3d::Create(sangoModelHundle));
 	std::vector<Object3d*> sangoModels = {
 		sangoModel_.get(),
