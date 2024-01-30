@@ -59,6 +59,10 @@ public:
 		uint32_t InComboPhase_ = 0;
 		//コンボが続くか
 		bool comboNext_ = false;
+		//攻撃の速さ
+		float speed_;
+		//攻撃の速度
+		Vector3 velocity_;
 	};
 
 	struct ComboAttack {
@@ -110,7 +114,7 @@ private:
 	std::list<Particle::ParticleData> particles2_;
 	Particle::Emitter emitter_{};
 
-	float particleVelocity_ = 0.4f;
+	float particleVelocity_ = 0.5f;
 
 	FollowCamera* followCamera_ = nullptr;
 

@@ -36,6 +36,17 @@ void TitleScene::Update(){
 		SceneManager::GetInstance()->ChangeScene("Game");
 	}
 
+	if (++count_ <= 60) {
+		Abutton_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+	else {
+		Abutton_->SetColor({ 1.0f,1.0f,1.0f,0.0f });
+	}
+
+	if (count_ >= 90) {
+		count_ = 0;
+	}
+
 }
 
 void TitleScene::DrawBackGround(){

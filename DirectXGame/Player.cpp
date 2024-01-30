@@ -30,7 +30,7 @@ void Player::Init(std::vector<uint32_t> modelHandles){
 	}
 
 	magicParticle_ = std::make_unique<Particle>();
-	magicParticle_.reset(Particle::Create(particleTex, 1000));
+	magicParticle_.reset(Particle::Create(particleTex, 10000));
 	magicParticle2_ = std::make_unique<Particle>();
 	magicParticle2_.reset(Particle::Create(particleTex2, 1));
 
@@ -121,6 +121,8 @@ void Player::OnCollision() {
 void Player::RootInit() {
 
 	isAttack_ = false;
+	particles_.clear();
+	particles2_.clear();
 
 }
 
@@ -163,7 +165,8 @@ void Player::RootUpdate() {
 void Player::AttackInit(const std::list<std::unique_ptr<Enemy>>& enemies) {
 
 	workAttack_.attackParam_ = 0;
-	Search(enemies);
+	workAttack_.speed_ = 1.0f;
+	//Search(enemies);
 
 	if (target_) {
 
@@ -225,25 +228,37 @@ void Player::AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies) {
 			emitter_.translate_ = target_->GetWorldPos();
 
 		}else {
-			Vector3 offset = { 0.0f,5.0f,10.0f };
+			Vector3 offset = { 0.0f,3.0f,5.0f };
 			offset = TransformNormal(offset, rotateMat_);
 
 			emitter_.translate_ = worldTransform_.translation_ + offset;
+
+			Vector3 direction = { 0.0f,0.0f,1.0f };
+			direction = TransformNormal(direction, rotateMat_);
+			workAttack_.velocity_ = direction.Normalize() * workAttack_.speed_;
 		}
 
-		
+		Particle::ParticleData particle;
+		particle.worldTransform_.translation_ = emitter_.translate_;
+		particle.worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
+		particle.velocity_ = {};
+		particle.color_ = { 0.71f,0.94f,1.0f,1.0f };
+		particle.lifeTime_ = (float)kComboAttacks_[workAttack_.comboIndex_].attackTime_;
+		particle.currentTime_ = 0.0f;
+
+		particles2_.push_back(particle);
 		
 
 		//速度とパーティクルの数の設定と生成
 		switch (workAttack_.comboIndex_) {
 		case 0:
 
-			emitter_.count_ = 100;
+			emitter_.count_ = 150;
 			
 
 			for (size_t count = 0; count < emitter_.count_; count++) {
 
-				std::uniform_real_distribution<float> distVelocity(-particleVelocity_, particleVelocity_);
+				std::uniform_real_distribution<float> distVelocity(-particleVelocity_ * 0.6f, particleVelocity_ * 0.6f);
 				std::uniform_real_distribution<float> distVelocityY(-0.1f, 0.1f);
 				std::uniform_real_distribution<float> distColor(0.3f, 0.8f);
 
@@ -251,20 +266,12 @@ void Player::AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies) {
 				particle.worldTransform_.translation_ = emitter_.translate_;
 				float size = 0.5f;
 				particle.worldTransform_.scale_ = { size,size,size };
-				particle.velocity_ = { distVelocity(randomEngine), distVelocityY(randomEngine) ,distVelocity(randomEngine) };
+				particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine) ,distVelocity(randomEngine) };
 				particle.color_ = { 0.0f,0.0f,distColor(randomEngine),1.0 };
 				particle.lifeTime_ = (float)kComboAttacks_[workAttack_.comboIndex_].attackTime_;
 				particle.currentTime_ = 0.0f;
 
 				particles_.push_back(particle);
-
-				if (count == 0) {
-					particle.worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
-					particle.velocity_ = {};
-					particle.color_ = { 0.71f,0.94f,1.0f,1.0f };
-
-					particles2_.push_back(particle);
-				}
 				
 			}
 			
@@ -272,34 +279,27 @@ void Player::AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies) {
 			break;
 		case 1:
 
-			emitter_.count_ = 100;
+			emitter_.count_ = 300;
 
-			for (size_t count = 0; count < emitter_.count_; count++) {
 
-				std::uniform_real_distribution<float> distVelocity(-particleVelocity_, particleVelocity_);
-				std::uniform_real_distribution<float> distVelocityY(-0.1f, 0.1f);
-				std::uniform_real_distribution<float> distColor(0.3f, 0.8f);
 
-				Particle::ParticleData particle;
-				particle.worldTransform_.translation_ = emitter_.translate_;
-				float size = 0.5f;
-				particle.worldTransform_.scale_ = { size,size,size };
-				particle.velocity_ = { distVelocity(randomEngine), distVelocityY(randomEngine) ,distVelocity(randomEngine) };
-				particle.color_ = { 0.0f,0.0f,distColor(randomEngine),1.0 };
-				particle.lifeTime_ = (float)kComboAttacks_[workAttack_.comboIndex_].attackTime_;
-				particle.currentTime_ = 0.0f;
+			//for (size_t count = 0; count < emitter_.count_; count++) {
 
-				particles_.push_back(particle);
+			//	std::uniform_real_distribution<float> distVelocity(-particleVelocity_, particleVelocity_);
+			//	//std::uniform_real_distribution<float> distVelocityY(-0.1f, 0.1f);
+			//	std::uniform_real_distribution<float> distColor(0.3f, 0.8f);
 
-				if (count == 0) {
-					
-					particle.worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
-					particle.velocity_ = {};
-					particle.color_ = { 0.71f,0.94f,1.0f,1.0f };
+			//	Particle::ParticleData particle;
+			//	particle.worldTransform_.translation_ = emitter_.translate_;
+			//	float size = 0.5f;
+			//	particle.worldTransform_.scale_ = { size,size,size };
+			//	particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine) ,distVelocity(randomEngine) };
+			//	particle.color_ = { 0.0f,0.0f,distColor(randomEngine),1.0 };
+			//	particle.lifeTime_ = (float)kComboAttacks_[workAttack_.comboIndex_].attackTime_;
+			//	particle.currentTime_ = 0.0f;
 
-					particles2_.push_back(particle);
-				}
-			}
+			//	particles_.push_back(particle);
+			//}
 
 
 
@@ -323,12 +323,7 @@ void Player::AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies) {
 
 				particles_.push_back(particle);
 
-				if (count == 0) {
-					particle.velocity_ = {};
-					particle.color_ = { 0.71f,0.94f,1.0f,1.0f };
-
-					particles2_.push_back(particle);
-				}
+				
 			}
 			break;
 		}
@@ -339,7 +334,32 @@ void Player::AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies) {
 		
 		break;
 	case 1:
-		
+		if (workAttack_.InComboPhase_ == 1) {
+			emitter_.translate_ += workAttack_.velocity_;
+
+			for (size_t count = 0; count < emitter_.count_; count++) {
+
+				std::uniform_real_distribution<float> distVelocity(-particleVelocity_ * 0.6f, particleVelocity_ * 0.6f);
+				//std::uniform_real_distribution<float> distVelocityY(-0.1f, 0.1f);
+				std::uniform_real_distribution<float> distColor(0.1f, 0.8f);
+
+				Particle::ParticleData particle;
+				particle.worldTransform_.translation_ = emitter_.translate_;
+				float size = 0.3f;
+				particle.worldTransform_.scale_ = { size,size,size };
+				particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine) ,distVelocity(randomEngine) };
+				particle.color_ = { 0.0f,0.0f,distColor(randomEngine),1.0 };
+				particle.lifeTime_ = (float)kComboAttacks_[workAttack_.comboIndex_].attackTime_;
+				particle.currentTime_ = 0.0f;
+
+				particles_.push_back(particle);
+			}
+
+			for (std::list<Particle::ParticleData>::iterator itParticle = particles2_.begin(); itParticle != particles2_.end(); itParticle++) {
+				(*itParticle).worldTransform_.translation_ += workAttack_.velocity_;
+			}
+
+		}
 		break;
 	case 2:
 		

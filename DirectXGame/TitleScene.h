@@ -34,5 +34,7 @@ private:
 	std::unique_ptr<Sprite> title_;
 	std::unique_ptr<Sprite> Abutton_;
 
+	int count_ = 0;
+
 };
 
