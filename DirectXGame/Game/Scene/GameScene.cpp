@@ -13,6 +13,14 @@ void GameScene::Init() {
 
 	camera_.Init();
 
+	levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("beginner"));
+
+	for (auto& objectData : levelData_->objects) {
+
+		
+
+	}
+
 #pragma region
 	Model* playerModelHundle = ModelManager::Load("InGameSeaHorse");
 	Model* arrowModelHundle = ModelManager::Load("Line");
