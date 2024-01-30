@@ -49,6 +49,12 @@ void GameScene::Init() {
 	sango2_ = std::make_unique<Sango>();
 	sango2_->Init(sangoModels);
 	sango2_->SetPos({10.0f,10.0f,0.0f});
+	sango3_ = std::make_unique<Sango>();
+	sango3_->Init(sangoModels);
+	sango3_->SetPos({ 0.0f,15.0f,0.0f });
+	sango4_ = std::make_unique<Sango>();
+	sango4_->Init(sangoModels);
+	sango4_->SetPos({ 10.0f,20.0f,0.0f });
 #pragma endregion Sango
 }
 
@@ -63,6 +69,8 @@ void GameScene::Update() {
 
 	sango_->Update();
 	sango2_->Update();
+	sango3_->Update();
+	sango4_->Update();
 
 
 #pragma region 
@@ -94,12 +102,32 @@ void GameScene::Update() {
 #endif
 		player_->HitSango(sango2_->GetPosition());
 		if (sango2_->GetIsAlreadyHit() == false) {
-			sango2_->HitPlayer();
-			player_->SetSangoId(sango2_->GetSangoId());
+		sango2_->HitPlayer();
+		player_->SetSangoId(sango2_->GetSangoId());
 		}
 	}
 	else {
 		sango2_->NotHitPlayer();
+	}
+	if (IsCollision(player_->GetAABB(), sango3_->GetAABB())) {
+		player_->HitSango(sango3_->GetPosition());
+		if (sango3_->GetIsAlreadyHit() == false) {
+			sango3_->HitPlayer();
+			player_->SetSangoId(sango3_->GetSangoId());
+		}
+	}
+	else {
+		sango3_->NotHitPlayer();
+	}
+	if (IsCollision(player_->GetAABB(), sango4_->GetAABB())) {
+		player_->HitSango(sango4_->GetPosition());
+		if (sango4_->GetIsAlreadyHit() == false) {
+			sango4_->HitPlayer();
+			player_->SetSangoId(sango4_->GetSangoId());
+		}
+	}
+	else {
+		sango4_->NotHitPlayer();
 	}
 #pragma endregion 当たり判定
 }
@@ -116,6 +144,8 @@ void GameScene::DrawModel() {
 
 	sango_->Draw(camera_.GetViewProjection());
 	sango2_->Draw(camera_.GetViewProjection());
+	sango3_->Draw(camera_.GetViewProjection());
+	sango4_->Draw(camera_.GetViewProjection());
 }
 
 void GameScene::DrawParticleModel() {

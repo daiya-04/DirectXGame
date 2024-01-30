@@ -55,6 +55,8 @@ private:
 
 	std::unique_ptr<Sango> sango_;
 	std::unique_ptr<Sango> sango2_;
+	std::unique_ptr<Sango> sango3_;
+	std::unique_ptr<Sango> sango4_;
 
 };
 
