@@ -70,7 +70,7 @@ void Player::Draw(const Camera& camera)
 	models_[0]->Draw(world_, camera);
 
 	//矢印
-	if (behavior_ == Behavior::kGrap) {
+	if ((behavior_ == Behavior::kGrap) && grapJump == false) {
 		models_[1]->Draw(world_Arrow_, camera);
 	}
 
