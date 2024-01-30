@@ -342,7 +342,7 @@ void Player::GrapJumpLeftUpdate()
 	}
 	if (grapJump == true) {
 		if (moveVector.y > kGravity) {
-			moveVector.y -= 0.02f;
+			moveVector.y -= 0.03f;
 		}
 		else if (moveVector.y < kGravity) {
 			moveVector.y = kGravity;
