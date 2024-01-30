@@ -131,6 +131,7 @@
     <ClCompile Include="Game\Floor\Floor.cpp" />
     <ClCompile Include="Game\Sango\Sango.cpp" />
     <ClCompile Include="Game\Box\Box.cpp" />
+    <ClCompile Include="Game\Goal\Goal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -233,5 +234,6 @@
     <ClInclude Include="Game\Floor\Floor.h" />
     <ClInclude Include="Game\Sango\Sango.h" />
     <ClInclude Include="Game\Box\Box.h" />
+    <ClInclude Include="Game\Goal\Goal.h" />
   </ItemGroup>
 </Project>
