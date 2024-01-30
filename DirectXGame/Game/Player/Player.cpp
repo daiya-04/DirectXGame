@@ -419,7 +419,8 @@ void Player::Move()
 	move = Input::GetInstance()->GetMoveXZ();
 	//正規化をして斜めの移動量を正しくする
 	move = move.Normalize();
-
+	move.y = 0.0f;
+	move.z = 0.0f;
 	move.x = move.x * speed;
 	move.y = move.y * speed;
 	move.z = move.z * speed;
@@ -429,16 +430,19 @@ void Player::Move()
 	//移動ベクトルをカメラの角度だけ回転
 	move = TransformNormal(move, rotateMatrix);
 	//移動
-	move.y = 0.0f;
+
 	world_.translation_ = world_.translation_ + move;
 	//プレイヤーの向きを移動方向に合わせる
 	move = move.Normalize();
-	Vector3 cross = Cross({ 0.0f,0.0f,1.0f }, move);
+	if (move.x > 0) {
+		direction.x = 1.0f;
+	}
+	else if (move.x < 0) {
+		direction.x = -1.0f;
+	}
+	Vector3 cross = Cross(Vector3{ 0.0f,0.0f,1.0f }, direction);
 	cross = cross.Normalize();
 	float dot = Dot({ 0.0f,0.0f,1.0f }, move);
-	//後ろを向いたら後ろ向きにする
-	if (move.z == -1.0f) {
-		cross.y = -1.0f;
-	}
+
 	moveQua_ = MakwRotateAxisAngleQuaternion(cross, std::acos(dot));
 }

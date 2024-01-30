@@ -133,5 +133,6 @@ private:
 	Quaternion playerQua_;
 	Quaternion moveQua_;
 	float moveParam = 0.0f;
+	Vector3 direction = { 0.0f,0.0f,0.0f };
 #pragma endregion 移動
 };
