@@ -41,7 +41,7 @@ private:
 	//ステージセレクト用の変数
 	int selectNum_ = 0;
 	int oldSelectNum_ = 0;
-	static const int maxStage_ = 3;
+	static const int maxStage_ = 4;
 	//補完の変数群
 	const float addEase_ = 0.04f;
 	float easeT_ = 0.0f;

@@ -13,7 +13,7 @@ void TitleScene::Init() {
 
 	uint32_t backGroundTex = TextureManager::Load("white.png");
 	uint32_t titleTex = TextureManager::Load("title.png");
-	uint32_t pressTex = TextureManager::Load("pressA.png");
+	uint32_t pressTex = TextureManager::Load("PressAButton.png");
 
 	background_.reset(new Sprite(backGroundTex, { 640.0f,360.0f }, { 1280.0f,720.0f }, 
 		0.0f, { 0.5f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
@@ -31,7 +31,7 @@ void TitleScene::Init() {
 
 	pressTrnas_.Init();
 	pressTrnas_.translation_ = { 640.0f,500.0f,0.0f };
-	pressTrnas_.scale_ = { 256.0f,64.0f,0.0f };
+	pressTrnas_.scale_ = { 508.0f,72.0f,0.0f };
 
 	press_.reset(new Sprite(pressTex, { pressTrnas_.translation_.x,pressTrnas_.translation_.y }, { 256.0f,64.0f }, 0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
 

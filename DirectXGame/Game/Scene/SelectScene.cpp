@@ -117,7 +117,7 @@ void SelectScene::Update() {
 
 	skyDomeWT_.UpdateMatrix();
 	floorWT_.UpdateMatrix();
-	for (int i = 0; i < 3; i++){
+	for (int i = 0; i < maxStage_; i++){
 		rockWT_[i].UpdateMatrix();
 		stageSelectWT_[i].UpdateMatrix();
 	}
