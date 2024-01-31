@@ -14,7 +14,6 @@ class Model {
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
-
 	struct VertexData {
 		Vector4 pos_;
 		Vector2 uv_;
@@ -28,7 +27,6 @@ public:
 		Matrix4x4 uvtransform_;
 		float shininess_;
 	};
-
 private:
 
 	//リソースの生成
@@ -37,6 +35,7 @@ private:
 public:
 
 	static void SetDevice();
+
 
 	void CreateBuffer();
 
@@ -59,6 +58,7 @@ public:
 	std::string name_;
 
 private:
+
 
 	static ID3D12Device* device_;
 
@@ -91,11 +91,11 @@ public:
 
 	static ModelManager* GetInstance();
 
-	static Model* Load(const std::string& modelName);
+	static Model* Load(const std::string& modelName, bool isLighting = true);
 
 private:
 
-	Model* LoadInternal(const std::string& modelName);
+	Model* LoadInternal(const std::string& modelName, bool isLighting);
 
 	void LoadObjFile(const std::string& modelName);
 

@@ -2,6 +2,7 @@
 #include <d3d12.h>
 #include "IScene.h"
 #include "AbstractSceneFactory.h"
+#include "Sprite.h"
 #include <memory>
 
 class SceneManager final {
@@ -11,6 +12,10 @@ private:
 
 	std::unique_ptr<IScene> scene_;
 	std::unique_ptr<IScene> nextScene_;
+
+	uint32_t fadeTex_ = 0;
+	std::unique_ptr<Sprite> fade_;
+	float alpha_ = 0.0f;
 
 public:
 

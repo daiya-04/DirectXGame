@@ -36,6 +36,8 @@ void Model::CreateBuffer() {
 	materialData->uvtransform_ = MakeIdentity44();
 	materialData->shininess_ = 10.0f;
 
+uint32_t ModelManager::Load(const std::string& modelName, bool isLighting) {
+	return ModelManager::GetInstance()->LoadInternal(modelName,isLighting);
 }
 
 ComPtr<ID3D12Resource> Model::CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes) {
@@ -80,14 +82,15 @@ ModelManager* ModelManager::GetInstance() {
 	return &instance;
 }
 
-Model* ModelManager::Load(const std::string& modelName) {
-	return ModelManager::GetInstance()->LoadInternal(modelName);
+Model* ModelManager::Load(const std::string& modelName, bool isLighting) {
+	return ModelManager::GetInstance()->LoadInternal(modelName,isLighting);
 }
 
-Model* ModelManager::LoadInternal(const std::string& modelName) {
 
+Model* ModelManager::LoadInternal(const std::string& modelName, bool isLighting) {
 	assert(useModelNum_ < kNumModel);
 	uint32_t handle = useModelNum_;
+	models_[useModelNum_].isLighting_ = isLighting;
 
 	auto it = std::find_if(models_.begin(), models_.end(), [&](const auto& model) {return model->name_ == modelName; });
 
@@ -187,4 +190,3 @@ void ModelManager::LoadMaterialTemplateFile(const std::string& fileName) {
 	}
 
 }
-
