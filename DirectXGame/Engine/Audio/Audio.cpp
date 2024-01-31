@@ -20,6 +20,10 @@ Audio::~Audio() {
 	}
 }
 
+size_t Audio::LoadWave(const std::string& fileName) {
+	return Audio::GetInstance()->LoadWaveInternal(fileName);
+}
+
 void Audio::Initialize() {
 	HRESULT hr;
 	//XAudioエンジンのインスタンスを作成
@@ -46,7 +50,7 @@ void Audio::Update() {
 	}
 }
 
-size_t Audio::SoundPlayWave(size_t soundHandle) {
+size_t Audio::SoundPlayWave(size_t soundHandle, float volume, bool loop) {
 	HRESULT hr;
 	const SoundData& soundData = soundData_.at(soundHandle);
 
@@ -55,10 +59,13 @@ size_t Audio::SoundPlayWave(size_t soundHandle) {
 	buf.pAudioData = soundData.pBuffer.data();
 	buf.AudioBytes = soundData.bufferSize;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
+	if (loop) {
+		buf.LoopCount = XAUDIO2_LOOP_INFINITE;
+	}
 
-	size_t playhandle = FindUnUsedPlayHandle();
+	size_t playHandle = FindUnUsedPlayHandle();
 	//プレイハンドルがいっぱい
-	assert(playhandle < kMaxNumPlayHandles);
+	assert(playHandle < kMaxNumPlayHandles);
 
 	//sourceVoiceの作成
 	IXAudio2SourceVoice* pSourcVoice = nullptr;
@@ -71,39 +78,40 @@ size_t Audio::SoundPlayWave(size_t soundHandle) {
 	hr = pSourcVoice->Start();
 	assert(SUCCEEDED(hr));
 
-	sourceVoices_[playhandle] = pSourcVoice;
-	return playhandle;
+	sourceVoices_[playHandle] = pSourcVoice;
+	sourceVoices_[playHandle]->SetVolume(volume);
+	return playHandle;
 }
 
-size_t Audio::SoundPlayLoopStart(size_t soundHandle) {
-	HRESULT hr;
-	const SoundData& soundData = soundData_.at(soundHandle);
-
-	//再生する波形データの設定
-	XAUDIO2_BUFFER buf{};
-	buf.pAudioData = soundData.pBuffer.data();
-	buf.AudioBytes = soundData.bufferSize;
-	buf.Flags = XAUDIO2_END_OF_STREAM;
-	buf.LoopCount = XAUDIO2_LOOP_INFINITE;
-
-	size_t playhandle = FindUnUsedPlayHandle();
-	//プレイハンドルがいっぱい
-	assert(playhandle < kMaxNumPlayHandles);
-
-	//sourceVoiceの作成
-	IXAudio2SourceVoice* pSourcVoice = nullptr;
-	hr = xAudio2_->CreateSourceVoice(&pSourcVoice, &soundData.wfex);
-	assert(SUCCEEDED(hr));
-
-	hr = pSourcVoice->SubmitSourceBuffer(&buf);
-	assert(SUCCEEDED(hr));
-
-	hr = pSourcVoice->Start();
-	assert(SUCCEEDED(hr));
-
-	sourceVoices_[playhandle] = pSourcVoice;
-	return playhandle;
-}
+//size_t Audio::SoundPlayLoopStart(size_t soundHandle) {
+//	HRESULT hr;
+//	const SoundData& soundData = soundData_.at(soundHandle);
+//
+//	//再生する波形データの設定
+//	XAUDIO2_BUFFER buf{};
+//	buf.pAudioData = soundData.pBuffer.data();
+//	buf.AudioBytes = soundData.bufferSize;
+//	buf.Flags = XAUDIO2_END_OF_STREAM;
+//	
+//
+//	size_t playhandle = FindUnUsedPlayHandle();
+//	//プレイハンドルがいっぱい
+//	assert(playhandle < kMaxNumPlayHandles);
+//
+//	//sourceVoiceの作成
+//	IXAudio2SourceVoice* pSourcVoice = nullptr;
+//	hr = xAudio2_->CreateSourceVoice(&pSourcVoice, &soundData.wfex);
+//	assert(SUCCEEDED(hr));
+//
+//	hr = pSourcVoice->SubmitSourceBuffer(&buf);
+//	assert(SUCCEEDED(hr));
+//
+//	hr = pSourcVoice->Start();
+//	assert(SUCCEEDED(hr));
+//
+//	sourceVoices_[playhandle] = pSourcVoice;
+//	return playhandle;
+//}
 
 void Audio::SoundPlayLoopEnd(size_t playHandle) {
 	if (IsValidPlayhandle(playHandle)) {
@@ -112,7 +120,7 @@ void Audio::SoundPlayLoopEnd(size_t playHandle) {
 	}
 }
 
-size_t Audio::SoundLoadWave(const std::string& filename) {
+size_t Audio::LoadWaveInternal(const std::string& filename) {
 	auto iter = std::find_if(soundData_.begin(), soundData_.end(), [&](const SoundData& soundData) {
 		return soundData.filename == filename;
 		});

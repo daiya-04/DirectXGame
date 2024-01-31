@@ -2,12 +2,16 @@
 #include "IScene.h"
 #include <memory>
 #include <list>
+#include <vector>
 
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
 #include "Camera.h"
 #include "WorldTransform.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+#include "LevelLoader.h"
 
 #include "Skydome.h"
 #include "Ground.h"
@@ -47,7 +51,6 @@ public:
 	void AddParticle(Particle::ParticleData particle);
 
 private:
-
 	Camera camera_;
 
 private: //オブジェクト
@@ -87,6 +90,5 @@ private: //オブジェクト
 
 	Vector2 pos1 = {};
 	Vector2 pos2 = {};
-
 };
 
