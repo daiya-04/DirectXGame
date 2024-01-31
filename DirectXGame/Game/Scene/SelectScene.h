@@ -32,6 +32,8 @@ public:
 
 	~SelectScene()override;
 
+	static void SetClearFlag(int x) { isStageClear_[x] = true; }
+
 private:
 	void SelectStage();
 
@@ -114,6 +116,6 @@ private:
 
 	bool isSceneNext_ = false;
 
-	bool isStageClear_[maxStage_];
+	static bool isStageClear_[maxStage_];
 };
 

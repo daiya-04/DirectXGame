@@ -4,6 +4,7 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
+#include"SelectScene.h"
 
 TitleScene::~TitleScene(){
 
@@ -55,6 +56,7 @@ void TitleScene::Update() {
 
 	if ((input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(XINPUT_GAMEPAD_A)) && !isNext_) {
 		isNext_ = true;
+		
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
 	}
 	

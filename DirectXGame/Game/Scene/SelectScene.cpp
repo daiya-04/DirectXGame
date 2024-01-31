@@ -7,6 +7,8 @@
 #include "ImGuiManager.h"
 #include <random>
 
+bool SelectScene::isStageClear_[maxStage_]{};
+
 SelectScene::~SelectScene() {}
 
 void SelectScene::Init() {
@@ -49,7 +51,7 @@ void SelectScene::Init() {
 		stageSelectWT_[i].translation_ = { i * 7.0f,-1.23f,-3.0f };
 		stageSelectWT_[i].scale_ = { 0.3f,0.2f,0.3f };
 
-		isStageClear_[i] = false;
+		
 	}
 	loadObj_.reset(Object3d::Create(loadModel_));
 	loadWT_.Init();
