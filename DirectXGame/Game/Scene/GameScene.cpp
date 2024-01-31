@@ -59,6 +59,17 @@ void GameScene::Init() {
 #pragma region
 
 #pragma endregion Box
+
+#pragma region
+	uint32_t goalModelHundle = ModelManager::Load("Goal");
+	goal_Model_.reset(Object3d::Create(goalModelHundle));
+	std::vector<Object3d*> goalModels = {
+		goal_Model_.get(),
+	};
+	goal_ = std::make_unique<Goal>();
+	goal_->Init(goalModels);
+	goal_->SetPos({10.0f,1.0f,0.0f});
+#pragma endregion Goal
 }
 
 void GameScene::Update() {
@@ -75,6 +86,7 @@ void GameScene::Update() {
 	sango3_->Update();
 	sango4_->Update();
 
+	goal_->Update();
 
 #pragma region 
 	if (IsCollision(player_->GetAABB(), floor_->GetAABB())) {
@@ -84,6 +96,8 @@ void GameScene::Update() {
 #endif
 		player_->HitFloor(floor_->GetPosition().y);
 	}
+
+#pragma region
 	if (IsCollision(player_->GetAABB(), sango_->GetAABB())) {
 #ifdef _DEBUG
 		ImGui::Begin("Sango");
@@ -132,6 +146,11 @@ void GameScene::Update() {
 	else {
 		sango4_->NotHitPlayer();
 	}
+#pragma endregion サンゴ
+
+	if (IsCollision(player_->GetAABB(), goal_->GetAABB())) {
+		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
+	}
 #pragma endregion 当たり判定
 }
 
@@ -149,6 +168,8 @@ void GameScene::DrawModel() {
 	sango2_->Draw(camera_.GetViewProjection());
 	sango3_->Draw(camera_.GetViewProjection());
 	sango4_->Draw(camera_.GetViewProjection());
+
+	goal_->Draw(camera_.GetViewProjection());
 }
 
 void GameScene::DrawParticleModel() {

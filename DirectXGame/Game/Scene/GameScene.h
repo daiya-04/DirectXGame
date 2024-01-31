@@ -9,12 +9,15 @@
 #include "Camera.h"
 #include "WorldTransform.h"
 
+#include "SceneManager.h"
+
 #pragma region
 #include "Game/FollowCamera/FollowCamera.h"
 #include "Game/Player/Player.h"
 #include "Game/Floor/Floor.h"
 #include "Game/Sango/Sango.h"
 #include "Game/Box/Box.h"
+#include "Game/Goal/Goal.h"
 
 #pragma endregion gameObject
 
@@ -53,11 +56,13 @@ private:
 	std::unique_ptr<Floor> floor_;
 
 	std::unique_ptr<Object3d> sangoModel_;
-
 	std::unique_ptr<Sango> sango_;
 	std::unique_ptr<Sango> sango2_;
 	std::unique_ptr<Sango> sango3_;
 	std::unique_ptr<Sango> sango4_;
+
+	std::unique_ptr<Object3d> goal_Model_;
+	std::unique_ptr<Goal> goal_;
 
 	std::list<Box*>box_;
 };
