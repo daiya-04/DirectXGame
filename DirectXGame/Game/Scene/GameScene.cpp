@@ -112,7 +112,7 @@ void GameScene::Update(){
 	}
 	
 	if (gameCount_ > 0) {
-		//gameCount_--;
+		gameCount_--;
 	}
 
 	if (gameCount_ == 0) {
@@ -144,7 +144,7 @@ void GameScene::Update(){
 			for (size_t index = 0; index < spawnNum_; index++) {
 				std::uniform_int_distribution<int> distPos(-60, 60);
 				Vector3 spawnPos = { (float)distPos(randomEngine),0.0f,(float)distPos(randomEngine) };
-				//enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, spawnPos)));
+				enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, spawnPos)));
 			}
 		}
 	}
@@ -178,10 +178,10 @@ void GameScene::Update(){
 			magicAttack.radius = 2.0f;
 	    	break;
 		case 1:
-			magicAttack.radius = 4.0f;
+			magicAttack.radius = 5.0f;
 			break;
 		case 2:
-			magicAttack.radius = 8.0f;
+			magicAttack.radius = 12.0f;
 			break;
 	}
 
