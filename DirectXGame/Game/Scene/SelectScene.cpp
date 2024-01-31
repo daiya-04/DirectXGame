@@ -18,7 +18,7 @@ void SelectScene::Init() {
 	Model_ = ModelManager::Load("box");
 	seaHorseModel_ = ModelManager::Load("SeaHorse");
 	rockModel_ = ModelManager::Load("StageSelect");
-	stageSelectModel_ = ModelManager::Load("Coral");
+	stageSelectModel_ = ModelManager::Load("box");
 	floorModel_ = ModelManager::Load("Firld");
 	skyModel_ = ModelManager::Load("skyDome");
 
