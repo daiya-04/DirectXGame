@@ -34,6 +34,12 @@ public:
 
 	static void SetClearFlag(int x) { isStageClear_[x] = true; }
 
+	static void ClearFlagReset() {
+		for (int i = 0; i < maxStage_-1; i++){
+			isStageClear_[i] = false;
+		}
+	}
+
 private:
 	void SelectStage();
 
