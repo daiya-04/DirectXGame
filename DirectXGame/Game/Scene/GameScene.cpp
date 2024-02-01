@@ -153,7 +153,7 @@ void GameScene::Update() {
 	
 	if (IsCollision(player_->GetAABB(), goal_->GetAABB()) && IsGoal == false) {
 		IsGoal = true;
-		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
+		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Result);
 	}
   
 #pragma endregion 当たり判定
