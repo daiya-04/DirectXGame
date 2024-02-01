@@ -58,7 +58,7 @@ void Player::Update()
 	WorldUpdate();
 	
 	if (world_.translation_.y < -20.0f) {
-		world_.translation_ = { 0.0f,0.0f,0.0f };
+		world_.translation_ = { 0.0f,2.0f,0.0f };
 		world_.UpdateMatrix();
 		behaviorRequest_ = Behavior::kRoot;
 	}
@@ -129,6 +129,8 @@ void Player::hitBox(Vector3 colliderPos, Vector3 colliderSize)
 		}
 	}
 #pragma endregion 移動制御	
+	world_.UpdateMatrixQua(moveQua_.MakeRotateMatrix());
+	IsOnGraund = true;
 }
 void Player::ImGui()
 {
