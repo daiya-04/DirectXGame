@@ -29,13 +29,6 @@ public:
 	void SetViewProjection(const Camera* camera) {
 		camera_ = camera;
 	}
-
-	void HitFloor(float PosY) {
-		world_.translation_.y = PosY;
-		moveQua_ = IdentityQuaternion();
-		world_.UpdateMatrixQua(moveQua_.MakeRotateMatrix());
-		IsOnGraund = true;
-	}
 	void HitSango() {
 		canGrap = true;
 	}

@@ -32,17 +32,6 @@ void GameScene::Init() {
 	camera_.SetTarget(&player_->GetWorldTransform());
 	camera_.SetPlayer(player_.get());
 #pragma endregion Player
-//#pragma region
-//	Model* floorModelHundle = ModelManager::Load("floor");
-//	floorModel_.reset(Object3d::Create(floorModelHundle));
-//	std::vector<Object3d*> planeModels = {
-//		floorModel_.get(),
-//	};
-//	floor_ = std::make_unique<Floor>();
-//	floor_->Init(planeModels);
-//	floor_->SetPos({ 0.0f,0.0f,0.0f });
-//	floor_->SetScale({ 10.0f,1.0f,10.0f });
-//#pragma endregion Plane
 #pragma region
 	Model* sangoModelHundle = ModelManager::Load("sango");
 	sangoModel_.reset(Object3d::Create(sangoModelHundle));
@@ -110,8 +99,6 @@ void GameScene::Update() {
 
 	player_->Update();
 
-	//floor_->Update();
-
 	for (auto& sango : sangoes_) {
 		sango->Update();
 	}
@@ -121,15 +108,6 @@ void GameScene::Update() {
 	}
 
 	goal_->Update();
-
-//#pragma region 
-//	if (IsCollision(player_->GetAABB(), floor_->GetAABB())) {
-//#ifdef _DEBUG
-//		ImGui::Begin("Floor");
-//		ImGui::End();
-//#endif
-//		player_->HitFloor(floor_->GetPosition().y);
-//	}
 
 	for (auto& sango : sangoes_) {
 
@@ -168,8 +146,6 @@ void GameScene::DrawBackGround() {
 void GameScene::DrawModel() {
 
 	player_->Draw(camera_.GetViewProjection());
-
-	//floor_->Draw(camera_.GetViewProjection());
 
 	for (auto& sango : sangoes_) {
 		sango->Draw(camera_.GetViewProjection());
