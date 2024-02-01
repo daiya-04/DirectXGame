@@ -104,9 +104,6 @@
     <ClCompile Include="Engine\Camera\Camera.cpp">
       <Filter>Engine\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\WorldTransform.cpp">
-      <Filter>Engine\3d</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\3d\DirectionalLight.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
@@ -131,6 +128,17 @@
     <ClCompile Include="Game\Floor\Floor.cpp" />
     <ClCompile Include="Game\Sango\Sango.cpp" />
     <ClCompile Include="Game\Box\Box.cpp" />
+    <ClCompile Include="Engine\3d\WorldTransform.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\PointLight.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\SpotLight.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelLoader.cpp" />
+    <ClCompile Include="Game\Goal\Goal.cpp" />
     <ClCompile Include="Game\Scene\ResultScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
@@ -239,6 +247,14 @@
     <ClInclude Include="Game\Floor\Floor.h" />
     <ClInclude Include="Game\Sango\Sango.h" />
     <ClInclude Include="Game\Box\Box.h" />
+    <ClInclude Include="Engine\3d\PointLight.h">
+      <Filter>Engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\SpotLight.h">
+      <Filter>Engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelLoader.h" />
+    <ClInclude Include="Game\Goal\Goal.h" />
     <ClInclude Include="Game\Scene\ResultScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>

@@ -1,0 +1,415 @@
+{
+    "name": "scene",
+    "objects": [
+        {
+            "type": "MESH",
+            "name": "Firld",
+            "transform": {
+                "translation": [
+                    0.0,
+                    100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    4.0,
+                    100.0,
+                    1.0
+                ]
+            },
+            "file_name": "Firld",
+            "object_type": "floor"
+        },
+        {
+            "type": "LIGHT",
+            "name": "Light",
+            "transform": {
+                "translation": [
+                    4.076245307922363,
+                    1.0054539442062378,
+                    5.903861999511719
+                ],
+                "rotation": [
+                    37.26104736328125,
+                    3.1637091636657715,
+                    106.93632507324219
+                ],
+                "scaling": [
+                    1.0,
+                    0.9999999403953552,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "CAMERA",
+            "name": "Camera",
+            "transform": {
+                "translation": [
+                    7.358891487121582,
+                    -6.925790786743164,
+                    4.958309173583984
+                ],
+                "rotation": [
+                    63.559295654296875,
+                    2.2983238068263745e-07,
+                    46.69194412231445
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "MESH",
+            "name": "サンゴ1",
+            "transform": {
+                "translation": [
+                    0.0,
+                    9.0,
+                    2.544205665588379
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "sango",
+            "object_type": "sango"
+        },
+        {
+            "type": "MESH",
+            "name": "Player",
+            "transform": {
+                "translation": [
+                    0.0,
+                    2.0215911865234375,
+                    3.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "SeaHorse",
+            "object_type": "Player"
+        },
+        {
+            "type": "MESH",
+            "name": "サンゴ2",
+            "transform": {
+                "translation": [
+                    0.0,
+                    17.503496170043945,
+                    8.561887741088867
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "sango",
+            "object_type": "sango"
+        },
+        {
+            "type": "MESH",
+            "name": "サンゴ3",
+            "transform": {
+                "translation": [
+                    0.0,
+                    28.130767822265625,
+                    15.315732955932617
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "sango",
+            "object_type": "sango"
+        },
+        {
+            "type": "MESH",
+            "name": "サンゴ4",
+            "transform": {
+                "translation": [
+                    0.0,
+                    69.97936248779297,
+                    2.418537139892578
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "sango",
+            "object_type": "sango"
+        },
+        {
+            "type": "MESH",
+            "name": "サンゴ5",
+            "transform": {
+                "translation": [
+                    0.0,
+                    76.18669128417969,
+                    9.009788513183594
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "sango",
+            "object_type": "sango"
+        },
+        {
+            "type": "MESH",
+            "name": "サンゴ6",
+            "transform": {
+                "translation": [
+                    0.0,
+                    88.05592346191406,
+                    19.819229125976562
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "sango",
+            "object_type": "sango"
+        },
+        {
+            "type": "MESH",
+            "name": "サンゴ7",
+            "transform": {
+                "translation": [
+                    -1.528691049537773e-16,
+                    92.67340850830078,
+                    22.076568603515625
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "sango",
+            "object_type": "sango"
+        },
+        {
+            "type": "MESH",
+            "name": "サンゴ8",
+            "transform": {
+                "translation": [
+                    0.0,
+                    83.21012115478516,
+                    16.389507293701172
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "sango",
+            "object_type": "sango"
+        },
+        {
+            "type": "MESH",
+            "name": "ゴール",
+            "transform": {
+                "translation": [
+                    0.0,
+                    189.5877227783203,
+                    2.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "box",
+            "object_type": "goal"
+        },
+        {
+            "type": "MESH",
+            "name": "サンゴ9",
+            "transform": {
+                "translation": [
+                    -1.528691049537773e-16,
+                    102.56221008300781,
+                    22.013980865478516
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "sango",
+            "object_type": "sango"
+        },
+        {
+            "type": "MESH",
+            "name": "サンゴ10",
+            "transform": {
+                "translation": [
+                    -1.528691049537773e-16,
+                    125.0,
+                    22.013980865478516
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "sango",
+            "object_type": "sango"
+        },
+        {
+            "type": "MESH",
+            "name": "サンゴ11",
+            "transform": {
+                "translation": [
+                    -1.528691049537773e-16,
+                    150.00343322753906,
+                    22.013980865478516
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "sango",
+            "object_type": "sango"
+        },
+        {
+            "type": "MESH",
+            "name": "サンゴ12",
+            "transform": {
+                "translation": [
+                    -1.528691049537773e-16,
+                    158.45272827148438,
+                    14.127970695495605
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "sango",
+            "object_type": "sango"
+        },
+        {
+            "type": "MESH",
+            "name": "サンゴ13",
+            "transform": {
+                "translation": [
+                    -1.528691049537773e-16,
+                    168.15377807617188,
+                    6.554896354675293
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "sango",
+            "object_type": "sango"
+        }
+    ]
+}

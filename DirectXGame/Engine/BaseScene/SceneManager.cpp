@@ -20,7 +20,17 @@ void SceneManager::Init() {
 
 	
 
+	spotLight_.Init();
+	spotLight_.intensity_ = 0.0f;
+	pointLight_.Init();
+	spotLight_.intensity_ = 0.0f;
+	pointLight_.Update();
+	spotLight_.Update();
+
 	camera_.Init();
+
+	Object3d::SetPointLight(&pointLight_);
+	Object3d::SetSpotLight(&spotLight_);
 
 	uint32_t circle = TextureManager::Load("circle.png");
 	particle_ = std::make_unique<Particle>();

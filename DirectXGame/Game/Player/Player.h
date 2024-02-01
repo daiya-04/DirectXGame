@@ -39,9 +39,7 @@ public:
 		grapPoint = Pos;
 		canGrap = true;
 	}
-	void hitBox() {
-
-	}
+	void hitBox(Vector3 colliderPos,Vector3 colliderSize);
 	void ImGui();
 
 #pragma region
@@ -57,6 +55,8 @@ public:
 #pragma endregion getter
 #pragma region
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
+
+	void SetPos(const Vector3& pos) { world_.translation_ = pos; }
 #pragma endregion setter
 
 private:
@@ -95,6 +95,7 @@ private:
 	std::optional<GrapBehavior> GrapBehaviorRequest_ = std::nullopt;
 	void GrapInit();
 	void GrapUpdate();
+	void GrapSelectDirection();
 	void GrapJumpLeftInitalize();
 	void GrapJumpLeftUpdate();
 	void GrapJumpRightInitalize();
@@ -106,17 +107,13 @@ private:
 	Quaternion directionQua_;
 	bool grapJump = false;
 	Vector3 grapJumpVec;
-	Quaternion endVecQua;
-	Quaternion beginVecQua;
-	Quaternion lerpQua;
 	float angle = 1.0f;
 	const float kAngleMax = 0.5f;
 	int JumpFlame;
-	float angleParam = 0.0f;
-	float kParam = 0.005f;
 	Vector3 moveVector;
 	Vector3 sangoDirection_ = { 0.0f,0.0f,0.0f };
-	float jumpParam = 0.8f;
+	float jumpParam = 0.0f;
+	float kjumpParam = 0.8f;
 	const float kGravity = -0.7f;
 	//当たり判定の履歴
 	int sangoId_ = 0;
@@ -136,5 +133,7 @@ private:
 	Quaternion playerQua_;
 	Quaternion moveQua_;
 	float moveParam = 0.0f;
+	Vector3 direction = { 0.0f,0.0f,0.0f };
+	Vector3 tlanslatePre;
 #pragma endregion 移動
 };

@@ -15,6 +15,7 @@ public:
 	virtual void Update() = 0;
 	virtual void Draw(const Camera& camera) = 0;
 	AABB GetAABB() { return collider; }
+
 	void SetColliderSize(Vector3 size) { colliderSize = size; }
 	void ColliderUpdate() {
 		collider.min.x = world_.translation_.x - colliderSize.x;
@@ -27,6 +28,7 @@ public:
 	};
 #pragma region
 	Vector3 GetPosition()const { return world_.translation_; }
+	Vector3 GetColliderSize() { return colliderSize; }
 #pragma endregion getter
 protected:
 
