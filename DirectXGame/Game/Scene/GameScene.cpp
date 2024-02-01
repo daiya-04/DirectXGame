@@ -91,8 +91,8 @@ void GameScene::Init() {
 		} else if (objectData.objectType == "goal") {
 			goal_->SetPos(objectData.translation);
 		} else if (objectData.objectType == "floor") {
-			floor_->SetPos(objectData.translation);
-			floor_->SetScale(objectData.scaling);
+			//floor_->SetPos(objectData.translation);
+			//floor_->SetScale(objectData.scaling);
 		}
 
 
