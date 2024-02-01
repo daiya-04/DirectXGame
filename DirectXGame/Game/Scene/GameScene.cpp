@@ -75,8 +75,6 @@ void GameScene::Init() {
 		} else if (objectData.objectType == "goal") {
 			goal_->SetPos(objectData.translation);
 		} else if (objectData.objectType == "floor") {
-			//floor_->SetPos(objectData.translation);
-			//floor_->SetScale(objectData.scaling);
 			Box* box = new Box();
 			box->Init(boxModels);
 			box->SetPos(objectData.translation);
