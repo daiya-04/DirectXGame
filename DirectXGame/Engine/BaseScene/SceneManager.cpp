@@ -56,9 +56,9 @@ void SceneManager::Update(){
 			(*itParticle).currentTime_ += kDeltaTime;
 		}
 
+			emitter_.frequencyTime_ += kDeltaTime;
 		if (isField_) {
 
-			emitter_.frequencyTime_ += kDeltaTime;
 			if (emitter_.frequency_ <= emitter_.frequencyTime_) {
 				particles_.splice(particles_.end(), Particle::Emit(emitter_, randomEngine));		
 	
@@ -66,7 +66,7 @@ void SceneManager::Update(){
 			}
 		}
 	}
-	if (nextSceneName_ == chackSelectName_) {
+	if (nextSceneName_ == chackSelectName_ && nowSceneName_ == AbstractSceneFactory::SceneName::Title) {
 		isField_ = true;
 	}
 	else {
@@ -74,13 +74,19 @@ void SceneManager::Update(){
 	}
 	
 
-	if (nextScene_ && nextSceneName_ == chackSelectName_ &&particleNum_ > 799) {
+	if (nextScene_ && nextSceneName_ == chackSelectName_ && particleNum_ > 799) {
 		scene_ = std::move(nextScene_);
 		nowSceneName_ = nextSceneName_;
 		nextSceneName_ = AbstractSceneFactory::SceneName::NONE;
 		scene_->Init();
 	}
-	else if(nextScene_&& nextSceneName_ != chackSelectName_){
+	else if (nextScene_ && nextSceneName_ == chackSelectName_ && nowSceneName_ != AbstractSceneFactory::SceneName::Title) {
+		scene_ = std::move(nextScene_);
+		nowSceneName_ = nextSceneName_;
+		nextSceneName_ = AbstractSceneFactory::SceneName::NONE;
+		scene_->Init();
+	}
+	else if (nextScene_ && nextSceneName_ != chackSelectName_){
 		scene_ = std::move(nextScene_);
 		nowSceneName_ = nextSceneName_;
 		nextSceneName_ = AbstractSceneFactory::SceneName::NONE;
