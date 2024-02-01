@@ -85,7 +85,7 @@ void GameScene::Init() {
 
 #pragma endregion 位置情報の読み込み
 
-	uint32_t goalModelHundle = ModelManager::Load("Goal");
+	Model* goalModelHundle = ModelManager::Load("Goal");
 	goal_Model_.reset(Object3d::Create(goalModelHundle));
 	std::vector<Object3d*> goalModels = {
 		goal_Model_.get(),
