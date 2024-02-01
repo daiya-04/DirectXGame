@@ -32,6 +32,7 @@ public:
 
 	void HitFloor(float PosY) {
 		world_.translation_.y = PosY;
+		moveQua_ = IdentityQuaternion();
 		world_.UpdateMatrixQua(moveQua_.MakeRotateMatrix());
 		IsOnGraund = true;
 	}

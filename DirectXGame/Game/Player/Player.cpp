@@ -179,6 +179,9 @@ void Player::BehaviorRootInit()
 	ArrowQua_ = IdentityQuaternion();
 	rotateQua = IdentityQuaternion();
 	directionQua_ = IdentityQuaternion();
+	moveQua_ = IdentityQuaternion();
+	playerQua_ = IdentityQuaternion();
+	rotateQua = IdentityQuaternion();
 	angle = 1.0f;
 	jumpParam = 0.0f;
 }
