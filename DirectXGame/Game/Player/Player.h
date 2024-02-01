@@ -39,9 +39,7 @@ public:
 		grapPoint = Pos;
 		canGrap = true;
 	}
-	void hitBox() {
-
-	}
+	void hitBox(Vector3 colliderPos,Vector3 colliderSize);
 	void ImGui();
 
 #pragma region
@@ -136,5 +134,6 @@ private:
 	Quaternion moveQua_;
 	float moveParam = 0.0f;
 	Vector3 direction = { 0.0f,0.0f,0.0f };
+	Vector3 tlanslatePre;
 #pragma endregion 移動
 };

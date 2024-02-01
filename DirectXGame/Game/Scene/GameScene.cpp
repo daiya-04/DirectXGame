@@ -49,21 +49,18 @@ void GameScene::Init() {
 	std::vector<Object3d*> sangoModels = {
 		sangoModel_.get(),
 	};
-	/*sango_ = std::make_unique<Sango>();
-	sango_->Init(sangoModels);
-	sango_->SetPos({0.0f,2.0f,0.0f});
-	sango2_ = std::make_unique<Sango>();
-	sango2_->Init(sangoModels);
-	sango2_->SetPos({10.0f,10.0f,0.0f});
-	sango3_ = std::make_unique<Sango>();
-	sango3_->Init(sangoModels);
-	sango3_->SetPos({ 0.0f,15.0f,0.0f });
-	sango4_ = std::make_unique<Sango>();
-	sango4_->Init(sangoModels);
-	sango4_->SetPos({ 10.0f,20.0f,0.0f });*/
 #pragma endregion Sango
 #pragma region
+	Model* boxModelHundle = ModelManager::Load("Box");
+	box_Model_.reset(Object3d::Create(boxModelHundle));
+	std::vector<Object3d*> boxModels = {
+		box_Model_.get(),
+	};
+	Box* box = new Box();
+	box->Init(boxModels);
+	box->SetPos({0.0f,0.0f,0.0f});
 
+	boxes_.push_back(std::unique_ptr<Box>(box));
 #pragma endregion Box
 
 #pragma region
@@ -85,6 +82,7 @@ void GameScene::Init() {
 
 #pragma endregion 位置情報の読み込み
 
+#pragma region
 	Model* goalModelHundle = ModelManager::Load("Goal");
 	goal_Model_.reset(Object3d::Create(goalModelHundle));
 	std::vector<Object3d*> goalModels = {
@@ -107,6 +105,10 @@ void GameScene::Update() {
 
 	for (auto& sango : sangoes_) {
 		sango->Update();
+	}
+	
+	for (auto& box : boxes_) {
+		box->Update();
 	}
 
 	goal_->Update();
@@ -133,6 +135,14 @@ void GameScene::Update() {
 		}
 
 	}
+	for (auto& box : boxes_) {
+
+		if (IsCollision(player_->GetAABB(), box->GetAABB())) {
+			player_->hitBox(box->GetPosition(),box->GetColliderSize());
+			
+		}
+
+	}
 	
 	if (IsCollision(player_->GetAABB(), goal_->GetAABB()) && IsGoal == false) {
 		IsGoal = true;
@@ -154,6 +164,9 @@ void GameScene::DrawModel() {
 
 	for (auto& sango : sangoes_) {
 		sango->Draw(camera_.GetViewProjection());
+	}
+	for (auto& box : boxes_) {
+		box->Draw(camera_.GetViewProjection());
 	}
 
 	goal_->Draw(camera_.GetViewProjection());
