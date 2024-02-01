@@ -3,11 +3,11 @@
     "objects": [
         {
             "type": "MESH",
-            "name": "Firld",
+            "name": "Firld1",
             "transform": {
                 "translation": [
                     0.0,
-                    100.0,
+                    13.30624008178711,
                     -1.0
                 ],
                 "rotation": [
@@ -17,7 +17,7 @@
                 ],
                 "scaling": [
                     4.0,
-                    100.0,
+                    20.0,
                     1.0
                 ]
             },
@@ -410,6 +410,52 @@
             },
             "file_name": "sango",
             "object_type": "sango"
+        },
+        {
+            "type": "MESH",
+            "name": "Firld2",
+            "transform": {
+                "translation": [
+                    0.0,
+                    76.37984466552734,
+                    -1.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    4.0,
+                    30.0,
+                    1.0
+                ]
+            },
+            "file_name": "Firld",
+            "object_type": "floor"
+        },
+        {
+            "type": "MESH",
+            "name": "Firld3",
+            "transform": {
+                "translation": [
+                    0.0,
+                    173.32632446289062,
+                    -1.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    4.0,
+                    30.0,
+                    1.0
+                ]
+            },
+            "file_name": "Firld",
+            "object_type": "floor"
         }
     ]
 }
