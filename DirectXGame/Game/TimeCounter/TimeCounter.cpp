@@ -3,7 +3,7 @@
 void TimeCounter::Init()
 {
 	uint32_t numberTex = TextureManager::Load("numbers.png");
-	Sprite* sprite = new Sprite(numberTex, { 640.0f,360.0f }, { 1280.0f,720.0f },
+	Sprite* sprite = new Sprite(numberTex, { 640.0f,360.0f }, { 640.0f,64.0f },
 		0.0f, { 0.5f,0.5f }, { 0.2f,0.2f,0.2f,1.0f });
 	sprite->Initialize();
 
