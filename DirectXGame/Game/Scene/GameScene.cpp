@@ -133,10 +133,11 @@ void GameScene::Update() {
 	for (auto& sango : sangoes_) {
 
 		if (IsCollision(player_->GetAABB(), sango->GetAABB())) {
-			player_->HitSango(sango->GetPosition());
+				player_->HitSango();
 			if (sango->GetIsAlreadyHit() == false) {
 				sango->HitPlayer();
 				player_->SetSangoId(sango->GetSangoId());
+				player_->SetSangoPos(sango->GetPosition());
 			}
 		}else {
 			sango->NotHitPlayer();

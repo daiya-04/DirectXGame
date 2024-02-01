@@ -35,8 +35,7 @@ public:
 		world_.UpdateMatrixQua(moveQua_.MakeRotateMatrix());
 		IsOnGraund = true;
 	}
-	void HitSango(Vector3 Pos) {
-		grapPoint = Pos;
+	void HitSango() {
 		canGrap = true;
 	}
 	void hitBox(Vector3 colliderPos,Vector3 colliderSize);
@@ -55,7 +54,7 @@ public:
 #pragma endregion getter
 #pragma region
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
-
+	void SetSangoPos(Vector3 Pos) { grapPoint = Pos; }
 	void SetPos(const Vector3& pos) { world_.translation_ = pos; }
 #pragma endregion setter
 
