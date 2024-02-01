@@ -4,6 +4,7 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
+#include"Ease/Ease.h"
 #include"SelectScene.h"
 
 TitleScene::~TitleScene(){
@@ -37,6 +38,11 @@ void TitleScene::Init() {
 	press_.reset(new Sprite(pressTex, { pressTrnas_.translation_.x,pressTrnas_.translation_.y }, { 256.0f,64.0f }, 0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
 
 	press_->Initialize();
+
+	i = 0.0f;
+
+	alpha = 1.0f;
+
 	input_ = Input::GetInstance();
 	
 	isNext_ = false;
@@ -50,6 +56,19 @@ void TitleScene::Update() {
 
 	press_->SetPosition({ pressTrnas_.translation_.x,pressTrnas_.translation_.y });
 	press_->SetSize({ pressTrnas_.scale_.x,pressTrnas_.scale_.y });
+
+
+	if (i < 0.0f) {
+		magnification *= -1;
+	}
+	else if (i > 1.0f) {
+		magnification *= -1;
+	}
+	
+	i += (addSpeed_ * magnification);
+	alpha = Ease::Easing(Ease::EaseName::EaseOutSine, 0.0f, 1.0f, i);
+
+	press_->SetColor({ 1.0f,1.0f,1.0f,alpha });
 
 	pressTrnas_.UpdateMatrix();
 	titleTrnas_.UpdateMatrix();
@@ -91,6 +110,7 @@ void TitleScene::DebugGUI() {
 	ImGui::DragFloat3("titlescale", &titleTrnas_.scale_.x, 0.1f);
 	ImGui::DragFloat3("presstrans", &pressTrnas_.translation_.x, 0.1f);
 	ImGui::DragFloat3("pressscale", &pressTrnas_.scale_.x, 0.1f);
+	ImGui::DragFloat("i", &i, 0.01f);
 	ImGui::End();
 #endif // _DEBUG
 

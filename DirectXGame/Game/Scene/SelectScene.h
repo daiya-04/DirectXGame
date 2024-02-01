@@ -30,7 +30,11 @@ public:
 
 	void DebugGUI()override;
 
+	void UIInit();
+
 	~SelectScene()override;
+
+	
 
 	static void SetClearFlag(int x) { isStageClear_[x] = true; }
 
@@ -123,5 +127,21 @@ private:
 	bool isSceneNext_ = false;
 
 	static bool isStageClear_[maxStage_];
+
+
+	//UI
+	std::unique_ptr<Sprite> APress_;
+	
+	std::unique_ptr<Sprite> stick_;
+
+	std::unique_ptr<Sprite> moveText_;
+
+	WorldTransform pressTrans_;
+
+	WorldTransform stickTrans_;
+
+	WorldTransform moveTrans_;
+
+	int UITimer_ = 0;
 };
 

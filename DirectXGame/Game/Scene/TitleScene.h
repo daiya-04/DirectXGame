@@ -47,5 +47,13 @@ private:
 
 	Input* input_ = nullptr;
 
+	float i = 0.0f;
+
+	float addSpeed_ = 0.04f;
+
+	float magnification = 1.0f;
+
+	float alpha = 1.0f;
+
 };
 
