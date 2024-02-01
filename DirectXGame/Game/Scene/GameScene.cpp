@@ -56,11 +56,7 @@ void GameScene::Init() {
 	std::vector<Object3d*> boxModels = {
 		box_Model_.get(),
 	};
-	Box* box = new Box();
-	box->Init(boxModels);
 	
-
-	boxes_.push_back(std::unique_ptr<Box>(box));
 #pragma endregion Box
 
 
@@ -92,8 +88,13 @@ void GameScene::Init() {
 		} else if (objectData.objectType == "floor") {
 			//floor_->SetPos(objectData.translation);
 			//floor_->SetScale(objectData.scaling);
+			Box* box = new Box();
+			box->Init(boxModels);
 			box->SetPos(objectData.translation);
 			box->SetScale(objectData.scaling);
+
+			boxes_.push_back(std::unique_ptr<Box>(box));
+			
 		}
 
 
