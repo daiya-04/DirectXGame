@@ -5,7 +5,6 @@
 #include <fstream>
 #include <sstream>
 #include "TextureManager.h"
-#include "ModelManager.h"
 #include "Log.h"
 #include "DirectionalLight.h"
 
@@ -17,6 +16,8 @@ ID3D12Device* Object3d::device_ = nullptr;
 ID3D12GraphicsCommandList* Object3d::commandList_ = nullptr;
 ComPtr<ID3D12RootSignature> Object3d::rootSignature_;
 ComPtr<ID3D12PipelineState> Object3d::graphicsPipelineState_;
+PointLight* Object3d::pointLight_ = nullptr;
+SpotLight* Object3d::spotLight_ = nullptr;
 
 void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
 
@@ -84,6 +85,14 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	rootParameters[(size_t)RootParameter::kDirectionLight].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  //CBVを使う
 	rootParameters[(size_t)RootParameter::kDirectionLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
 	rootParameters[(size_t)RootParameter::kDirectionLight].Descriptor.ShaderRegister = 3;  //レジスタ番号1を使う
+
+	rootParameters[(size_t)RootParameter::kPointLight].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  //CBVを使う
+	rootParameters[(size_t)RootParameter::kPointLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
+	rootParameters[(size_t)RootParameter::kPointLight].Descriptor.ShaderRegister = 4;  //レジスタ番号1を使う
+
+	rootParameters[(size_t)RootParameter::kSpotLight].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  //CBVを使う
+	rootParameters[(size_t)RootParameter::kSpotLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
+	rootParameters[(size_t)RootParameter::kSpotLight].Descriptor.ShaderRegister = 5;  //レジスタ番号1を使う
 
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
@@ -206,11 +215,11 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 }
 
-Object3d* Object3d::Create(uint32_t modelHandle) {
+Object3d* Object3d::Create(Model* model) {
 	
 
 	Object3d* obj = new Object3d();
-	obj->Initialize(modelHandle);
+	obj->Initialize(model);
 
 	return obj;
 
@@ -291,26 +300,28 @@ ComPtr<IDxcBlob> Object3d::CompileShader(const std::wstring& filePath, const wch
 }
 
 
-void Object3d::Initialize(uint32_t modelHandle) {
-
-	modelHandle_ = modelHandle;
-
+void Object3d::Initialize(Model* model) {
+	model_ = model;
 }
 
 void Object3d::Draw(const WorldTransform& worldTransform, const Camera& camera) {
 	
-	ModelManager::GetInstance()->SetVertexBuffers(commandList_,modelHandle_);
-	ModelManager::GetInstance()->SetGraphicsRootConstantBufferView(commandList_, (UINT)RootParameter::kMaterial, modelHandle_);
+	model_->SetVertexBuffers(commandList_);
+	model_->SetGraphicsRootConstantBufferView(commandList_, (UINT)RootParameter::kMaterial);
 	//wvp用のCBufferの場所の設定
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kWorldTransform, worldTransform.GetGPUVirtualAddress());
 
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kCamera, camera.GetGPUVirtualAddress());
 	
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, ModelManager::GetInstance()->GetUvHandle(modelHandle_));
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, model_->GetUvHandle());
 
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
 
-	commandList_->DrawInstanced(ModelManager::GetInstance()->GetIndex(modelHandle_), 1, 0, 0);
+	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kPointLight, pointLight_->GetGPUVirtualAddress());
+
+	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kSpotLight, spotLight_->GetGPUVirtualAddress());
+
+	commandList_->DrawInstanced(model_->GetVertices(), 1, 0, 0);
 
 }
 

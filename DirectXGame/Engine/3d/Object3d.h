@@ -10,6 +10,9 @@
 #include <vector>
 #include "WorldTransform.h"
 #include "Camera.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+#include "ModelManager.h"
 
 class Object3d{
 private:
@@ -23,6 +26,8 @@ private:
 		kCamera,
 		kTexture,
 		kDirectionLight,
+		kPointLight,
+		kSpotLight,
 		
 		kParamNum,
 	};
@@ -33,6 +38,7 @@ public:
 		kCube,
 		kSphere,
 		kPlane,
+		kModel,
 	};
 
 private: //静的メンバ変数
@@ -47,11 +53,20 @@ public: //静的メンバ関数
 	//静的初期化
 	static void StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 	//モデルの生成
-	static Object3d* Create(uint32_t modelHandle);
+	static Object3d* Create(Model* model);
 	//描画前処理
 	static void preDraw();
 	//描画後処理
 	static void postDraw();
+
+	static void SetPointLight(PointLight* pointLight) { pointLight_ = pointLight; }
+
+	static void SetSpotLight(SpotLight* spotLight) { spotLight_ = spotLight; }
+
+public:
+
+	static PointLight* pointLight_;
+	static SpotLight* spotLight_;
 
 	
 private:
@@ -61,16 +76,18 @@ private:
 	
 private: //メンバ変数
 
-	uint32_t modelHandle_ = 0;
+	Model* model_ = nullptr;
 
 public: //メンバ関数
 
 	//初期化
-	void Initialize(uint32_t modelHandle);
+	void Initialize(Model* model);
 	//描画
 	void Draw(const WorldTransform& worldTransform,const Camera& camera);
 	
-	void SetModelHandle(uint32_t modelHandle) { modelHandle_ = modelHandle; }
+	void SetModelHandle(Model* model) { model_ = model; }
+
+	void SetColor(const Vector4& color) { model_->SetColor(color); }
 
 private:
 	

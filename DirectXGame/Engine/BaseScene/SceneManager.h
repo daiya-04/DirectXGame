@@ -8,6 +8,8 @@
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
+#include "PointLight.h"
+#include "SpotLight.h"
 #include "Camera.h"
 #include "WorldTransform.h"
 
@@ -56,6 +58,9 @@ private:
 	Particle::AccelerationField accelerationField_;
 
 	Input* input_ = nullptr;
+
+	PointLight pointLight_;
+	SpotLight spotLight_;
 
 };
 

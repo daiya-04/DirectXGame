@@ -64,13 +64,13 @@ private:
 
 	Camera camera_;
 	//モデルデータの入れ物
-	uint32_t Model_ = 0;
-	uint32_t seaHorseModel_ = 0;
-	uint32_t floorModel_ = 0;
-	uint32_t rockModel_ = 0;
-	uint32_t stageSelectModel_ = 0;
-	uint32_t skyModel_ = 0;
-	uint32_t loadModel_ = 0;
+	Model* Model_ = 0;
+	Model* seaHorseModel_ = 0;
+	Model* floorModel_ = 0;
+	Model* rockModel_ = 0;
+	Model* stageSelectModel_ = 0;
+	Model* skyModel_ = 0;
+	Model* loadModel_ = 0;
 
 	//オブジェクト
 	std::unique_ptr<Object3d> obj_[maxStage_];	

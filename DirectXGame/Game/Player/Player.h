@@ -57,6 +57,8 @@ public:
 #pragma endregion getter
 #pragma region
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
+
+	void SetPos(const Vector3& pos) { world_.translation_ = pos; }
 #pragma endregion setter
 
 private:

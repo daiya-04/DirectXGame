@@ -2,12 +2,16 @@
 #include "IScene.h"
 #include <memory>
 #include <list>
+#include <vector>
 
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
 #include "Camera.h"
 #include "WorldTransform.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+#include "LevelLoader.h"
 
 #include "SceneManager.h"
 
@@ -56,14 +60,14 @@ private:
 	std::unique_ptr<Floor> floor_;
 
 	std::unique_ptr<Object3d> sangoModel_;
-	std::unique_ptr<Sango> sango_;
-	std::unique_ptr<Sango> sango2_;
-	std::unique_ptr<Sango> sango3_;
-	std::unique_ptr<Sango> sango4_;
+
+	std::vector<std::unique_ptr<Sango>> sangoes_;
 
 	std::unique_ptr<Object3d> goal_Model_;
 	std::unique_ptr<Goal> goal_;
 
 	std::list<Box*>box_;
+
+	std::unique_ptr<LevelData> levelData_;
 };
 
