@@ -92,7 +92,7 @@ void GameScene::Init() {
 	};
 	goal_ = std::make_unique<Goal>();
 	goal_->Init(goalModels);
-	goal_->SetPos({10.0f,1.0f,0.0f});
+	goal_->SetPos({15.0f,1.0f,0.0f});
 #pragma endregion Goal
 }
 
@@ -108,10 +108,6 @@ void GameScene::Update() {
 	for (auto& sango : sangoes_) {
 		sango->Update();
 	}
-	/*sango_->Update();
-	sango2_->Update();
-	sango3_->Update();
-	sango4_->Update();*/
 
 	goal_->Update();
 
@@ -137,8 +133,9 @@ void GameScene::Update() {
 		}
 
 	}
-
-	if (IsCollision(player_->GetAABB(), goal_->GetAABB())) {
+	
+	if (IsCollision(player_->GetAABB(), goal_->GetAABB()) && IsGoal == false) {
+		IsGoal = true;
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
 	}
   

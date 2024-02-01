@@ -65,6 +65,7 @@ private:
 
 	std::unique_ptr<Object3d> goal_Model_;
 	std::unique_ptr<Goal> goal_;
+	bool IsGoal = false;
 
 	std::list<Box*>box_;
 
