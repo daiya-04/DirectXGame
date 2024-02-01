@@ -285,19 +285,19 @@ void Player::GrapUpdate()
 		/*if (secondJump == false && Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
 			moveVector = secondJumpVec/2;
 			secondJump = true;
-		}
+		}*/
 		JumpFlame++;
 		if (JumpFlame == 45) {
 			angle = 0.9f;
 		}
 		Vector3 cross = Cross(Vector3{ 0.0f,0.0f,1.0f }, Vector3{ 0.0f,1.0f,0.0f });
 		cross = cross.Normalize();
-		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));*/
+		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 	}
-	/*if (secondJump == false) {
+	if (secondJump == false) {
 		moveQua_ = moveQua_.Normalize() * rotateQua.Normalize();
 	}
-	if (secondJump) {
+	/*if (secondJump) {
 		Move();
 	}*/
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
