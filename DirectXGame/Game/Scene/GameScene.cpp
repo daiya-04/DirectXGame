@@ -47,8 +47,6 @@ void GameScene::Init() {
 	};
 	
 #pragma endregion Box
-
-
 #pragma region
 
 	Model* goalModelHundle = ModelManager::Load("Goal");
@@ -59,7 +57,6 @@ void GameScene::Init() {
 	goal_ = std::make_unique<Goal>();
 	goal_->Init(goalModels);
 #pragma endregion Goal
-
 #pragma region
 
 	for (auto& objectData : levelData_->objects) {
@@ -88,11 +85,15 @@ void GameScene::Init() {
 	}
 
 #pragma endregion 位置情報の読み込み
+
+	timeCounter_ = std::make_unique<TimeCounter>();
+	timeCounter_->Init();
 }
 
 void GameScene::Update() {
 	DebugGUI();
 
+#pragma region
 	camera_.Update();
 
 	player_->Update();
@@ -106,6 +107,11 @@ void GameScene::Update() {
 	}
 
 	goal_->Update();
+
+	timeCounter_->Update();
+#pragma endregion Update
+
+#pragma region
 
 	for (auto& sango : sangoes_) {
 
@@ -168,13 +174,27 @@ void GameScene::DrawParticle() {
 
 void GameScene::DrawUI() {
 
-
+	timeCounter_->Draw();
 
 }
 
 void GameScene::DebugGUI() {
 
 	player_->ImGui();
+
+#ifdef _DEBUG
+	ImGui::Begin("Timer");
+	if (ImGui::Button("On")) {
+		timeCounter_->IsTimerAnable();
+	}
+	if (ImGui::Button("Off")) {
+		timeCounter_->IsTimerStop();
+	}
+	if (ImGui::Button("Reset")) {
+		timeCounter_->Reset();
+	}
+	ImGui::End();
+#endif
 }
 
 

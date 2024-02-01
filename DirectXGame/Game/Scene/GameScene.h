@@ -15,6 +15,8 @@
 
 #include "SceneManager.h"
 
+#include "TimeCounter/TimeCounter.h"
+
 #pragma region
 #include "Game/FollowCamera/FollowCamera.h"
 #include "Game/Player/Player.h"
@@ -71,5 +73,7 @@ private:
 	std::vector<std::unique_ptr<Box>>boxes_;
 
 	std::unique_ptr<LevelData> levelData_;
+
+	std::unique_ptr<TimeCounter> timeCounter_;
 };
 
