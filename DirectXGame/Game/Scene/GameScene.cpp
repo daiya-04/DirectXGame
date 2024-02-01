@@ -139,7 +139,6 @@ void GameScene::Update() {
 
 		if (IsCollision(player_->GetAABB(), box->GetAABB())) {
 			player_->hitBox(box->GetPosition(),box->GetColliderSize());
-			
 		}
 
 	}
