@@ -56,8 +56,8 @@ private:
 	std::unique_ptr<Object3d> arrowModel_;
 	std::unique_ptr<Player> player_;
 
-	std::unique_ptr<Object3d> floorModel_;
-	std::unique_ptr<Floor> floor_;
+	/*std::unique_ptr<Object3d> floorModel_;
+	std::unique_ptr<Floor> floor_;*/
 
 	std::unique_ptr<Object3d> sangoModel_;
 
