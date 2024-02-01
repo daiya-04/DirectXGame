@@ -68,8 +68,6 @@ void GameScene::Init() {
 
 #pragma region
 
-	
-
 	for (auto& objectData : levelData_->objects) {
 
 		if (objectData.objectType == "Player") {
@@ -87,6 +85,15 @@ void GameScene::Init() {
 
 #pragma endregion 位置情報の読み込み
 
+	uint32_t goalModelHundle = ModelManager::Load("Goal");
+	goal_Model_.reset(Object3d::Create(goalModelHundle));
+	std::vector<Object3d*> goalModels = {
+		goal_Model_.get(),
+	};
+	goal_ = std::make_unique<Goal>();
+	goal_->Init(goalModels);
+	goal_->SetPos({10.0f,1.0f,0.0f});
+#pragma endregion Goal
 }
 
 void GameScene::Update() {
@@ -106,6 +113,7 @@ void GameScene::Update() {
 	sango3_->Update();
 	sango4_->Update();*/
 
+	goal_->Update();
 
 #pragma region 
 	if (IsCollision(player_->GetAABB(), floor_->GetAABB())) {
@@ -130,54 +138,10 @@ void GameScene::Update() {
 
 	}
 
-	/*if (IsCollision(player_->GetAABB(), sango_->GetAABB())) {
-#ifdef _DEBUG
-		ImGui::Begin("Sango");
-		ImGui::End();
-#endif
-		player_->HitSango(sango_->GetPosition());
-		if (sango_->GetIsAlreadyHit() == false) {
-			sango_->HitPlayer();
-			player_->SetSangoId(sango_->GetSangoId());
-		}
+	if (IsCollision(player_->GetAABB(), goal_->GetAABB())) {
+		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
 	}
-	else {
-		sango_->NotHitPlayer();
-	}
-	if (IsCollision(player_->GetAABB(), sango2_->GetAABB())) {
-#ifdef _DEBUG
-		ImGui::Begin("Sango");
-		ImGui::End();
-#endif
-		player_->HitSango(sango2_->GetPosition());
-		if (sango2_->GetIsAlreadyHit() == false) {
-		sango2_->HitPlayer();
-		player_->SetSangoId(sango2_->GetSangoId());
-		}
-	}
-	else {
-		sango2_->NotHitPlayer();
-	}
-	if (IsCollision(player_->GetAABB(), sango3_->GetAABB())) {
-		player_->HitSango(sango3_->GetPosition());
-		if (sango3_->GetIsAlreadyHit() == false) {
-			sango3_->HitPlayer();
-			player_->SetSangoId(sango3_->GetSangoId());
-		}
-	}
-	else {
-		sango3_->NotHitPlayer();
-	}
-	if (IsCollision(player_->GetAABB(), sango4_->GetAABB())) {
-		player_->HitSango(sango4_->GetPosition());
-		if (sango4_->GetIsAlreadyHit() == false) {
-			sango4_->HitPlayer();
-			player_->SetSangoId(sango4_->GetSangoId());
-		}
-	}
-	else {
-		sango4_->NotHitPlayer();
-	}*/
+  
 #pragma endregion 当たり判定
 }
 
@@ -195,10 +159,8 @@ void GameScene::DrawModel() {
 		sango->Draw(camera_.GetViewProjection());
 	}
 
-	/*sango_->Draw(camera_.GetViewProjection());
-	sango2_->Draw(camera_.GetViewProjection());
-	sango3_->Draw(camera_.GetViewProjection());
-	sango4_->Draw(camera_.GetViewProjection());*/
+	goal_->Draw(camera_.GetViewProjection());
+
 }
 
 void GameScene::DrawParticleModel() {

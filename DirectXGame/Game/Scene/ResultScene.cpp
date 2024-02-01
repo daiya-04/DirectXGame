@@ -1,15 +1,15 @@
-#include "TitleScene.h"
+#include "ResultScene.h"
 
 #include"SceneManager.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
 
-TitleScene::~TitleScene(){
+ResultScene::~ResultScene(){
 
 }
 
-void TitleScene::Init() {	
+void ResultScene::Init() {	
 
 	uint32_t backGroundTex = TextureManager::Load("white.png");
 	uint32_t titleTex = TextureManager::Load("title.png");
@@ -22,7 +22,7 @@ void TitleScene::Init() {
 
 	titleTrnas_.Init();
 	titleTrnas_.translation_ = { 640.0f,230.0f,0.0f };
-	titleTrnas_.scale_ = { 576.0f,192.0f,0.0f };
+	titleTrnas_.scale_ = { 820.0f,420.0f,0.0f };
 
 	title_.reset(new Sprite(titleTex, { titleTrnas_.translation_.x,titleTrnas_.translation_.y }, { titleTrnas_.scale_.x,titleTrnas_.scale_.y },
 		0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
@@ -41,7 +41,7 @@ void TitleScene::Init() {
 	isNext_ = false;
 }
 
-void TitleScene::Update() {
+void ResultScene::Update() {
 	DebugGUI();
 
 	title_->SetPosition({ titleTrnas_.translation_.x,titleTrnas_.translation_.y });
@@ -60,35 +60,33 @@ void TitleScene::Update() {
 	
 }
 
-void TitleScene::DrawBackGround() {
+void ResultScene::DrawBackGround() {
 	background_->Draw();
-	press_->Draw();
-	title_->Draw();
+	//press_->Draw();
+	//title_->Draw();
 }
 
-void TitleScene::DrawModel() {
-
-}
-
-void TitleScene::DrawParticleModel() {
+void ResultScene::DrawModel() {
 
 }
 
-void TitleScene::DrawParticle() {
+void ResultScene::DrawParticleModel() {
+
+}
+
+void ResultScene::DrawParticle() {
 	
 }
 
-void TitleScene::DrawUI() {
+void ResultScene::DrawUI() {
 
 }
 
-void TitleScene::DebugGUI() {
+void ResultScene::DebugGUI() {
 #ifdef _DEBUG
 	ImGui::Begin("TitleSprite");
-	ImGui::DragFloat3("titletrans", &titleTrnas_.translation_.x, 0.1f);
-	ImGui::DragFloat3("titlescale", &titleTrnas_.scale_.x, 0.1f);
-	ImGui::DragFloat3("presstrans", &pressTrnas_.translation_.x, 0.1f);
-	ImGui::DragFloat3("pressscale", &pressTrnas_.scale_.x, 0.1f);
+	ImGui::DragFloat3("trans", &pressTrnas_.translation_.x, 0.1f);
+	ImGui::DragFloat3("scale", &pressTrnas_.scale_.x, 0.1f);
 	ImGui::End();
 #endif // _DEBUG
 

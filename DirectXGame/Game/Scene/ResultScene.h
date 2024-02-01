@@ -10,7 +10,7 @@
 #include "Camera.h"
 #include "WorldTransform.h"
 
-class TitleScene: public IScene{
+class ResultScene : public IScene{
 public:
 
 	void Init()override;
@@ -29,7 +29,7 @@ public:
 
 	void DebugGUI()override;
 
-	~TitleScene()override;
+	~ResultScene()override;
 
 private:
 

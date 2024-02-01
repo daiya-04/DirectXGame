@@ -138,6 +138,13 @@
       <Filter>Engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="LevelLoader.cpp" />
+    <ClCompile Include="Game\Goal\Goal.cpp" />
+    <ClCompile Include="Game\Scene\ResultScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\TutorialScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -247,5 +254,12 @@
       <Filter>Engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="LevelLoader.h" />
+    <ClInclude Include="Game\Goal\Goal.h" />
+    <ClInclude Include="Game\Scene\ResultScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\TutorialScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

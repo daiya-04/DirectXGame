@@ -14,7 +14,7 @@
 
 void DSFramework::Init(){
 	
-	WinApp::GetInstance()->CreateGameWindow(L"2306_タツノオトシGO!");
+	WinApp::GetInstance()->CreateGameWindow(L"2306_スク竜");
 
 	
 	DirectXCommon::GetInstance()->Initialize();

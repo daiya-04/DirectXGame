@@ -2,6 +2,8 @@
 #include "GameScene.h"
 #include "TitleScene.h"
 #include"SelectScene.h"
+#include"ResultScene.h"
+#include"TutorialScene.h"
 
 std::unique_ptr<IScene> SceneFactory::CreateScene(AbstractSceneFactory::SceneName sceneName){
 
@@ -19,8 +21,12 @@ std::unique_ptr<IScene> SceneFactory::CreateScene(AbstractSceneFactory::SceneNam
         newScene = std::make_unique<GameScene>();
         break;
     case SceneName::Result:
+        newScene = std::make_unique<ResultScene>();
         break;
     case SceneName::GameOver:
+        break;
+    case SceneName::Tutorial:
+        newScene = std::make_unique<TutorialScene>();
         break;
     default:
         break;
