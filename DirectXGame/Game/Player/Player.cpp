@@ -20,6 +20,8 @@ void Player::Init(std::vector<Object3d*> models)
 
 void Player::Update()
 {
+	tlanslatePre = world_.translation_;
+
 	if (behaviorRequest_) {
 		//ふるまいの変更
 		behavior_ = behaviorRequest_.value();
@@ -81,6 +83,52 @@ void Player::Draw(const Camera& camera)
 		models_[1]->Draw(world_Arrow_, camera);
 	}
 
+}
+void Player::hitBox(Vector3 colliderPos, Vector3 colliderSize)
+{
+#pragma region
+	if (tlanslatePre.y - colliderSize.y < colliderPos.y + colliderSize.y && tlanslatePre.y + colliderSize.y > colliderPos.y - colliderSize.y) {
+		if (tlanslatePre.x > colliderPos.x + colliderSize.x) {
+			//左から右
+			if (world_.translation_.x - colliderSize.x < colliderPos.x + colliderSize.x) {
+				world_.translation_.x = colliderPos.x + colliderSize.x + colliderSize.x;
+			}
+		}
+		if (tlanslatePre.x < colliderPos.x - colliderSize.x) {
+			//右から左
+			if (world_.translation_.x + colliderSize.x > colliderPos.x - colliderSize.x) {
+				world_.translation_.x = colliderPos.x - colliderSize.x - colliderSize.x;
+			}
+		}
+	}
+
+	if (tlanslatePre.y > colliderPos.y + colliderSize.y) {
+		//上から下
+		if (world_.translation_.y - colliderSize.y < colliderPos.y + colliderSize.y) {
+			world_.translation_.y = colliderPos.y + colliderSize.y + colliderSize.y;
+		}
+	}
+	if (tlanslatePre.y < colliderPos.y - colliderSize.y) {
+		//下から上
+		if (world_.translation_.y + colliderSize.y > colliderPos.y - colliderSize.y) {
+			world_.translation_.y = colliderPos.y - colliderSize.y - colliderSize.y;
+		}
+	}
+	if (tlanslatePre.y - colliderSize.y < colliderPos.y + colliderSize.y && tlanslatePre.y + colliderSize.y > colliderPos.y - colliderSize.y) {
+		if (tlanslatePre.z < colliderPos.z - colliderSize.z) {
+			//手前から奥
+			if (world_.translation_.z + colliderSize.z > colliderPos.z - colliderSize.z) {
+				world_.translation_.z = colliderPos.z - colliderSize.z - colliderSize.z;
+			}
+		}
+		if (tlanslatePre.z > colliderPos.z + colliderSize.z) {
+			//奥から手前
+			if (world_.translation_.z - colliderSize.z < colliderPos.z + colliderSize.z) {
+				world_.translation_.z = colliderPos.z + colliderSize.z + colliderSize.z;
+			}
+		}
+	}
+#pragma endregion 移動制御	
 }
 void Player::ImGui()
 {

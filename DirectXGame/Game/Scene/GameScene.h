@@ -65,8 +65,10 @@ private:
 
 	std::unique_ptr<Object3d> goal_Model_;
 	std::unique_ptr<Goal> goal_;
+	bool IsGoal = false;
 
-	std::list<Box*>box_;
+	std::unique_ptr<Object3d> box_Model_;
+	std::vector<std::unique_ptr<Box>>boxes_;
 
 	std::unique_ptr<LevelData> levelData_;
 };
