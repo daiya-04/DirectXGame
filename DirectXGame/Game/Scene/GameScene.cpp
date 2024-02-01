@@ -40,8 +40,6 @@ void GameScene::Init() {
 	};
 	floor_ = std::make_unique<Floor>();
 	floor_->Init(planeModels);
-	floor_->SetPos({ 0.0f,0.0f,0.0f });
-	floor_->SetScale({ 10.0f,1.0f,10.0f });
 #pragma endregion Plane
 #pragma region
 	Model* sangoModelHundle = ModelManager::Load("sango");
@@ -63,26 +61,9 @@ void GameScene::Init() {
 	boxes_.push_back(std::unique_ptr<Box>(box));
 #pragma endregion Box
 
-#pragma region
-
-	for (auto& objectData : levelData_->objects) {
-
-		if (objectData.objectType == "Player") {
-			player_->SetPos(objectData.translation);
-		}else if (objectData.objectType == "sango") {
-			Sango* newSango = new Sango();
-			newSango->Init(sangoModels);
-			newSango->SetPos(objectData.translation);
-
-			sangoes_.push_back(std::unique_ptr<Sango>(newSango));
-		}
-		
-
-	}
-
-#pragma endregion 位置情報の読み込み
 
 #pragma region
+
 	Model* goalModelHundle = ModelManager::Load("Goal");
 	goal_Model_.reset(Object3d::Create(goalModelHundle));
 	std::vector<Object3d*> goalModels = {
@@ -90,8 +71,31 @@ void GameScene::Init() {
 	};
 	goal_ = std::make_unique<Goal>();
 	goal_->Init(goalModels);
-	goal_->SetPos({15.0f,1.0f,0.0f});
 #pragma endregion Goal
+
+#pragma region
+
+	for (auto& objectData : levelData_->objects) {
+
+		if (objectData.objectType == "Player") {
+			player_->SetPos(objectData.translation);
+		} else if (objectData.objectType == "sango") {
+			Sango* newSango = new Sango();
+			newSango->Init(sangoModels);
+			newSango->SetPos(objectData.translation);
+
+			sangoes_.push_back(std::unique_ptr<Sango>(newSango));
+		} else if (objectData.objectType == "goal") {
+			goal_->SetPos(objectData.translation);
+		} else if (objectData.objectType == "floor") {
+			floor_->SetPos(objectData.translation);
+			floor_->SetScale(objectData.scaling);
+		}
+
+
+	}
+
+#pragma endregion 位置情報の読み込み
 }
 
 void GameScene::Update() {
