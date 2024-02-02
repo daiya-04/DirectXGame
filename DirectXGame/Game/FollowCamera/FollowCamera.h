@@ -28,6 +28,7 @@ public:
 #pragma region
 	const Camera& GetViewProjection() { return viewProjection_; }
 #pragma endregion Getter
+	void ImGui();
 private:
 	//ビュープロジェクション
 	Camera viewProjection_;

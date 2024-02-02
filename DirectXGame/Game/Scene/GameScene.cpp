@@ -181,7 +181,7 @@ void GameScene::DrawUI() {
 void GameScene::DebugGUI() {
 
 	player_->ImGui();
-
+	camera_.ImGui();
 #ifdef _DEBUG
 	ImGui::Begin("Timer");
 	if (ImGui::Button("On")) {

@@ -16,6 +16,7 @@ void Player::Init(std::vector<Object3d*> models)
 	directionQua_ = IdentityQuaternion();
 	moveParam = 0.3f;
 	Character::SetColliderSize({ 1.0f,1.0f,1.0f });
+	Character::SetOffset({0.0f,1.0f,0.0f});
 }
 
 void Player::Update()
@@ -84,47 +85,47 @@ void Player::Draw(const Camera& camera)
 	}
 
 }
-void Player::hitBox(Vector3 colliderPos, Vector3 colliderSize)
+void Player::hitBox(Vector3 colliderPos, Vector3 HitcolliderSize)
 {
 #pragma region
-	if (tlanslatePre.y - colliderSize.y < colliderPos.y + colliderSize.y && tlanslatePre.y + colliderSize.y > colliderPos.y - colliderSize.y) {
+	if (tlanslatePre.y - colliderSize.y + offset_.y < colliderPos.y + HitcolliderSize.y && tlanslatePre.y + colliderSize.y + offset_.y > colliderPos.y - HitcolliderSize.y) {
 		if (tlanslatePre.x > colliderPos.x + colliderSize.x) {
 			//左から右
-			if (world_.translation_.x - colliderSize.x < colliderPos.x + colliderSize.x) {
-				world_.translation_.x = colliderPos.x + colliderSize.x + colliderSize.x;
+			if (world_.translation_.x - colliderSize.x < colliderPos.x + HitcolliderSize.x) {
+				world_.translation_.x = colliderPos.x + HitcolliderSize.x + colliderSize.x;
 			}
 		}
-		if (tlanslatePre.x < colliderPos.x - colliderSize.x) {
+		if (tlanslatePre.x < colliderPos.x - HitcolliderSize.x) {
 			//右から左
-			if (world_.translation_.x + colliderSize.x > colliderPos.x - colliderSize.x) {
-				world_.translation_.x = colliderPos.x - colliderSize.x - colliderSize.x;
+			if (world_.translation_.x + colliderSize.x > colliderPos.x - HitcolliderSize.x) {
+				world_.translation_.x = colliderPos.x - HitcolliderSize.x - colliderSize.x;
 			}
 		}
 	}
 
-	if (tlanslatePre.y > colliderPos.y + colliderSize.y) {
+	if (tlanslatePre.y >= colliderPos.y + HitcolliderSize.y) {
 		//上から下
-		if (world_.translation_.y - colliderSize.y < colliderPos.y + colliderSize.y) {
-			world_.translation_.y = colliderPos.y + colliderSize.y + colliderSize.y;
+		if (world_.translation_.y - colliderSize.y < colliderPos.y + HitcolliderSize.y) {
+			world_.translation_.y = colliderPos.y + HitcolliderSize.y;
 		}
 	}
-	if (tlanslatePre.y < colliderPos.y - colliderSize.y) {
+	if (tlanslatePre.y <= colliderPos.y - HitcolliderSize.y) {
 		//下から上
-		if (world_.translation_.y + colliderSize.y > colliderPos.y - colliderSize.y) {
-			world_.translation_.y = colliderPos.y - colliderSize.y - colliderSize.y;
+		if (world_.translation_.y + colliderSize.y > colliderPos.y - HitcolliderSize.y) {
+			world_.translation_.y = colliderPos.y - HitcolliderSize.y;
 		}
 	}
-	if (tlanslatePre.y - colliderSize.y < colliderPos.y + colliderSize.y && tlanslatePre.y + colliderSize.y > colliderPos.y - colliderSize.y) {
-		if (tlanslatePre.z < colliderPos.z - colliderSize.z) {
+	if (tlanslatePre.y - colliderSize.y < colliderPos.y + HitcolliderSize.y && tlanslatePre.y + colliderSize.y > colliderPos.y - HitcolliderSize.y) {
+		if (tlanslatePre.z < colliderPos.z - HitcolliderSize.z) {
 			//手前から奥
-			if (world_.translation_.z + colliderSize.z > colliderPos.z - colliderSize.z) {
-				world_.translation_.z = colliderPos.z - colliderSize.z - colliderSize.z;
+			if (world_.translation_.z + colliderSize.z > colliderPos.z - HitcolliderSize.z) {
+				world_.translation_.z = colliderPos.z - HitcolliderSize.z - colliderSize.z;
 			}
 		}
-		if (tlanslatePre.z > colliderPos.z + colliderSize.z) {
+		if (tlanslatePre.z > colliderPos.z + HitcolliderSize.z) {
 			//奥から手前
-			if (world_.translation_.z - colliderSize.z < colliderPos.z + colliderSize.z) {
-				world_.translation_.z = colliderPos.z + colliderSize.z + colliderSize.z;
+			if (world_.translation_.z - colliderSize.z < colliderPos.z + HitcolliderSize.z) {
+				world_.translation_.z = colliderPos.z + HitcolliderSize.z + colliderSize.z;
 			}
 		}
 	}
