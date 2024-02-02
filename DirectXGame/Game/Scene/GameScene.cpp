@@ -82,11 +82,15 @@ void GameScene::Init() {
 		if (objectData.objectType == "Player") {
 			player_->SetPos(objectData.translation);
 		} else if (objectData.objectType == "sango") {
-			Sango* newSango = new Sango();
+			/*Sango* newSango = new Sango();
 			newSango->Init(sangoModels);
-			newSango->SetPos(objectData.translation);
+			newSango->SetPos(objectData.translation);*/
 
-			sangoes_.push_back(std::unique_ptr<Sango>(newSango));
+			auto& sang = sangoes_.emplace_back(std::make_unique<Sango>());
+			sang->Init(sangoModels);
+			sang->SetPos(objectData.translation);
+
+			//sangoes_.push_back(std::unique_ptr<Sango>(newSango));
 		} else if (objectData.objectType == "goal") {
 			goal_->SetPos(objectData.translation);
 		} else if (objectData.objectType == "floor") {
