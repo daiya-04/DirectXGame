@@ -41,6 +41,8 @@ public:
 
 	void SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex, uint32_t textureHandle);
 
+	const D3D12_RESOURCE_DESC GetResourceDesc(uint32_t textureHandle);
+
 	//リソースの生成
 	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
 
