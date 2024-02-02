@@ -238,7 +238,6 @@ void Player::GrapUpdate()
 		}
 	}
 
-	//if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
 		//自動でつかむ
 		if (canGrap == true && grapJump == true && PreSangoId_ != sangoId_) {
 			behaviorRequest_ = Behavior::kGrap;
@@ -282,11 +281,11 @@ void Player::GrapUpdate()
 		if (DeletePreIdTime_ >= kDeletePreIdTime_) {
 			PreSangoId_ = -1;
 		}
-
-		if (secondJump == false && Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
+		//2段ジャンプ
+		/*if (secondJump == false && Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
 			moveVector = secondJumpVec/2;
 			secondJump = true;
-		}
+		}*/
 		JumpFlame++;
 		if (JumpFlame == 45) {
 			angle = 0.9f;
@@ -298,9 +297,9 @@ void Player::GrapUpdate()
 	if (secondJump == false) {
 		moveQua_ = moveQua_.Normalize() * rotateQua.Normalize();
 	}
-	if (secondJump) {
+	/*if (secondJump) {
 		Move();
-	}
+	}*/
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
 		if (jumpParam < 0.8f) {
 		jumpParam += 0.01f;
