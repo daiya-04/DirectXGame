@@ -13,7 +13,7 @@ void GameScene::Init() {
 
 	camera_.Init();
 
-	levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("beginner"));
+	levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage1"));
 
 	
 
