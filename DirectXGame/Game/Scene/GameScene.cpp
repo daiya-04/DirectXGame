@@ -208,7 +208,7 @@ void GameScene::DebugGUI(){
 		ImGui::SliderFloat("distance", &spotLight_.distance_, 0.0f, 10.0f);
 		ImGui::SliderFloat("decay", &spotLight_.decay_, 0.01f, 2.0f);
 		ImGui::SliderFloat("cosAngle", &spotLight_.cosAngle_, 0.0f, spotLight_.cosFalloffStart_ - 0.001f);
-		ImGui::SliderFloat("cosFalloffStart", &spotLight_.cosFalloffStart_, spotLight_.cosAngle_, 1.0f);
+		ImGui::SliderFloat("cosFalloffStart", &spotLight_.cosFalloffStart_, spotLight_.cosAngle_ + 0.001f, 1.0f);
 
 		ImGui::TreePop();
 	}
