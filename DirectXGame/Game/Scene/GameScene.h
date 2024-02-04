@@ -59,9 +59,9 @@ private:
 	PointLight pointLight_;
 	SpotLight spotLight_;
 
-	std::unique_ptr<LevelData> levelData_;
+	/*std::unique_ptr<LevelData> levelData_;
 	std::vector<std::unique_ptr<Object3d>> objects_;
-	std::vector<WorldTransform> WTs_;
+	std::vector<WorldTransform> WTs_;*/
 
 };
 
