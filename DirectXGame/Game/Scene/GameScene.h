@@ -78,5 +78,6 @@ private:
 
 	std::unique_ptr<Sprite> UI_Grap;
 	std::unique_ptr<Sprite> UI_PlayerRoring;
+	WorldTransform world_;
 };
 

@@ -93,7 +93,7 @@ void GameScene::Init() {
 	UI_Grap = std::make_unique<Sprite>(Sprite(UITex, { 700.0f,300.0f }, { 250.0f,80.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
 	UI_Grap->Initialize();
 	UITex = TextureManager::Load("PressButton.png");
-	UI_PlayerRoring = std::make_unique<Sprite>(Sprite(UITex, { 700.0f,300.0f }, { 508.0f,72.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
+	UI_PlayerRoring = std::make_unique<Sprite>(Sprite(UITex, { 620.0f,310.0f }, { 508.0f,72.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
 	UI_PlayerRoring->Initialize();
 }
 
@@ -143,7 +143,6 @@ void GameScene::Update() {
 		IsGoal = true;
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
 	}
-#pragma endregion 当たり判定
 }
 
 void GameScene::DrawBackGround() {
