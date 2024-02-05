@@ -138,14 +138,18 @@ void Player::ImGui()
 #ifdef _DEBUG
 	ImGui::Begin("Player");
 	ImGui::InputFloat3("translate", &world_.translation_.x);
+	ImGui::InputFloat("MoveSpeed", &speed);
+	ImGui::InputFloat("JumpMaxValue", &kjumpParam);
+	ImGui::InputFloat("JumpaddValue", &addJumpParam);
+	ImGui::InputFloat("JumpsubValue", &subJumpParam);
+	ImGui::InputFloat("MoveSpeed", &speed);
 
 	if (ImGui::Button("Reset")) {
 		world_.translation_ = { 0.0f,0.0f,0.0f };
 		world_.UpdateMatrix();
 		behaviorRequest_ = Behavior::kRoot;
 	}
-	ImGui::InputInt("sangoId", &sangoId_);
-	ImGui::InputInt("sangoId", &PreSangoId_);
+	
 	ImGui::End();
 #endif
 }
@@ -304,15 +308,15 @@ void Player::GrapUpdate()
 		Move();
 	}*/
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
-		if (jumpParam < 0.8f) {
-		jumpParam += 0.01f;
+		if (jumpParam < kjumpParam) {
+		jumpParam += addJumpParam;
 		}
-		else if (jumpParam >= 0.8f) {
-		jumpParam = 0.8f;
+		else if (jumpParam >= kjumpParam) {
+		jumpParam = kjumpParam;
 		}
 	}
 	else if (jumpParam > 0.0f) {
-		jumpParam -= 0.004f;
+		jumpParam -= subJumpParam;
 	}
 	else if (jumpParam < 0.0f) {
 		jumpParam = 0.0f;
