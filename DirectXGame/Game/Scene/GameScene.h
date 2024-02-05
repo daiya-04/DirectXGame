@@ -75,5 +75,7 @@ private:
 	std::unique_ptr<LevelData> levelData_;
 
 	std::unique_ptr<TimeCounter> timeCounter_;
+
+	std::unique_ptr<Sprite> UI_Grap;
 };
 

@@ -109,7 +109,7 @@ void Player::hitBox(Vector3 colliderPos, Vector3 HitcolliderSize)
 			world_.translation_.y = colliderPos.y + HitcolliderSize.y;
 		}
 	}
-	if (tlanslatePre.y <= colliderPos.y - HitcolliderSize.y) {
+	if (tlanslatePre.y < colliderPos.y - HitcolliderSize.y) {
 		//下から上
 		if (world_.translation_.y + colliderSize.y > colliderPos.y - HitcolliderSize.y) {
 			world_.translation_.y = colliderPos.y - HitcolliderSize.y;
@@ -176,6 +176,7 @@ void Player::Gravity()
 #pragma region
 void Player::BehaviorRootInit()
 {
+	farstFlag = true;
 	moveParam = 0.3f;
 	ArrowQua_ = IdentityQuaternion();
 	rotateQua = IdentityQuaternion();
@@ -389,6 +390,7 @@ void Player::GrapJumpLeftUpdate()
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
 		grapJump = true;
+		farstFlag = false;
 		moveVector = grapJumpVec * jumpParam;
 	}
 	else if(grapJump == false) {
@@ -448,6 +450,7 @@ void Player::GrapJumpRightUpdate()
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
 		grapJump = true;
+		farstFlag = false;
 		moveVector = grapJumpVec * jumpParam;
 	}
 	else if (grapJump == false) {

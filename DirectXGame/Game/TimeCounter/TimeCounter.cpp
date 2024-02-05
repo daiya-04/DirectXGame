@@ -3,11 +3,11 @@
 void TimeCounter::Init()
 {
 	uint32_t numberTex = TextureManager::Load("numbers.png");
-	Sprite* spriteOne = new Sprite(numberTex, { 640.0f,360.0f }, { 64.0f,64.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f });
+	Sprite* spriteOne = new Sprite(numberTex, { 1186.0f,658.0f }, { 64.0f,64.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f });
 	spriteOne->Initialize();
 	numbers_.push_back(std::unique_ptr<Sprite>(spriteOne));
 
-	Sprite* spriteTwo = new Sprite(numberTex, { 640.0f,360.0f }, { 64.0f,64.0f }, 0.0f, { 1.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f });
+	Sprite* spriteTwo = new Sprite(numberTex, { 1186.0f,658.0f }, { 64.0f,64.0f }, 0.0f, { 1.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f });
 	spriteTwo->Initialize();
 	numbers_.push_back(std::unique_ptr<Sprite>(spriteTwo));
 }

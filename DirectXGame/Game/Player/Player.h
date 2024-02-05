@@ -45,6 +45,12 @@ public:
 	Behavior GetBehavior()const {
 		return behavior_;
 	}
+	bool GetFarstFlag()const {
+		return farstFlag;
+	}
+	bool GetCanGrapFlag()const {
+		return canGrap;
+	}
 #pragma endregion getter
 #pragma region
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
@@ -129,4 +135,5 @@ private:
 	Vector3 direction = { 0.0f,0.0f,0.0f };
 	Vector3 tlanslatePre;
 #pragma endregion 移動
+	bool farstFlag = true;
 };

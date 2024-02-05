@@ -88,6 +88,10 @@ void GameScene::Init() {
 
 	timeCounter_ = std::make_unique<TimeCounter>();
 	timeCounter_->Init();
+
+	uint32_t numberTex = TextureManager::Load("UI_grap.png");
+	UI_Grap = std::make_unique<Sprite>(Sprite(numberTex, { 700.0f,300.0f }, { 250.0f,80.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
+	UI_Grap->Initialize();
 }
 
 void GameScene::Update() {
@@ -112,7 +116,6 @@ void GameScene::Update() {
 #pragma endregion Update
 
 #pragma region
-
 	for (auto& sango : sangoes_) {
 
 		if (IsCollision(player_->GetAABB(), sango->GetAABB())) {
@@ -121,25 +124,22 @@ void GameScene::Update() {
 				sango->HitPlayer();
 				player_->SetSangoId(sango->GetSangoId());
 				player_->SetSangoPos(sango->GetPosition());
+
 			}
 		}else {
 			sango->NotHitPlayer();
 		}
-
 	}
 	for (auto& box : boxes_) {
 
 		if (IsCollision(player_->GetAABB(), box->GetAABB())) {
 			player_->hitBox(box->GetPosition(),box->GetColliderSize());
 		}
-
 	}
-	
 	if (IsCollision(player_->GetAABB(), goal_->GetAABB()) && IsGoal == false) {
 		IsGoal = true;
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
 	}
-  
 #pragma endregion 当たり判定
 }
 
@@ -175,6 +175,9 @@ void GameScene::DrawParticle() {
 void GameScene::DrawUI() {
 
 	timeCounter_->Draw();
+	if (player_->GetFarstFlag()&& player_->GetCanGrapFlag()) {
+		UI_Grap->Draw();
+	}
 
 }
 
