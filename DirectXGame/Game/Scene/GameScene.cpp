@@ -47,8 +47,6 @@ void GameScene::Init() {
 	};
 	
 #pragma endregion Box
-
-
 #pragma region
 
 	Model* goalModelHundle = ModelManager::Load("Goal");
@@ -59,7 +57,6 @@ void GameScene::Init() {
 	goal_ = std::make_unique<Goal>();
 	goal_->Init(goalModels);
 #pragma endregion Goal
-
 #pragma region
 
 	for (auto& objectData : levelData_->objects) {
@@ -88,11 +85,29 @@ void GameScene::Init() {
 	}
 
 #pragma endregion 位置情報の読み込み
+
+	timeCounter_ = std::make_unique<TimeCounter>();
+	timeCounter_->Init();
+
+	//スカイドーム
+	Model* skyDomeModelHundle = ModelManager::Load("skyDome");
+	SkyDomeModel_.reset(Object3d::Create(skyDomeModelHundle));
+	world_.Init();
+	world_.scale_ = {100.0f,100.0f,100.0f};
+	world_.UpdateMatrix();
+
+	uint32_t UITex = TextureManager::Load("UI_grap.png");
+	UI_Grap = std::make_unique<Sprite>(Sprite(UITex, { 700.0f,300.0f }, { 250.0f,80.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
+	UI_Grap->Initialize();
+	UITex = TextureManager::Load("PressButton.png");
+	UI_PlayerRoring = std::make_unique<Sprite>(Sprite(UITex, { 620.0f,310.0f }, { 508.0f,72.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
+	UI_PlayerRoring->Initialize();
 }
 
 void GameScene::Update() {
 	DebugGUI();
 
+#pragma region
 	camera_.Update();
 
 	player_->Update();
@@ -107,6 +122,10 @@ void GameScene::Update() {
 
 	goal_->Update();
 
+	timeCounter_->Update();
+#pragma endregion Update
+
+#pragma region
 	for (auto& sango : sangoes_) {
 
 		if (IsCollision(player_->GetAABB(), sango->GetAABB())) {
@@ -115,26 +134,22 @@ void GameScene::Update() {
 				sango->HitPlayer();
 				player_->SetSangoId(sango->GetSangoId());
 				player_->SetSangoPos(sango->GetPosition());
+
 			}
 		}else {
 			sango->NotHitPlayer();
 		}
-
 	}
 	for (auto& box : boxes_) {
 
 		if (IsCollision(player_->GetAABB(), box->GetAABB())) {
 			player_->hitBox(box->GetPosition(),box->GetColliderSize());
 		}
-
 	}
-	
 	if (IsCollision(player_->GetAABB(), goal_->GetAABB()) && IsGoal == false) {
 		IsGoal = true;
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
 	}
-  
-#pragma endregion 当たり判定
 }
 
 void GameScene::DrawBackGround() {
@@ -154,6 +169,7 @@ void GameScene::DrawModel() {
 
 	goal_->Draw(camera_.GetViewProjection());
 
+	SkyDomeModel_->Draw(world_,camera_.GetViewProjection());
 }
 
 void GameScene::DrawParticleModel() {
@@ -168,13 +184,33 @@ void GameScene::DrawParticle() {
 
 void GameScene::DrawUI() {
 
-
+	timeCounter_->Draw();
+	if (player_->GetFarstFlag()&& player_->GetCanGrapFlag()) {
+		//UI_Grap->Draw();
+	}
+	if (!player_->GetFarstFlag() && player_->GetCanGrapFlag()) {
+		//UI_PlayerRoring->Draw();
+	}
 
 }
 
 void GameScene::DebugGUI() {
 
 	player_->ImGui();
+	camera_.ImGui();
+#ifdef _DEBUG
+	ImGui::Begin("Timer");
+	if (ImGui::Button("On")) {
+		timeCounter_->IsTimerAnable();
+	}
+	if (ImGui::Button("Off")) {
+		timeCounter_->IsTimerStop();
+	}
+	if (ImGui::Button("Reset")) {
+		timeCounter_->Reset();
+	}
+	ImGui::End();
+#endif
 }
 
 

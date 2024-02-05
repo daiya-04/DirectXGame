@@ -16,6 +16,7 @@ void Player::Init(std::vector<Object3d*> models)
 	directionQua_ = IdentityQuaternion();
 	moveParam = 0.3f;
 	Character::SetColliderSize({ 1.0f,1.0f,1.0f });
+	Character::SetOffset({0.0f,1.0f,0.0f});
 }
 
 void Player::Update()
@@ -84,47 +85,47 @@ void Player::Draw(const Camera& camera)
 	}
 
 }
-void Player::hitBox(Vector3 colliderPos, Vector3 colliderSize)
+void Player::hitBox(Vector3 colliderPos, Vector3 HitcolliderSize)
 {
 #pragma region
-	if (tlanslatePre.y - colliderSize.y < colliderPos.y + colliderSize.y && tlanslatePre.y + colliderSize.y > colliderPos.y - colliderSize.y) {
+	if (tlanslatePre.y - colliderSize.y + offset_.y < colliderPos.y + HitcolliderSize.y && tlanslatePre.y + colliderSize.y + offset_.y > colliderPos.y - HitcolliderSize.y) {
 		if (tlanslatePre.x > colliderPos.x + colliderSize.x) {
 			//左から右
-			if (world_.translation_.x - colliderSize.x < colliderPos.x + colliderSize.x) {
-				world_.translation_.x = colliderPos.x + colliderSize.x + colliderSize.x;
+			if (world_.translation_.x - colliderSize.x < colliderPos.x + HitcolliderSize.x) {
+				world_.translation_.x = colliderPos.x + HitcolliderSize.x + colliderSize.x;
 			}
 		}
-		if (tlanslatePre.x < colliderPos.x - colliderSize.x) {
+		if (tlanslatePre.x < colliderPos.x - HitcolliderSize.x) {
 			//右から左
-			if (world_.translation_.x + colliderSize.x > colliderPos.x - colliderSize.x) {
-				world_.translation_.x = colliderPos.x - colliderSize.x - colliderSize.x;
+			if (world_.translation_.x + colliderSize.x > colliderPos.x - HitcolliderSize.x) {
+				world_.translation_.x = colliderPos.x - HitcolliderSize.x - colliderSize.x;
 			}
 		}
 	}
 
-	if (tlanslatePre.y > colliderPos.y + colliderSize.y) {
+	if (tlanslatePre.y >= colliderPos.y + HitcolliderSize.y) {
 		//上から下
-		if (world_.translation_.y - colliderSize.y < colliderPos.y + colliderSize.y) {
-			world_.translation_.y = colliderPos.y + colliderSize.y + colliderSize.y;
+		if (world_.translation_.y - colliderSize.y < colliderPos.y + HitcolliderSize.y) {
+			world_.translation_.y = colliderPos.y + HitcolliderSize.y;
 		}
 	}
-	if (tlanslatePre.y < colliderPos.y - colliderSize.y) {
+	if (tlanslatePre.y < colliderPos.y - HitcolliderSize.y) {
 		//下から上
-		if (world_.translation_.y + colliderSize.y > colliderPos.y - colliderSize.y) {
-			world_.translation_.y = colliderPos.y - colliderSize.y - colliderSize.y;
+		if (world_.translation_.y + colliderSize.y > colliderPos.y - HitcolliderSize.y) {
+			world_.translation_.y = colliderPos.y - HitcolliderSize.y;
 		}
 	}
-	if (tlanslatePre.y - colliderSize.y < colliderPos.y + colliderSize.y && tlanslatePre.y + colliderSize.y > colliderPos.y - colliderSize.y) {
-		if (tlanslatePre.z < colliderPos.z - colliderSize.z) {
+	if (tlanslatePre.y - colliderSize.y < colliderPos.y + HitcolliderSize.y && tlanslatePre.y + colliderSize.y > colliderPos.y - HitcolliderSize.y) {
+		if (tlanslatePre.z < colliderPos.z - HitcolliderSize.z) {
 			//手前から奥
-			if (world_.translation_.z + colliderSize.z > colliderPos.z - colliderSize.z) {
-				world_.translation_.z = colliderPos.z - colliderSize.z - colliderSize.z;
+			if (world_.translation_.z + colliderSize.z > colliderPos.z - HitcolliderSize.z) {
+				world_.translation_.z = colliderPos.z - HitcolliderSize.z - colliderSize.z;
 			}
 		}
-		if (tlanslatePre.z > colliderPos.z + colliderSize.z) {
+		if (tlanslatePre.z > colliderPos.z + HitcolliderSize.z) {
 			//奥から手前
-			if (world_.translation_.z - colliderSize.z < colliderPos.z + colliderSize.z) {
-				world_.translation_.z = colliderPos.z + colliderSize.z + colliderSize.z;
+			if (world_.translation_.z - colliderSize.z < colliderPos.z + HitcolliderSize.z) {
+				world_.translation_.z = colliderPos.z + HitcolliderSize.z + colliderSize.z;
 			}
 		}
 	}
@@ -137,14 +138,18 @@ void Player::ImGui()
 #ifdef _DEBUG
 	ImGui::Begin("Player");
 	ImGui::InputFloat3("translate", &world_.translation_.x);
+	ImGui::InputFloat("MoveSpeed", &speed);
+	ImGui::InputFloat("JumpMaxValue", &kjumpParam);
+	ImGui::InputFloat("JumpaddValue", &addJumpParam);
+	ImGui::InputFloat("JumpsubValue", &subJumpParam);
+	ImGui::InputFloat("MoveSpeed", &speed);
 
 	if (ImGui::Button("Reset")) {
 		world_.translation_ = { 0.0f,0.0f,0.0f };
 		world_.UpdateMatrix();
 		behaviorRequest_ = Behavior::kRoot;
 	}
-	ImGui::InputInt("sangoId", &sangoId_);
-	ImGui::InputInt("sangoId", &PreSangoId_);
+	
 	ImGui::End();
 #endif
 }
@@ -175,6 +180,7 @@ void Player::Gravity()
 #pragma region
 void Player::BehaviorRootInit()
 {
+	farstFlag = true;
 	moveParam = 0.3f;
 	ArrowQua_ = IdentityQuaternion();
 	rotateQua = IdentityQuaternion();
@@ -211,6 +217,7 @@ void Player::BehaviorJumpUpdate()
 #pragma region
 void Player::GrapInit()
 {
+	farstFlag = false;
 	moveParam = 1.0f;
 	PreSangoId_ = sangoId_;
 	world_.translation_ = grapPoint;
@@ -301,15 +308,15 @@ void Player::GrapUpdate()
 		Move();
 	}*/
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
-		if (jumpParam < 0.8f) {
-		jumpParam += 0.01f;
+		if (jumpParam < kjumpParam) {
+		jumpParam += addJumpParam;
 		}
-		else if (jumpParam >= 0.8f) {
-		jumpParam = 0.8f;
+		else if (jumpParam >= kjumpParam) {
+		jumpParam = kjumpParam;
 		}
 	}
 	else if (jumpParam > 0.0f) {
-		jumpParam -= 0.004f;
+		jumpParam -= subJumpParam;
 	}
 	else if (jumpParam < 0.0f) {
 		jumpParam = 0.0f;
@@ -447,6 +454,7 @@ void Player::GrapJumpRightUpdate()
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
 		grapJump = true;
+
 		moveVector = grapJumpVec * jumpParam;
 	}
 	else if (grapJump == false) {
@@ -485,9 +493,9 @@ void Player::Move()
 	move.z = move.z * speed;
 	//カメラの正面方向に移動するようにする
 	//回転行列を作る
-	Matrix4x4 rotateMatrix = MakeRotateXMatrix(camera_->rotation_.x) * MakeRotateYMatrix(camera_->rotation_.y) * MakeRotateZMatrix(camera_->rotation_.z);
-	//移動ベクトルをカメラの角度だけ回転
-	move = TransformNormal(move, rotateMatrix);
+	//Matrix4x4 rotateMatrix = MakeRotateXMatrix(camera_->rotation_.x) * MakeRotateYMatrix(camera_->rotation_.y) * MakeRotateZMatrix(camera_->rotation_.z);
+	////移動ベクトルをカメラの角度だけ回転
+	//move = TransformNormal(move, rotateMatrix);
 	//移動
 
 	world_.translation_ = world_.translation_ + move;

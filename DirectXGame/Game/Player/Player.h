@@ -45,6 +45,12 @@ public:
 	Behavior GetBehavior()const {
 		return behavior_;
 	}
+	bool GetFarstFlag()const {
+		return farstFlag;
+	}
+	bool GetCanGrapFlag()const {
+		return canGrap;
+	}
 #pragma endregion getter
 #pragma region
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
@@ -105,8 +111,6 @@ private:
 	int JumpFlame;
 	Vector3 moveVector;
 	Vector3 sangoDirection_ = { 0.0f,0.0f,0.0f };
-	float jumpParam = 0.0f;
-	float kjumpParam = 0.8f;
 	const float kGravity = -0.7f;
 	//当たり判定の履歴
 	int sangoId_ = 0;
@@ -116,6 +120,11 @@ private:
 	Quaternion PlayerDirectionQua_;
 	bool secondJump = false;
 	Vector3 secondJumpVec;
+	//プレイヤージャンプ
+	float jumpParam = 0.0f;
+	float kjumpParam = 0.8f;
+	float addJumpParam = 0.01f;
+	float subJumpParam = 0.004f;
 #pragma endregion GrapBehavior
 #pragma region
 	WorldTransform world_Arrow_;
@@ -129,4 +138,5 @@ private:
 	Vector3 direction = { 0.0f,0.0f,0.0f };
 	Vector3 tlanslatePre;
 #pragma endregion 移動
+	bool farstFlag = true;
 };

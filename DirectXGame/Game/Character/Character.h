@@ -17,14 +17,14 @@ public:
 	AABB GetAABB() { return collider; }
 
 	void SetColliderSize(Vector3 size) { colliderSize = size; }
+	void SetOffset(Vector3 offset) {
+		offset_ = offset;
+	}
+
 	void ColliderUpdate() {
-		collider.min.x = world_.translation_.x - colliderSize.x;
-		collider.min.y = world_.translation_.y - colliderSize.y;
-		collider.min.z = world_.translation_.z - colliderSize.z;
-		
-		collider.max.x = world_.translation_.x + colliderSize.x;
-		collider.max.y = world_.translation_.y + colliderSize.y;
-		collider.max.z = world_.translation_.z + colliderSize.z;
+		collider.min = world_.translation_ - colliderSize + offset_;
+		collider.max = world_.translation_ + colliderSize + offset_;
+
 	};
 #pragma region
 	Vector3 GetPosition()const { return world_.translation_; }
@@ -37,7 +37,7 @@ protected:
 
 	Vector3 colliderSize = {};
 	AABB collider;
-
+	Vector3 offset_ = { 0.0f,0.0f,0.0f };
 private:
 
 

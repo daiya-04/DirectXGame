@@ -13,7 +13,7 @@ public:
 	void SetScale(Vector3 Scale) {
 		world_.scale_ = Scale;
 		world_.UpdateMatrix();
-		Character::SetColliderSize({ colliderSize.x * Scale.x,colliderSize.y * Scale.y,colliderSize.z * Scale.z });
+		Character::SetColliderSize({ Scale.x,Scale.y,Scale.z });
 	}
 #pragma endregion setter
 

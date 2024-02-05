@@ -15,6 +15,8 @@
 
 #include "SceneManager.h"
 
+#include "TimeCounter/TimeCounter.h"
+
 #pragma region
 #include "Game/FollowCamera/FollowCamera.h"
 #include "Game/Player/Player.h"
@@ -56,8 +58,7 @@ private:
 	std::unique_ptr<Object3d> arrowModel_;
 	std::unique_ptr<Player> player_;
 
-	/*std::unique_ptr<Object3d> floorModel_;
-	std::unique_ptr<Floor> floor_;*/
+	std::unique_ptr<Object3d> SkyDomeModel_;
 
 	std::unique_ptr<Object3d> sangoModel_;
 
@@ -71,5 +72,11 @@ private:
 	std::vector<std::unique_ptr<Box>>boxes_;
 
 	std::unique_ptr<LevelData> levelData_;
+
+	std::unique_ptr<TimeCounter> timeCounter_;
+
+	std::unique_ptr<Sprite> UI_Grap;
+	std::unique_ptr<Sprite> UI_PlayerRoring;
+	WorldTransform world_;
 };
 

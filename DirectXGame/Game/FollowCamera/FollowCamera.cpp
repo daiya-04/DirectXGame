@@ -11,7 +11,7 @@ void FollowCamera::Init() {
 
 	const float kRadian = 0.02f;
 
-	viewProjection_.rotation_.x = 10 * kRadian;
+	viewProjection_.rotation_.y = 10 * kRadian;
 	viewProjection_.UpdateMatrix();
 }
 
@@ -66,9 +66,9 @@ void FollowCamera::Update() {
 
 		const float kRadian = 0.02f;
 
-		viewProjection_.rotation_.x = 10 * kRadian;
+		//viewProjection_.rotation_.x = 10 * kRadian;
 	
-	viewProjection_.rotation_.y = LerpShortAngle(viewProjection_.rotation_.y, rotate_, parameter_t);
+	//viewProjection_.rotation_.y = LerpShortAngle(viewProjection_.rotation_.y, rotate_, parameter_t);
 	viewProjection_.UpdateMatrix();
 }
 
@@ -76,6 +76,17 @@ void FollowCamera::SetTarget(const WorldTransform* target)
 {
 	target_ = target;
 	Reset();
+}
+
+void FollowCamera::ImGui()
+{
+#ifdef _DEBUG
+	ImGui::Begin("Camera");
+	ImGui::DragFloat3("Translate",&offset.x);
+	ImGui::DragFloat3("Rotate",&viewProjection_.rotation_.x);
+	ImGui::End();
+#endif
+	viewProjection_.UpdateMatrix();
 }
 
 void FollowCamera::Reset()
@@ -95,7 +106,7 @@ void FollowCamera::Reset()
 
 Vector3 FollowCamera::OffsetCalc()
 {
-	Vector3 offset = { 0.0f, 5.0f, -25.0f };
+	offset = { 0.0f, 0.0f, -25.0f };
 	//回転行列の合成
 	Matrix4x4 rotateMatrix = MakeRotateXMatrix(viewProjection_.rotation_.x) * MakeRotateYMatrix(viewProjection_.rotation_.y) * MakeRotateZMatrix(viewProjection_.rotation_.z);
 
