@@ -18,6 +18,8 @@ void GameScene::Init(){
 		wt.Init();
 	}
 
+	
+
 	Object3d::SetPointLight(&pointLight_);
 	Object3d::SetSpotLight(&spotLight_);
 
@@ -31,7 +33,7 @@ void GameScene::Init(){
 
 	//レベルデータからオブジェクトを生成、配置
 	for (auto& objectData : levelData_->objects) {
-		Model* model = ModelManager::Load(objectData.fileName);
+		std::shared_ptr<Model> model = ModelManager::Load(objectData.fileName);
 
 		Object3d* newObject = Object3d::Create(model);
 
@@ -57,7 +59,7 @@ void GameScene::Init(){
 	terrainWT_.rotation_.y = -1.57f;
 	
 
-	particle_ = std::make_unique<Particle>();
+	//particle_ = std::make_unique<Particle>();
 	particle_.reset(Particle::Create(circle, 100));
 
 	emitter_.count_ = 5;
@@ -68,16 +70,19 @@ void GameScene::Init(){
 void GameScene::Update(){
 	DebugGUI();
 
-	obj_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
-
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine(seedGenerator());
+
+	if (Input::GetInstance()->PushKey(DIK_P)) {
+		
+	}
 
 	emitter_.frequencyTime_ += kDeltaTime;
 	if (emitter_.frequency_ <= emitter_.frequencyTime_) {
 		particleData_.splice(particleData_.end(), Particle::Emit(emitter_, randomEngine));
 		emitter_.frequencyTime_ -= emitter_.frequency_;
 	}
+	
 	for (std::list<Particle::ParticleData>::iterator itParticle = particleData_.begin(); itParticle != particleData_.end(); itParticle++) {
 		(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_ * kDeltaTime;
 		(*itParticle).currentTime_ += kDeltaTime;
@@ -121,7 +126,7 @@ void GameScene::DrawParticleModel(){
 
 void GameScene::DrawParticle(){
 
-	//particle_->Draw(particleData_, camera_);
+	particle_->Draw(particleData_, camera_);
 
 }
 

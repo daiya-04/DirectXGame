@@ -80,11 +80,11 @@ ModelManager* ModelManager::GetInstance() {
 	return &instance;
 }
 
-Model* ModelManager::Load(const std::string& modelName) {
+std::shared_ptr<Model> ModelManager::Load(const std::string& modelName) {
 	return ModelManager::GetInstance()->LoadInternal(modelName);
 }
 
-Model* ModelManager::LoadInternal(const std::string& modelName) {
+std::shared_ptr<Model> ModelManager::LoadInternal(const std::string& modelName) {
 
 	assert(useModelNum_ < kNumModel);
 	uint32_t handle = useModelNum_;
@@ -93,7 +93,7 @@ Model* ModelManager::LoadInternal(const std::string& modelName) {
 
 	if (it != models_.end()) {
 		handle = static_cast<uint32_t>(std::distance(models_.begin(), it));
-		return models_[handle].get();
+		return models_[handle];
 	}
 
 	models_.push_back(std::unique_ptr<Model>(new Model()));
@@ -105,7 +105,7 @@ Model* ModelManager::LoadInternal(const std::string& modelName) {
 	models_[handle]->CreateBuffer();
 
 	useModelNum_++;
-	return models_[handle].get();
+	return models_[handle];
 }
 
 void ModelManager::LoadObjFile(const std::string& modelName) {

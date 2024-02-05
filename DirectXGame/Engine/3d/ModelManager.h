@@ -84,18 +84,18 @@ private:
 	
 	std::string filename_;
 	std::string directoryPath_;
-	std::vector<std::unique_ptr<Model>> models_;
+	std::vector<std::shared_ptr<Model>> models_;
 	uint32_t useModelNum_= 0;
 
 public:
 
 	static ModelManager* GetInstance();
 
-	static Model* Load(const std::string& modelName);
+	static std::shared_ptr<Model> Load(const std::string& modelName);
 
 private:
 
-	Model* LoadInternal(const std::string& modelName);
+	std::shared_ptr<Model> LoadInternal(const std::string& modelName);
 
 	void LoadObjFile(const std::string& modelName);
 

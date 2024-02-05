@@ -18,6 +18,8 @@ public:
 
 		Vector3 scaling;
 
+		std::string objectType;
+
 	};
 
 public:

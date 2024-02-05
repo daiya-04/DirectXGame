@@ -215,7 +215,7 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 }
 
-Object3d* Object3d::Create(Model* model) {
+Object3d* Object3d::Create(std::shared_ptr<Model> model) {
 	
 
 	Object3d* obj = new Object3d();
@@ -300,7 +300,7 @@ ComPtr<IDxcBlob> Object3d::CompileShader(const std::wstring& filePath, const wch
 }
 
 
-void Object3d::Initialize(Model* model) {
+void Object3d::Initialize(std::shared_ptr<Model> model) {
 	model_ = model;
 }
 

@@ -2,28 +2,6 @@
     "name": "scene",
     "objects": [
         {
-            "type": "MESH",
-            "name": "obj1",
-            "transform": {
-                "translation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scaling": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "file_name": "teapot"
-        },
-        {
             "type": "LIGHT",
             "name": "Light",
             "transform": {
@@ -67,7 +45,7 @@
         },
         {
             "type": "MESH",
-            "name": "平面",
+            "name": "地面2",
             "transform": {
                 "translation": [
                     0.0,
@@ -85,16 +63,17 @@
                     1.0
                 ]
             },
-            "file_name": "terrain"
+            "file_name": "terrain",
+            "object_type": "ground"
         },
         {
             "type": "MESH",
-            "name": "立方体",
+            "name": "teapot1",
             "transform": {
                 "translation": [
                     0.0,
-                    7.110944747924805,
-                    3.3963959217071533
+                    0.0,
+                    1.0
                 ],
                 "rotation": [
                     0.0,
@@ -107,7 +86,31 @@
                     1.0
                 ]
             },
-            "file_name": "teapot"
+            "file_name": "teapot",
+            "object_type": "teapot"
+        },
+        {
+            "type": "MESH",
+            "name": "teapot2",
+            "transform": {
+                "translation": [
+                    8.0,
+                    5.0,
+                    1.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "file_name": "teapot",
+            "object_type": "teapot"
         }
     ]
 }

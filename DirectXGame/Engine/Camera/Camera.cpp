@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "DirectXCommon.h"
+#include "Input.h"
 #include <cassert>
 
 void Camera::Init() {
@@ -7,6 +8,53 @@ void Camera::Init() {
 	CreateCBuffer();
 	Map();
 	UpdateMatrix();
+
+}
+
+void Camera::CameraControl() {
+
+	const float kMoveSpeed = 0.1f;
+	const float kRotateSpeed = 0.01f;
+
+	if (Input::GetInstance()->PushKey(DIK_W)) {
+		translation_.y += kMoveSpeed;
+	}
+	if (Input::GetInstance()->PushKey(DIK_S)) {
+		translation_.y -= kMoveSpeed;
+	}
+	if (Input::GetInstance()->PushKey(DIK_D)) {
+		translation_.x += kMoveSpeed;
+	}
+	if (Input::GetInstance()->PushKey(DIK_A)) {
+		translation_.x -= kMoveSpeed;
+	}
+
+	if (Input::GetInstance()->PushKey(DIK_UP)) {
+		rotation_.x += kRotateSpeed;
+	}
+	if (Input::GetInstance()->PushKey(DIK_DOWN)) {
+		rotation_.x -= kRotateSpeed;
+	}
+	if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+		rotation_.y += kRotateSpeed;
+	}
+	if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+		rotation_.y -= kRotateSpeed;
+	}
+
+	Vector3 move{};
+
+	move = Input::GetInstance()->GetMoveXZ();
+	move = move / SHRT_MAX * kMoveSpeed;
+	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_DPAD_UP)) {
+		translation_.y += kMoveSpeed;
+	}
+	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_DPAD_DOWN)) {
+		translation_.y -= kMoveSpeed;
+	}
+
+	translation_ += move;
+	rotation_ += Input::GetInstance()->GetCameraRotate() * kRotateSpeed;
 
 }
 

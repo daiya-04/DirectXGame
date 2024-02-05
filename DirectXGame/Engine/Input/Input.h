@@ -53,6 +53,13 @@ public:
 		return false;
 	}
 
+	bool PushButton(int button) const {
+		if ((joyState.Gamepad.wButtons & button)) {
+			return true;
+		}
+		return false;
+	}
+
 	bool LeftTrigger() const;
 
 	bool RightTrigger() const;

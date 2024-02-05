@@ -120,6 +120,12 @@
       <Filter>Engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="LevelLoader.cpp" />
+    <ClCompile Include="ModelScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -213,5 +219,11 @@
       <Filter>Engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="LevelLoader.h" />
+    <ClInclude Include="ModelScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

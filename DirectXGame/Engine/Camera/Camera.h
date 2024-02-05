@@ -36,6 +36,8 @@ public:
 
 	void Init();
 
+	void CameraControl();
+
 	void UpdateMatrix();
 
 	void UpdateViewMatrix();

@@ -33,6 +33,12 @@ void TextureManager::SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* c
 	commandList->SetGraphicsRootDescriptorTable(rootParamIndex, textures_[textureHandle].textureSrvHandleGPU_);
 }
 
+const D3D12_RESOURCE_DESC TextureManager::GetResourceDesc(uint32_t textureHandle) {
+	assert(textureHandle < kNumTextures);
+
+	return textures_[textureHandle].resource->GetDesc();
+}
+
 ComPtr<ID3D12Resource> TextureManager::CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes) {
 	//リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapproperties{};
@@ -57,14 +63,14 @@ ComPtr<ID3D12Resource> TextureManager::CreateBufferResource(ComPtr<ID3D12Device>
 	return Resource;
 }
 
-uint32_t TextureManager::LoadInternal(const std::string& fileName){
+uint32_t TextureManager::LoadInternal(const std::string& fileName) {
 
 	assert(useTextureNum_ < kNumTextures);
 	uint32_t handle = useTextureNum_;
 
 	//読み込み済みのテクスチャを検索
 	auto it = std::find_if(textures_.begin(), textures_.end(), [&](const auto& texture) {return texture.name == fileName; });
-	
+
 	if (it != textures_.end()) {
 		//読み込み済みのテクスチャの要素番号を取得
 		handle = static_cast<uint32_t>(std::distance(textures_.begin(), it));
@@ -87,7 +93,7 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName){
 
 	HRESULT hr;
 
-	
+
 	ScratchImage image{};
 
 	//WICテクスチャのロード
@@ -249,7 +255,7 @@ uint32_t TextureManager::LoadUvInternal(const std::string& fileName, const std::
 }
 
 
-ComPtr<ID3D12Resource> TextureManager::UploadTextureData(const DirectX::ScratchImage& mipImage,const Texture& tex) {
+ComPtr<ID3D12Resource> TextureManager::UploadTextureData(const DirectX::ScratchImage& mipImage, const Texture& tex) {
 
 	std::vector<D3D12_SUBRESOURCE_DATA> subresource;
 	//読み込んだデータからDirectX12用のSubresouceの配列を作成する

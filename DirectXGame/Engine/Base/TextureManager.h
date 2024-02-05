@@ -6,7 +6,7 @@
 #include <d3dx12.h>
 #include <DirectXTex.h>
 
-class TextureManager{
+class TextureManager {
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
@@ -27,7 +27,7 @@ private:
 	std::string directoryPath_ = "Resources/textures/";
 	std::array<Texture, kNumTextures> textures_;
 	int32_t useTextureNum_ = 0;
-	std::array<ComPtr<ID3D12Resource>,kNumTextures> intermediateResource_;
+	std::array<ComPtr<ID3D12Resource>, kNumTextures> intermediateResource_;
 
 public:
 
@@ -41,6 +41,8 @@ public:
 
 	void SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex, uint32_t textureHandle);
 
+	const D3D12_RESOURCE_DESC GetResourceDesc(uint32_t textureHandle);
+
 	//リソースの生成
 	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
 
@@ -51,7 +53,7 @@ private:
 	uint32_t LoadUvInternal(const std::string& fileName, const std::string& filePath);
 
 	[[nodiscard]]
-	ComPtr<ID3D12Resource> UploadTextureData(const DirectX::ScratchImage& mipImage,const Texture& tex);
+	ComPtr<ID3D12Resource> UploadTextureData(const DirectX::ScratchImage& mipImage, const Texture& tex);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
 

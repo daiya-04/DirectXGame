@@ -15,7 +15,7 @@ ComPtr<ID3D12RootSignature> Sprite::rootSignature_;
 ComPtr<ID3D12PipelineState> Sprite::graphicsPipelineState_;
 Matrix4x4 Sprite::projectionMatrix_ = MakeIdentity44();
 
-void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowHeight){
+void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowHeight) {
 
 	assert(device);
 	device_ = device;
@@ -86,7 +86,7 @@ void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowH
 	}
 
 	//バイナリを元に生成
-	
+
 	hr = device_->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
 	assert(SUCCEEDED(hr));
 
@@ -111,7 +111,13 @@ void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowH
 	//すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 	//blendDesc.RenderTarget[0].BlendEnable = TRUE;
-	
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 	//ここをいじるといろいろなブレンドモードを設定できる
 	//ノーマルブレンド
 	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
@@ -183,13 +189,13 @@ void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowH
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	//実際に生成
-	
+
 	hr = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_));
 	assert(SUCCEEDED(hr));
 
 }
 
-void Sprite::preDraw(ID3D12GraphicsCommandList* commandList){
+void Sprite::preDraw(ID3D12GraphicsCommandList* commandList) {
 
 	assert(commandList);
 	commandList_ = commandList;
@@ -211,7 +217,7 @@ void Sprite::Finalize() {
 	graphicsPipelineState_.Reset();
 }
 
-Sprite::Sprite(){}
+Sprite::Sprite() {}
 
 Sprite::Sprite(uint32_t textureHandle, Vector2 position, Vector2 size, float rotate, Vector2 anchorpoint, Vector4 color) {
 
@@ -221,6 +227,8 @@ Sprite::Sprite(uint32_t textureHandle, Vector2 position, Vector2 size, float rot
 	rotate_ = rotate;
 	anchorpoint_ = anchorpoint;
 	color_ = color;
+	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
+	texSize_ = { (float)resourceDesc_.Width,(float)resourceDesc_.Height };
 
 }
 
@@ -232,7 +240,7 @@ void Sprite::Initialize() {
 	vertexResource_ = CreateBufferResource(device_, sizeof(VertexData) * 6);
 
 	//頂点バッファビューを作成する
-	
+
 	//リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点6つ分のサイズ
@@ -257,16 +265,16 @@ void Sprite::Initialize() {
 
 }
 
-void Sprite::Draw(){
+void Sprite::Draw() {
 
-	
+
 	Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,rotate_ }, { position_.x,position_.y,0.0f });
 	Matrix4x4 viewMatrix = MakeIdentity44();
 	Matrix4x4 wvpMatrix = worldMatrix * viewMatrix * projectionMatrix_;
 	Matrix4x4* wvpData = nullptr;
 	HRESULT hr = wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	*wvpData = wvpMatrix;
-	
+
 
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView);
 
@@ -313,7 +321,14 @@ void Sprite::SetColor(const Vector4& color) {
 
 }
 
-ComPtr<IDxcBlob> Sprite::CompileShader(const std::wstring& filePath,const wchar_t* profile,IDxcUtils* dxcUtils,IDxcCompiler3* dxcCompiler,IDxcIncludeHandler* includeHandleer) {
+void Sprite::SetTextureArea(const Vector2& texBase, const Vector2& texSize) {
+	texBase_ = texBase;
+	texSize_ = texSize;
+
+	TransferVertex();
+}
+
+ComPtr<IDxcBlob> Sprite::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer) {
 
 	//これからシェーダーをコンパイルする旨をログに出す
 	Log(ConvertString(std::format(L"Begin CompileShader, Path:{},profile:{}\n", filePath, profile)));
@@ -371,29 +386,34 @@ ComPtr<IDxcBlob> Sprite::CompileShader(const std::wstring& filePath,const wchar_
 
 }
 
-void Sprite::TransferVertex(){
+void Sprite::TransferVertex() {
 
 	float left = (0.0f - anchorpoint_.x) * size_.x;
 	float right = (1.0f - anchorpoint_.x) * size_.x;
 	float top = (0.0f - anchorpoint_.y) * size_.y;
 	float bottom = (1.0f - anchorpoint_.y) * size_.y;
 
+	float uvLeft = texBase_.x / (float)resourceDesc_.Width;
+	float uvRight = (texBase_.x + texSize_.x) / (float)resourceDesc_.Width;
+	float uvTop = texBase_.y / (float)resourceDesc_.Height;
+	float uvBottom = (texBase_.y + texSize_.y) / (float)resourceDesc_.Height;
+
 	//頂点データを設定する
 	VertexData* vertexData = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//1枚目の三角形
 	vertexData[0].pos_ = { left,bottom,0.0f,1.0f };//左下
-	vertexData[0].uv_ = { 0.0f,1.0f };
+	vertexData[0].uv_ = { uvLeft,uvBottom };
 	vertexData[1].pos_ = { left,top,0.0f,1.0f };//左上
-	vertexData[1].uv_ = { 0.0f,0.0f };
+	vertexData[1].uv_ = { uvLeft,uvTop };
 	vertexData[2].pos_ = { right,bottom,0.0f,1.0f };//右下
-	vertexData[2].uv_ = { 1.0f,1.0f };
+	vertexData[2].uv_ = { uvRight,uvBottom };
 	//2枚目の三角形
 	vertexData[3] = vertexData[1];//左上
 	vertexData[4].pos_ = { right,top,0.0f,1.0f };//右上
-	vertexData[4].uv_ = { 1.0f,0.0f };
+	vertexData[4].uv_ = { uvRight,uvTop };
 	vertexData[5] = vertexData[2];//右下
-	
+
 
 
 }
