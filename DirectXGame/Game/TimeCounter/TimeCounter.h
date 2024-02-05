@@ -18,7 +18,10 @@ public:
 	void Update();
 	void Draw();
 
-	void Reset() { flameCount = 0; };
+	void Reset() {
+		flameCount = 0; tenPlaceNumber
+			= 0; onePlaceNumber = 0;
+	};
 
 #pragma region
 	void IsTimerAnable() { IsTimeCount = true; }

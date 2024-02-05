@@ -88,12 +88,13 @@ void GameScene::Init() {
 
 	timeCounter_ = std::make_unique<TimeCounter>();
 	timeCounter_->Init();
+	timeCounter_->IsTimerAnable();
 
 	//スカイドーム
 	Model* skyDomeModelHundle = ModelManager::Load("skyDome");
 	SkyDomeModel_.reset(Object3d::Create(skyDomeModelHundle));
 	world_.Init();
-	world_.scale_ = {100.0f,100.0f,100.0f};
+	world_.scale_ = {1000.0f,1000.0f,1000.0f};
 	world_.UpdateMatrix();
 
 	uint32_t UITex = TextureManager::Load("UI_grap.png");
@@ -186,10 +187,10 @@ void GameScene::DrawUI() {
 
 	timeCounter_->Draw();
 	if (player_->GetFarstFlag()&& player_->GetCanGrapFlag()) {
-		//UI_Grap->Draw();
+		UI_Grap->Draw();
 	}
 	if (!player_->GetFarstFlag() && player_->GetCanGrapFlag()) {
-		//UI_PlayerRoring->Draw();
+		UI_PlayerRoring->Draw();
 	}
 
 }

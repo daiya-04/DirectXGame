@@ -27,8 +27,13 @@ void TimeCounter::Update()
 	ImGui::End();
 #endif
 	NumberCount = flameCount / 60;
+	if (NumberCount > 99) {
+		NumberCount = 99;
+	}
 	tenPlaceNumber = (int)NumberCount / 10;
 	onePlaceNumber = (int)NumberCount % 10;
+
+
 }
 
 void TimeCounter::Draw()
