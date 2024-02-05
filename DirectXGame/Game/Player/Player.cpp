@@ -493,9 +493,9 @@ void Player::Move()
 	move.z = move.z * speed;
 	//カメラの正面方向に移動するようにする
 	//回転行列を作る
-	Matrix4x4 rotateMatrix = MakeRotateXMatrix(camera_->rotation_.x) * MakeRotateYMatrix(camera_->rotation_.y) * MakeRotateZMatrix(camera_->rotation_.z);
-	//移動ベクトルをカメラの角度だけ回転
-	move = TransformNormal(move, rotateMatrix);
+	//Matrix4x4 rotateMatrix = MakeRotateXMatrix(camera_->rotation_.x) * MakeRotateYMatrix(camera_->rotation_.y) * MakeRotateZMatrix(camera_->rotation_.z);
+	////移動ベクトルをカメラの角度だけ回転
+	//move = TransformNormal(move, rotateMatrix);
 	//移動
 
 	world_.translation_ = world_.translation_ + move;

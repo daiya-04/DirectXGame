@@ -48,6 +48,7 @@ private:
 	//追従対象からのオフセットを計算する
 	Vector3 OffsetCalc();
 
+	Vector3 offset = { 0.0f, 0.0f, -25.0f };
 	//球面線形補間
 	float LerpShortAngle(float a, float b, float t);
 	bool IsGrap = false;

@@ -178,10 +178,10 @@ void GameScene::DrawUI() {
 
 	timeCounter_->Draw();
 	if (player_->GetFarstFlag()&& player_->GetCanGrapFlag()) {
-		UI_Grap->Draw();
+		//UI_Grap->Draw();
 	}
 	if (!player_->GetFarstFlag() && player_->GetCanGrapFlag()) {
-		UI_PlayerRoring->Draw();
+		//UI_PlayerRoring->Draw();
 	}
 
 }
