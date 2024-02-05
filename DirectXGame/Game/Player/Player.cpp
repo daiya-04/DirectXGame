@@ -213,6 +213,7 @@ void Player::BehaviorJumpUpdate()
 #pragma region
 void Player::GrapInit()
 {
+	farstFlag = false;
 	moveParam = 1.0f;
 	PreSangoId_ = sangoId_;
 	world_.translation_ = grapPoint;
@@ -390,7 +391,6 @@ void Player::GrapJumpLeftUpdate()
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
 		grapJump = true;
-		farstFlag = false;
 		moveVector = grapJumpVec * jumpParam;
 	}
 	else if(grapJump == false) {
@@ -450,7 +450,7 @@ void Player::GrapJumpRightUpdate()
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
 		grapJump = true;
-		farstFlag = false;
+
 		moveVector = grapJumpVec * jumpParam;
 	}
 	else if (grapJump == false) {

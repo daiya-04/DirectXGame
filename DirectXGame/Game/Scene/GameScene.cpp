@@ -89,9 +89,12 @@ void GameScene::Init() {
 	timeCounter_ = std::make_unique<TimeCounter>();
 	timeCounter_->Init();
 
-	uint32_t numberTex = TextureManager::Load("UI_grap.png");
-	UI_Grap = std::make_unique<Sprite>(Sprite(numberTex, { 700.0f,300.0f }, { 250.0f,80.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
+	uint32_t UITex = TextureManager::Load("UI_grap.png");
+	UI_Grap = std::make_unique<Sprite>(Sprite(UITex, { 700.0f,300.0f }, { 250.0f,80.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
 	UI_Grap->Initialize();
+	UITex = TextureManager::Load("PressButton.png");
+	UI_PlayerRoring = std::make_unique<Sprite>(Sprite(UITex, { 700.0f,300.0f }, { 508.0f,72.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
+	UI_PlayerRoring->Initialize();
 }
 
 void GameScene::Update() {
@@ -177,6 +180,9 @@ void GameScene::DrawUI() {
 	timeCounter_->Draw();
 	if (player_->GetFarstFlag()&& player_->GetCanGrapFlag()) {
 		UI_Grap->Draw();
+	}
+	if (!player_->GetFarstFlag() && player_->GetCanGrapFlag()) {
+		UI_PlayerRoring->Draw();
 	}
 
 }
