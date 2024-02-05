@@ -89,6 +89,13 @@ void GameScene::Init() {
 	timeCounter_ = std::make_unique<TimeCounter>();
 	timeCounter_->Init();
 
+	//スカイドーム
+	Model* skyDomeModelHundle = ModelManager::Load("skyDome");
+	SkyDomeModel_.reset(Object3d::Create(skyDomeModelHundle));
+	world_.Init();
+	world_.scale_ = {100.0f,100.0f,100.0f};
+	world_.UpdateMatrix();
+
 	uint32_t UITex = TextureManager::Load("UI_grap.png");
 	UI_Grap = std::make_unique<Sprite>(Sprite(UITex, { 700.0f,300.0f }, { 250.0f,80.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
 	UI_Grap->Initialize();
@@ -162,6 +169,7 @@ void GameScene::DrawModel() {
 
 	goal_->Draw(camera_.GetViewProjection());
 
+	SkyDomeModel_->Draw(world_,camera_.GetViewProjection());
 }
 
 void GameScene::DrawParticleModel() {
