@@ -3,6 +3,7 @@
 
 #include "Engine/Input/input.h"
 #include "ImGuiManager.h"
+#include "Particle.h"
 
 #include "Game/Character/Character.h"
 enum class Behavior {
@@ -56,6 +57,7 @@ public:
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
 	void SetSangoPos(Vector3 Pos) { grapPoint = Pos; }
 	void SetPos(const Vector3& pos) { world_.translation_ = pos; }
+	void SetSoundHundle(std::vector<size_t> hundles) { sounds_ = hundles; }
 #pragma endregion setter
 
 private:
@@ -139,4 +141,8 @@ private:
 	Vector3 tlanslatePre;
 #pragma endregion 移動
 	bool farstFlag = true;
+#pragma region
+	std::vector<size_t> sounds_;
+#pragma endregion 音
+
 };

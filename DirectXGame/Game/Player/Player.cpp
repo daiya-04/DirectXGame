@@ -17,6 +17,7 @@ void Player::Init(std::vector<Object3d*> models)
 	moveParam = 0.3f;
 	Character::SetColliderSize({ 1.0f,1.0f,1.0f });
 	Character::SetOffset({0.0f,1.0f,0.0f});
+
 }
 
 void Player::Update()

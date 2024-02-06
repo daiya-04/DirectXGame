@@ -25,7 +25,7 @@
 #include "Game/Box/Box.h"
 #include "Game/Goal/Goal.h"
 #include "Signpost/Signpost.h"
-
+#include "CostomParticle/RingParticle.h"
 #pragma endregion gameObject
 
 
@@ -83,5 +83,7 @@ private:
 	
 	std::unique_ptr<Object3d> sign_Model_;
 	std::unique_ptr<Signpost> signPost;
+
+	std::unique_ptr<RingParticle> ringParticle;
 };
 
