@@ -18,8 +18,6 @@ void SceneManager::Init() {
 
 	sceneFactory_ = std::make_unique<SceneFactory>();
 
-	
-
 	spotLight_.Init();
 	spotLight_.intensity_ = 0.0f;
 	pointLight_.Init();
@@ -58,7 +56,7 @@ void SceneManager::Init() {
 
 void SceneManager::Update(){
 	if (nextScene_ && fadeAlpha_ < 1.0f) {
-		fadeAlpha_ += 0.01f;
+		fadeAlpha_ += 0.02f;
 	}
 
 	if (fadeAlpha_ >= 1.0f && nextScene_) {

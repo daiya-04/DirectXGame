@@ -131,7 +131,12 @@ void TitleScene::Update() {
 	for (int i = 0; i < coralsWT_.size(); i++){
 		coralsWT_[i].UpdateMatrix();
 	}
-
+	if (isNext_){
+		t += 0.02f;
+	}
+	
+	camera_.translation_ = Ease::Easing(Ease::EaseName::EaseInBack, { 0.0f,2.1f,-7.0f }, endPos_, t);
+	
 	if ((input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(XINPUT_GAMEPAD_A)) && !isNext_) {
 		isNext_ = true;
 		
@@ -164,12 +169,20 @@ void TitleScene::DrawParticle() {
 }
 
 void TitleScene::DrawUI() {
-	press_->Draw();
-	title_->Draw();
+	if (!isNext_){
+		press_->Draw();
+		title_->Draw();
+	}
+	
 }
 
 void TitleScene::DebugGUI() {
 #ifdef _DEBUG
+	ImGui::Begin("CameraMove");
+	ImGui::DragFloat("t", &t, 0.01f, 0.0f, 1.0f);
+	ImGui::DragFloat3("Endpos", &endPos_.x, 0.01f);
+	ImGui::End();
+
 	ImGui::Begin("TitleSprite");
 	ImGui::DragFloat3("titletrans", &titleTrnas_.translation_.x, 0.1f);
 	ImGui::DragFloat3("titlescale", &titleTrnas_.scale_.x, 0.1f);

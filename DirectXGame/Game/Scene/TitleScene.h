@@ -47,6 +47,10 @@ private:
 
 	WorldTransform pressTrnas_;
 
+	float t = 0.0f;
+
+	Vector3 endPos_ = { 0.0f,0.0f,3.0f };
+
 	bool isNext_ = false;
 
 	Input* input_ = nullptr;
