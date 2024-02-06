@@ -45,7 +45,7 @@ void RingParticle::Update()
 	}
 #ifdef _DEBUG
 	ImGui::Begin("GameParticle");
-	if (ImGui::Button("Addcircle")) {
+	if (ImGui::Button("Addcircle1")) {
 		Particle::ParticleData particle;
 		particle.worldTransform_.translation_ = { 0.0f,5.0f,0.0f };
 		particle.worldTransform_.scale_ = { particleScale,particleScale,1.0f };
@@ -58,7 +58,7 @@ void RingParticle::Update()
 		}
 		particles_.splice(particles_.end(), particleData);
 	}
-	if (ImGui::Button("AdduvChecker")) {
+	if (ImGui::Button("Addcircle2")) {
 		Particle::ParticleData particle;
 		particle.worldTransform_.translation_ = { 0.0f,5.0f,0.0f };
 		particle.worldTransform_.scale_ = { particleScale,particleScale,1.0f };

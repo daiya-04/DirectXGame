@@ -43,7 +43,7 @@ private:
 	};
 	float kTranslate = 4.5f;
 	float lifeTime = 0.4f;
-	float particleScale = 2.0f;
+	float particleScale = 1.5f;
 	Vector3 particleColor = {55.0f,30.0f,1.0f};
 	Vector3 particle2Color = {1.0f,30.0f,55.0f};
 };
