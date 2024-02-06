@@ -146,6 +146,7 @@
       <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Game\TimeCounter\TimeCounter.cpp" />
+    <ClCompile Include="Game\Signpost\Signpost.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -263,5 +264,6 @@
       <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Game\TimeCounter\TimeCounter.h" />
+    <ClInclude Include="Game\Signpost\Signpost.h" />
   </ItemGroup>
 </Project>
