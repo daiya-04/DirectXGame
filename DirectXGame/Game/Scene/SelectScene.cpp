@@ -9,6 +9,8 @@
 
 bool SelectScene::isStageClear_[maxStage_]{};
 
+int SelectScene::selectNum_ = 0;
+
 SelectScene::~SelectScene() {}
 
 void SelectScene::UIInit(){

@@ -4,6 +4,7 @@
 #include "ModelManager.h"
 #include "ImGuiManager.h"
 #include "Audio.h"
+#include"SelectScene.h"
 #include "Input.h"
 #include <random>
 
@@ -13,7 +14,21 @@ void GameScene::Init() {
 
 	camera_.Init();
 
-	levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage1"));
+	nowSceneNum_ = SelectScene::GetSelectNumber();
+
+	if (nowSceneNum_ == 0) {
+		levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("beginner"));
+	}
+	else if (nowSceneNum_ == 1) {
+		levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage1"));
+	}
+	else if (nowSceneNum_ == 2) {
+		levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage2"));
+	}
+	else if (nowSceneNum_ == 3) {
+		levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage2"));
+	}
+	
 
 	
 
@@ -164,6 +179,9 @@ void GameScene::Update() {
 	}
 	if (IsCollision(player_->GetAABB(), goal_->GetAABB()) && IsGoal == false) {
 		IsGoal = true;
+		
+		SelectScene::SetClearFlag(nowSceneNum_);
+		
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Result);
 	}
 }

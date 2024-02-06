@@ -53,6 +53,8 @@ public:
 
 private:
 
+	int nowSceneNum_ = 0;
+
 	FollowCamera camera_;
 
 	std::unique_ptr<Object3d> playerModel_;
