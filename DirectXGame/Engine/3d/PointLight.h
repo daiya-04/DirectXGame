@@ -34,7 +34,7 @@ private:
 public:
 
 	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
-	Vector3 position_ = {};
+	Vector3 position_ = { 0.0f,0.0f,3.0f };
 	float intensity_ = 1.0f;
 	float radius_ = 5.0f;
 	float decay_ = 1.0f;

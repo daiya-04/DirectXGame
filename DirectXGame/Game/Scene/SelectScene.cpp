@@ -38,6 +38,8 @@ void SelectScene::UIInit(){
 	moveTrans_.scale_ = { 192.0f,192.0f,0.0f };
 
 	UITimer_ = 0;
+	isSelectEnd_ = false;
+	isSceneNext_ = false;
 }
 
 void SelectScene::Init() {
@@ -264,7 +266,8 @@ void SelectScene::EnterTheStage(){
 	playerWT_.translation_ = Ease::Easing(Ease::EaseName::EaseNone, startPlayerPos_, endPlayerPos_, easeT_);
 	playerWT_.rotation_.y = Ease::Easing(Ease::EaseName::EaseOutSine, startRotate_, endRotate_, easeRotateT_);
 
-	if (cooltime_>=80){
+	if (cooltime_ >= 80 && !isSelectEnd_) {
+		isSelectEnd_ = true;
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Game);
 	}
 }

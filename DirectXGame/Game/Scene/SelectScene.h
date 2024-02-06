@@ -126,6 +126,8 @@ private:
 
 	bool isSceneNext_ = false;
 
+	bool isSelectEnd_ = false;
+
 	static bool isStageClear_[maxStage_];
 
 

@@ -10,6 +10,7 @@
 #include "Object3d.h"
 #include "Particle.h"
 #include "Camera.h"
+#include "Game/FollowCamera/FollowCamera.h"
 #include "WorldTransform.h"
 #include <json.hpp>
 
@@ -65,16 +66,19 @@ private:
 	Model* skyModel_ = 0;
 	Model* floorModel_ = 0;
 	Model* coralModel_[coralNum_]{ 0 };
+	Model* rockModel_ = 0;
 
 
 	std::unique_ptr<Object3d> skyDomeObj_;
 	std::unique_ptr<Object3d> floorObj_;
+	std::unique_ptr<Object3d> rockObj_;
 	Object3d* obj_[coralNum_];
 	std::vector<std::unique_ptr<Object3d>> coralObj_;
 
 	WorldTransform skyDomeWT_;
 	WorldTransform floorWT_;
 	WorldTransform coralWT_;
+	WorldTransform rockWT_;
 	std::vector<WorldTransform> coralsWT_;
 
 	//ファイル保存のあれこれ
@@ -117,12 +121,6 @@ private:
 	char ItemName_[256]{};
 
 	std::vector<std::string> fileName;
-private:
-
-	
-
-	
-
 
 };
 

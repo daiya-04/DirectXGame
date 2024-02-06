@@ -32,7 +32,14 @@ void SceneManager::Init() {
 	Object3d::SetPointLight(&pointLight_);
 	Object3d::SetSpotLight(&spotLight_);
 
-	uint32_t circle = TextureManager::Load("circle.png");
+	uint32_t backGroundTex = TextureManager::Load("white.png");
+
+	fade_.reset(new Sprite(backGroundTex, { 640.0f,360.0f }, { 1280.0f,720.0f },
+		0.0f, { 0.5f,0.5f }, { 0.0f,0.0f,0.0f,fadeAlpha_ }));
+
+	fade_->Initialize();
+
+	/*uint32_t circle = TextureManager::Load("circle.png");
 	particle_ = std::make_unique<Particle>();
 	particle_.reset(Particle::Create(circle, 800));
 
@@ -45,78 +52,47 @@ void SceneManager::Init() {
 	accelerationField_.area_.min = { -100.0f,-100.0f,-100.0f };
 	accelerationField_.area_.max = { 100.0f,100.0f,100.0f };
 
-	isField_ = false;
+	isField_ = false;*/
 
 }
 
 void SceneManager::Update(){
-	if (nextSceneName_ == chackSelectName_ || nowSceneName_ == chackSelectName_) {
-		std::random_device seedGenerator;
-		std::mt19937 randomEngine(seedGenerator());
-
-		particleNum_ = particle_->GetParticleNum();
-
-		for (std::list<Particle::ParticleData>::iterator itParticle = particles_.begin(); itParticle != particles_.end(); itParticle++) {
-			if (true) {
-				if (IsCollision(accelerationField_.area_, (*itParticle).worldTransform_.translation_)) {
-					(*itParticle).velocity_ += accelerationField_.acceleration_ * kDeltaTime;
-				}
-			}
-			(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_ * kDeltaTime;
-			(*itParticle).currentTime_ += kDeltaTime;
-		}
-
-			emitter_.frequencyTime_ += kDeltaTime;
-		if (isField_) {
-
-			if (emitter_.frequency_ <= emitter_.frequencyTime_) {
-				particles_.splice(particles_.end(), Particle::Emit(emitter_, randomEngine));		
-	
-				emitter_.frequencyTime_ -= emitter_.frequency_;
-			}
-		}
+	if (nextScene_ && fadeAlpha_ < 1.0f) {
+		fadeAlpha_ += 0.01f;
 	}
-	if (nextSceneName_ == chackSelectName_ && nowSceneName_ == AbstractSceneFactory::SceneName::Title) {
-		isField_ = true;
-	}
-	else {
-		isField_ = false;
-	}
-	
 
-	if (nextScene_ && nextSceneName_ == chackSelectName_ && particleNum_ > 799) {
+	if (fadeAlpha_ >= 1.0f && nextScene_) {
+		nextSceneInit_ = true;
+	}
+
+	if (nextSceneInit_) {
 		scene_ = std::move(nextScene_);
 		nowSceneName_ = nextSceneName_;
 		nextSceneName_ = AbstractSceneFactory::SceneName::NONE;
 		scene_->Init();
+		nextSceneInit_ = false;
 	}
-	else if (nextScene_ && nextSceneName_ == chackSelectName_ && nowSceneName_ != AbstractSceneFactory::SceneName::Title) {
-		scene_ = std::move(nextScene_);
-		nowSceneName_ = nextSceneName_;
-		nextSceneName_ = AbstractSceneFactory::SceneName::NONE;
-		scene_->Init();
-	}
-	else if (nextScene_ && nextSceneName_ != chackSelectName_){
-		scene_ = std::move(nextScene_);
-		nowSceneName_ = nextSceneName_;
-		nextSceneName_ = AbstractSceneFactory::SceneName::NONE;
-		scene_->Init();
-	}
+
+	fade_->SetColor({ 0.0f,0.0f,0.0f,fadeAlpha_ });
 
 #ifdef _DEBUG
 	ImGui::Begin("Title");
-	ImGui::DragInt("particleNum", &particleNum_);
+	/*ImGui::DragInt("particleNum", &particleNum_);
 	ImGui::Checkbox("FieldEffect", &isField_);
 	ImGui::DragInt("count", reinterpret_cast<int*>(&emitter_.count_), 1.0f, 1, 15);
 	ImGui::DragFloat("frequency", &emitter_.frequency_, 0.01f, 0.01f, 1.0f);
-	ImGui::DragFloat3("transform", &emitter_.translate_.x, 0.1f);
+	ImGui::DragFloat3("transform", &emitter_.translate_.x, 0.1f);*/
+	ImGui::DragFloat("Alpha", &fadeAlpha_, 0.1f);
 	if (ImGui::Button("Go NextScene")) {
 		ChangeScene(AbstractSceneFactory::SceneName::Select);
 	}
 	ImGui::End();
 #endif // _DEBUG
+	if (!nextScene_ && fadeAlpha_ > 0.0f) {
+		fadeAlpha_ -= 0.02f;
+	}
 
-
+	
 	scene_->Update();
 	camera_.UpdateViewMatrix();
 }
@@ -142,7 +118,7 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	///パーティクル
 	Particle::preDraw();
-	particle_->Draw(particles_, camera_);
+	
 	scene_->DrawParticle();
 
 	Particle::postDraw();
@@ -151,7 +127,7 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 	Sprite::preDraw(commandList);
 
 	scene_->DrawUI();
-
+	fade_->Draw();
 	Sprite::postDraw();
 
 }

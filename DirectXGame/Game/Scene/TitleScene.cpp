@@ -63,7 +63,16 @@ void TitleScene::Init() {
 
 	floorObj_.reset(Object3d::Create(floorModel_));
 	floorWT_.Init();
-	floorWT_.translation_ = { 0.0f,-5.0f,0.0f };
+	floorWT_.translation_ = { 0.0f,-1.0f,0.0f };
+
+	rockModel_ = ModelManager::Load("Rock");
+
+	rockObj_.reset(Object3d::Create(rockModel_));
+	rockWT_.Init();
+	rockWT_.translation_.z = 4.0f;
+	rockWT_.translation_.y = -1.0f;
+	rockWT_.rotation_.y = 1.57f;
+	rockWT_.scale_ = { 1.5f,0.3f,1.5f };
 
 	ChackFiles();
 
@@ -117,6 +126,7 @@ void TitleScene::Update() {
 
 	floorWT_.UpdateMatrix();
 	skyDomeWT_.UpdateMatrix();
+	rockWT_.UpdateMatrix();
 
 	for (int i = 0; i < coralsWT_.size(); i++){
 		coralsWT_[i].UpdateMatrix();
@@ -138,6 +148,7 @@ void TitleScene::DrawBackGround() {
 void TitleScene::DrawModel() {
 	floorObj_->Draw(floorWT_, camera_);
 	skyDomeObj_->Draw(skyDomeWT_, camera_);
+	rockObj_->Draw(rockWT_, camera_);
 
 	for (int i = 0; i < coralObj_.size(); i++){
 		coralObj_[i]->Draw(coralsWT_[i], camera_);
@@ -171,7 +182,7 @@ void TitleScene::DebugGUI() {
 	ImGui::End();
 
 	ImGui::Begin("Corals");
-	for (int i = 0; i < coralNum_; i++){
+	for (int i = 0; i < coralsWT_.size(); i++){
 		ImGui::DragFloat3(("coralTrans " + std::to_string(i)).c_str(), &coralsWT_[i].translation_.x, 0.1f);
 	}
 	ImGui::End();
@@ -201,6 +212,20 @@ void TitleScene::DebugGUI() {
 						ImGui::DragFloat3("Trans", &coralsWT_[i].translation_.x, 0.1f);
 						ImGui::DragFloat3("rotate", &coralsWT_[i].rotation_.x, 0.01f);
 						ImGui::DragFloat3("Scale", &coralsWT_[i].scale_.x, 0.01f);
+						if (ImGui::Button("erase")){
+							if (OperationConfirmation()){
+								std::vector<std::unique_ptr<Object3d>>::iterator position = coralObj_.begin() + i;
+								std::vector<WorldTransform>::iterator WTposition = coralsWT_.begin() + i;
+								
+								if (position != coralObj_.end() && WTposition != coralsWT_.end()) {
+									coralObj_.erase(position);
+									coralsWT_.erase(WTposition);
+									
+								}	
+								
+							}
+
+						}
 						ImGui::TreePop();
 					}
 				}
