@@ -7,7 +7,40 @@
 #include "ImGuiManager.h"
 #include <random>
 
+bool SelectScene::isStageClear_[maxStage_]{};
+
 SelectScene::~SelectScene() {}
+
+void SelectScene::UIInit(){
+	uint32_t pressTex = TextureManager::Load("A.png");
+	uint32_t stickTex = TextureManager::Load("stick.png");
+	uint32_t moveTex = TextureManager::Load("move.png");
+
+	APress_.reset(new Sprite(pressTex, { 640.0f,250.0f }, { 64.0f,64.0f }, 0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
+	APress_->Initialize();
+
+	pressTrans_.Init();
+	pressTrans_.translation_ = { 640.0f,315.0f,0.0f };
+	pressTrans_.scale_ = { 64.0f,64.0f,0.0f };
+
+	stick_.reset(new Sprite(stickTex, { 100.0f,600.0f }, { 64.0f,64.0f }, 0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
+	stick_->Initialize();
+
+	stickTrans_.Init();
+	stickTrans_.translation_ = { 100.0f,620.0f,0.0f };
+	stickTrans_.scale_ = { 128.0f,128.0f,0.0f };
+
+	moveText_.reset(new Sprite(moveTex, { 100.0f,600.0f }, { 64.0f,64.0f }, 0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
+	moveText_->Initialize();
+
+	moveTrans_.Init();
+	moveTrans_.translation_ = { 260.0f,620.0f,0.0f };
+	moveTrans_.scale_ = { 192.0f,192.0f,0.0f };
+
+	UITimer_ = 0;
+	isSelectEnd_ = false;
+	isSceneNext_ = false;
+}
 
 void SelectScene::Init() {
 
@@ -49,7 +82,7 @@ void SelectScene::Init() {
 		stageSelectWT_[i].translation_ = { i * 7.0f,-1.23f,-3.0f };
 		stageSelectWT_[i].scale_ = { 0.3f,0.2f,0.3f };
 
-		isStageClear_[i] = false;
+		
 	}
 	loadObj_.reset(Object3d::Create(loadModel_));
 	loadWT_.Init();
@@ -89,7 +122,7 @@ void SelectScene::Init() {
 
 	cooltime_ = 0;
 
-
+	UIInit();
 
 	input_ = Input::GetInstance();
 }
@@ -99,6 +132,15 @@ void SelectScene::Update() {
 	for (int i = 0; i < maxStage_; i++){
 		objWT_[i].rotation_.y += 0.02f;
 	}
+
+	stick_->SetPosition({ stickTrans_.translation_.x,stickTrans_.translation_.y });
+	stick_->SetSize({ stickTrans_.scale_.x,stickTrans_.scale_.y });
+
+	APress_->SetPosition({ pressTrans_.translation_.x,pressTrans_.translation_.y });
+	APress_->SetSize({ pressTrans_.scale_.x,pressTrans_.scale_.y });
+
+	moveText_->SetPosition({ moveTrans_.translation_.x,moveTrans_.translation_.y });
+	moveText_->SetSize({ moveTrans_.scale_.x,moveTrans_.scale_.y });
 
 	SelectStage();
 	EnterTheStage();
@@ -115,9 +157,13 @@ void SelectScene::Update() {
 		sloadWT_[i].UpdateMatrix();
 	}
 
+	stickTrans_.UpdateMatrix();
+	pressTrans_.UpdateMatrix();
+	moveTrans_.UpdateMatrix();
+
 	skyDomeWT_.UpdateMatrix();
 	floorWT_.UpdateMatrix();
-	for (int i = 0; i < 3; i++){
+	for (int i = 0; i < maxStage_; i++){
 		rockWT_[i].UpdateMatrix();
 		stageSelectWT_[i].UpdateMatrix();
 	}
@@ -183,6 +229,15 @@ void SelectScene::SelectStage(){
 	if (easeRotateT_>1.0f){
 		easeRotateT_ = 1.0f;
 		endRotate_ = 3.14f;
+
+		UITimer_++;
+		if (UITimer_>60){
+			UITimer_ = 0;
+		}
+
+	}
+	else {
+		UITimer_ = 0;
 	}
 
 	camera_.translation_.x = Ease::Easing(Ease::EaseName::EaseOutSine, startPos_, endPos_, easeT_);
@@ -193,7 +248,7 @@ void SelectScene::SelectStage(){
 void SelectScene::EnterTheStage(){
 	if (!isSceneNext_)
 		return;
-	
+	UITimer_ = 0;
 	startRotate_ = 3.14f;
 	endRotate_ = 0.0f;
 
@@ -211,7 +266,8 @@ void SelectScene::EnterTheStage(){
 	playerWT_.translation_ = Ease::Easing(Ease::EaseName::EaseNone, startPlayerPos_, endPlayerPos_, easeT_);
 	playerWT_.rotation_.y = Ease::Easing(Ease::EaseName::EaseOutSine, startRotate_, endRotate_, easeRotateT_);
 
-	if (cooltime_>=80){
+	if (cooltime_ >= 80 && !isSelectEnd_) {
+		isSelectEnd_ = true;
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Game);
 	}
 }
@@ -253,9 +309,11 @@ void SelectScene::DrawParticle() {
 }
 
 void SelectScene::DrawUI() {
-
-
-
+	stick_->Draw();
+	if (UITimer_>30){
+		APress_->Draw();
+	}
+	moveText_->Draw();
 }
 
 void SelectScene::DebugGUI() {
@@ -297,6 +355,16 @@ void SelectScene::DebugGUI() {
 			ImGui::Checkbox("stage1", &isStageClear_[0]);
 			ImGui::Checkbox("stage2", &isStageClear_[1]);
 			ImGui::Checkbox("stage3", &isStageClear_[2]);
+			ImGui::Checkbox("stage3", &isStageClear_[3]);
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Sprite")){
+			ImGui::DragFloat3("stickTrans", &stickTrans_.translation_.x, 0.1f);
+			ImGui::DragFloat3("stickScale", &stickTrans_.scale_.x, 0.1f);
+			ImGui::DragFloat3("APressTrans", &pressTrans_.translation_.x, 0.1f);
+			ImGui::DragFloat3("APressScale", &pressTrans_.scale_.x, 0.1f);
+			ImGui::DragFloat3("moveTexTrans", &moveTrans_.translation_.x, 0.1f);
+			ImGui::DragFloat3("moveTexScale", &moveTrans_.scale_.x, 0.1f);
 			ImGui::EndMenu();
 		}
 		
@@ -307,3 +375,4 @@ void SelectScene::DebugGUI() {
 
 #endif // _DEBUG
 }
+

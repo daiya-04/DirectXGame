@@ -46,7 +46,13 @@ private:
 	SceneManager& operator=(const SceneManager&) = delete;
 
 	Camera camera_;
-	std::unique_ptr<Particle> particle_;
+
+	std::unique_ptr<Sprite> fade_;
+
+	float fadeAlpha_ = 0.0f;
+
+	bool nextSceneInit_ = true;
+	/*std::unique_ptr<Particle> particle_;
 	std::list<Particle::ParticleData> particles_;
 	Particle::Emitter emitter_{};
 	const float kDeltaTime = 1.0f / 60.0f;
@@ -55,7 +61,7 @@ private:
 
 	bool isField_ = false;
 
-	Particle::AccelerationField accelerationField_;
+	Particle::AccelerationField accelerationField_;*/
 
 	Input* input_ = nullptr;
 
