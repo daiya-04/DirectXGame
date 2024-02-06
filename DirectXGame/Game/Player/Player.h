@@ -51,6 +51,9 @@ public:
 	bool GetCanGrapFlag()const {
 		return canGrap;
 	}
+	bool GetMaxPower() {
+		return maxPower_;
+	}
 #pragma endregion getter
 #pragma region
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
@@ -99,6 +102,7 @@ private:
 	void GrapJumpLeftUpdate();
 	void GrapJumpRightInitalize();
 	void GrapJumpRightUpdate();
+	bool maxPower_ = false;
 	Quaternion playerLock;
 	bool canGrap = false;
 	Vector3 grapPoint;

@@ -81,6 +81,7 @@ private:
 
 	std::unique_ptr<Sprite> UI_Grap;
 	std::unique_ptr<Sprite> UI_PlayerRoring;
+	std::unique_ptr<Sprite> UI_Release;
 	WorldTransform world_;
 	
 	std::unique_ptr<Object3d> sign_Model_;
