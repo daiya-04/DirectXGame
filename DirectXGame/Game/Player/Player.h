@@ -80,7 +80,7 @@ private:
 	void BehaviorRootUpdate();
 	Vector3 move;
 	//プレイヤーの移動
-	float speed = 0.5f;
+	float speed = 0.2f;
 	//ジャンプ
 	void BehaviorJumpInit();
 	void BehaviorJumpUpdate();
@@ -122,7 +122,7 @@ private:
 	Vector3 secondJumpVec;
 	//プレイヤージャンプ
 	float jumpParam = 0.0f;
-	float kjumpParam = 0.8f;
+	float kjumpParam = 1.0f;
 	float addJumpParam = 0.01f;
 	float subJumpParam = 0.004f;
 #pragma endregion GrapBehavior
