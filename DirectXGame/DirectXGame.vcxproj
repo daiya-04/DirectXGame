@@ -133,6 +133,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\ResultScene.cpp" />
     <ClCompile Include="Game\Scene\SelectScene.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
+    <ClCompile Include="Game\Signpost\Signpost.cpp" />
     <ClCompile Include="Game\TimeCounter\TimeCounter.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="Game\Scene\TutorialScene.cpp" />
@@ -191,6 +192,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\SelectScene.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
     <ClInclude Include="Engine\3d\SpotLight.h" />
+    <ClInclude Include="Game\Signpost\Signpost.h" />
     <ClInclude Include="Game\TimeCounter\TimeCounter.h" />
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="Game\Scene\TutorialScene.h" />

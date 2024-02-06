@@ -142,7 +142,6 @@ void Player::ImGui()
 	ImGui::InputFloat("JumpMaxValue", &kjumpParam);
 	ImGui::InputFloat("JumpaddValue", &addJumpParam);
 	ImGui::InputFloat("JumpsubValue", &subJumpParam);
-	ImGui::InputFloat("MoveSpeed", &speed);
 
 	if (ImGui::Button("Reset")) {
 		world_.translation_ = { 0.0f,0.0f,0.0f };

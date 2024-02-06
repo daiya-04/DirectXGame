@@ -24,6 +24,7 @@
 #include "Game/Sango/Sango.h"
 #include "Game/Box/Box.h"
 #include "Game/Goal/Goal.h"
+#include "Signpost/Signpost.h"
 
 #pragma endregion gameObject
 
@@ -65,6 +66,7 @@ private:
 	std::vector<std::unique_ptr<Sango>> sangoes_;
 
 	std::unique_ptr<Object3d> goal_Model_;
+
 	std::unique_ptr<Goal> goal_;
 	bool IsGoal = false;
 
@@ -78,5 +80,8 @@ private:
 	std::unique_ptr<Sprite> UI_Grap;
 	std::unique_ptr<Sprite> UI_PlayerRoring;
 	WorldTransform world_;
+	
+	std::unique_ptr<Object3d> sign_Model_;
+	std::unique_ptr<Signpost> signPost;
 };
 

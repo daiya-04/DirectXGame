@@ -103,6 +103,14 @@ void GameScene::Init() {
 	UITex = TextureManager::Load("PressButton.png");
 	UI_PlayerRoring = std::make_unique<Sprite>(Sprite(UITex, { 620.0f,310.0f }, { 508.0f,72.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
 	UI_PlayerRoring->Initialize();
+
+	Model* signModelHundle = ModelManager::Load("Goal");
+	sign_Model_.reset(Object3d::Create(signModelHundle));
+	std::vector<Object3d*> signModels = {
+		sign_Model_.get(),
+	};
+	signPost = std::make_unique<Signpost>();
+	signPost->Init(signModels);
 }
 
 void GameScene::Update() {
@@ -124,6 +132,9 @@ void GameScene::Update() {
 	goal_->Update();
 
 	timeCounter_->Update();
+	signPost->SetStert(player_->GetPosition());
+	signPost->SetEnd(goal_->GetPosition());
+	signPost->Update();
 #pragma endregion Update
 
 #pragma region
@@ -171,6 +182,8 @@ void GameScene::DrawModel() {
 	goal_->Draw(camera_.GetViewProjection());
 
 	SkyDomeModel_->Draw(world_,camera_.GetViewProjection());
+
+	signPost->Draw(camera_.GetViewProjection());
 }
 
 void GameScene::DrawParticleModel() {
