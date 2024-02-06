@@ -58,7 +58,7 @@ void Player::Update()
 
 	WorldUpdate();
 	
-	if (world_.translation_.y < -20.0f) {
+	if (world_.translation_.y < -30.0f) {
 		world_.translation_ = { 0.0f,2.0f,0.0f };
 		world_.UpdateMatrix();
 		behaviorRequest_ = Behavior::kRoot;
@@ -66,7 +66,7 @@ void Player::Update()
 	
 	Character::ColliderUpdate();
 
-	if (world_.translation_.y < -20.0f) {
+	if (world_.translation_.y < -30.0f) {
 		world_.translation_ = { 0.0f,0.0f,0.0f };
 		world_.UpdateMatrix();
 		behaviorRequest_ = Behavior::kRoot;
