@@ -1,8 +1,10 @@
 #pragma once
 #include <optional>
+#include "Audio.h"
 
 #include "Engine/Input/input.h"
 #include "ImGuiManager.h"
+#include "Particle.h"
 
 #include "Game/Character/Character.h"
 enum class Behavior {
@@ -51,6 +53,12 @@ public:
 	bool GetCanGrapFlag()const {
 		return canGrap;
 	}
+	bool GetP_RoringFlag()const {
+		return P_RoringFlag;
+	}
+	bool GetP_AutoGrapFlag()const {
+		return P_AutoGrapFlag;
+	}
 	bool GetMaxPower() {
 		return maxPower_;
 	}
@@ -59,9 +67,16 @@ public:
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
 	void SetSangoPos(Vector3 Pos) { grapPoint = Pos; }
 	void SetPos(const Vector3& pos) { world_.translation_ = pos; }
+	void SetSoundHundle(std::vector<size_t> hundles) { sounds_ = hundles;
+	}
+	void SetRepopPos(const Vector3& pos) { repopPos_ = pos; }
+	void SetSoundHundle(std::vector<size_t> hundles) { sounds_ = hundles; }
 #pragma endregion setter
 
 private:
+
+	Vector3 repopPos_ = {};
+
 	//ビュープロジェクション
 	const Camera* camera_;
 
@@ -72,7 +87,6 @@ private:
 	void Gravity();
 	bool IsOnGraund = false;
 #pragma endregion 重力
-
 #pragma region
 	//ふるまい
 	Behavior behavior_ = Behavior::kRoot;
@@ -143,4 +157,16 @@ private:
 	Vector3 tlanslatePre;
 #pragma endregion 移動
 	bool farstFlag = true;
+#pragma region
+	std::vector<size_t> sounds_;
+	bool IsRoringSound = false;
+	bool IsGrapjumpSound = false;
+	int roringCount = 0;
+	int roringMaxCount = 35;
+#pragma endregion 音
+#pragma region
+	bool P_RoringFlag = false;
+	bool P_AutoGrapFlag = false;
+#pragma endregion パーティクル用フラグ
+
 };

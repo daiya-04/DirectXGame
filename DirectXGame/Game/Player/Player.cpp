@@ -7,6 +7,7 @@ void Player::Init(std::vector<Object3d*> models)
 
 	world_.Init();
 	world_Arrow_.Init();
+	world_Arrow_.scale_.x = 0.1f;
 
 	behavior_ = Behavior::kRoot;
 
@@ -18,12 +19,16 @@ void Player::Init(std::vector<Object3d*> models)
 	moveParam = 0.3f;
 	Character::SetColliderSize({ 1.0f,1.0f,1.0f });
 	Character::SetOffset({0.0f,1.0f,0.0f});
+
+
 }
 
 void Player::Update()
 {
-	tlanslatePre = world_.translation_;
 
+
+	tlanslatePre = world_.translation_;
+	P_RoringFlag = false;
 	if (behaviorRequest_) {
 		//ふるまいの変更
 		behavior_ = behaviorRequest_.value();
@@ -59,16 +64,16 @@ void Player::Update()
 
 	WorldUpdate();
 	
-	if (world_.translation_.y < -30.0f) {
-		world_.translation_ = { 0.0f,2.0f,0.0f };
+	if (world_.translation_.y < -40.0f) {
+		world_.translation_ = repopPos_;
 		world_.UpdateMatrix();
 		behaviorRequest_ = Behavior::kRoot;
 	}
 	
 	Character::ColliderUpdate();
 
-	if (world_.translation_.y < -30.0f) {
-		world_.translation_ = { 0.0f,0.0f,0.0f };
+	if (world_.translation_.y < -40.0f) {
+		world_.translation_ = repopPos_;
 		world_.UpdateMatrix();
 		behaviorRequest_ = Behavior::kRoot;
 	}
@@ -198,6 +203,8 @@ void Player::BehaviorRootInit()
 	rotateQua = IdentityQuaternion();
 	angle = 1.0f;
 	jumpParam = 0.0f;
+	roringMaxCount = 35;
+	roringCount = 0;
 }
 void Player::BehaviorRootUpdate()
 {
@@ -225,12 +232,15 @@ void Player::BehaviorJumpUpdate()
 #pragma region
 void Player::GrapInit()
 {
+	IsGrapjumpSound = false;
+	IsRoringSound = false;
 	farstFlag = false;
 	moveParam = 1.0f;
 	PreSangoId_ = sangoId_;
 	world_.translation_ = grapPoint;
 	world_.UpdateMatrix();
 	world_Arrow_.translation_ = grapPoint;
+	world_Arrow_.scale_.x = 0.1f;
 	world_Arrow_.UpdateMatrix();
 	playerQua_ = IdentityQuaternion();
 	IsOnGraund = false;
@@ -244,6 +254,7 @@ void Player::GrapInit()
 }
 void Player::GrapUpdate()
 {
+	P_AutoGrapFlag = false;
 	if (Input::GetInstance()->GetMoveXZ().x != 0 && grapJump == false) {
 		if (Input::GetInstance()->GetMoveXZ().x > 0 && GrapBehavior_ != GrapBehavior::kRight) {
 			GrapBehaviorRequest_ = GrapBehavior::kRight;
@@ -256,8 +267,10 @@ void Player::GrapUpdate()
 		//自動でつかむ
 		if (canGrap == true && grapJump == true && PreSangoId_ != sangoId_) {
 			behaviorRequest_ = Behavior::kGrap;
+			P_AutoGrapFlag = true;
 		}
 	
+		world_Arrow_.scale_.x = jumpParam;
 
 	if (GrapBehaviorRequest_) {
 		//ふるまいの変更
@@ -316,6 +329,20 @@ void Player::GrapUpdate()
 		Move();
 	}*/
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
+		if (IsRoringSound == false) {
+			Audio::GetInstance()->SoundPlayWave(sounds_[1], 1.0f, false);
+			IsRoringSound = true;
+		}
+		if (IsRoringSound) {
+			roringCount++;
+		}
+		if (roringCount == roringMaxCount) {
+			if (roringMaxCount > 25) {
+				roringMaxCount -= 5;
+			}
+			roringCount = 0;
+			IsRoringSound = false;
+		}
 		if (jumpParam < kjumpParam) {
 		jumpParam += addJumpParam;
 		maxPower_ = false;
@@ -331,9 +358,21 @@ void Player::GrapUpdate()
 	else if (jumpParam < 0.0f) {
 		jumpParam = 0.0f;
 	}
+	if (!Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
+		if (roringMaxCount < 35 && grapJump == false) {
+			roringCount++;
+			if (roringCount >= 20) {
+				roringMaxCount += 5;
+				roringCount = 0;
+			}
+		}
+	}
+
 #ifdef _DEBUG
 	ImGui::Begin("Player");
 	ImGui::InputFloat("JumpParameter",&jumpParam);
+	ImGui::InputInt("roringMaxCount",&roringMaxCount);
+
 	ImGui::End();
 #endif
 
@@ -382,7 +421,6 @@ void Player::GrapJumpLeftInitalize()
 }
 void Player::GrapJumpLeftUpdate()
 {
-
 	grapJumpVec = { 1.0f,0.0f,0.0f };
 	//////回転行列を作る
 	ArrowQua_ = ArrowQua_.Normalize();
@@ -402,10 +440,15 @@ void Player::GrapJumpLeftUpdate()
 		}
 		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 		rotateQua = rotateQua.Normalize();
+		P_RoringFlag = true;
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
 		grapJump = true;
 		moveVector = grapJumpVec * jumpParam;
+		if (IsGrapjumpSound == false) {
+			Audio::GetInstance()->SoundPlayWave(sounds_[0], 0.5f, false);
+			IsGrapjumpSound = true;
+		}
 	}
 	else if(grapJump == false) {
 		if (angle < 1.0f) {
@@ -460,12 +503,16 @@ void Player::GrapJumpRightUpdate()
 		}
 		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 		rotateQua = rotateQua.Normalize();
-
+		P_RoringFlag = true;
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
 		grapJump = true;
 
 		moveVector = grapJumpVec * jumpParam;
+		if (IsGrapjumpSound == false) {
+			Audio::GetInstance()->SoundPlayWave(sounds_[0], 0.5f, false);
+			IsGrapjumpSound = true;
+		}
 	}
 	else if (grapJump == false) {
 		if (angle < 1.0f) {
@@ -476,7 +523,6 @@ void Player::GrapJumpRightUpdate()
 		}
 		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 	}
-
 
 	if (grapJump == true) {
 		moveVector.y -= 0.03f;

@@ -58,6 +58,7 @@ public:
 	//音声再生
 	size_t SoundPlayWave(size_t soundHandle, float volume = 1.0f,bool loop = false);
 
+
 	//size_t SoundPlayLoopStart(size_t soundHandle);
 	void SoundPlayLoopEnd(size_t playhandle);
 	//音声ロード

@@ -7,7 +7,7 @@ void Sango::Init(std::vector<Object3d*> models)
 
 	world_.Init();
 
-	Character::SetColliderSize({ 3.0f,3.0f,5.0f });
+	Character::SetColliderSize({ 2.5f,2.5f,5.0f });
 }
 
 void Sango::Update()
