@@ -63,10 +63,14 @@ public:
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
 	void SetSangoPos(Vector3 Pos) { grapPoint = Pos; }
 	void SetPos(const Vector3& pos) { world_.translation_ = pos; }
+	void SetRepopPos(const Vector3& pos) { repopPos_ = pos; }
 	void SetSoundHundle(std::vector<size_t> hundles) { sounds_ = hundles; }
 #pragma endregion setter
 
 private:
+
+	Vector3 repopPos_ = {};
+
 	//ビュープロジェクション
 	const Camera* camera_;
 

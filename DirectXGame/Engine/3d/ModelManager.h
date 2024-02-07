@@ -55,6 +55,8 @@ public:
 	std::vector<VertexData> vertices_;
 	//uv
 	int32_t uvHandle_ = 0;
+	//ライティングの有無
+	bool isLighting_ = true;
 	//modelファイルの名前
 	std::string name_;
 
@@ -91,11 +93,11 @@ public:
 
 	static ModelManager* GetInstance();
 
-	static Model* Load(const std::string& modelName);
+	static Model* Load(const std::string& modelName, bool isLighting = true);
 
 private:
 
-	Model* LoadInternal(const std::string& modelName);
+	Model* LoadInternal(const std::string& modelName, bool isLighting = true);
 
 	void LoadObjFile(const std::string& modelName);
 

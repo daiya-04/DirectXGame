@@ -53,8 +53,8 @@ void TitleScene::Init() {
 
 
 	//model
-	skyModel_ = ModelManager::Load("skyDome");
-
+	skyModel_ = ModelManager::Load("skyDome",false);
+	skyModel_->SetColor({ 0.419f,0.411f,0.788f,1.0f });
 	skyDomeObj_.reset(Object3d::Create(skyModel_));
 	skyDomeWT_.Init();
 	skyDomeWT_.scale_ = { 100.0f,100.0f,100.0f };

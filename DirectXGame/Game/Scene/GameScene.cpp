@@ -13,7 +13,7 @@ void GameScene::Init() {
 
 	camera_.Init();
 
-	levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage1"));
+	levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage2"));
 
 	
 
@@ -64,6 +64,7 @@ void GameScene::Init() {
 
 		if (objectData.objectType == "Player") {
 			player_->SetPos(objectData.translation);
+			player_->SetRepopPos(objectData.translation);
 		} else if (objectData.objectType == "sango") {
 			/*Sango* newSango = new Sango();
 			newSango->Init(sangoModels);
@@ -98,7 +99,8 @@ void GameScene::Init() {
 #pragma endregion タイマー
 #pragma region 
 
-	Model* skyDomeModelHundle = ModelManager::Load("skyDome");
+	//スカイドーム
+	Model* skyDomeModelHundle = ModelManager::Load("skyDome",false);
 	SkyDomeModel_.reset(Object3d::Create(skyDomeModelHundle));
 	world_.Init();
 	world_.scale_ = {1000.0f,1000.0f,1000.0f};
