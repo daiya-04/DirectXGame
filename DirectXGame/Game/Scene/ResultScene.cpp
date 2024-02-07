@@ -13,7 +13,7 @@ void ResultScene::Init() {
 
 	uint32_t backGroundTex = TextureManager::Load("white.png");
 	uint32_t titleTex = TextureManager::Load("clear.png");
-	uint32_t pressTex = TextureManager::Load("PressAButton.png");
+	uint32_t pressTex = TextureManager::Load("goSelect.png");
 
 	background_.reset(new Sprite(backGroundTex, { 640.0f,360.0f }, { 1280.0f,720.0f }, 
 		0.0f, { 0.5f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
