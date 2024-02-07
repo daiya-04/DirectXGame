@@ -27,6 +27,11 @@ public:
 	void Init(std::vector<Object3d*> models)override;
 	void Update()override;
 	void Draw(const Camera& camera)override;
+	void Reset() {
+		world_.translation_ = { 0.0f,0.0f,0.0f };
+		world_.UpdateMatrix();
+		behaviorRequest_ = Behavior::kRoot;
+	}
 
 	void SetViewProjection(const Camera* camera) {
 		camera_ = camera;

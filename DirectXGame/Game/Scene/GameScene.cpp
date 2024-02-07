@@ -133,7 +133,7 @@ void GameScene::Init() {
 	UI_Release->Initialize();
 #pragma endregion UI
 #pragma region
-	Model* signModelHundle = ModelManager::Load("Goal");
+	Model* signModelHundle = ModelManager::Load("Arrow");
 	sign_Model_.reset(Object3d::Create(signModelHundle));
 	std::vector<Object3d*> signModels = {
 		sign_Model_.get(),
@@ -175,7 +175,9 @@ void GameScene::Update() {
 	if (IsPause) {
 		pauseManu->Update();
 		if (pauseManu->GetIsRestert()) {
-			
+			player_->Reset();
+			timeCounter_->Reset();
+			IsPause = false;
 		}
 		if (pauseManu->GetIsReturnSelect()) {
 			SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
