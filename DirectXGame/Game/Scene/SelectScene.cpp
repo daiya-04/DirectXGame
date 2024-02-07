@@ -17,6 +17,10 @@ void SelectScene::UIInit(){
 	uint32_t pressTex = TextureManager::Load("A.png");
 	uint32_t stickTex = TextureManager::Load("stick.png");
 	uint32_t moveTex = TextureManager::Load("move.png");
+	stageT_ = TextureManager::Load("stageT.png");
+	stage1_ = TextureManager::Load("stage1.png");
+	stage2_ = TextureManager::Load("stage2.png");
+	stage3_ = TextureManager::Load("stage3.png");
 
 	APress_.reset(new Sprite(pressTex, { 640.0f,250.0f }, { 64.0f,64.0f }, 0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
 	APress_->Initialize();
@@ -38,6 +42,15 @@ void SelectScene::UIInit(){
 	moveTrans_.Init();
 	moveTrans_.translation_ = { 260.0f,620.0f,0.0f };
 	moveTrans_.scale_ = { 192.0f,192.0f,0.0f };
+
+	stageNameWT_.Init();
+	stageNameWT_.translation_ = { 640.0f,120.0f,0.0f };
+	stageNameWT_.scale_ = { 394.0f,64.0f,0.0f };
+
+	stageName_.reset(new Sprite(stageT_, { stageNameWT_.translation_.x,stageNameWT_.translation_.y }, { stageNameWT_.scale_.x,stageNameWT_.scale_.y }
+	, 0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
+	stageName_->Initialize();
+
 
 	UITimer_ = 0;
 	isSelectEnd_ = false;
@@ -145,6 +158,9 @@ void SelectScene::Update() {
 	moveText_->SetPosition({ moveTrans_.translation_.x,moveTrans_.translation_.y });
 	moveText_->SetSize({ moveTrans_.scale_.x,moveTrans_.scale_.y });
 
+	stageName_->SetPosition({ stageNameWT_.translation_.x,stageNameWT_.translation_.y });
+	stageName_->SetSize({ stageNameWT_.scale_.x,stageNameWT_.scale_.y });
+
 	SelectStage();
 	EnterTheStage();
 	
@@ -163,6 +179,7 @@ void SelectScene::Update() {
 	stickTrans_.UpdateMatrix();
 	pressTrans_.UpdateMatrix();
 	moveTrans_.UpdateMatrix();
+	stageNameWT_.UpdateMatrix();
 
 	skyDomeWT_.UpdateMatrix();
 	floorWT_.UpdateMatrix();
@@ -318,6 +335,20 @@ void SelectScene::DrawUI() {
 		APress_->Draw();
 	}
 	moveText_->Draw();
+	if (selectNum_ == 0) {
+		stageName_->SetTextureHandle(stageT_);
+	}
+	else if (selectNum_ == 1) {
+		stageName_->SetTextureHandle(stage1_);
+	}
+	else if (selectNum_ == 2) {
+		stageName_->SetTextureHandle(stage2_);
+	}
+	else if (selectNum_ == 3) {
+		stageName_->SetTextureHandle(stage3_);
+	}
+
+	stageName_->Draw();
 }
 
 void SelectScene::DebugGUI() {
@@ -369,6 +400,8 @@ void SelectScene::DebugGUI() {
 			ImGui::DragFloat3("APressScale", &pressTrans_.scale_.x, 0.1f);
 			ImGui::DragFloat3("moveTexTrans", &moveTrans_.translation_.x, 0.1f);
 			ImGui::DragFloat3("moveTexScale", &moveTrans_.scale_.x, 0.1f);
+			ImGui::DragFloat3("stageNameTexTrans", &stageNameWT_.translation_.x, 1.0f);
+			ImGui::DragFloat3("stageNameTexScale", &stageNameWT_.scale_.x, 0.1f);
 			ImGui::EndMenu();
 		}
 		

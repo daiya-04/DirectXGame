@@ -138,11 +138,20 @@ private:
 
 	std::unique_ptr<Sprite> moveText_;
 
+	std::unique_ptr<Sprite> stageName_;
+
 	WorldTransform pressTrans_;
 
 	WorldTransform stickTrans_;
 
 	WorldTransform moveTrans_;
+
+	WorldTransform stageNameWT_;
+
+	uint32_t stageT_ = 0;
+	uint32_t stage1_ = 0;
+	uint32_t stage2_ = 0;
+	uint32_t stage3_ = 0;
 
 	int UITimer_ = 0;
 };
