@@ -19,10 +19,13 @@ void GlobalVariables::CreateGroup(const std::string& groupName) {
 }
 
 void GlobalVariables::Update() {
+#ifdef _DEBUG
+
+
 	if (!ImGui::Begin("Global Variables", nullptr, ImGuiWindowFlags_MenuBar)) {
 		ImGui::End();
 		return;
-	}
+}
 	if (!ImGui::BeginMenuBar()) { return; }
 
 	for (std::map<std::string, Group>::iterator itGroup = datas_.begin(); itGroup != datas_.end();
@@ -76,6 +79,7 @@ void GlobalVariables::Update() {
 
 	ImGui::EndMenuBar();
 	ImGui::End();
+#endif
 }
 
 void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, int32_t value) {

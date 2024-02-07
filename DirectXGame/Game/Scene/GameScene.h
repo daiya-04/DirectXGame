@@ -2,12 +2,31 @@
 #include "IScene.h"
 #include <memory>
 #include <list>
+#include <vector>
 
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
 #include "Camera.h"
 #include "WorldTransform.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+#include "LevelLoader.h"
+
+#include "SceneManager.h"
+
+#include "TimeCounter/TimeCounter.h"
+
+#pragma region
+#include "Game/FollowCamera/FollowCamera.h"
+#include "Game/Player/Player.h"
+#include "Game/Floor/Floor.h"
+#include "Game/Sango/Sango.h"
+#include "Game/Box/Box.h"
+#include "Game/Goal/Goal.h"
+#include "Signpost/Signpost.h"
+#include "CostomParticle/RingParticle.h"
+#pragma endregion gameObject
 
 
 class GameScene : public IScene {
@@ -30,23 +49,60 @@ public:
 	void DebugGUI()override;
 
 	~GameScene()override;
+
+	static float GetTimeNum() { return timeNum_; }
 	
 
 private:
 
-	Camera camera_;
+	int nowSceneNum_ = 0;
 
-	uint32_t Model_ = 0;
-	uint32_t Model2_ = 0;
-	std::unique_ptr<Object3d> obj_;
-	std::unique_ptr<Object3d> obj2_;
-	WorldTransform objWT_;
-	WorldTransform objWT2_;
+	FollowCamera camera_;
 
-	std::unique_ptr<Particle> particle_;
-	std::list<Particle::ParticleData> particleData_;
-	Particle::Emitter emitter_{};
-	const float kDeltaTime = 1.0f / 60.0f;
+	std::unique_ptr<Object3d> playerModel_;
+	std::unique_ptr<Object3d> arrowModel_;
+	std::unique_ptr<Player> player_;
 
+	std::unique_ptr<Object3d> SkyDomeModel_;
+
+	std::unique_ptr<Object3d> sangoModel_;
+
+	std::vector<std::unique_ptr<Sango>> sangoes_;
+
+	std::unique_ptr<Object3d> goal_Model_;
+
+	std::unique_ptr<Goal> goal_;
+	bool IsGoal = false;
+
+	std::unique_ptr<Object3d> box_Model_;
+	std::vector<std::unique_ptr<Box>>boxes_;
+
+	std::unique_ptr<LevelData> levelData_;
+
+	std::unique_ptr<TimeCounter> timeCounter_;
+	static float timeNum_;
+
+	std::unique_ptr<Sprite> UI_Grap;
+	std::unique_ptr<Sprite> UI_PlayerRoring;
+	std::unique_ptr<Sprite> UI_Release;
+	WorldTransform world_;
+	
+	std::unique_ptr<Object3d> sign_Model_;
+	std::unique_ptr<Signpost> signPost;
+
+	std::unique_ptr<RingParticle> ringParticle;
+	Vector3 CircleparticleColor[2] = {
+	{55.0f,30.0f,1.0f},
+	{1.0f,30.0f,55.0f}
+	};
+	Vector3 particleColor[2] = {
+	{0.05f,0.5f,1.0f},
+	{1.0f,0.5f,0.05f}
+	};
+	bool IsRoringPlayer = false;
+	int RoringparticleCount = 0;
+	bool IsAutoGrapPlayer = false;
+	int AutoGrapparticleCount = 0;
+	int MaxCount = 10;
 };
 

@@ -31,7 +31,7 @@ private:
 	void Map();
 
 public:
-	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
+	Vector4 color_ = { 0.419f,0.411f,0.788f,1.0f };
 	Vector3 direction_ = { 0.0f,-1.0f,0.0f };
 	float intensity_ = 1.0f;
 

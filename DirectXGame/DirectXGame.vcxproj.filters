@@ -50,6 +50,9 @@
     <Filter Include="Engine\Audio">
       <UniqueIdentifier>{951f94c5-20fb-491b-b20e-c5528d356ac4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Ease">
+      <UniqueIdentifier>{d200f97c-e7ef-4970-abef-3f932e6e39e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -101,9 +104,6 @@
     <ClCompile Include="Engine\Camera\Camera.cpp">
       <Filter>Engine\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\WorldTransform.cpp">
-      <Filter>Engine\3d</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\3d\DirectionalLight.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
@@ -113,6 +113,41 @@
     <ClCompile Include="Engine\Audio\Audio.cpp">
       <Filter>Engine\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Player\Player.cpp" />
+    <ClCompile Include="Engine\Collision\Hit.cpp" />
+    <ClCompile Include="Game\Scene\TitleScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\SelectScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Ease\Ease.cpp">
+      <Filter>Game\Ease</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\FollowCamera\FollowCamera.cpp" />
+    <ClCompile Include="Game\Floor\Floor.cpp" />
+    <ClCompile Include="Game\Sango\Sango.cpp" />
+    <ClCompile Include="Game\Box\Box.cpp" />
+    <ClCompile Include="Engine\3d\WorldTransform.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\PointLight.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\SpotLight.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelLoader.cpp" />
+    <ClCompile Include="Game\Goal\Goal.cpp" />
+    <ClCompile Include="Game\Scene\ResultScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\TutorialScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\TimeCounter\TimeCounter.cpp" />
+    <ClCompile Include="Game\Signpost\Signpost.cpp" />
+    <ClCompile Include="Game\CostomParticle\RingParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -199,5 +234,38 @@
     <ClInclude Include="Engine\Audio\Audio.h">
       <Filter>Engine\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Player\Player.h" />
+    <ClInclude Include="Game\Character\Character.h" />
+    <ClInclude Include="Engine\Collision\Hit.h" />
+    <ClInclude Include="Game\Scene\TitleScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SelectScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Ease\Ease.h">
+      <Filter>Game\Ease</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\FollowCamera\FollowCamera.h" />
+    <ClInclude Include="Game\Floor\Floor.h" />
+    <ClInclude Include="Game\Sango\Sango.h" />
+    <ClInclude Include="Game\Box\Box.h" />
+    <ClInclude Include="Engine\3d\PointLight.h">
+      <Filter>Engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\SpotLight.h">
+      <Filter>Engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelLoader.h" />
+    <ClInclude Include="Game\Goal\Goal.h" />
+    <ClInclude Include="Game\Scene\ResultScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\TutorialScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\TimeCounter\TimeCounter.h" />
+    <ClInclude Include="Game\Signpost\Signpost.h" />
+    <ClInclude Include="Game\CostomParticle\RingParticle.h" />
   </ItemGroup>
 </Project>

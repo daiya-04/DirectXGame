@@ -64,6 +64,46 @@ bool Input::TriggerKey(BYTE keyNumber) const{
 	return false;
 }
 
+bool Input::GetTiltJoyStickRight(){
+	if ((float)(joyState.Gamepad.sThumbLX) > 10000 && (float)(preJoyState.Gamepad.sThumbLX) <= 10000) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool Input::GetTiltJoyStickLeft()
+{
+	if ((float)(joyState.Gamepad.sThumbLX) < -10000 && (float)(preJoyState.Gamepad.sThumbLX) >= -10000) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool Input::GetTiltJoyStickUp()
+{
+	if ((float)(joyState.Gamepad.sThumbLY) > 10000 && (float)(preJoyState.Gamepad.sThumbLY) <= 10000) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool Input::GetTiltJoyStickDown()
+{
+	if ((float)(joyState.Gamepad.sThumbLY) < -10000 && (float)(preJoyState.Gamepad.sThumbLY) >= -10000) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+
 bool Input::GetJoystickState() {
 
 	DWORD dwResult;
@@ -73,16 +113,16 @@ bool Input::GetJoystickState() {
 	dwResult = XInputGetState(0, &joyState);
 
 	if (dwResult == ERROR_SUCCESS) {
-		if (fabs(joyState.Gamepad.sThumbLX) < 10000) {
+		if (fabs(joyState.Gamepad.sThumbLX) < 2500) {
 			joyState.Gamepad.sThumbLX = 0;
 		}
-		if (fabs(joyState.Gamepad.sThumbLY) < 10000) {
+		if (fabs(joyState.Gamepad.sThumbLY) < 2500) {
 			joyState.Gamepad.sThumbLY = 0;
 		}
-		if (fabs(joyState.Gamepad.sThumbRX) < 10000) {
+		if (fabs(joyState.Gamepad.sThumbRX) < 2500) {
 			joyState.Gamepad.sThumbRX = 0;
 		}
-		if (fabs(joyState.Gamepad.sThumbRY) < 10000) {
+		if (fabs(joyState.Gamepad.sThumbRY) < 2500) {
 			joyState.Gamepad.sThumbRY = 0;
 		}
 		return true;

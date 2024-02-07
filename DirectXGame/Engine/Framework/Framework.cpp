@@ -14,7 +14,7 @@
 
 void DSFramework::Init(){
 	
-	WinApp::GetInstance()->CreateGameWindow(L"LE2A_12_セト_ダイヤ");
+	WinApp::GetInstance()->CreateGameWindow(L"2306_スク竜");
 
 	
 	DirectXCommon::GetInstance()->Initialize();
@@ -24,7 +24,7 @@ void DSFramework::Init(){
 	Audio::GetInstance()->Initialize();
 
 	TextureManager::GetInstance()->Initialize();
-	ModelManager::GetInstance()->Initialize();
+	Model::SetDevice();
 	//TextureManager::Load("uvChecker.png");
 
 	Sprite::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), WinApp::kClientWidth, WinApp::kClientHeight);
@@ -76,7 +76,7 @@ void DSFramework::Run(){
 		Update();
 
 		//終了リクエストが来たら抜ける
-		if (IsEndRequest()) { break; }
+		if (IsEndRequest()||Input::GetInstance()->TriggerKey(DIK_ESCAPE)||Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_BACK)) { break; }
 
 		//描画
 		Draw();

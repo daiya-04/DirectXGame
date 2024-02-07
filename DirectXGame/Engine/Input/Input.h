@@ -36,6 +36,15 @@ public:
 	//キーのトリガーをチェック
 	bool TriggerKey(BYTE keyNumber) const;
 
+	//Lスティックを傾けた瞬間をチェック
+	bool GetTiltJoyStickRight();
+
+	bool GetTiltJoyStickLeft();
+
+	bool GetTiltJoyStickUp();
+
+	bool GetTiltJoyStickDown();
+
 	bool GetJoystickState();
 
 	Vector3 GetMoveXZ() {
@@ -48,6 +57,18 @@ public:
 
 	bool TriggerButton(int button) const {
 		if ((joyState.Gamepad.wButtons & button) && !(preJoyState.Gamepad.wButtons & button)) {
+			return true;
+		}
+		return false;
+	}
+	bool PushButton(int button) const {
+		if ((joyState.Gamepad.wButtons & button)) {
+			return true;
+		}
+		return false;
+	}
+	bool ReleaseButton(int button) const {
+		if (!(joyState.Gamepad.wButtons & button) && (preJoyState.Gamepad.wButtons & button)) {
 			return true;
 		}
 		return false;
