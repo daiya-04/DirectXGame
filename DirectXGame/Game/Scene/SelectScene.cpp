@@ -144,6 +144,7 @@ void SelectScene::Init() {
 	UIInit();
 
 	SEHandle_ = Audio::LoadWave("title.wav");
+	moveSEHandle_ = Audio::LoadWave("moveSE.wav");
 
 	input_ = Input::GetInstance();
 }
@@ -228,6 +229,7 @@ void SelectScene::SelectStage(){
 				selectNum_++;
 				easeT_ = 0;
 				easeRotateT_ = 0;
+				Audio::GetInstance()->SoundPlayWave(moveSEHandle_, 0.5f, false);
 			}
 		}
 	}
@@ -241,6 +243,7 @@ void SelectScene::SelectStage(){
 			selectNum_--;
 			easeT_ = 0;
 			easeRotateT_ = 0;
+			Audio::GetInstance()->SoundPlayWave(moveSEHandle_, 0.5f, false);
 		}
 	}
 	

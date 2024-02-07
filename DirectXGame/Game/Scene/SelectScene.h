@@ -157,5 +157,6 @@ private:
 
 	//音
 	size_t SEHandle_;
+	size_t moveSEHandle_;
 };
 
