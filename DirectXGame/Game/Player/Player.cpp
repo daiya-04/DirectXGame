@@ -309,11 +309,6 @@ void Player::GrapUpdate()
 		if (DeletePreIdTime_ >= kDeletePreIdTime_) {
 			PreSangoId_ = -1;
 		}
-		//2段ジャンプ
-		/*if (secondJump == false && Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
-			moveVector = secondJumpVec/2;
-			secondJump = true;
-		}*/
 		JumpFlame++;
 		if (JumpFlame == 45) {
 			angle = 0.9f;
@@ -325,9 +320,6 @@ void Player::GrapUpdate()
 	if (secondJump == false) {
 		moveQua_ = moveQua_.Normalize() * rotateQua.Normalize();
 	}
-	/*if (secondJump) {
-		Move();
-	}*/
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
 		if (IsRoringSound == false) {
 			Audio::GetInstance()->SoundPlayWave(sounds_[1], 1.0f, false);

@@ -40,15 +40,6 @@ void RingParticle::Update()
 		(*itParticle).currentTime_ += kDeltaTime;
 		it++;
 	}
-
-#ifdef _DEBUG
-	ImGui::Begin("GameParticle");
-	ImGui::SliderFloat("Trans", &kCircleTranslate, 0, 10);
-	ImGui::SliderFloat("life", &CirclelifeTime, 0, 1);
-	ImGui::SliderFloat("Scale", &CircleparticleScale, 0, 10);
-	ImGui::SliderFloat3("Color1", &particleColor[0].x, 0, 255);
-	ImGui::End();
-#endif
 }
 
 void RingParticle::Draw(const Camera& camera)

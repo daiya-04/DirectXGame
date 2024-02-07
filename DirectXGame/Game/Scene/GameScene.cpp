@@ -247,13 +247,6 @@ void GameScene::Update() {
 		AutoGrapparticleCount = 0;
 		IsAutoGrapPlayer = false;
 	}
-#ifdef _DEBUG
-	ImGui::Begin("ParticleColor");
-	ImGui::SliderFloat3("Color0", &particleColor[0].x,0,255);
-	ImGui::SliderFloat3("Color1", &particleColor[1].x,0,255);
-	ImGui::End();
-#endif
-
 #pragma endregion パーティクル
 
 	timeNum_ = timeCounter_->GetNumberCount();
