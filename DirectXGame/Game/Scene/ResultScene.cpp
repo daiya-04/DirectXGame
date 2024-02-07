@@ -1,5 +1,6 @@
 #include "ResultScene.h"
 #include"GameScene.h"
+#include"SelectScene.h"
 #include"SceneManager.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
@@ -78,6 +79,14 @@ void ResultScene::Update() {
 
 	pressTrnas_.UpdateMatrix();
 	titleTrnas_.UpdateMatrix();
+
+	if (timenum_ < SelectScene::GetBestTime(SelectScene::GetSelectNumber())) {
+		SelectScene::SetBestTime(SelectScene::GetSelectNumber(), timenum_);
+	}
+	else if (SelectScene::GetBestTime(SelectScene::GetSelectNumber()) == 0.0f){
+		SelectScene::SetBestTime(SelectScene::GetSelectNumber(), timenum_);
+	}
+	
 
 	timeCounter_->SetNumberCount(timenum_);
 

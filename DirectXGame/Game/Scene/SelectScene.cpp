@@ -9,6 +9,8 @@
 
 bool SelectScene::isStageClear_[maxStage_]{};
 
+float SelectScene::bestTimes_[maxStage_ - 1]{};
+
 int SelectScene::selectNum_ = 0;
 
 SelectScene::~SelectScene() {}
@@ -17,6 +19,7 @@ void SelectScene::UIInit(){
 	uint32_t pressTex = TextureManager::Load("A.png");
 	uint32_t stickTex = TextureManager::Load("stick.png");
 	uint32_t moveTex = TextureManager::Load("move.png");
+	uint32_t bestTex = TextureManager::Load("best.png");
 	stageT_ = TextureManager::Load("stageT.png");
 	stage1_ = TextureManager::Load("stage1.png");
 	stage2_ = TextureManager::Load("stage2.png");
@@ -50,6 +53,20 @@ void SelectScene::UIInit(){
 	stageName_.reset(new Sprite(stageT_, { stageNameWT_.translation_.x,stageNameWT_.translation_.y }, { stageNameWT_.scale_.x,stageNameWT_.scale_.y }
 	, 0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
 	stageName_->Initialize();
+
+	bestWT_.Init();
+	bestWT_.translation_ = {550.0f,200.0f,0.0f };
+	bestWT_.scale_ = { 256.0f,64.0f,0.0f };
+
+	best_.reset(new Sprite(bestTex, { bestWT_.translation_.x,bestWT_.translation_.y }, { bestWT_.scale_.x,bestWT_.scale_.y }
+	, 0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
+	best_->Initialize();
+
+	timeCounter_ = std::make_unique<TimeCounter>();
+	timeCounter_->Init();
+
+	pos_ = { 760.0f,200.0f };
+	scale_ = { 64.0f,64.0f };
 
 
 	UITimer_ = 0;
@@ -167,6 +184,14 @@ void SelectScene::Update() {
 	stageName_->SetPosition({ stageNameWT_.translation_.x,stageNameWT_.translation_.y });
 	stageName_->SetSize({ stageNameWT_.scale_.x,stageNameWT_.scale_.y });
 
+	best_->SetPosition({ bestWT_.translation_.x,bestWT_.translation_.y });
+	best_->SetSize({ bestWT_.scale_.x,bestWT_.scale_.y });
+
+	timeCounter_->SetPosition(pos_);
+	timeCounter_->SetScale(scale_);
+
+	timeCounter_->SetNumberCount(bestTimes_[selectNum_]);
+
 	SelectStage();
 	EnterTheStage();
 	
@@ -186,6 +211,7 @@ void SelectScene::Update() {
 	pressTrans_.UpdateMatrix();
 	moveTrans_.UpdateMatrix();
 	stageNameWT_.UpdateMatrix();
+	bestWT_.UpdateMatrix();
 
 	skyDomeWT_.UpdateMatrix();
 	floorWT_.UpdateMatrix();
@@ -356,7 +382,10 @@ void SelectScene::DrawUI() {
 	else if (selectNum_ == 3) {
 		stageName_->SetTextureHandle(stage3_);
 	}
-
+	if (selectNum_ != 0){
+		best_->Draw();
+		timeCounter_->Draw();
+	}
 	stageName_->Draw();
 }
 
@@ -411,6 +440,16 @@ void SelectScene::DebugGUI() {
 			ImGui::DragFloat3("moveTexScale", &moveTrans_.scale_.x, 0.1f);
 			ImGui::DragFloat3("stageNameTexTrans", &stageNameWT_.translation_.x, 1.0f);
 			ImGui::DragFloat3("stageNameTexScale", &stageNameWT_.scale_.x, 0.1f);
+			ImGui::DragFloat2("pos", &pos_.x, 1.0f);
+			ImGui::DragFloat2("scale", &scale_.x, 0.1f);
+			ImGui::DragFloat3("bestTrnas", &bestWT_.translation_.x, 1.0f);
+			ImGui::DragFloat3("bestScale", &bestWT_.scale_.x, 0.1f);
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("BestTime")) {
+			ImGui::DragFloat("tut", &bestTimes_[0], 0.1f);
+			ImGui::DragFloat("stage1", &bestTimes_[1], 0.1f);
+			ImGui::DragFloat("stage2", &bestTimes_[2], 0.1f);
 			ImGui::EndMenu();
 		}
 		
