@@ -60,6 +60,8 @@ private:
 
 	WorldTransform bestUpdateWT_;
 
+	int resultTimer_ = 0;
+
 	bool isBest_ = false;
 
 	bool isNext_ = false;

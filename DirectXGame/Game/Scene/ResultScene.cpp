@@ -68,6 +68,8 @@ void ResultScene::Init() {
 	
 	SEHandle_ = Audio::LoadWave("title.wav");
 
+	resultTimer_ = 0;
+
 	isNext_ = false;
 
 	isBest_ = false;
@@ -102,6 +104,10 @@ void ResultScene::Update() {
 		isBest_ = true;
 		SelectScene::SetBestTime(SelectScene::GetSelectNumber(), timenum_);
 	}
+	resultTimer_++;
+	if (resultTimer_ > 60) {
+		resultTimer_ = 0;
+	}
 	
 
 	timeCounter_->SetNumberCount(timenum_);
@@ -119,7 +125,10 @@ void ResultScene::DrawBackGround() {
 	press_->Draw();
 	timeS_->Draw();
 	if (isBest_){
-		bestUpdate_->Draw();
+		if (resultTimer_ < 31) {
+			bestUpdate_->Draw();
+		}
+		
 	}
 	title_->Draw();
 }
