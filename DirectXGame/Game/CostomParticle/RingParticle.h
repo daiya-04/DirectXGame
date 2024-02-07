@@ -12,11 +12,14 @@ public:
 	void Draw(const Camera& camera);
 
 	void addParticle(Vector3 pos, Vector3 color);
+	void addCircleParticle(Vector3 pos, Vector3 color);
 
 private:
 	std::unique_ptr<Particle> particle;
+	std::unique_ptr<Particle> Circleparticle;
 	Particle::Emitter emitter;
 	std::list<Particle::ParticleData> particles_;
+	std::list<Particle::ParticleData> Circleparticles_;
 	const float kDeltaTime = 1.0f / 60.0f;
 	const int kDirection = 16;
 
@@ -41,9 +44,12 @@ private:
 		{-0.5f,0.5f,0.0f},
 		{-0.25f,0.75f,0.0f},
 	};
-	float kTranslate = 4.5f;
-	float lifeTime = 0.4f;
+	float kTranslate = 10.0f;
+	float lifeTime = 1.0f;
 	float particleScale = 1.5f;
+	float kCircleTranslate = 4.5f;
+	float CirclelifeTime = 0.4f;
+	float CircleparticleScale = 1.5f;
 	Vector3 particleColor[2] = {
 		{55.0f,30.0f,1.0f}, 
 		{1.0f,30.0f,55.0f}

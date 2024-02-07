@@ -50,6 +50,9 @@ public:
 	bool GetFarstFlag()const {
 		return farstFlag;
 	}
+	bool GetgrapJumpFlag()const {
+		return grapJump;
+	}
 	bool GetCanGrapFlag()const {
 		return canGrap;
 	}
@@ -70,7 +73,6 @@ public:
 	void SetSoundHundle(std::vector<size_t> hundles) { sounds_ = hundles;
 	}
 	void SetRepopPos(const Vector3& pos) { repopPos_ = pos; }
-	void SetSoundHundle(std::vector<size_t> hundles) { sounds_ = hundles; }
 #pragma endregion setter
 
 private:

@@ -372,7 +372,6 @@ void Player::GrapUpdate()
 	ImGui::Begin("Player");
 	ImGui::InputFloat("JumpParameter",&jumpParam);
 	ImGui::InputInt("roringMaxCount",&roringMaxCount);
-
 	ImGui::End();
 #endif
 

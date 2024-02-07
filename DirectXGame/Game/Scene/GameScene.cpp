@@ -31,9 +31,6 @@ void GameScene::Init() {
 		levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage2"));
 	}
 	
-
-	
-
 #pragma region
 	Model* playerModelHundle = ModelManager::Load("InGameSeaHorse");
 	Model* arrowModelHundle = ModelManager::Load("Line");
@@ -219,35 +216,44 @@ void GameScene::Update() {
 #pragma endregion Collition
 
 #pragma region
-
-	if (player_->GetP_RoringFlag()) {
-		IsRoringPlayer = true;
-	}
-	else if (!player_->GetP_RoringFlag()) {
-		IsRoringPlayer = false;
-		RoringparticleCount = 0;
-	}
-	if (IsRoringPlayer) {
-		RoringparticleCount++;
-		if (RoringparticleCount == 20 || RoringparticleCount == 40|| RoringparticleCount == 50|| RoringparticleCount == 55) {
-			ringParticle->addParticle(player_->GetPosition(), particleColor[1]);
+	if (!player_->GetgrapJumpFlag()) {
+		if (player_->GetP_RoringFlag()) {
+			IsRoringPlayer = true;
 		}
-		if (RoringparticleCount == 55) {
-			RoringparticleCount = 45;
+		else if (!player_->GetP_RoringFlag()) {
+			IsRoringPlayer = false;
+			RoringparticleCount = 0;
+		}
+		if (IsRoringPlayer) {
+			RoringparticleCount++;
+			if (RoringparticleCount == 25 || RoringparticleCount == 40 || RoringparticleCount == 50 || RoringparticleCount == 55) {
+				ringParticle->addCircleParticle(player_->GetPosition(), CircleparticleColor[1]);
+
+			}
+			if (RoringparticleCount == 55) {
+				RoringparticleCount = 45;
+			}
 		}
 	}
 	if (player_->GetP_AutoGrapFlag()) {
 		IsAutoGrapPlayer = true;
-
-	}	
+	}
 	if (IsAutoGrapPlayer) {
 		AutoGrapparticleCount++;
 	}
 	if (AutoGrapparticleCount == MaxCount) {
-		ringParticle->addParticle(player_->GetPosition(), particleColor[0]);
+		ringParticle->addCircleParticle(player_->GetPosition(), CircleparticleColor[0]);
+		ringParticle->addParticle(player_->GetPosition(), CircleparticleColor[1]);
 		AutoGrapparticleCount = 0;
 		IsAutoGrapPlayer = false;
 	}
+#ifdef _DEBUG
+	ImGui::Begin("ParticleColor");
+	ImGui::SliderFloat3("Color0", &particleColor[0].x,0,255);
+	ImGui::SliderFloat3("Color1", &particleColor[1].x,0,255);
+	ImGui::End();
+#endif
+
 #pragma endregion パーティクル
 
 	timeNum_ = timeCounter_->GetNumberCount();

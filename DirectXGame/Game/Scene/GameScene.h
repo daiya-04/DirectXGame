@@ -91,9 +91,13 @@ private:
 	std::unique_ptr<Signpost> signPost;
 
 	std::unique_ptr<RingParticle> ringParticle;
-	Vector3 particleColor[2] = {
+	Vector3 CircleparticleColor[2] = {
 	{55.0f,30.0f,1.0f},
 	{1.0f,30.0f,55.0f}
+	};
+	Vector3 particleColor[2] = {
+	{0.05f,0.5f,1.0f},
+	{1.0f,0.5f,0.05f}
 	};
 	bool IsRoringPlayer = false;
 	int RoringparticleCount = 0;
