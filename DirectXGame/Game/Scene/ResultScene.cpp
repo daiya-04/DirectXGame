@@ -25,7 +25,7 @@ void ResultScene::Init() {
 	titleTrnas_.scale_ = {512.0f,512.0f,0.0f };
 
 	title_.reset(new Sprite(titleTex, { titleTrnas_.translation_.x,titleTrnas_.translation_.y }, { titleTrnas_.scale_.x,titleTrnas_.scale_.y },
-		0.0f, { 0.5f,0.5f }, { 0.0f,0.0f,0.0f,1.0f }));
+		0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
 
 	title_->Initialize();
 
