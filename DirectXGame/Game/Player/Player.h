@@ -144,8 +144,8 @@ private:
 	//プレイヤージャンプ
 	float jumpParam = 0.0f;
 	float kjumpParam = 1.0f;
-	float addJumpParam = 0.01f;
-	float subJumpParam = 0.004f;
+	float addJumpParam = 0.02f;
+	float subJumpParam = 0.005f;
 #pragma endregion GrapBehavior
 #pragma region
 	WorldTransform world_Arrow_;
