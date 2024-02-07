@@ -52,6 +52,12 @@ public:
 	bool GetCanGrapFlag()const {
 		return canGrap;
 	}
+	bool GetP_RoringFlag()const {
+		return P_RoringFlag;
+	}
+	bool GetP_AutoGrapFlag()const {
+		return P_AutoGrapFlag;
+	}
 #pragma endregion getter
 #pragma region
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
@@ -144,5 +150,9 @@ private:
 #pragma region
 	std::vector<size_t> sounds_;
 #pragma endregion 音
+#pragma region
+	bool P_RoringFlag = false;
+	bool P_AutoGrapFlag = false;
+#pragma endregion パーティクル用フラグ
 
 };

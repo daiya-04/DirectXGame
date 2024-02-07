@@ -122,7 +122,7 @@ void GameScene::Init() {
 #pragma region
 	ringParticle = std::make_unique<RingParticle>();
 	ringParticle->Init();
-#pragma endregion
+#pragma endregion パーティクル
 }
 
 void GameScene::Update() {
@@ -143,6 +143,16 @@ void GameScene::Update() {
 	signPost->SetEnd(goal_->GetPosition());
 	signPost->Update();
 
+#ifdef _DEBUG
+	ImGui::Begin("GameParticle");
+	if (ImGui::Button("Addcircle1")) {
+		ringParticle->addParticle(player_->GetPosition(),particleColor[0]);
+	}
+	if (ImGui::Button("Addcircle2")) {
+		ringParticle->addParticle(player_->GetPosition(), particleColor[1]);
+	}
+	ImGui::End();
+#endif
 	ringParticle->Update();
 #pragma endregion Update
 
@@ -173,6 +183,36 @@ void GameScene::Update() {
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
 	}
 #pragma endregion Collition
+
+	if (player_->GetP_RoringFlag()) {
+		IsRoringPlayer = true;
+	}
+	else if (!player_->GetP_RoringFlag()) {
+		IsRoringPlayer = false;
+		RoringparticleCount = 0;
+	}
+	if (IsRoringPlayer) {
+		RoringparticleCount++;
+		if (RoringparticleCount == 20 || RoringparticleCount == 40|| RoringparticleCount == 50|| RoringparticleCount == 55) {
+			ringParticle->addParticle(player_->GetPosition(), particleColor[1]);
+		}
+		if (RoringparticleCount == 55) {
+			RoringparticleCount = 45;
+		}
+	}
+	if (player_->GetP_AutoGrapFlag()) {
+		IsAutoGrapPlayer = true;
+
+	}	
+	if (IsAutoGrapPlayer) {
+		AutoGrapparticleCount++;
+	}
+	if (AutoGrapparticleCount == MaxCount) {
+		ringParticle->addParticle(player_->GetPosition(), particleColor[0]);
+		AutoGrapparticleCount = 0;
+		IsAutoGrapPlayer = false;
+	}
+
 }
 
 void GameScene::DrawBackGround() {

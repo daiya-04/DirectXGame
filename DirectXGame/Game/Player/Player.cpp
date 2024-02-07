@@ -23,7 +23,7 @@ void Player::Init(std::vector<Object3d*> models)
 void Player::Update()
 {
 	tlanslatePre = world_.translation_;
-
+	P_RoringFlag = false;
 	if (behaviorRequest_) {
 		//ふるまいの変更
 		behavior_ = behaviorRequest_.value();
@@ -236,6 +236,7 @@ void Player::GrapInit()
 }
 void Player::GrapUpdate()
 {
+	P_AutoGrapFlag = false;
 	if (Input::GetInstance()->GetMoveXZ().x != 0 && grapJump == false) {
 		if (Input::GetInstance()->GetMoveXZ().x > 0 && GrapBehavior_ != GrapBehavior::kRight) {
 			GrapBehaviorRequest_ = GrapBehavior::kRight;
@@ -248,6 +249,7 @@ void Player::GrapUpdate()
 		//自動でつかむ
 		if (canGrap == true && grapJump == true && PreSangoId_ != sangoId_) {
 			behaviorRequest_ = Behavior::kGrap;
+			P_AutoGrapFlag = true;
 		}
 	
 
@@ -392,6 +394,7 @@ void Player::GrapJumpLeftUpdate()
 		}
 		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 		rotateQua = rotateQua.Normalize();
+		P_RoringFlag = true;
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
 		grapJump = true;
@@ -450,7 +453,7 @@ void Player::GrapJumpRightUpdate()
 		}
 		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 		rotateQua = rotateQua.Normalize();
-
+		P_RoringFlag = true;
 	}
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
 		grapJump = true;
@@ -466,7 +469,6 @@ void Player::GrapJumpRightUpdate()
 		}
 		rotateQua = MakwRotateAxisAngleQuaternion(cross, std::acos(angle));
 	}
-
 
 	if (grapJump == true) {
 		moveVector.y -= 0.03f;

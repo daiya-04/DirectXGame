@@ -85,5 +85,14 @@ private:
 	std::unique_ptr<Signpost> signPost;
 
 	std::unique_ptr<RingParticle> ringParticle;
+	Vector3 particleColor[2] = {
+	{55.0f,30.0f,1.0f},
+	{1.0f,30.0f,55.0f}
+	};
+	bool IsRoringPlayer = false;
+	int RoringparticleCount = 0;
+	bool IsAutoGrapPlayer = false;
+	int AutoGrapparticleCount = 0;
+	int MaxCount = 10;
 };
 
