@@ -76,7 +76,10 @@ void SelectScene::Init() {
 		obj_[i].reset(Object3d::Create(Model_));
 		objWT_[i].Init();
 		objWT_[i].translation_ = { i * 7.0f,-1.0f,0.0f };
-		objWT_[i].scale_ = { 0.5f,0.7f,0.5f };
+		objWT_[i].scale_ = 
+		{ 0.15f + i * 0.15f,
+			0.2f + i * 0.2f,
+			0.15f + i * 0.15f };
 	}
 
 	skyDomeObj_.reset(Object3d::Create(skyModel_));
