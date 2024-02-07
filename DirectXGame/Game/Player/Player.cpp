@@ -20,10 +20,13 @@ void Player::Init(std::vector<Object3d*> models)
 	Character::SetColliderSize({ 1.0f,1.0f,1.0f });
 	Character::SetOffset({0.0f,1.0f,0.0f});
 
+
 }
 
 void Player::Update()
 {
+
+
 	tlanslatePre = world_.translation_;
 	P_RoringFlag = false;
 	if (behaviorRequest_) {
@@ -200,6 +203,8 @@ void Player::BehaviorRootInit()
 	rotateQua = IdentityQuaternion();
 	angle = 1.0f;
 	jumpParam = 0.0f;
+	roringMaxCount = 60;
+	roringCount = 0;
 }
 void Player::BehaviorRootUpdate()
 {
@@ -227,6 +232,8 @@ void Player::BehaviorJumpUpdate()
 #pragma region
 void Player::GrapInit()
 {
+	IsGrapjumpSound = false;
+	IsRoringSound = false;
 	farstFlag = false;
 	moveParam = 1.0f;
 	PreSangoId_ = sangoId_;
@@ -322,6 +329,20 @@ void Player::GrapUpdate()
 		Move();
 	}*/
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
+		if (IsRoringSound == false) {
+			Audio::GetInstance()->SoundPlayWave(sounds_[1], 1.0f, false);
+			IsRoringSound = true;
+		}
+		if (IsRoringSound) {
+			roringCount++;
+		}
+		if (roringCount == roringMaxCount) {
+			if (roringMaxCount > 25) {
+				roringMaxCount -= 5;
+			}
+			roringCount = 0;
+			IsRoringSound = false;
+		}
 		if (jumpParam < kjumpParam) {
 		jumpParam += addJumpParam;
 		maxPower_ = false;
@@ -337,9 +358,21 @@ void Player::GrapUpdate()
 	else if (jumpParam < 0.0f) {
 		jumpParam = 0.0f;
 	}
+	if (!Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
+		if (roringMaxCount < 60 && grapJump == false) {
+			roringCount++;
+			if (roringCount >= 30) {
+				roringMaxCount += 5;
+				roringCount = 0;
+			}
+		}
+	}
+
 #ifdef _DEBUG
 	ImGui::Begin("Player");
 	ImGui::InputFloat("JumpParameter",&jumpParam);
+	ImGui::InputInt("roringMaxCount",&roringMaxCount);
+
 	ImGui::End();
 #endif
 
@@ -388,7 +421,6 @@ void Player::GrapJumpLeftInitalize()
 }
 void Player::GrapJumpLeftUpdate()
 {
-
 	grapJumpVec = { 1.0f,0.0f,0.0f };
 	//////回転行列を作る
 	ArrowQua_ = ArrowQua_.Normalize();
@@ -413,6 +445,10 @@ void Player::GrapJumpLeftUpdate()
 	else if (Input::GetInstance()->ReleaseButton(XINPUT_GAMEPAD_X) && grapJump == false) {
 		grapJump = true;
 		moveVector = grapJumpVec * jumpParam;
+		if (IsGrapjumpSound == false) {
+			Audio::GetInstance()->SoundPlayWave(sounds_[0], 0.5f, false);
+			IsGrapjumpSound = true;
+		}
 	}
 	else if(grapJump == false) {
 		if (angle < 1.0f) {
@@ -473,6 +509,10 @@ void Player::GrapJumpRightUpdate()
 		grapJump = true;
 
 		moveVector = grapJumpVec * jumpParam;
+		if (IsGrapjumpSound == false) {
+			Audio::GetInstance()->SoundPlayWave(sounds_[0], 0.5f, false);
+			IsGrapjumpSound = true;
+		}
 	}
 	else if (grapJump == false) {
 		if (angle < 1.0f) {

@@ -1,5 +1,6 @@
 #pragma once
 #include <optional>
+#include "Audio.h"
 
 #include "Engine/Input/input.h"
 #include "ImGuiManager.h"
@@ -66,6 +67,8 @@ public:
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
 	void SetSangoPos(Vector3 Pos) { grapPoint = Pos; }
 	void SetPos(const Vector3& pos) { world_.translation_ = pos; }
+	void SetSoundHundle(std::vector<size_t> hundles) { sounds_ = hundles;
+	}
 	void SetRepopPos(const Vector3& pos) { repopPos_ = pos; }
 	void SetSoundHundle(std::vector<size_t> hundles) { sounds_ = hundles; }
 #pragma endregion setter
@@ -84,7 +87,6 @@ private:
 	void Gravity();
 	bool IsOnGraund = false;
 #pragma endregion 重力
-
 #pragma region
 	//ふるまい
 	Behavior behavior_ = Behavior::kRoot;
@@ -157,6 +159,10 @@ private:
 	bool farstFlag = true;
 #pragma region
 	std::vector<size_t> sounds_;
+	bool IsRoringSound = false;
+	bool IsGrapjumpSound = false;
+	int roringCount = 0;
+	int roringMaxCount = 60;
 #pragma endregion 音
 #pragma region
 	bool P_RoringFlag = false;

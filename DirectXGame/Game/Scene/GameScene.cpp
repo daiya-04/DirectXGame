@@ -147,6 +147,12 @@ void GameScene::Init() {
 	ringParticle = std::make_unique<RingParticle>();
 	ringParticle->Init();
 #pragma endregion パーティクル
+#pragma region
+	std::vector<size_t>soundHandle;
+	soundHandle.push_back(Audio::LoadWave("GrapJump.wav"));
+	soundHandle.push_back(Audio::LoadWave("Rotation.wav"));
+	player_->SetSoundHundle(soundHandle);
+#pragma endregion
 }
 
 void GameScene::Update() {
