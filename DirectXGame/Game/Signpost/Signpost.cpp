@@ -29,6 +29,9 @@ void Signpost::Update()
 
 	Vector3 offset = OffsetCalc();
 	world_.translation_ = posStert + offset;
+	if (world_.translation_.x > posEnd.x) {
+		world_.translation_.x = posEnd.x - 5.0f;
+	}
 
 	world_.UpdateMatrixQua(forTargetQua.MakeRotateMatrix());
 }

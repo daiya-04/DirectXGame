@@ -3,6 +3,7 @@
 
 #include "Engine/Input/input.h"
 #include "ImGuiManager.h"
+#include "Particle.h"
 
 #include "Game/Character/Character.h"
 enum class Behavior {
@@ -51,12 +52,19 @@ public:
 	bool GetCanGrapFlag()const {
 		return canGrap;
 	}
+	bool GetP_RoringFlag()const {
+		return P_RoringFlag;
+	}
+	bool GetP_AutoGrapFlag()const {
+		return P_AutoGrapFlag;
+	}
 #pragma endregion getter
 #pragma region
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
 	void SetSangoPos(Vector3 Pos) { grapPoint = Pos; }
 	void SetPos(const Vector3& pos) { world_.translation_ = pos; }
 	void SetRepopPos(const Vector3& pos) { repopPos_ = pos; }
+	void SetSoundHundle(std::vector<size_t> hundles) { sounds_ = hundles; }
 #pragma endregion setter
 
 private:
@@ -143,4 +151,12 @@ private:
 	Vector3 tlanslatePre;
 #pragma endregion 移動
 	bool farstFlag = true;
+#pragma region
+	std::vector<size_t> sounds_;
+#pragma endregion 音
+#pragma region
+	bool P_RoringFlag = false;
+	bool P_AutoGrapFlag = false;
+#pragma endregion パーティクル用フラグ
+
 };
