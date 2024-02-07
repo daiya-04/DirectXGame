@@ -45,7 +45,7 @@ void PauseManu::Update()
 	}
 	else if (Cursor == 1) {
 		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A)) {
-			IsRestert = true;
+			IsReturnSelect = true;
 		}
 	}
 }

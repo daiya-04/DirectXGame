@@ -15,6 +15,7 @@ public:
 	void Reset();
 #pragma region
 	bool GetIsRestert() { return IsRestert; }
+	bool GetIsReturnSelect() { return IsReturnSelect; }
 #pragma endregion
 
 private:
