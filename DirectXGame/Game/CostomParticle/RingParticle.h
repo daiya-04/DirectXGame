@@ -21,9 +21,9 @@ private:
 	std::list<Particle::ParticleData> particles_;
 	std::list<Particle::ParticleData> Circleparticles_;
 	const float kDeltaTime = 1.0f / 60.0f;
-	const int kDirection = 16;
+	const int kDirection = 12;
 
-	Vector3 translate[16] = {
+	Vector3 translatea[16] = {
 		{0.0f,1.0f,0.0f},
 		{0.25f,0.75f,0.0f},
 		{0.5f,0.5f,0.0f},
@@ -42,6 +42,23 @@ private:
 		{-1.0f,0.0f,0.0f},
 		{-0.75f,0.25f,0.0f},
 		{-0.5f,0.5f,0.0f},
+		{-0.25f,0.75f,0.0f},
+	};
+	Vector3 translate[12] = {
+		{0.0f,1.0f,0.0f},
+		{0.25f,0.75f,0.0f},
+		{0.75f,0.25f,0.0f},
+
+		{1.0f,0.0f,0.0f},
+		{0.75f,-0.25f,0.0f},
+		{0.25f,-0.75f,0.0f},
+
+		{0.0f,-1.0f,0.0f},
+		{-0.25f,-0.75f,0.0f},
+		{-0.75f,-0.25f,0.0f},
+
+		{-1.0f,0.0f,0.0f},
+		{-0.75f,0.25f,0.0f},
 		{-0.25f,0.75f,0.0f},
 	};
 	float kTranslate = 10.0f;
