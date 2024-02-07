@@ -20,6 +20,7 @@ void PauseManu::Init()
 	
 	UITex = TextureManager::Load("Arrow.png");
 	UI_Arrow = std::make_unique<Sprite>(Sprite(UITex, { 640.0f,500.0f }, { 64.0f,64.0f }, 0.0f, { 0.5f,0.5f }, { 0.4f,0.4f,0.4f,1.0f }));
+	UI_Arrow->Initialize();
 }
 
 void PauseManu::Update()

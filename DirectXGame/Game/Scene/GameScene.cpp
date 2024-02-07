@@ -174,6 +174,13 @@ void GameScene::Update() {
 	}
 	if (IsPause) {
 		pauseManu->Update();
+		if (pauseManu->GetIsRestert()) {
+			
+		}
+		if (pauseManu->GetIsReturnSelect()) {
+			SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
+		}
+
 		return;
 	}
 	pauseManu->Reset();
