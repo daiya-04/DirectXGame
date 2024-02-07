@@ -14,6 +14,7 @@ void ResultScene::Init() {
 	uint32_t backGroundTex = TextureManager::Load("white.png");
 	uint32_t titleTex = TextureManager::Load("clear.png");
 	uint32_t pressTex = TextureManager::Load("goSelect.png");
+	uint32_t timeSTex = TextureManager::Load("timeS.png");
 
 	background_.reset(new Sprite(backGroundTex, { 640.0f,360.0f }, { 1280.0f,720.0f }, 
 		0.0f, { 0.5f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
@@ -36,6 +37,14 @@ void ResultScene::Init() {
 	press_.reset(new Sprite(pressTex, { pressTrnas_.translation_.x,pressTrnas_.translation_.y }, { 256.0f,64.0f }, 0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
 
 	press_->Initialize();
+
+	timeSTrnas_.Init();
+	timeSTrnas_.translation_ = { 848.0f,400.0f,0.0f };
+	timeSTrnas_.scale_ = { 128.0f,128.0f,0.0f };
+
+	timeS_.reset(new Sprite(timeSTex, { timeSTrnas_.translation_.x,timeSTrnas_.translation_.y }, { 128.0f,128.0f }, 0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
+
+	timeS_->Initialize();
 
 	timeCounter_ = std::make_unique<TimeCounter>();
 	timeCounter_->Init();
@@ -61,6 +70,9 @@ void ResultScene::Update() {
 	press_->SetPosition({ pressTrnas_.translation_.x,pressTrnas_.translation_.y });
 	press_->SetSize({ pressTrnas_.scale_.x,pressTrnas_.scale_.y });
 
+	timeS_->SetPosition({ timeSTrnas_.translation_.x,timeSTrnas_.translation_.y });
+	timeS_->SetSize({ timeSTrnas_.scale_.x,timeSTrnas_.scale_.y });
+
 	timeCounter_->SetPosition(pos_);
 	timeCounter_->SetScale(scale_);
 
@@ -80,6 +92,7 @@ void ResultScene::Update() {
 void ResultScene::DrawBackGround() {
 	background_->Draw();
 	press_->Draw();
+	timeS_->Draw();
 	title_->Draw();
 }
 

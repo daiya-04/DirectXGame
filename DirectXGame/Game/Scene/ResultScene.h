@@ -40,6 +40,8 @@ private:
 
 	std::unique_ptr<Sprite> press_;
 
+	std::unique_ptr<Sprite> timeS_;
+
 	std::unique_ptr<TimeCounter> timeCounter_;
 
 	Vector2 scale_{};
@@ -51,6 +53,8 @@ private:
 	WorldTransform titleTrnas_;
 
 	WorldTransform pressTrnas_;
+
+	WorldTransform timeSTrnas_;
 
 	bool isNext_ = false;
 
