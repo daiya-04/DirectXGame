@@ -28,7 +28,7 @@ void GameScene::Init() {
 		levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage2"));
 	}
 	else if (nowSceneNum_ == 3) {
-		levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage2"));
+		levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage3"));
 	}
 	
 #pragma region
