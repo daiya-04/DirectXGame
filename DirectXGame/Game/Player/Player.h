@@ -162,7 +162,7 @@ private:
 	bool IsRoringSound = false;
 	bool IsGrapjumpSound = false;
 	int roringCount = 0;
-	int roringMaxCount = 60;
+	int roringMaxCount = 35;
 #pragma endregion 音
 #pragma region
 	bool P_RoringFlag = false;

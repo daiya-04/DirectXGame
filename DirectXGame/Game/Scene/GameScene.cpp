@@ -218,6 +218,8 @@ void GameScene::Update() {
 	}
 #pragma endregion Collition
 
+#pragma region
+
 	if (player_->GetP_RoringFlag()) {
 		IsRoringPlayer = true;
 	}
@@ -246,6 +248,7 @@ void GameScene::Update() {
 		AutoGrapparticleCount = 0;
 		IsAutoGrapPlayer = false;
 	}
+#pragma endregion パーティクル
 
 	timeNum_ = timeCounter_->GetNumberCount();
 }

@@ -203,7 +203,7 @@ void Player::BehaviorRootInit()
 	rotateQua = IdentityQuaternion();
 	angle = 1.0f;
 	jumpParam = 0.0f;
-	roringMaxCount = 60;
+	roringMaxCount = 35;
 	roringCount = 0;
 }
 void Player::BehaviorRootUpdate()
@@ -359,9 +359,9 @@ void Player::GrapUpdate()
 		jumpParam = 0.0f;
 	}
 	if (!Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
-		if (roringMaxCount < 60 && grapJump == false) {
+		if (roringMaxCount < 35 && grapJump == false) {
 			roringCount++;
-			if (roringCount >= 30) {
+			if (roringCount >= 20) {
 				roringMaxCount += 5;
 				roringCount = 0;
 			}
