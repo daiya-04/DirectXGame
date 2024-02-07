@@ -6,6 +6,7 @@ void Player::Init(std::vector<Object3d*> models)
 
 	world_.Init();
 	world_Arrow_.Init();
+	world_Arrow_.scale_.x = 0.1f;
 
 	behavior_ = Behavior::kRoot;
 
@@ -58,16 +59,16 @@ void Player::Update()
 
 	WorldUpdate();
 	
-	if (world_.translation_.y < -30.0f) {
-		world_.translation_ = { 0.0f,2.0f,0.0f };
+	if (world_.translation_.y < -40.0f) {
+		world_.translation_ = repopPos_;
 		world_.UpdateMatrix();
 		behaviorRequest_ = Behavior::kRoot;
 	}
 	
 	Character::ColliderUpdate();
 
-	if (world_.translation_.y < -30.0f) {
-		world_.translation_ = { 0.0f,0.0f,0.0f };
+	if (world_.translation_.y < -40.0f) {
+		world_.translation_ = repopPos_;
 		world_.UpdateMatrix();
 		behaviorRequest_ = Behavior::kRoot;
 	}
@@ -222,6 +223,7 @@ void Player::GrapInit()
 	world_.translation_ = grapPoint;
 	world_.UpdateMatrix();
 	world_Arrow_.translation_ = grapPoint;
+	world_Arrow_.scale_.x = 0.1f;
 	world_Arrow_.UpdateMatrix();
 	playerQua_ = IdentityQuaternion();
 	IsOnGraund = false;
@@ -249,6 +251,7 @@ void Player::GrapUpdate()
 			behaviorRequest_ = Behavior::kGrap;
 		}
 	
+		world_Arrow_.scale_.x = jumpParam;
 
 	if (GrapBehaviorRequest_) {
 		//ふるまいの変更
