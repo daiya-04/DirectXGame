@@ -42,6 +42,8 @@ private:
 
 	std::unique_ptr<Sprite> timeS_;
 
+	std::unique_ptr<Sprite> bestUpdate_;
+
 	std::unique_ptr<TimeCounter> timeCounter_;
 
 	Vector2 scale_{};
@@ -55,6 +57,10 @@ private:
 	WorldTransform pressTrnas_;
 
 	WorldTransform timeSTrnas_;
+
+	WorldTransform bestUpdateWT_;
+
+	bool isBest_ = false;
 
 	bool isNext_ = false;
 

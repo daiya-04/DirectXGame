@@ -16,6 +16,7 @@ void ResultScene::Init() {
 	uint32_t titleTex = TextureManager::Load("clear.png");
 	uint32_t pressTex = TextureManager::Load("goSelect.png");
 	uint32_t timeSTex = TextureManager::Load("timeS.png");
+	uint32_t bestUpdateTex = TextureManager::Load("bestUpdate.png");
 
 	background_.reset(new Sprite(backGroundTex, { 640.0f,360.0f }, { 1280.0f,720.0f }, 
 		0.0f, { 0.5f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
@@ -47,6 +48,14 @@ void ResultScene::Init() {
 
 	timeS_->Initialize();
 
+	bestUpdateWT_.Init();
+	bestUpdateWT_.translation_ = { 640.0f,270.0f,0.0f };
+	bestUpdateWT_.scale_ = { 384.0f,108.0f,0.0f };
+
+	bestUpdate_.reset(new Sprite(bestUpdateTex, { bestUpdateWT_.translation_.x,bestUpdateWT_.translation_.y }, { bestUpdateWT_.scale_.x,bestUpdateWT_.scale_.y }, 0.0f, { 0.5f,0.5f }, { 1.0f,1.0f,1.0f,1.0f }));
+
+	bestUpdate_->Initialize();
+
 	timeCounter_ = std::make_unique<TimeCounter>();
 	timeCounter_->Init();
 	timenum_ = GameScene::GetTimeNum();
@@ -60,6 +69,8 @@ void ResultScene::Init() {
 	SEHandle_ = Audio::LoadWave("title.wav");
 
 	isNext_ = false;
+
+	isBest_ = false;
 }
 
 void ResultScene::Update() {
@@ -74,6 +85,9 @@ void ResultScene::Update() {
 	timeS_->SetPosition({ timeSTrnas_.translation_.x,timeSTrnas_.translation_.y });
 	timeS_->SetSize({ timeSTrnas_.scale_.x,timeSTrnas_.scale_.y });
 
+	bestUpdate_->SetPosition({ bestUpdateWT_.translation_.x,bestUpdateWT_.translation_.y });
+	bestUpdate_->SetSize({ bestUpdateWT_.scale_.x,bestUpdateWT_.scale_.y });
+
 	timeCounter_->SetPosition(pos_);
 	timeCounter_->SetScale(scale_);
 
@@ -81,9 +95,11 @@ void ResultScene::Update() {
 	titleTrnas_.UpdateMatrix();
 
 	if (timenum_ < SelectScene::GetBestTime(SelectScene::GetSelectNumber())) {
+		isBest_ = true;
 		SelectScene::SetBestTime(SelectScene::GetSelectNumber(), timenum_);
 	}
 	else if (SelectScene::GetBestTime(SelectScene::GetSelectNumber()) == 0.0f){
+		isBest_ = true;
 		SelectScene::SetBestTime(SelectScene::GetSelectNumber(), timenum_);
 	}
 	
@@ -102,6 +118,9 @@ void ResultScene::DrawBackGround() {
 	background_->Draw();
 	press_->Draw();
 	timeS_->Draw();
+	if (isBest_){
+		bestUpdate_->Draw();
+	}
 	title_->Draw();
 }
 
