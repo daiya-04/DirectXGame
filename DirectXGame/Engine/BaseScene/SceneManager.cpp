@@ -18,6 +18,14 @@ void SceneManager::Init() {
 
 	sceneFactory_ = std::make_unique<SceneFactory>();
 
+	audio_ = Audio::GetInstance();
+
+	titleBGM = Audio::LoadWave("Title2.wav");
+	gameBGM = Audio::LoadWave("Game1.wav");
+	clearBGM = Audio::LoadWave("Result3.wav");
+
+	audio_->SoundPlayWave(titleBGM, 0.3f, true);
+
 	spotLight_.Init();
 	spotLight_.intensity_ = 0.0f;
 	pointLight_.Init();
@@ -64,11 +72,28 @@ void SceneManager::Update(){
 	}
 
 	if (nextSceneInit_) {
+		if (nowSceneName_ == AbstractSceneFactory::SceneName::Select && nextSceneName_ == AbstractSceneFactory::SceneName::Game) {
+			audio_->SoundPlayLoopEnd(titleBGM);
+			gameBGM= audio_->SoundPlayWave(gameBGM, 0.3f, true);
+			titleBGM = Audio::LoadWave("Title2.wav");
+		}
+		else if (nowSceneName_ == AbstractSceneFactory::SceneName::Game && nextSceneName_ == AbstractSceneFactory::SceneName::Result) {
+			audio_->SoundPlayLoopEnd(gameBGM);			
+			clearBGM= audio_->SoundPlayWave(clearBGM, 0.3f, true);
+			gameBGM = Audio::LoadWave("Game1.wav");
+		}
+		else if (nowSceneName_ == AbstractSceneFactory::SceneName::Result && nextSceneName_ == AbstractSceneFactory::SceneName::Select) {
+			audio_->SoundPlayLoopEnd(clearBGM);			
+			titleBGM= audio_->SoundPlayWave(titleBGM, 0.3f, true);
+			clearBGM = Audio::LoadWave("Result3.wav");
+		}
+		
 		scene_ = std::move(nextScene_);
 		nowSceneName_ = nextSceneName_;
 		nextSceneName_ = AbstractSceneFactory::SceneName::NONE;
 		scene_->Init();
 		nextSceneInit_ = false;
+		
 	}
 
 	fade_->SetColor({ 0.0f,0.0f,0.0f,fadeAlpha_ });

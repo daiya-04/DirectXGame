@@ -12,6 +12,7 @@
 #include "SpotLight.h"
 #include "Camera.h"
 #include "WorldTransform.h"
+#include"Audio.h"
 
 
 class SceneManager final {
@@ -48,6 +49,12 @@ private:
 	Camera camera_;
 
 	std::unique_ptr<Sprite> fade_;
+
+	Audio* audio_;
+
+	size_t titleBGM;
+	size_t gameBGM;
+	size_t clearBGM;
 
 	float fadeAlpha_ = 0.0f;
 

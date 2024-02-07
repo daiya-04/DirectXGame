@@ -65,6 +65,9 @@ private:
 
 	Camera camera_;
 
+	//音
+	size_t SEHandle_;
+
 	//モデル
 	static const int coralNum_ = 9;
 	Model* skyModel_ = 0;

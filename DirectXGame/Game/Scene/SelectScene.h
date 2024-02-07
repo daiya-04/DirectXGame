@@ -8,6 +8,7 @@
 #include "Particle.h"
 #include "Camera.h"
 #include "WorldTransform.h"
+#include"TimeCounter/TimeCounter.h"
 #include"Quaternion.h"
 
 
@@ -37,6 +38,10 @@ public:
 	static int GetSelectNumber() { return selectNum_; }
 
 	static void SetClearFlag(int x) { isStageClear_[x] = true; }
+
+	static float GetBestTime(int stageNum) { return bestTimes_[stageNum]; }
+
+	static void SetBestTime(int stageNum, float x) { bestTimes_[stageNum] = x; }
 
 	static void ClearFlagReset() {
 		for (int i = 0; i < maxStage_-1; i++){
@@ -130,6 +135,8 @@ private:
 
 	static bool isStageClear_[maxStage_];
 
+	static float bestTimes_[maxStage_ - 1];
+
 
 	//UI
 	std::unique_ptr<Sprite> APress_;
@@ -138,12 +145,38 @@ private:
 
 	std::unique_ptr<Sprite> moveText_;
 
+	std::unique_ptr<Sprite> stageName_;
+
+	std::unique_ptr<Sprite> best_;
+
 	WorldTransform pressTrans_;
 
 	WorldTransform stickTrans_;
 
 	WorldTransform moveTrans_;
 
+	WorldTransform stageNameWT_;
+
+	WorldTransform bestWT_;
+
+	uint32_t stageT_ = 0;
+	uint32_t stage1_ = 0;
+	uint32_t stage2_ = 0;
+	uint32_t stage3_ = 0;
+
 	int UITimer_ = 0;
+
+	//音
+	size_t SEHandle_;
+	size_t moveSEHandle_;
+	//タイム
+
+	std::unique_ptr<TimeCounter> timeCounter_;
+
+	Vector2 scale_{};
+
+	Vector2 pos_{};
+
+	float timenum_;
 };
 
