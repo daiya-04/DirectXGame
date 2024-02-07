@@ -70,6 +70,8 @@ public:
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
 	void SetSangoPos(Vector3 Pos) { grapPoint = Pos; }
 	void SetPos(const Vector3& pos) { world_.translation_ = pos; }
+
+	void SetSoundHundle(const std::vector<size_t> handle) { sounds_ = handle; }
 	
 	void SetRepopPos(const Vector3& pos) { repopPos_ = pos; }
 #pragma endregion setter
