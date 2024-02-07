@@ -30,14 +30,14 @@ void TimeCounter::Update()
 	if (NumberCount > 99) {
 		NumberCount = 99;
 	}
-	tenPlaceNumber = (int)NumberCount / 10;
-	onePlaceNumber = (int)NumberCount % 10;
 
 
 }
 
 void TimeCounter::Draw()
 {
+	tenPlaceNumber = (int)NumberCount / 10;
+	onePlaceNumber = (int)NumberCount % 10;
 	//スプライトのn番を描画
 	numbers_[ONEPLACE]->SetTextureArea(NumberValue[onePlaceNumber].Base, NumberValue[onePlaceNumber].Size);
 	numbers_[ONEPLACE]->Draw();

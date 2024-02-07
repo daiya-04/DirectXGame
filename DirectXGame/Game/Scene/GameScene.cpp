@@ -10,6 +10,8 @@
 
 GameScene::~GameScene() {}
 
+float GameScene::timeNum_ = 0.0f;
+
 void GameScene::Init() {
 
 	camera_.Init();
@@ -184,9 +186,11 @@ void GameScene::Update() {
 		IsGoal = true;
 		
 		SelectScene::SetClearFlag(nowSceneNum_);
+		timeCounter_->IsTimerStop();
 		
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Result);
 	}
+	timeNum_ = timeCounter_->GetNumberCount();
 }
 
 void GameScene::DrawBackGround() {

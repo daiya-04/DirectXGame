@@ -23,6 +23,20 @@ public:
 			= 0; onePlaceNumber = 0;
 	};
 
+	float GetNumberCount() { return NumberCount; }
+
+	void SetNumberCount(float NumberCont) { NumberCount = NumberCont; }
+
+	void SetPosition(const Vector2& position) {
+		numbers_[0]->SetPosition(position);
+		numbers_[1]->SetPosition(position);
+	}
+
+	void SetScale(const Vector2& scale) {
+		numbers_[0]->SetSize(scale);
+		numbers_[1]->SetSize(scale);
+	}
+
 #pragma region
 	void IsTimerAnable() { IsTimeCount = true; }
 	void IsTimerStop() { IsTimeCount = false; }

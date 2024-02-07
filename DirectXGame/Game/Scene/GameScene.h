@@ -49,6 +49,8 @@ public:
 	void DebugGUI()override;
 
 	~GameScene()override;
+
+	static float GetTimeNum() { return timeNum_; }
 	
 
 private:
@@ -78,6 +80,7 @@ private:
 	std::unique_ptr<LevelData> levelData_;
 
 	std::unique_ptr<TimeCounter> timeCounter_;
+	static float timeNum_;
 
 	std::unique_ptr<Sprite> UI_Grap;
 	std::unique_ptr<Sprite> UI_PlayerRoring;

@@ -7,6 +7,7 @@
 #include"Ease/Ease.h"
 #include"SelectScene.h"
 
+
 TitleScene::~TitleScene(){
 
 }
