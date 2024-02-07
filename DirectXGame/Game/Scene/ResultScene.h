@@ -9,6 +9,7 @@
 #include "Particle.h"
 #include "Camera.h"
 #include "WorldTransform.h"
+#include"TimeCounter/TimeCounter.h"
 
 class ResultScene : public IScene{
 public:
@@ -38,6 +39,14 @@ private:
 	std::unique_ptr<Sprite> title_;
 
 	std::unique_ptr<Sprite> press_;
+
+	std::unique_ptr<TimeCounter> timeCounter_;
+
+	Vector2 scale_{};
+
+	Vector2 pos_{};
+
+	float timenum_;
 
 	WorldTransform titleTrnas_;
 

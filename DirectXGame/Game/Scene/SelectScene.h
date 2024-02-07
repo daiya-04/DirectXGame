@@ -34,7 +34,7 @@ public:
 
 	~SelectScene()override;
 
-	
+	static int GetSelectNumber() { return selectNum_; }
 
 	static void SetClearFlag(int x) { isStageClear_[x] = true; }
 
@@ -51,7 +51,7 @@ private:
 
 private:
 	//ステージセレクト用の変数
-	int selectNum_ = 0;
+	static int selectNum_;
 	int oldSelectNum_ = 0;
 	static const int maxStage_ = 4;
 	//補完の変数群

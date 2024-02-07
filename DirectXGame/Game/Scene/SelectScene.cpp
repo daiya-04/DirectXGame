@@ -9,6 +9,8 @@
 
 bool SelectScene::isStageClear_[maxStage_]{};
 
+int SelectScene::selectNum_ = 0;
+
 SelectScene::~SelectScene() {}
 
 void SelectScene::UIInit(){
@@ -48,7 +50,7 @@ void SelectScene::Init() {
 	camera_.translation_ = { 0.0f,2.1f,-7.0f };
 	camera_.rotation_ = { 0.33f,0.0f,0.0f };
 
-	Model_ = ModelManager::Load("box");
+	Model_ = ModelManager::Load("selectRock");
 	seaHorseModel_ = ModelManager::Load("SeaHorse");
 	rockModel_ = ModelManager::Load("StageSelect");
 	stageSelectModel_ = ModelManager::Load("Coral");
@@ -60,7 +62,8 @@ void SelectScene::Init() {
 	for (int i = 0; i < maxStage_; i++){
 		obj_[i].reset(Object3d::Create(Model_));
 		objWT_[i].Init();
-		objWT_[i].translation_ = { i * 7.0f,0.0f,0.0f };
+		objWT_[i].translation_ = { i * 7.0f,-1.0f,0.0f };
+		objWT_[i].scale_ = { 0.5f,0.7f,0.5f };
 	}
 
 	skyDomeObj_.reset(Object3d::Create(skyModel_));
@@ -173,6 +176,7 @@ void SelectScene::Update() {
 			easeRotateT_ = 0.0f;
 			startPlayerPos_ = playerWT_.translation_;
 			endPlayerPos_ = objWT_[selectNum_].translation_;
+			endPlayerPos_.y += 1.0f;
 			easeT_ = 0.0f;
 
 		}

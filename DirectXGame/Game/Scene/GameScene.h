@@ -49,9 +49,13 @@ public:
 	void DebugGUI()override;
 
 	~GameScene()override;
+
+	static float GetTimeNum() { return timeNum_; }
 	
 
 private:
+
+	int nowSceneNum_ = 0;
 
 	FollowCamera camera_;
 
@@ -76,9 +80,11 @@ private:
 	std::unique_ptr<LevelData> levelData_;
 
 	std::unique_ptr<TimeCounter> timeCounter_;
+	static float timeNum_;
 
 	std::unique_ptr<Sprite> UI_Grap;
 	std::unique_ptr<Sprite> UI_PlayerRoring;
+	std::unique_ptr<Sprite> UI_Release;
 	WorldTransform world_;
 	
 	std::unique_ptr<Object3d> sign_Model_;

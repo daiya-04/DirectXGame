@@ -1,5 +1,6 @@
 #include "Player.h"
 
+
 void Player::Init(std::vector<Object3d*> models)
 {
 	models_ = models;
@@ -72,6 +73,14 @@ void Player::Update()
 		world_.translation_ = repopPos_;
 		world_.UpdateMatrix();
 		behaviorRequest_ = Behavior::kRoot;
+	}
+
+	if (jumpParam >= kjumpParam - 0.03f) {
+		
+		maxPower_ = true;
+	}
+	else {
+		maxPower_ = false;
 	}
 
 	IsOnGraund = false;
@@ -315,9 +324,11 @@ void Player::GrapUpdate()
 	if (Input::GetInstance()->PushButton(XINPUT_GAMEPAD_X)) {
 		if (jumpParam < kjumpParam) {
 		jumpParam += addJumpParam;
+		maxPower_ = false;
 		}
 		else if (jumpParam >= kjumpParam) {
 		jumpParam = kjumpParam;
+		maxPower_ = true;
 		}
 	}
 	else if (jumpParam > 0.0f) {

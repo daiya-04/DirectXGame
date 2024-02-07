@@ -4,16 +4,33 @@
 #include "ModelManager.h"
 #include "ImGuiManager.h"
 #include "Audio.h"
+#include"SelectScene.h"
 #include "Input.h"
 #include <random>
 
 GameScene::~GameScene() {}
 
+float GameScene::timeNum_ = 0.0f;
+
 void GameScene::Init() {
 
 	camera_.Init();
 
-	levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage2"));
+	nowSceneNum_ = SelectScene::GetSelectNumber();
+
+	if (nowSceneNum_ == 0) {
+		levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("beginner"));
+	}
+	else if (nowSceneNum_ == 1) {
+		levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage1"));
+	}
+	else if (nowSceneNum_ == 2) {
+		levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage2"));
+	}
+	else if (nowSceneNum_ == 3) {
+		levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("Stage2"));
+	}
+	
 
 	
 
@@ -114,8 +131,9 @@ void GameScene::Init() {
 	UITex = TextureManager::Load("PressButton.png");
 	UI_PlayerRoring = std::make_unique<Sprite>(Sprite(UITex, { 620.0f,310.0f }, { 508.0f,72.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
 	UI_PlayerRoring->Initialize();
-#pragma endregion UI
-#pragma region
+	UITex = TextureManager::Load("ReleaseButton.png");
+	UI_Release = std::make_unique<Sprite>(Sprite(UITex, { 620.0f,310.0f }, { 508.0f,72.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
+	UI_Release->Initialize();
 
 	Model* signModelHundle = ModelManager::Load("Goal");
 	sign_Model_.reset(Object3d::Create(signModelHundle));
@@ -186,6 +204,10 @@ void GameScene::Update() {
 	}
 	if (IsCollision(player_->GetAABB(), goal_->GetAABB()) && IsGoal == false) {
 		IsGoal = true;
+		
+		SelectScene::SetClearFlag(nowSceneNum_);
+		timeCounter_->IsTimerStop();
+		
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Result);
 	}
 #pragma endregion Collition
@@ -219,6 +241,7 @@ void GameScene::Update() {
 		IsAutoGrapPlayer = false;
 	}
 
+	timeNum_ = timeCounter_->GetNumberCount();
 }
 
 void GameScene::DrawBackGround() {
@@ -260,7 +283,13 @@ void GameScene::DrawUI() {
 		UI_Grap->Draw();
 	}
 	if (!player_->GetFarstFlag() && player_->GetCanGrapFlag()) {
-		UI_PlayerRoring->Draw();
+		if (player_->GetMaxPower()){
+			UI_Release->Draw();
+		}
+		else {
+			UI_PlayerRoring->Draw();
+		}
+		
 	}
 
 }

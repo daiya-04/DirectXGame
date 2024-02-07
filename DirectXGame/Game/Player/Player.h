@@ -58,6 +58,9 @@ public:
 	bool GetP_AutoGrapFlag()const {
 		return P_AutoGrapFlag;
 	}
+	bool GetMaxPower() {
+		return maxPower_;
+	}
 #pragma endregion getter
 #pragma region
 	void SetSangoId(int sangoId) { 	sangoId_ = sangoId; }
@@ -111,6 +114,7 @@ private:
 	void GrapJumpLeftUpdate();
 	void GrapJumpRightInitalize();
 	void GrapJumpRightUpdate();
+	bool maxPower_ = false;
 	Quaternion playerLock;
 	bool canGrap = false;
 	Vector3 grapPoint;
