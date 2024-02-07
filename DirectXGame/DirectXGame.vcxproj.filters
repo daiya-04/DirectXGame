@@ -148,6 +148,7 @@
     <ClCompile Include="Game\TimeCounter\TimeCounter.cpp" />
     <ClCompile Include="Game\Signpost\Signpost.cpp" />
     <ClCompile Include="Game\CostomParticle\RingParticle.cpp" />
+    <ClCompile Include="Game\PauseMenu\PauseManu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -267,5 +268,6 @@
     <ClInclude Include="Game\TimeCounter\TimeCounter.h" />
     <ClInclude Include="Game\Signpost\Signpost.h" />
     <ClInclude Include="Game\CostomParticle\RingParticle.h" />
+    <ClInclude Include="Game\PauseMenu\PauseManu.h" />
   </ItemGroup>
 </Project>

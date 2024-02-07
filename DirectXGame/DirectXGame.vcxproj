@@ -125,6 +125,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\FollowCamera\FollowCamera.cpp" />
     <ClCompile Include="Game\Goal\Goal.cpp" />
     <ClCompile Include="Game\CostomParticle\RingParticle.cpp" />
+    <ClCompile Include="Game\PauseMenu\PauseManu.cpp" />
     <ClCompile Include="Game\Player\Player.cpp" />
     <ClCompile Include="Game\Floor\Floor.cpp" />
     <ClCompile Include="Game\Sango\Sango.cpp" />
@@ -180,6 +181,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\FollowCamera\FollowCamera.h" />
     <ClInclude Include="Game\Goal\Goal.h" />
     <ClInclude Include="Game\CostomParticle\RingParticle.h" />
+    <ClInclude Include="Game\PauseMenu\PauseManu.h" />
     <ClInclude Include="Game\Player\Player.h" />
     <ClInclude Include="Game\Floor\Floor.h" />
     <ClInclude Include="Game\Sango\Sango.h" />

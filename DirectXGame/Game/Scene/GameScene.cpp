@@ -131,7 +131,8 @@ void GameScene::Init() {
 	UITex = TextureManager::Load("ReleaseButton.png");
 	UI_Release = std::make_unique<Sprite>(Sprite(UITex, { 620.0f,310.0f }, { 508.0f,72.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
 	UI_Release->Initialize();
-
+#pragma endregion UI
+#pragma region
 	Model* signModelHundle = ModelManager::Load("Goal");
 	sign_Model_.reset(Object3d::Create(signModelHundle));
 	std::vector<Object3d*> signModels = {
@@ -149,11 +150,34 @@ void GameScene::Init() {
 	soundHandle.push_back(Audio::LoadWave("GrapJump.wav"));
 	soundHandle.push_back(Audio::LoadWave("Rotation.wav"));
 	player_->SetSoundHundle(soundHandle);
-#pragma endregion
+#pragma endregion 音
+#pragma region
+	pauseManu = std::make_unique<PauseManu>();
+	pauseManu->Init();
+#pragma endregion Pause
+
 }
 
 void GameScene::Update() {
 	DebugGUI();
+
+#pragma region
+	if (IsPause) {
+		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_START)) {
+			IsPause = false;
+		}
+	}
+	else if (IsPause == false) {
+		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_START)) {
+			IsPause = true;
+		}
+	}
+	if (IsPause) {
+		pauseManu->Update();
+		return;
+	}
+	pauseManu->Reset();
+#pragma endregion Pause
 
 #pragma region
 	camera_.Update();
@@ -170,16 +194,6 @@ void GameScene::Update() {
 	signPost->SetEnd(goal_->GetPosition());
 	signPost->Update();
 
-#ifdef _DEBUG
-	ImGui::Begin("GameParticle");
-	if (ImGui::Button("Addcircle1")) {
-		ringParticle->addParticle(player_->GetPosition(),particleColor[0]);
-	}
-	if (ImGui::Button("Addcircle2")) {
-		ringParticle->addParticle(player_->GetPosition(), particleColor[1]);
-	}
-	ImGui::End();
-#endif
 	ringParticle->Update();
 #pragma endregion Update
 
@@ -299,6 +313,10 @@ void GameScene::DrawUI() {
 		}
 		
 	}
+	if(IsPause){
+		pauseManu->Draw();
+	}
+
 
 }
 

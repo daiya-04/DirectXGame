@@ -26,6 +26,7 @@
 #include "Game/Goal/Goal.h"
 #include "Signpost/Signpost.h"
 #include "CostomParticle/RingParticle.h"
+#include "PauseMenu/PauseManu.h"
 #pragma endregion gameObject
 
 
@@ -89,7 +90,7 @@ private:
 	
 	std::unique_ptr<Object3d> sign_Model_;
 	std::unique_ptr<Signpost> signPost;
-
+#pragma region
 	std::unique_ptr<RingParticle> ringParticle;
 	Vector3 CircleparticleColor[2] = {
 	{55.0f,30.0f,1.0f},
@@ -104,5 +105,10 @@ private:
 	bool IsAutoGrapPlayer = false;
 	int AutoGrapparticleCount = 0;
 	int MaxCount = 10;
+#pragma endregion パーティクル
+#pragma region
+	std::unique_ptr<PauseManu> pauseManu;
+	bool IsPause = false;
+#pragma endregion Pause
 };
 
