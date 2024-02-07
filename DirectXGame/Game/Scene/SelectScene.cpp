@@ -143,6 +143,8 @@ void SelectScene::Init() {
 
 	UIInit();
 
+	SEHandle_ = Audio::LoadWave("title.wav");
+
 	input_ = Input::GetInstance();
 }
 
@@ -193,6 +195,7 @@ void SelectScene::Update() {
 
 	if ((input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(XINPUT_GAMEPAD_A)) && easeT_ == 1.0f && easeRotateT_ == 1.0f) {
 		if (!isSceneNext_) {
+			Audio::GetInstance()->SoundPlayWave(SEHandle_, 0.5f, false);
 			easeRotateT_ = 0.0f;
 			startPlayerPos_ = playerWT_.translation_;
 			endPlayerPos_ = objWT_[selectNum_].translation_;

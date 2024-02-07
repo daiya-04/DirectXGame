@@ -154,5 +154,8 @@ private:
 	uint32_t stage3_ = 0;
 
 	int UITimer_ = 0;
+
+	//音
+	size_t SEHandle_;
 };
 

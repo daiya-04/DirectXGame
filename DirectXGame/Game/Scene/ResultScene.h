@@ -56,5 +56,8 @@ private:
 
 	Input* input_ = nullptr;
 
+	//音
+	size_t SEHandle_;
+
 };
 

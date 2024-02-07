@@ -47,6 +47,8 @@ void ResultScene::Init() {
 
 	input_ = Input::GetInstance();
 	
+	SEHandle_ = Audio::LoadWave("title.wav");
+
 	isNext_ = false;
 }
 
@@ -69,6 +71,7 @@ void ResultScene::Update() {
 
 	if ((input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(XINPUT_GAMEPAD_A)) && !isNext_) {
 		isNext_ = true;
+		Audio::GetInstance()->SoundPlayWave(SEHandle_, 0.5f, false);
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Select);
 	}
 	

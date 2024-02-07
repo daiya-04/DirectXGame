@@ -74,15 +74,18 @@ void SceneManager::Update(){
 	if (nextSceneInit_) {
 		if (nowSceneName_ == AbstractSceneFactory::SceneName::Select && nextSceneName_ == AbstractSceneFactory::SceneName::Game) {
 			audio_->SoundPlayLoopEnd(titleBGM);
-			gameBGM = audio_->SoundPlayWave(gameBGM, 0.3f, true);
+			gameBGM= audio_->SoundPlayWave(gameBGM, 0.3f, true);
+			titleBGM = Audio::LoadWave("Title2.wav");
 		}
 		else if (nowSceneName_ == AbstractSceneFactory::SceneName::Game && nextSceneName_ == AbstractSceneFactory::SceneName::Result) {
-			audio_->SoundPlayLoopEnd(gameBGM);
-			clearBGM = audio_->SoundPlayWave(clearBGM, 0.3f, true);
+			audio_->SoundPlayLoopEnd(gameBGM);			
+			clearBGM= audio_->SoundPlayWave(clearBGM, 0.3f, true);
+			gameBGM = Audio::LoadWave("Game1.wav");
 		}
 		else if (nowSceneName_ == AbstractSceneFactory::SceneName::Result && nextSceneName_ == AbstractSceneFactory::SceneName::Select) {
-			audio_->SoundPlayLoopEnd(clearBGM);
-			titleBGM = audio_->SoundPlayWave(titleBGM, 0.3f, true);
+			audio_->SoundPlayLoopEnd(clearBGM);			
+			titleBGM= audio_->SoundPlayWave(titleBGM, 0.3f, true);
+			clearBGM = Audio::LoadWave("Result3.wav");
 		}
 		
 		scene_ = std::move(nextScene_);
