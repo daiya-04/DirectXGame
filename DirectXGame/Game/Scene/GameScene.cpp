@@ -29,6 +29,7 @@ void GameScene::Init() {
 	player_ = std::make_unique<Player>();
 	player_->Init(playerModels);
 	player_->SetViewProjection(&camera_.GetViewProjection());
+	//player_->SetSoundHundle();
 	camera_.SetTarget(&player_->GetWorldTransform());
 	camera_.SetPlayer(player_.get());
 #pragma endregion Player
@@ -89,17 +90,21 @@ void GameScene::Init() {
 	}
 
 #pragma endregion 位置情報の読み込み
+#pragma region 
 
 	timeCounter_ = std::make_unique<TimeCounter>();
 	timeCounter_->Init();
 	timeCounter_->IsTimerAnable();
+#pragma endregion タイマー
+#pragma region 
 
-	//スカイドーム
 	Model* skyDomeModelHundle = ModelManager::Load("skyDome");
 	SkyDomeModel_.reset(Object3d::Create(skyDomeModelHundle));
 	world_.Init();
 	world_.scale_ = {1000.0f,1000.0f,1000.0f};
 	world_.UpdateMatrix();
+#pragma endregion スカイドーム
+#pragma region
 
 	uint32_t UITex = TextureManager::Load("UI_grap.png");
 	UI_Grap = std::make_unique<Sprite>(Sprite(UITex, { 700.0f,300.0f }, { 250.0f,80.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
@@ -107,6 +112,8 @@ void GameScene::Init() {
 	UITex = TextureManager::Load("PressButton.png");
 	UI_PlayerRoring = std::make_unique<Sprite>(Sprite(UITex, { 620.0f,310.0f }, { 508.0f,72.0f }, 0.0f, { 0.0f,0.5f }, { 0.2f,0.2f,0.2f,1.0f }));
 	UI_PlayerRoring->Initialize();
+#pragma endregion UI
+#pragma region
 
 	Model* signModelHundle = ModelManager::Load("Goal");
 	sign_Model_.reset(Object3d::Create(signModelHundle));
@@ -115,6 +122,11 @@ void GameScene::Init() {
 	};
 	signPost = std::make_unique<Signpost>();
 	signPost->Init(signModels);
+#pragma endregion 矢印
+#pragma region
+	ringParticle = std::make_unique<RingParticle>();
+	ringParticle->Init();
+#pragma endregion パーティクル
 }
 
 void GameScene::Update() {
@@ -122,26 +134,34 @@ void GameScene::Update() {
 
 #pragma region
 	camera_.Update();
-
 	player_->Update();
-
 	for (auto& sango : sangoes_) {
 		sango->Update();
 	}
-	
 	for (auto& box : boxes_) {
 		box->Update();
 	}
-
 	goal_->Update();
-
 	timeCounter_->Update();
 	signPost->SetStert(player_->GetPosition());
 	signPost->SetEnd(goal_->GetPosition());
 	signPost->Update();
+
+#ifdef _DEBUG
+	ImGui::Begin("GameParticle");
+	if (ImGui::Button("Addcircle1")) {
+		ringParticle->addParticle(player_->GetPosition(),particleColor[0]);
+	}
+	if (ImGui::Button("Addcircle2")) {
+		ringParticle->addParticle(player_->GetPosition(), particleColor[1]);
+	}
+	ImGui::End();
+#endif
+	ringParticle->Update();
 #pragma endregion Update
 
 #pragma region
+
 	for (auto& sango : sangoes_) {
 
 		if (IsCollision(player_->GetAABB(), sango->GetAABB())) {
@@ -166,6 +186,37 @@ void GameScene::Update() {
 		IsGoal = true;
 		SceneManager::GetInstance()->ChangeScene(AbstractSceneFactory::SceneName::Result);
 	}
+#pragma endregion Collition
+
+	if (player_->GetP_RoringFlag()) {
+		IsRoringPlayer = true;
+	}
+	else if (!player_->GetP_RoringFlag()) {
+		IsRoringPlayer = false;
+		RoringparticleCount = 0;
+	}
+	if (IsRoringPlayer) {
+		RoringparticleCount++;
+		if (RoringparticleCount == 20 || RoringparticleCount == 40|| RoringparticleCount == 50|| RoringparticleCount == 55) {
+			ringParticle->addParticle(player_->GetPosition(), particleColor[1]);
+		}
+		if (RoringparticleCount == 55) {
+			RoringparticleCount = 45;
+		}
+	}
+	if (player_->GetP_AutoGrapFlag()) {
+		IsAutoGrapPlayer = true;
+
+	}	
+	if (IsAutoGrapPlayer) {
+		AutoGrapparticleCount++;
+	}
+	if (AutoGrapparticleCount == MaxCount) {
+		ringParticle->addParticle(player_->GetPosition(), particleColor[0]);
+		AutoGrapparticleCount = 0;
+		IsAutoGrapPlayer = false;
+	}
+
 }
 
 void GameScene::DrawBackGround() {
@@ -197,7 +248,7 @@ void GameScene::DrawParticleModel() {
 }
 
 void GameScene::DrawParticle() {
-
+	ringParticle->Draw(camera_.GetViewProjection());
 }
 
 void GameScene::DrawUI() {
