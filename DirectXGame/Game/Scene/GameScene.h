@@ -40,8 +40,8 @@ private:
 
 	Camera camera_;
 
-	Model* Model_ = 0;
-	Model* Model2_ = 0;
+	std::shared_ptr<Model> Model_ = 0;
+	std::shared_ptr<Model> Model2_ = 0;
 	std::unique_ptr<Object3d> obj_;
 	std::unique_ptr<Object3d> obj2_;
 	WorldTransform objWT_;
@@ -52,7 +52,7 @@ private:
 	Particle::Emitter emitter_{};
 	const float kDeltaTime = 1.0f / 60.0f;
 
-	Model* terrainModel_ = 0;
+	std::shared_ptr<Model> terrainModel_ = 0;
 	std::unique_ptr<Object3d> terrain_;
 	WorldTransform terrainWT_;
 
@@ -62,6 +62,8 @@ private:
 	std::unique_ptr<LevelData> levelData_;
 	std::vector<std::unique_ptr<Object3d>> objects_;
 	std::vector<WorldTransform> WTs_;
+
+	std::unique_ptr<Sprite> bg_;
 
 };
 

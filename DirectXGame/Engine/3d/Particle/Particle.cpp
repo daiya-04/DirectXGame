@@ -230,7 +230,7 @@ Particle::ParticleData Particle::MakeNewParticle(std::mt19937& randomEngine, con
 	//particle.worldTransform_.translation_ = { /*distPos(randomEngine),distPos(randomEngine) ,distPos(randomEngine)*/ };
 	particle.worldTransform_.translation_ = translate;
 	particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine) ,distVelocity(randomEngine) };
-	particle.color_ = { distColor(randomEngine),0.0f ,0.0f,1.0 };
+	particle.color_ = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine),1.0 };
 	particle.lifeTime_ = 2.0f;
 	//particle.lifeTime_ = distTime(randomEngine);
 	particle.currentTime_ = 0.0f;

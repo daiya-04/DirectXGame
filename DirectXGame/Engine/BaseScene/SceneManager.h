@@ -2,6 +2,7 @@
 #include <d3d12.h>
 #include "IScene.h"
 #include "AbstractSceneFactory.h"
+#include "PostEffect.h"
 #include <memory>
 
 class SceneManager final {
@@ -11,6 +12,8 @@ private:
 
 	std::unique_ptr<IScene> scene_;
 	std::unique_ptr<IScene> nextScene_;
+
+	std::unique_ptr<PostEffect> postEffect_;
 
 public:
 

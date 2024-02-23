@@ -176,7 +176,7 @@ void DirectXCommon::InitializeRenderTargetView() {
 	//RTV用のヒープでディスクリプタの数は2。RTVはShader内で触るものではないので、ShaderVisibleはfalse
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
 	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	descriptorHeapDesc.NumDescriptors = swapChainDesc.BufferCount;
+	descriptorHeapDesc.NumDescriptors = 3;
 	hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap_));
 	//ディスクリプタヒープが作れなかったので起動できない
 	assert(SUCCEEDED(hr));
@@ -195,6 +195,7 @@ void DirectXCommon::InitializeRenderTargetView() {
 		
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
 		rtvHandle = GetCPUDescriptorHandle(rtvDescriptorHeap_, device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), uint32_t(i));
+		IncrementRtvHeapCount();
 		device_->CreateRenderTargetView(backBuffers_[i].Get(), &rtvDesc, rtvHandle);
 	}
 
@@ -235,7 +236,7 @@ void DirectXCommon::InitializeDepthBuffer() {
 	////DSV用のヒープでディスクリプタの数は1。
 	D3D12_DESCRIPTOR_HEAP_DESC dsvDescriptorHeapDesc{};
 	dsvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-	dsvDescriptorHeapDesc.NumDescriptors = 1;
+	dsvDescriptorHeapDesc.NumDescriptors = 2;
 	hr = device_->CreateDescriptorHeap(&dsvDescriptorHeapDesc, IID_PPV_ARGS(&dsvDescriptorHeap_));
 	//ディスクリプタヒープが作れなかったので起動できない
 	assert(SUCCEEDED(hr));
@@ -246,6 +247,7 @@ void DirectXCommon::InitializeDepthBuffer() {
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2dTexture
 	//DSVHeapの先頭にDSVを作る
 	device_->CreateDepthStencilView(depthBuffer_.Get(), &dsvDesc, dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
+	IncrementDsvHeapCount();
 
 }
 
@@ -290,7 +292,8 @@ void DirectXCommon::preDraw() {
 	//描画先のRTVを設定する
 	commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 	//指定した色で画面全体をクリアする
-	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };  //RGBAの順
+	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
+	//float clearColor[] = { 0.f,0.0f,0.0f,1.0f };//RGBAの順
 	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	ClearDepthBaffer();
 

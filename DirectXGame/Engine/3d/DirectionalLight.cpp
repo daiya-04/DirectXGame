@@ -58,11 +58,16 @@ void DirectionalLight::Map(){
 void DirectionalLight::DebugGUI() {
 #ifdef _DEBUG
 
-	ImGui::Begin("DirectionalLight");
+	ImGui::Begin("Light");
 
-	ImGui::ColorEdit4("DL color", &color_.x);
-	ImGui::SliderFloat3("DL direction", &direction_.x, -1.0f, 1.0f);
-	ImGui::SliderFloat("DL intensity", &intensity_, 0.0f, 1.0f);
+	if (ImGui::TreeNode("DirectionLight")) {
+
+		ImGui::ColorEdit4("DL color", &color_.x);
+		ImGui::SliderFloat3("DL direction", &direction_.x, -1.0f, 1.0f);
+		ImGui::SliderFloat("DL intensity", &intensity_, 0.0f, 1.0f);
+
+		ImGui::TreePop();
+	}
 
 	ImGui::End();
 
