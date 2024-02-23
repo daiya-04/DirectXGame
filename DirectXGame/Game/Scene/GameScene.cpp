@@ -3,10 +3,11 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
+#include "Audio.h"
+#include "Input.h"
 #include "SceneManager.h"
 #include "Input.h"
 #include "Hit.h"
-
 #include <random>
 
 GameScene::~GameScene() {}
@@ -105,6 +106,7 @@ void GameScene::Init(){
 }
 
 void GameScene::Update(){
+
 	DebugGUI();
 
 	if (finishCount_ <= 0) {
@@ -280,7 +282,7 @@ void GameScene::DrawUI(){
 
 void GameScene::DebugGUI(){
 #ifdef _DEBUG
-
+  
 	ImGui::Begin("window");
 
 	int count = gameCount_ / 60;
