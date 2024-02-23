@@ -120,6 +120,9 @@
       <Filter>Engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="LevelLoader.cpp" />
+    <ClCompile Include="Engine\2d\PostEffect.cpp">
+      <Filter>Engine\2d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -213,5 +216,8 @@
       <Filter>Engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="LevelLoader.h" />
+    <ClInclude Include="Engine\2d\PostEffect.h">
+      <Filter>Engine\2d</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

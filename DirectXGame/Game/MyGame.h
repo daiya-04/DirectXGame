@@ -1,6 +1,7 @@
 #pragma once
 #include "Framework.h"
 #include <memory>
+#include "PostEffect.h"
 
 class MyGame : public DSFramework {
 public:
@@ -15,7 +16,7 @@ public:
 
 private:
 
-	
+	//std::unique_ptr<PostEffect> postEffect_;
 
 };
 

@@ -4,6 +4,8 @@
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
+#include "ImGuiManager.h"
+#include "TextureManager.h"
 #include <cassert>
 
 SceneManager* SceneManager::GetInstance(){
@@ -15,6 +17,11 @@ SceneManager* SceneManager::GetInstance(){
 void SceneManager::Init() {
 
 	sceneFactory_ = std::make_unique<SceneFactory>();
+
+	//uint32_t whiteTex = TextureManager::Load("white.png");
+
+	postEffect_ = std::make_unique<PostEffect>();
+	postEffect_->Init();
 
 }
 
@@ -28,18 +35,21 @@ void SceneManager::Update(){
 
 	scene_->Update();
 
+#ifdef _DEBUG
+
+	ImGui::Begin("window");
+
+	ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
+
+	ImGui::End();
+
+#endif // _DEBUG
+
 }
 
 void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
-	///背景スプライト
-	Sprite::preDraw(commandList);
-
-	scene_->DrawBackGround();
-
-	Sprite::postDraw();
-
-	DirectXCommon::GetInstance()->ClearDepthBaffer();
+	postEffect_->PreDrawScene(commandList);
 
 	///3dオブジェクト
 	Object3d::preDraw();
@@ -61,6 +71,29 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 	scene_->DrawUI();
 
 	Sprite::postDraw();
+
+	postEffect_->PostDrawScene(commandList);
+
+	DirectXCommon::GetInstance()->preDraw();
+
+	///背景スプライト
+	Sprite::preDraw(commandList);
+
+	scene_->DrawBackGround();
+
+	Sprite::postDraw();
+
+	DirectXCommon::GetInstance()->ClearDepthBaffer();
+
+
+	postEffect_->Draw(commandList);
+
+	
+
+	ImGuiManager::GetInstance()->Draw();
+
+	DirectXCommon::GetInstance()->postDraw();
+	
 
 }
 

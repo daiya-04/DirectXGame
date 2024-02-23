@@ -110,13 +110,13 @@ void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowH
 	D3D12_BLEND_DESC blendDesc{};
 	//すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	//blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 	
 	//ここをいじるといろいろなブレンドモードを設定できる
 	//ノーマルブレンド
-	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;*/
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 	//加算
 	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
@@ -135,9 +135,9 @@ void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowH
 	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;*/
 	//
 	//α値のブレンド設定で基本的に使わないからいじらない
-	/*blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;*/
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 
 	//RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
@@ -213,7 +213,7 @@ void Sprite::Finalize() {
 
 Sprite::Sprite(){}
 
-Sprite::Sprite(uint32_t textureHandle, Vector2 position, Vector2 size, float rotate, Vector2 anchorpoint, Vector4 color) {
+Sprite::Sprite(uint32_t textureHandle, Vector2 position, Vector2 size, Vector2 anchorpoint, Vector4 color, float rotate) {
 
 	textureHandle_ = textureHandle;
 	position_ = position;
@@ -221,6 +221,8 @@ Sprite::Sprite(uint32_t textureHandle, Vector2 position, Vector2 size, float rot
 	rotate_ = rotate;
 	anchorpoint_ = anchorpoint;
 	color_ = color;
+	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
+	texSize_ = { (float)resourceDesc_.Width,(float)resourceDesc_.Height };
 
 }
 
@@ -313,6 +315,13 @@ void Sprite::SetColor(const Vector4& color) {
 
 }
 
+void Sprite::SetTextureArea(const Vector2& texBase, const Vector2& texSize) {
+	texBase_ = texBase;
+	texSize_ = texSize;
+
+	TransferVertex();
+}
+
 ComPtr<IDxcBlob> Sprite::CompileShader(const std::wstring& filePath,const wchar_t* profile,IDxcUtils* dxcUtils,IDxcCompiler3* dxcCompiler,IDxcIncludeHandler* includeHandleer) {
 
 	//これからシェーダーをコンパイルする旨をログに出す
@@ -378,20 +387,25 @@ void Sprite::TransferVertex(){
 	float top = (0.0f - anchorpoint_.y) * size_.y;
 	float bottom = (1.0f - anchorpoint_.y) * size_.y;
 
+	float uvLeft = texBase_.x / (float)resourceDesc_.Width;
+	float uvRight = (texBase_.x + texSize_.x) / (float)resourceDesc_.Width;
+	float uvTop = texBase_.y / (float)resourceDesc_.Height;
+	float uvBottom = (texBase_.y + texSize_.y) / (float)resourceDesc_.Height;
+
 	//頂点データを設定する
 	VertexData* vertexData = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//1枚目の三角形
 	vertexData[0].pos_ = { left,bottom,0.0f,1.0f };//左下
-	vertexData[0].uv_ = { 0.0f,1.0f };
+	vertexData[0].uv_ = { uvLeft,uvBottom };
 	vertexData[1].pos_ = { left,top,0.0f,1.0f };//左上
-	vertexData[1].uv_ = { 0.0f,0.0f };
+	vertexData[1].uv_ = { uvLeft,uvTop };
 	vertexData[2].pos_ = { right,bottom,0.0f,1.0f };//右下
-	vertexData[2].uv_ = { 1.0f,1.0f };
+	vertexData[2].uv_ = { uvRight,uvBottom };
 	//2枚目の三角形
 	vertexData[3] = vertexData[1];//左上
 	vertexData[4].pos_ = { right,top,0.0f,1.0f };//右上
-	vertexData[4].uv_ = { 1.0f,0.0f };
+	vertexData[4].uv_ = { uvRight,uvTop };
 	vertexData[5] = vertexData[2];//右下
 	
 

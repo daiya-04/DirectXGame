@@ -13,7 +13,9 @@ void GameScene::Init(){
 
 	camera_.Init();
 	pointLight_.Init();
+	pointLight_.intensity_ = 0.0f;
 	spotLight_.Init();
+	spotLight_.intensity_ = 0.0f;
 	for (auto& wt : WTs_) {
 		wt.Init();
 	}
@@ -22,15 +24,16 @@ void GameScene::Init(){
 	Object3d::SetSpotLight(&spotLight_);
 
 	uint32_t circle = TextureManager::Load("circle.png");
+	uint32_t bgTex = TextureManager::Load("finish.png");
 
 	Model_ = ModelManager::Load("plane");
-	Model2_ = ModelManager::Load("teapot");
+	Model2_ = ModelManager::Load("cube");
 	terrainModel_ = ModelManager::Load("terrain");
 
-	levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("stage"));
+	//levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("stage"));
 
 	//レベルデータからオブジェクトを生成、配置
-	for (auto& objectData : levelData_->objects) {
+	/*for (auto& objectData : levelData_->objects) {
 		Model* model = ModelManager::Load(objectData.fileName);
 
 		Object3d* newObject = Object3d::Create(model);
@@ -44,18 +47,22 @@ void GameScene::Init(){
 
 		WTs_.push_back(wt);
 		objects_.push_back(std::unique_ptr<Object3d>(newObject));
-	}
+	}*/
 
 	obj_.reset(Object3d::Create(Model2_));
 	objWT_.Init();
 
 	obj2_.reset(Object3d::Create(Model2_));
 	objWT2_.Init();
+	objWT2_.translation_ = { -3.0f,2.0f,0.0f };
 
 	terrain_.reset(Object3d::Create(terrainModel_));
 	terrainWT_.Init();
 	terrainWT_.rotation_.y = -1.57f;
 	
+	//bg_.reset(new Sprite(bgTex, { 0.0f,0.0f }, { 1280.0f / 1.0f,720.0f / 1.0f }));
+	bg_.reset(new Sprite(bgTex, { 0.0f,0.0f }, { 100.0f,100.0f }));
+	bg_->Initialize();
 
 	particle_ = std::make_unique<Particle>();
 	particle_.reset(Particle::Create(circle, 100));
@@ -67,8 +74,6 @@ void GameScene::Init(){
 
 void GameScene::Update(){
 	DebugGUI();
-
-	obj_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine(seedGenerator());
@@ -97,7 +102,7 @@ void GameScene::Update(){
 
 void GameScene::DrawBackGround(){
 
-	
+	//bg_->Draw();
 
 }
 
@@ -107,9 +112,9 @@ void GameScene::DrawModel(){
 	//obj2_->Draw(objWT2_, camera_);
 	//terrain_->Draw(terrainWT_, camera_);
 
-	for (size_t index = 0; index < objects_.size(); index++) {
+	/*for (size_t index = 0; index < objects_.size(); index++) {
 		objects_[index]->Draw(WTs_[index], camera_);
-	}
+	}*/
 
 }
 
@@ -127,7 +132,7 @@ void GameScene::DrawParticle(){
 
 void GameScene::DrawUI(){
 
-
+	bg_->Draw();
 
 }
 
@@ -136,9 +141,23 @@ void GameScene::DebugGUI(){
 
 	ImGui::Begin("object");
 
-	ImGui::DragFloat3("plane transform", &objWT_.translation_.x, 0.01f);
-	ImGui::DragFloat3("teapot transform", &objWT2_.translation_.x, 0.01f);
-	ImGui::DragFloat3("teapot scale", &objWT2_.scale_.x, 0.01f);
+	if (ImGui::TreeNode("Teapot 1")) {
+
+		ImGui::DragFloat3("transform", &objWT_.translation_.x, 0.01f);
+		ImGui::DragFloat3("rotation", &objWT_.rotation_.x, 0.01f);
+		ImGui::DragFloat3("scale", &objWT_.scale_.x, 0.01f);
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Teapot 2")) {
+
+		ImGui::DragFloat3("transform", &objWT2_.translation_.x, 0.01f);
+		ImGui::DragFloat3("rotation", &objWT2_.rotation_.x, 0.01f);
+		ImGui::DragFloat3("scale", &objWT2_.scale_.x, 0.01f);
+
+		ImGui::TreePop();
+	}
 
 	ImGui::End();
 
@@ -158,26 +177,32 @@ void GameScene::DebugGUI(){
 
 	ImGui::End();
 
-	ImGui::Begin("PointLight");
+	ImGui::Begin("Light");
 
-	ImGui::ColorEdit4("color", &pointLight_.color_.x);
-	ImGui::DragFloat3("position", &pointLight_.position_.x, 0.01f);
-	ImGui::SliderFloat("intensity", &pointLight_.intensity_, 0.0f, 1.0f);
-	ImGui::SliderFloat("radius", &pointLight_.radius_, 0.0f, 10.0f);
-	ImGui::SliderFloat("decay", &pointLight_.decay_, 0.01f, 2.0f);
+	if (ImGui::TreeNode("PointLight")) {
 
-	ImGui::End();
+		ImGui::ColorEdit4("color", &pointLight_.color_.x);
+		ImGui::DragFloat3("position", &pointLight_.position_.x, 0.01f);
+		ImGui::SliderFloat("intensity", &pointLight_.intensity_, 0.0f, 1.0f);
+		ImGui::SliderFloat("radius", &pointLight_.radius_, 0.0f, 10.0f);
+		ImGui::SliderFloat("decay", &pointLight_.decay_, 0.01f, 2.0f);
 
-	ImGui::Begin("SpotLight");
+		ImGui::TreePop();
+	}
 
-	ImGui::ColorEdit4("color", &spotLight_.color_.x);
-	ImGui::DragFloat3("position", &spotLight_.position_.x, 0.01f);
-	ImGui::SliderFloat("intensity", &spotLight_.intensity_, 0.0f, 1.0f);
-	ImGui::SliderFloat3("direction", &spotLight_.direction_.x, -1.0f, 1.0f);
-	ImGui::SliderFloat("distance", &spotLight_.distance_, 0.0f, 10.0f);
-	ImGui::SliderFloat("decay", &spotLight_.decay_, 0.01f, 2.0f);
-	ImGui::SliderFloat("cosAngle", &spotLight_.cosAngle_, 0.0f, spotLight_.cosFalloffStart_ - 0.001f);
-	ImGui::SliderFloat("cosFalloffStart", &spotLight_.cosFalloffStart_, spotLight_.cosAngle_, 1.0f);
+	if (ImGui::TreeNode("SpotLight")) {
+
+		ImGui::ColorEdit4("color", &spotLight_.color_.x);
+		ImGui::DragFloat3("position", &spotLight_.position_.x, 0.01f);
+		ImGui::SliderFloat("intensity", &spotLight_.intensity_, 0.0f, 1.0f);
+		ImGui::SliderFloat3("direction", &spotLight_.direction_.x, -1.0f, 1.0f);
+		ImGui::SliderFloat("distance", &spotLight_.distance_, 0.0f, 10.0f);
+		ImGui::SliderFloat("decay", &spotLight_.decay_, 0.01f, 2.0f);
+		ImGui::SliderFloat("cosAngle", &spotLight_.cosAngle_, 0.0f, spotLight_.cosFalloffStart_ - 0.001f);
+		ImGui::SliderFloat("cosFalloffStart", &spotLight_.cosFalloffStart_, spotLight_.cosAngle_ + 0.001f, 1.0f);
+
+		ImGui::TreePop();
+	}
 
 	ImGui::End();
 

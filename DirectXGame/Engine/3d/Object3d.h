@@ -53,7 +53,7 @@ public: //静的メンバ関数
 	//静的初期化
 	static void StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 	//モデルの生成
-	static Object3d* Create(Model* model);
+	static Object3d* Create(std::shared_ptr<Model> model);
 	//描画前処理
 	static void preDraw();
 	//描画後処理
@@ -76,16 +76,16 @@ private:
 	
 private: //メンバ変数
 
-	Model* model_ = nullptr;
+	std::shared_ptr<Model> model_;
 
 public: //メンバ関数
 
 	//初期化
-	void Initialize(Model* model);
+	void Initialize(std::shared_ptr<Model> model);
 	//描画
 	void Draw(const WorldTransform& worldTransform,const Camera& camera);
 	
-	void SetModelHandle(Model* model) { model_ = model; }
+	void SetModelHandle(std::shared_ptr<Model> model) { model_ = model; }
 
 	void SetColor(const Vector4& color) { model_->SetColor(color); }
 

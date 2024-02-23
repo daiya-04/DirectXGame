@@ -25,7 +25,7 @@ public:
 		Vector4 color_;
 	};
 
-private:  //静的メンバ変数
+protected:  //静的メンバ変数
 
 	//共通部分の変数
 	static ID3D12Device* device_ ;
@@ -59,7 +59,7 @@ public: //静的メンバ関数
 	/// <returns></returns>
 	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
 
-private: //メンバ変数
+protected: //メンバ変数
 
 
 
@@ -67,6 +67,7 @@ private: //メンバ変数
 	ComPtr<ID3D12Resource> wvpResource_;
 	ComPtr<ID3D12Resource> vertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+	D3D12_RESOURCE_DESC resourceDesc_;
 	//座標
 	Vector2 position_{};
 	//サイズ
@@ -80,10 +81,14 @@ private: //メンバ変数
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 
+	Vector2 texBase_{};
+
+	Vector2 texSize_ = { 100.0f,100.0f };
+
 public: //メンバ関数
 	
 	Sprite();
-	Sprite(uint32_t textureHandle,Vector2 position, Vector2 size, float rotate = 0.0f, Vector2 anchorpoint = { 0.0f,0.0f }, Vector4 color = { 1.0f,1.0f,1.0f,1.0f });
+	Sprite(uint32_t textureHandle, Vector2 position, Vector2 size, Vector2 anchorpoint = { 0.0f,0.0f }, Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, float rotate = 0.0f );
 
 	void Initialize();
 
@@ -99,6 +104,11 @@ public: //メンバ関数
 	void SetAnchorpoint(const Vector2& anchorpoint);
 	//色の設定
 	void SetColor(const Vector4& color);
+	//
+	void SetTextureArea(const Vector2& texBase, const Vector2& texSize);
+	//
+	void SetTextureHandle(uint32_t textureHandle) { textureHandle_ = textureHandle; }
+
 	//座標の取得
 	const Vector2& GetPosition() const { return position_; }
 	//サイズの取得
