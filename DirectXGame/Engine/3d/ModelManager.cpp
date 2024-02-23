@@ -88,6 +88,7 @@ std::shared_ptr<Model> ModelManager::LoadInternal(const std::string& modelName) 
 
 	assert(useModelNum_ < kNumModel);
 	uint32_t handle = useModelNum_;
+	models_[useModelNum_].isLighting_ = isLighting;
 
 	auto it = std::find_if(models_.begin(), models_.end(), [&](const auto& model) {return model->name_ == modelName; });
 

@@ -123,7 +123,7 @@ public:
 
 	void Initialize(uint32_t textureHandle, uint32_t particleNum);
 
-	void Draw(std::list<ParticleData>& particleData,const Camera& camera);
+	void Draw(std::list<ParticleData>& particleData,const Camera& camera,bool easeAlpha = true);
 
 private:
 

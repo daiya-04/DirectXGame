@@ -28,7 +28,7 @@ public:
 		Matrix4x4 uvtransform_;
 		float shininess_;
 	};
-
+  
 private:
 
 	//リソースの生成

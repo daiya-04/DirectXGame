@@ -12,7 +12,7 @@ void MyGame::Init(){
 
 	DSFramework::Init();
 
-	SceneManager::GetInstance()->ChangeScene("Game");
+	SceneManager::GetInstance()->ChangeScene("Title");
 
 	TextureManager::Load("white.png");
 

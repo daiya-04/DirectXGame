@@ -78,8 +78,6 @@ void GlobalVariables::Update() {
 	ImGui::EndMenuBar();
 	ImGui::End();
 #endif // _DEBUG
-
-
 }
 
 void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, int32_t value) {
