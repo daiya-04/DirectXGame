@@ -70,12 +70,7 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	postEffect_->PreDrawScene(commandList);
 
-	///3dオブジェクト
-	Object3d::preDraw();
-
-	scene_->DrawModel();
-
-	Object3d::postDraw();
+	
 
 	///パーティクル
 	Particle::preDraw();
@@ -83,14 +78,6 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 	scene_->DrawParticle();
 
 	Particle::postDraw();
-
-	///UI
-	Sprite::preDraw(commandList);
-
-	scene_->DrawUI();
-	fade_->Draw();
-
-	Sprite::postDraw();
 
 	postEffect_->PostDrawScene(commandList);
 
@@ -105,10 +92,22 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	DirectXCommon::GetInstance()->ClearDepthBaffer();
 
+	///3dオブジェクト
+	Object3d::preDraw();
+
+	scene_->DrawModel();
+
+	Object3d::postDraw();
 
 	postEffect_->Draw(commandList);
 
-	
+	///UI
+	Sprite::preDraw(commandList);
+
+	scene_->DrawUI();
+	fade_->Draw();
+
+	Sprite::postDraw();
 
 	ImGuiManager::GetInstance()->Draw();
 

@@ -31,8 +31,8 @@ void Model::CreateBuffer() {
 	//マテリアルにデータを書き込む
 	//書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	materialData->color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-	materialData->enableLightnig_ = true;
+	materialData->color_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	materialData->enableLightnig_ = isLighting_;
 	materialData->uvtransform_ = MakeIdentity44();
 	materialData->shininess_ = 10.0f;
 
@@ -80,15 +80,15 @@ ModelManager* ModelManager::GetInstance() {
 	return &instance;
 }
 
-std::shared_ptr<Model> ModelManager::Load(const std::string& modelName) {
-	return ModelManager::GetInstance()->LoadInternal(modelName);
+std::shared_ptr<Model> ModelManager::Load(const std::string& modelName, bool isLighting) {
+	return ModelManager::GetInstance()->LoadInternal(modelName,isLighting);
 }
 
-std::shared_ptr<Model> ModelManager::LoadInternal(const std::string& modelName) {
+std::shared_ptr<Model> ModelManager::LoadInternal(const std::string& modelName, bool isLighting) {
 
 	assert(useModelNum_ < kNumModel);
 	uint32_t handle = useModelNum_;
-	models_[useModelNum_].isLighting_ = isLighting;
+	
 
 	auto it = std::find_if(models_.begin(), models_.end(), [&](const auto& model) {return model->name_ == modelName; });
 
@@ -100,6 +100,7 @@ std::shared_ptr<Model> ModelManager::LoadInternal(const std::string& modelName) 
 	models_.push_back(std::unique_ptr<Model>(new Model()));
 
 	models_[handle]->name_ = modelName;
+	models_[useModelNum_]->isLighting_ = isLighting;
 
 	LoadObjFile(modelName);
 

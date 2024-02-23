@@ -15,15 +15,22 @@ GameScene::~GameScene() {}
 void GameScene::Init(){
 
 	camera_.Init();
+	pointLight_.Init();
+	pointLight_.intensity_ = 0.0f;
+	spotLight_.Init();
+	spotLight_.intensity_ = 0.0f;
+
+	Object3d::SetPointLight(&pointLight_);
+	Object3d::SetSpotLight(&spotLight_);
 
 	finishCount_ = finishTime_;
 
 	/// モデルの読み込み
 
-	uint32_t skydomeModel = ModelManager::Load("skydome",false);
-	uint32_t groundModel = ModelManager::Load("ground");
-	uint32_t playerBodyModel = ModelManager::Load("float_Body");
-	uint32_t playerHeadModel = ModelManager::Load("float_Head");
+	std::shared_ptr<Model> skydomeModel = ModelManager::Load("skydome",false);
+	std::shared_ptr<Model> groundModel = ModelManager::Load("ground");
+	std::shared_ptr<Model> playerBodyModel = ModelManager::Load("float_Body");
+	std::shared_ptr<Model> playerHeadModel = ModelManager::Load("float_Head");
 	enemyBodyModel_ = ModelManager::Load("EnemyBody");
 	enemyHeadModel_ = ModelManager::Load("EnemyHead");
 	//bulletModel_ = ModelManager::Load("EnemyBullet");
@@ -235,6 +242,8 @@ void GameScene::Update(){
 
 	//camera_.UpdateViewMatrix();
 	camera_.UpdateCameraPos();
+	pointLight_.Update();
+	spotLight_.Update();
 }
 
 void GameScene::DrawBackGround(){
@@ -298,11 +307,40 @@ void GameScene::DebugGUI(){
 	
 
 	ImGui::End();
+
+	ImGui::Begin("Light");
+
+	if (ImGui::TreeNode("PointLight")) {
+
+		ImGui::ColorEdit4("color", &pointLight_.color_.x);
+		ImGui::DragFloat3("position", &pointLight_.position_.x, 0.01f);
+		ImGui::SliderFloat("intensity", &pointLight_.intensity_, 0.0f, 1.0f);
+		ImGui::SliderFloat("radius", &pointLight_.radius_, 0.0f, 10.0f);
+		ImGui::SliderFloat("decay", &pointLight_.decay_, 0.01f, 2.0f);
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("SpotLight")) {
+
+		ImGui::ColorEdit4("color", &spotLight_.color_.x);
+		ImGui::DragFloat3("position", &spotLight_.position_.x, 0.01f);
+		ImGui::SliderFloat("intensity", &spotLight_.intensity_, 0.0f, 1.0f);
+		ImGui::SliderFloat3("direction", &spotLight_.direction_.x, -1.0f, 1.0f);
+		ImGui::SliderFloat("distance", &spotLight_.distance_, 0.0f, 10.0f);
+		ImGui::SliderFloat("decay", &spotLight_.decay_, 0.01f, 2.0f);
+		ImGui::SliderFloat("cosAngle", &spotLight_.cosAngle_, 0.0f, spotLight_.cosFalloffStart_ - 0.001f);
+		ImGui::SliderFloat("cosFalloffStart", &spotLight_.cosFalloffStart_, spotLight_.cosAngle_ + 0.001f, 1.0f);
+
+		ImGui::TreePop();
+	}
+
+	ImGui::End();
 	
 #endif // _DEBUG
 }
 
-Enemy* GameScene::EnemyPop(std::vector<uint32_t> modelHandles, Vector3 pos) {
+Enemy* GameScene::EnemyPop(std::vector<std::shared_ptr<Model>> modelHandles, Vector3 pos) {
 
 	Enemy* enemy = new Enemy();
 	enemy->Init(modelHandles);

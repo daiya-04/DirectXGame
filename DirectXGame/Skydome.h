@@ -13,7 +13,7 @@ private:
 
 public:
 	//初期化
-	void Init(uint32_t modelHandle);
+	void Init(std::shared_ptr<Model> modelHandle);
 	//更新
 	void Update();
 	//描画

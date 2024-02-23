@@ -135,7 +135,7 @@ public:
 	Player() :randomEngine(seedGenerator()) {}
 
 	//初期化
-	void Init(std::vector<uint32_t> modelHandles);
+	void Init(std::vector<std::shared_ptr<Model>> modelHandles);
 	//更新
 	void Update(const std::list<std::unique_ptr<Enemy>>& enemies);
 	//描画

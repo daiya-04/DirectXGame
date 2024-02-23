@@ -20,7 +20,7 @@ class EnemyBullet{
 
 public:
 
-	void Init(uint32_t modelHandle, const Vector3& pos, const Vector3& velocity);
+	void Init(std::shared_ptr<Model> modelHandle, const Vector3& pos, const Vector3& velocity);
 
 	void Update();
 

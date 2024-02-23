@@ -1,6 +1,6 @@
 #include "Ground.h"
 
-void Ground::Init(uint32_t modelHandle){
+void Ground::Init(std::shared_ptr<Model> modelHandle){
 
 	worldTransform_.Init();
 

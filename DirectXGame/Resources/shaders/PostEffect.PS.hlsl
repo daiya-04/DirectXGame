@@ -54,7 +54,7 @@ PixelShaderOutput main(VertexShaderOutput input){
     // 3. オリジナルのテクスチャとガウシアンブラーを適用した結果を合成
     output.color = gTexture.Sample(gSampler, input.texcoord) + highLumiColor + blurredColor;
 
-	output.color.rgb *= 2.0;
+	output.color.rgb *= 3.0;
 	
 	/*float totalWeight = 0, sigma = 0.005, stepWidth = 0.001;
 	float32_t4 sampleColor = float32_t4(0.0, 0.0, 0.0, 0.0);
