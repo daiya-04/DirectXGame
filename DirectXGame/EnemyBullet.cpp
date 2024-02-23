@@ -1,6 +1,6 @@
 #include "EnemyBullet.h"
 
-void EnemyBullet::Init(uint32_t modelHandle, const Vector3& pos, const Vector3& velocity){
+void EnemyBullet::Init(std::shared_ptr<Model> modelHandle, const Vector3& pos, const Vector3& velocity){
 
 	worldTransform_.Init();
 

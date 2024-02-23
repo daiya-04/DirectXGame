@@ -14,7 +14,7 @@ const std::array<Player::ComboAttack, Player::comboNum_> Player::kComboAttacks_ 
 	}
 };
 
-void Player::Init(std::vector<uint32_t> modelHandles){
+void Player::Init(std::vector<std::shared_ptr<Model>> modelHandles){
 
 	uint32_t particleTex = TextureManager::Load("circle.png");
 	uint32_t particleTex2 = TextureManager::Load("star.png");

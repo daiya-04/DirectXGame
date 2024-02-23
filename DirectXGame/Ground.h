@@ -13,7 +13,7 @@ private:
 
 public:
 
-	void Init(uint32_t modelHandle);
+	void Init(std::shared_ptr<Model> modelHandle);
 
 	void Update();
 

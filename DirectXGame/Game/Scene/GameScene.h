@@ -2,12 +2,16 @@
 #include "IScene.h"
 #include <memory>
 #include <list>
+#include <vector>
 
 #include "Sprite.h"
 #include "Object3d.h"
 #include "Particle.h"
 #include "Camera.h"
 #include "WorldTransform.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+#include "LevelLoader.h"
 
 #include "Skydome.h"
 #include "Ground.h"
@@ -40,7 +44,7 @@ public:
 
 	GameScene() :randomEngine(seedGenerator()) {}
 
-	Enemy* EnemyPop(std::vector<uint32_t> modelHandles, Vector3 pos);
+	Enemy* EnemyPop(std::vector<std::shared_ptr<Model>> modelHandles, Vector3 pos);
 	
 	void AddEnemyBullet(EnemyBullet* enemyBullet);
 
@@ -49,6 +53,9 @@ public:
 private:
 
 	Camera camera_;
+
+	PointLight pointLight_;
+	SpotLight spotLight_;
 
 private: //オブジェクト
 
@@ -64,9 +71,9 @@ private: //オブジェクト
 	std::unique_ptr<Particle> particle_;
 	std::list<Particle::ParticleData> particles_;
 
-	uint32_t enemyBodyModel_ = 0;
-	uint32_t enemyHeadModel_ = 0;
-	uint32_t bulletModel_ = 0;
+	std::shared_ptr<Model> enemyBodyModel_ = 0;
+	std::shared_ptr<Model> enemyHeadModel_ = 0;
+	std::shared_ptr<Model> bulletModel_ = 0;
 
 	uint32_t gameTime_ = 60 * 60;
 	uint32_t gameCount_ = gameTime_;

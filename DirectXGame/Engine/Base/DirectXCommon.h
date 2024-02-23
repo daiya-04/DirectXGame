@@ -33,6 +33,8 @@ private:
 	ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
 
 	int32_t srvHeapCount_ = 0;
+	int32_t rtvHeapCount_ = 0;
+	int32_t dsvHeapCount_ = 0;
 
 public:
 
@@ -65,8 +67,14 @@ public:
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
 	size_t GetBackBufferCount() const { return backBuffers_.size(); }
 	ID3D12DescriptorHeap* GetSrvHeap() { return srvDescriptorHeap_.Get(); }
-	int32_t GetSrvHeapCount() { return srvHeapCount_; }
+	ID3D12DescriptorHeap* GetRtvHeap() { return rtvDescriptorHeap_.Get(); }
+	ID3D12DescriptorHeap* GetDsvHeap() { return dsvDescriptorHeap_.Get(); }
+	int32_t GetSrvHeapCount() const { return srvHeapCount_; }
+	int32_t GetRtvHeapCount() const { return rtvHeapCount_; }
+	int32_t GetDsvHeapCount() const { return dsvHeapCount_; }
 	void IncrementSrvHeapCount() { srvHeapCount_++; }
+	void IncrementRtvHeapCount() { rtvHeapCount_++; }
+	void IncrementDsvHeapCount() { dsvHeapCount_++; }
 
 private:
 

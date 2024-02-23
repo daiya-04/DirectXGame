@@ -3,6 +3,7 @@
 #include "DirectXCommon.h"
 #include "Object3d.h"
 #include "Particle.h"
+#include "ImGuiManager.h"
 #include "TextureManager.h"
 #include <cassert>
 
@@ -15,6 +16,9 @@ SceneManager* SceneManager::GetInstance(){
 void SceneManager::Init() {
 
 	sceneFactory_ = std::make_unique<SceneFactory>();
+
+	postEffect_ = std::make_unique<PostEffect>();
+	postEffect_->Init();
 
 	fadeTex_ = TextureManager::Load("Black.png");
 
@@ -47,11 +51,37 @@ void SceneManager::Update(){
 	if (!nextScene_ && alpha_ <= 0.0f) {
 		scene_->Update();
 	}
+  
+  fade_->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
 
-	fade_->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
+#ifdef _DEBUG
+
+	ImGui::Begin("window");
+
+	ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
+
+	ImGui::End();
+
+#endif // _DEBUG
+
 }
 
 void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
+
+	postEffect_->PreDrawScene(commandList);
+
+	
+
+	///パーティクル
+	Particle::preDraw();
+
+	scene_->DrawParticle();
+
+	Particle::postDraw();
+
+	postEffect_->PostDrawScene(commandList);
+
+	DirectXCommon::GetInstance()->preDraw();
 
 	///背景スプライト
 	Sprite::preDraw(commandList);
@@ -69,12 +99,7 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	Object3d::postDraw();
 
-	///パーティクル
-	Particle::preDraw();
-
-	scene_->DrawParticle();
-
-	Particle::postDraw();
+	postEffect_->Draw(commandList);
 
 	///UI
 	Sprite::preDraw(commandList);
@@ -83,6 +108,11 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 	fade_->Draw();
 
 	Sprite::postDraw();
+
+	ImGuiManager::GetInstance()->Draw();
+
+	DirectXCommon::GetInstance()->postDraw();
+	
 
 }
 

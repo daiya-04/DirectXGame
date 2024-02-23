@@ -1,6 +1,6 @@
 #include "Skydome.h"
 
-void Skydome::Init(uint32_t modelHandle) {
+void Skydome::Init(std::shared_ptr<Model> modelHandle) {
 
 	worldTransform_.Init();
 

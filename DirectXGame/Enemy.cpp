@@ -6,7 +6,7 @@
 
 const WorldTransform* Enemy::target_ = nullptr;
 
-void Enemy::Init(std::vector<uint32_t> modelHandles){
+void Enemy::Init(std::vector<std::shared_ptr<Model>> modelHandles){
 
 	worldTransform_.Init();
 	partsWorldTransform_[Body].Init();

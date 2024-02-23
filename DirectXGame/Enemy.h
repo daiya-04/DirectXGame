@@ -53,7 +53,7 @@ public:
 	Enemy() :randomEngine(seedGenerator()) {}
 
 	//初期化
-	void Init(std::vector<uint32_t> modelHandles);
+	void Init(std::vector<std::shared_ptr<Model>> modelHandles);
 	//更新
 	void Update();
 	//描画
