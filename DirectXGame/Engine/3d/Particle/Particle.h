@@ -50,7 +50,7 @@ public:
 	struct ParticleData {
 		WorldTransform worldTransform_;
 		Vector3 velocity_;
-		Vector4 color_;
+		Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 		float lifeTime_ = 0; //生存時間
 		float currentTime_ = 0; //生成されてから今の時間
 	};
