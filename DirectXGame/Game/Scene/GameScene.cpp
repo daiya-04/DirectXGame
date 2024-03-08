@@ -61,8 +61,7 @@ void GameScene::Init(){
 	terrainWT_.rotation_.y = -1.57f;
 	
 	//bg_.reset(new Sprite(bgTex, { 0.0f,0.0f }, { 1280.0f / 1.0f,720.0f / 1.0f }));
-	bg_.reset(new Sprite(bgTex, { 0.0f,0.0f }, { 100.0f,100.0f }));
-	bg_->Initialize();
+	bg_.reset(Sprite::Create(bgTex,{640.0f,360.0f}));
 
 	particle_ = std::make_unique<Particle>();
 	particle_.reset(Particle::Create(circle, 100));
@@ -108,8 +107,8 @@ void GameScene::DrawBackGround(){
 
 void GameScene::DrawModel(){
 
-	//obj_->Draw(objWT_, camera_);
-	//obj2_->Draw(objWT2_, camera_);
+	obj_->Draw(objWT_, camera_);
+	obj2_->Draw(objWT2_, camera_);
 	//terrain_->Draw(terrainWT_, camera_);
 
 	/*for (size_t index = 0; index < objects_.size(); index++) {
