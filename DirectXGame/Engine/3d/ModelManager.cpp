@@ -31,7 +31,7 @@ void Model::CreateBuffer() {
 	//マテリアルにデータを書き込む
 	//書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	materialData->color_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	materialData->color_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialData->enableLightnig_ = true;
 	materialData->uvtransform_ = MakeIdentity44();
 	materialData->shininess_ = 10.0f;

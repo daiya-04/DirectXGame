@@ -189,6 +189,14 @@ void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowH
 
 }
 
+Sprite* Sprite::Create(uint32_t textureHandle, Vector2 postion, float scale) {
+
+	Sprite* sprite = new Sprite(textureHandle, postion, scale);
+	sprite->Initialize();
+
+	return sprite;
+}
+
 void Sprite::preDraw(ID3D12GraphicsCommandList* commandList){
 
 	assert(commandList);
@@ -211,17 +219,16 @@ void Sprite::Finalize() {
 	graphicsPipelineState_.Reset();
 }
 
-Sprite::Sprite(){}
-
-Sprite::Sprite(uint32_t textureHandle, Vector2 position, Vector2 size, Vector2 anchorpoint, Vector4 color, float rotate) {
+Sprite::Sprite(uint32_t textureHandle, Vector2 position, float scale, Vector2 anchorpoint, Vector4 color, float rotate) {
 
 	textureHandle_ = textureHandle;
+	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
 	position_ = position;
-	size_ = size;
+	size_ = { (float)resourceDesc_.Width * scale,(float)resourceDesc_.Height * scale};
 	rotate_ = rotate;
 	anchorpoint_ = anchorpoint;
 	color_ = color;
-	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
+	
 	texSize_ = { (float)resourceDesc_.Width,(float)resourceDesc_.Height };
 
 }
@@ -243,6 +250,18 @@ void Sprite::Initialize() {
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
 	TransferVertex();
+
+	indexResource_ = CreateBufferResource(device_, sizeof(uint32_t) * 6);
+
+	indexBufferView.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	indexBufferView.SizeInBytes = sizeof(uint32_t) * 6;
+	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+
+	uint32_t* indexMap = nullptr;
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexMap));
+
+	indexMap[0] = 1;  indexMap[1] = 0;  indexMap[2] = 2;
+	indexMap[3] = 0;  indexMap[4] = 3;  indexMap[5] = 2;
 
 	//マテリアル用のリソースを作る
 	matrialResource_ = CreateBufferResource(device_, sizeof(MaterialData));
@@ -271,12 +290,13 @@ void Sprite::Draw(){
 	
 
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView);
+	commandList_->IASetIndexBuffer(&indexBufferView);
 
 	commandList_->SetGraphicsRootConstantBufferView(0, matrialResource_->GetGPUVirtualAddress());
 	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, 2, textureHandle_);
 
-	commandList_->DrawInstanced(6, 1, 0, 0);
+	commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 }
 
@@ -289,6 +309,20 @@ void Sprite::SetPosition(const Vector2& position) {
 void Sprite::SetSize(const Vector2& size) {
 
 	size_ = size;
+
+	TransferVertex();
+}
+
+void Sprite::SetScale(float scale) {
+
+	size_ *= scale;
+
+	TransferVertex();
+}
+
+void Sprite::SetScale(Vector2 scale) {
+
+	size_ = { size_.x * scale.x,size_.y * scale.y };
 
 	TransferVertex();
 }
@@ -396,17 +430,17 @@ void Sprite::TransferVertex(){
 	VertexData* vertexData = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//1枚目の三角形
-	vertexData[0].pos_ = { left,bottom,0.0f,1.0f };//左下
-	vertexData[0].uv_ = { uvLeft,uvBottom };
-	vertexData[1].pos_ = { left,top,0.0f,1.0f };//左上
-	vertexData[1].uv_ = { uvLeft,uvTop };
+	vertexData[0].pos_ = { left,top,0.0f,1.0f };//左上
+	vertexData[0].uv_ = { uvLeft,uvTop };
+	vertexData[1].pos_ = { left,bottom,0.0f,1.0f };//左下
+	vertexData[1].uv_ = { uvLeft,uvBottom };
 	vertexData[2].pos_ = { right,bottom,0.0f,1.0f };//右下
 	vertexData[2].uv_ = { uvRight,uvBottom };
 	//2枚目の三角形
-	vertexData[3] = vertexData[1];//左上
-	vertexData[4].pos_ = { right,top,0.0f,1.0f };//右上
-	vertexData[4].uv_ = { uvRight,uvTop };
-	vertexData[5] = vertexData[2];//右下
+	//vertexData[3] = vertexData[1];//左上
+	vertexData[3].pos_ = { right,top,0.0f,1.0f };//右上
+	vertexData[3].uv_ = { uvRight,uvTop };
+	//vertexData[5] = vertexData[2];//右下
 	
 
 
