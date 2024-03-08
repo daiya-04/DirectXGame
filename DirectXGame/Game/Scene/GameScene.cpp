@@ -113,7 +113,6 @@ void GameScene::Init(){
 }
 
 void GameScene::Update(){
-
 	DebugGUI();
 
 	if (finishCount_ <= 0) {
@@ -263,7 +262,7 @@ void GameScene::DrawModel(){
 	for (const auto& bullet : enemyBullets_) {
 		bullet->Draw(camera_);
 	}
-
+  
 }
 
 void GameScene::DrawParticleModel(){
@@ -337,6 +336,7 @@ void GameScene::DebugGUI(){
 
 	ImGui::End();
 	
+
 #endif // _DEBUG
 }
 
