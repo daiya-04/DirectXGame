@@ -109,7 +109,7 @@
     </ClCompile>
     <ClCompile Include="Engine\Audio\Audio.cpp">
       <Filter>Engine\Audio</Filter>
-    </ClCompile>
+    </ClCompile>             
     <ClCompile Include="Engine\3d\WorldTransform.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
@@ -122,6 +122,16 @@
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="Engine\2d\PostEffect.cpp">
       <Filter>Engine\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="Skydome.cpp" />
+    <ClCompile Include="Ground.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="FollowCamera.cpp" />
+    <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyBullet.cpp" />
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>Game\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -208,7 +218,7 @@
     </ClInclude>
     <ClInclude Include="Engine\Audio\Audio.h">
       <Filter>Engine\Audio</Filter>
-    </ClInclude>
+    </ClInclude>              
     <ClInclude Include="Engine\3d\PointLight.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
@@ -218,6 +228,16 @@
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="Engine\2d\PostEffect.h">
       <Filter>Engine\2d</Filter>
+    </ClInclude>  
+    <ClInclude Include="Skydome.h" />
+    <ClInclude Include="Ground.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="FollowCamera.h" />
+    <ClInclude Include="Easing.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyBullet.h" />
+    <ClInclude Include="TitleScene.h">
+      <Filter>Game\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -42,6 +42,14 @@ public:
 
 	void UpdateProjectionMatrix();
 
+	void UpdateCameraPos();
+
+	void SetMatView(const Matrix4x4& matView) { 
+		matView_ = matView;
+		cMap_->matView = matView;
+	}
+	const Matrix4x4& GetMatView() { return matView_; }
+
 	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const { return cBuffer_->GetGPUVirtualAddress(); }
 
 	Matrix4x4 GetBillBoadMatrix() const {
