@@ -44,7 +44,7 @@ PixelShaderOutput main(VertexShaderOutput input){
         for (float px = -sigma * 2; px <= sigma * 2; px += stepWidth) {
             float2 pickUV = input.texcoord + float2(px, py);
             float weight = Gaussian(input.texcoord, pickUV, sigma);
-            blurredColor.rgb += gTexture.Sample(gSampler, pickUV) * weight;
+            blurredColor.rgb += gTexture.Sample(gSampler, pickUV).rgb * weight;
             totalWeight += weight;
         }
     }

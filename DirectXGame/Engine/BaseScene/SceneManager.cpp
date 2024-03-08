@@ -70,15 +70,6 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	postEffect_->PreDrawScene(commandList);
 
-	
-
-	///パーティクル
-	Particle::preDraw();
-
-	scene_->DrawParticle();
-
-	Particle::postDraw();
-
 	postEffect_->PostDrawScene(commandList);
 
 	DirectXCommon::GetInstance()->preDraw();
@@ -98,6 +89,13 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 	scene_->DrawModel();
 
 	Object3d::postDraw();
+
+	///パーティクル
+	Particle::preDraw();
+
+	scene_->DrawParticle();
+
+	Particle::postDraw();
 
 	postEffect_->Draw(commandList);
 
