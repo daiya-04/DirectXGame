@@ -109,7 +109,7 @@
     </ClCompile>
     <ClCompile Include="Engine\Audio\Audio.cpp">
       <Filter>Engine\Audio</Filter>
-    </ClCompile>             
+    </ClCompile>
     <ClCompile Include="Engine\3d\WorldTransform.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
@@ -133,6 +133,7 @@
     <ClCompile Include="TitleScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Boss.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -218,7 +219,7 @@
     </ClInclude>
     <ClInclude Include="Engine\Audio\Audio.h">
       <Filter>Engine\Audio</Filter>
-    </ClInclude>              
+    </ClInclude>
     <ClInclude Include="Engine\3d\PointLight.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
@@ -228,7 +229,7 @@
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="Engine\2d\PostEffect.h">
       <Filter>Engine\2d</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="Player.h" />
@@ -239,5 +240,6 @@
     <ClInclude Include="TitleScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Boss.h" />
   </ItemGroup>
 </Project>

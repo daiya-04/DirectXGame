@@ -12,7 +12,7 @@
 #include "FollowCamera.h"
 #include "Particle.h"
 
-class Enemy;
+//class Enemy;
 
 class Player{
 private: //ふるまい用メンバ変数
@@ -34,9 +34,9 @@ public: //ふるまい用メンバ関数
 	//通常行動更新
 	void RootUpdate();
 	//攻撃行動初期化
-	void AttackInit(const std::list<std::unique_ptr<Enemy>>& enemies);
+	void AttackInit();
 	//攻撃行動更新
-	void AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies);
+	void AttackUpdate();
 	//ダッシュ初期化
 	void DashInit();
 	//ダッシュ更新
@@ -95,7 +95,7 @@ private:
 
 	uint32_t life = 5;
 
-	Enemy* target_ = nullptr;
+	//Enemy* target_ = nullptr;
 
 	float attackRange_ = 35.0f;
 
@@ -137,13 +137,13 @@ public:
 	//初期化
 	void Init(std::vector<std::shared_ptr<Model>> modelHandles);
 	//更新
-	void Update(const std::list<std::unique_ptr<Enemy>>& enemies);
+	void Update();
 	//描画
 	void Draw(const Camera& camera);
 	//パーティクル描画
 	void DrawParticle(const Camera& camera);
 
-	void Search(const std::list<std::unique_ptr<Enemy>>& enemies);
+	//void Search(const std::list<std::unique_ptr<Enemy>>& enemies);
 
 	void OnCollision();
 

@@ -14,11 +14,9 @@ void TitleScene::Init(){
 	uint32_t buttonTex = TextureManager::Load("AButton.png");
 
 
-	title_.reset(new Sprite(titleTex, { 640.0f,360.0f }, { 1280.0f,720.0f }));
-	title_->Initialize();
+	title_.reset(Sprite::Create(titleTex, { 640.0f,360.0f }));
 
-	Abutton_.reset(new Sprite(buttonTex, {640.0f,520.0f}, {100.0f,100.0f}));
-	Abutton_->Initialize();
+	Abutton_.reset(Sprite::Create(buttonTex, {640.0f,520.0f}));
 
 }
 

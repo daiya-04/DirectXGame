@@ -31,9 +31,11 @@ void GameScene::Init(){
 	std::shared_ptr<Model> groundModel = ModelManager::Load("ground");
 	std::shared_ptr<Model> playerBodyModel = ModelManager::Load("float_Body");
 	std::shared_ptr<Model> playerHeadModel = ModelManager::Load("float_Head");
-	enemyBodyModel_ = ModelManager::Load("EnemyBody");
-	enemyHeadModel_ = ModelManager::Load("EnemyHead");
+	//enemyBodyModel_ = ModelManager::Load("EnemyBody");
+	//enemyHeadModel_ = ModelManager::Load("EnemyHead");
 	//bulletModel_ = ModelManager::Load("EnemyBullet");
+	std::shared_ptr<Model> bossBodyModel = ModelManager::Load("BossBody");
+	std::shared_ptr<Model> bossHeadModel = ModelManager::Load("BossHead");
 
 	///
 
@@ -61,6 +63,10 @@ void GameScene::Init(){
 	player_ = std::make_unique<Player>();
 	player_->Init({ playerBodyModel,playerHeadModel });
 
+	//ボス
+	boss_ = std::make_unique<Boss>();
+	boss_->Init({ bossBodyModel,bossHeadModel });
+
 	//敵
 	/*uint32_t enemyNum = 3;
 
@@ -76,14 +82,14 @@ void GameScene::Init(){
 		enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, enemyPos[index])));
 	}*/
 
-	for (size_t index = 0; index < spawnNum_; index++) {
+	/*for (size_t index = 0; index < spawnNum_; index++) {
 		std::uniform_int_distribution<int> distPosX(-60, 60);
 		std::uniform_int_distribution<int> distPosZ(50, 100);
 		Vector3 spawnPos = { (float)distPosX(randomEngine),0.0f,(float)distPosZ(randomEngine) };
 		enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, spawnPos)));
 	}
 
-	Enemy::SetTarget(&player_->GetWorldTransform());
+	Enemy::SetTarget(&player_->GetWorldTransform());*/
 
 	//追従カメラ
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -97,14 +103,11 @@ void GameScene::Init(){
 
 	//UI
 	
-	XButton_.reset(new Sprite(XButtonTex, {1200.0f,70.0f}, { 100.0f,100.0f }));
-	XButton_->Initialize();
+	XButton_.reset(Sprite::Create(XButtonTex, {1200.0f,70.0f}));
 
-	char_Attack_.reset(new Sprite(char_AttackTex, {1100.0f,70.0f}, { 100.0f,50.0f }));
-	char_Attack_->Initialize();
+	char_Attack_.reset(Sprite::Create(char_AttackTex, {1100.0f,70.0f}));
 
-	finish_.reset(new Sprite(finishTex, { 670.0f,200.0f }, { 1280.0f,400.0f }));
-	finish_->Initialize();
+	finish_.reset(Sprite::Create(finishTex, { 670.0f,200.0f }));
 
 	///
 
@@ -124,12 +127,12 @@ void GameScene::Update(){
 	}
 
 	if (gameCount_ == 0) {
-		if (!enemies_.empty()) {
+		/*if (!enemies_.empty()) {
 			enemies_.clear();
 		}
 		if (!enemyBullets_.empty()) {
 			enemyBullets_.clear();
-		}
+		}*/
 
 		finishCount_--;
 		
@@ -146,7 +149,7 @@ void GameScene::Update(){
 	
 
 
-	if (gameCount_ >= 20) {
+	/*if (gameCount_ >= 20) {
 		if (--spawnCount_ <= 0) {
 			spawnCount_ = spawnCoolTime_;
 			for (size_t index = 0; index < spawnNum_; index++) {
@@ -155,19 +158,20 @@ void GameScene::Update(){
 				enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, spawnPos)));
 			}
 		}
-	}
+	}*/
 	
 
 	skydome_->Update();
 	ground_->Update();
-	for (const auto& enemy : enemies_) {
+	/*for (const auto& enemy : enemies_) {
 		enemy->Update();
-	}
-	player_->Update(enemies_);
+	}*/
+	player_->Update();
+	boss_->Update();
 	
-	for (const auto& bullet : enemyBullets_) {
+	/*for (const auto& bullet : enemyBullets_) {
 		bullet->Update();
-	}
+	}*/
 	followCamera_->Update();
 
 	
@@ -194,16 +198,16 @@ void GameScene::Update(){
 	}
 
 	//敵弾とプレイヤー
-	for (const auto& bullet : enemyBullets_) {
+	/*for (const auto& bullet : enemyBullets_) {
 		Sphere bulletHitRange = { bullet->GetWorldPos(),0.3f };
 		if (IsCollision(player, bulletHitRange)) {
 			bullet->OnCollision();
 			player_->OnCollision();
 		}
-	}
+	}*/
 
 	//魔法攻撃と敵
-	if (player_->IsAttack()) {
+	/*if (player_->IsAttack()) {
 		for (const auto& enemy : enemies_) {
 			AABB enemyBody = {
 				enemy->GetWorldPos() - enemy->GetSize(),
@@ -213,22 +217,22 @@ void GameScene::Update(){
 				enemy->OnCollision();
 			}
 		}
-	}
+	}*/
 	
 
-	enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
+	/*enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
 		if (enemy->IsDead()) {
 			return true;
 		}
 		return false;
-	});
+	});*/
 
-	enemyBullets_.remove_if([](const std::unique_ptr<EnemyBullet>& bullet) {
+	/*enemyBullets_.remove_if([](const std::unique_ptr<EnemyBullet>& bullet) {
 		if (bullet->IsDead()) {
 			return true;
 		}
 		return false;
-	});
+	});*/
 
 	///
 
@@ -256,12 +260,13 @@ void GameScene::DrawModel(){
 	skydome_->Draw(camera_);
 	ground_->Draw(camera_);
 	player_->Draw(camera_);
-	for (const auto& enemy : enemies_) {
+	boss_->Draw(camera_);
+	/*for (const auto& enemy : enemies_) {
 		enemy->Draw(camera_);
 	}
 	for (const auto& bullet : enemyBullets_) {
 		bullet->Draw(camera_);
-	}
+	}*/
   
 }
 
@@ -340,21 +345,21 @@ void GameScene::DebugGUI(){
 #endif // _DEBUG
 }
 
-Enemy* GameScene::EnemyPop(std::vector<std::shared_ptr<Model>> modelHandles, Vector3 pos) {
+//Enemy* GameScene::EnemyPop(std::vector<std::shared_ptr<Model>> modelHandles, Vector3 pos) {
+//
+//	Enemy* enemy = new Enemy();
+//	enemy->Init(modelHandles);
+//	enemy->SetPos(pos);
+//	std::uniform_int_distribution<int> distTime(5, 9);
+//	enemy->SetCoolTime(distTime(randomEngine));
+//	enemy->SetGameScene(this);
+//
+//	return enemy;
+//}
 
-	Enemy* enemy = new Enemy();
-	enemy->Init(modelHandles);
-	enemy->SetPos(pos);
-	std::uniform_int_distribution<int> distTime(5, 9);
-	enemy->SetCoolTime(distTime(randomEngine));
-	enemy->SetGameScene(this);
-
-	return enemy;
-}
-
-void GameScene::AddEnemyBullet(EnemyBullet* enemyBullet) {
-	enemyBullets_.push_back(std::unique_ptr<EnemyBullet>(enemyBullet));
-}
+//void GameScene::AddEnemyBullet(EnemyBullet* enemyBullet) {
+//	enemyBullets_.push_back(std::unique_ptr<EnemyBullet>(enemyBullet));
+//}
 
 void GameScene::AddParticle(Particle::ParticleData particle) {
 	particles_.push_back(particle);

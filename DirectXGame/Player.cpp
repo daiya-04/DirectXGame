@@ -55,7 +55,7 @@ void Player::Init(std::vector<std::shared_ptr<Model>> modelHandles){
 	}
 }
 
-void Player::Update(const std::list<std::unique_ptr<Enemy>>& enemies){
+void Player::Update(){
 
 	if (behaviorRequest_) {
 
@@ -66,7 +66,7 @@ void Player::Update(const std::list<std::unique_ptr<Enemy>>& enemies){
 				RootInit();
 			    break;
 			case Behavior::kAttack:
-				AttackInit(enemies);
+				AttackInit();
 				break;
 			case Behavior::kDash:
 				DashInit();
@@ -81,7 +81,7 @@ void Player::Update(const std::list<std::unique_ptr<Enemy>>& enemies){
 		RootUpdate();
 		break;
 	case Behavior::kAttack:
-		AttackUpdate(enemies);
+		AttackUpdate();
 		break;
 	case Behavior::kDash:
 		DashUpdate();
@@ -162,22 +162,22 @@ void Player::RootUpdate() {
 
 }
 
-void Player::AttackInit(const std::list<std::unique_ptr<Enemy>>& enemies) {
+void Player::AttackInit() {
 
 	workAttack_.attackParam_ = 0;
 	workAttack_.speed_ = 1.0f;
 	//Search(enemies);
 
-	if (target_) {
+	/*if (target_) {
 
 		Vector3 direction = target_->GetWorldTransform().translation_ - worldTransform_.translation_;
 
 		rotateMat_ = DirectionToDirection(from_, direction);
-	}
+	}*/
 	
 }
 
-void Player::AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies) {
+void Player::AttackUpdate() {
 
 	if (workAttack_.comboIndex_ < comboNum_ - 1) {
 		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_X)) {
@@ -208,7 +208,7 @@ void Player::AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies) {
 			workAttack_.comboNext_ = false;
 			workAttack_.comboIndex_++;
 
-			AttackInit(enemies);
+			AttackInit();
 		}
 		else {
 			behaviorRequest_ = Behavior::kRoot;
@@ -223,27 +223,24 @@ void Player::AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies) {
 		//パーティクルの要素の削除
 		particles_.clear();
 
-		if (target_) {
+		/*if (target_) {
 			emitter_.translate_ = target_->GetWorldPos();
-		}
+		}*/
 
 		Vector3 direction = { 0.0f,0.0f,1.0f };
 		direction = TransformNormal(direction, rotateMat_);
 		workAttack_.velocity_ = direction.Normalize() * workAttack_.speed_;
 		
+		Vector3 offset = { 0.0f,3.0f,10.0f };
+		offset = TransformNormal(offset, rotateMat_);
+
+		emitter_.translate_ = worldTransform_.translation_ + offset;
 
 		//速度とパーティクルの数の設定と生成
 		switch (workAttack_.comboIndex_) {
 		case 0:
 
 			emitter_.count_ = 150;
-
-			if (!target_) {
-				Vector3 offset = { 0.0f,3.0f,10.0f };
-				offset = TransformNormal(offset, rotateMat_);
-
-				emitter_.translate_ = worldTransform_.translation_ + offset;
-			}
 			
 
 			for (size_t count = 0; count < emitter_.count_; count++) {
@@ -272,13 +269,6 @@ void Player::AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies) {
 
 			emitter_.count_ = 300;
 
-			if (!target_) {
-				Vector3 offset = { 0.0f,3.0f,5.0f };
-				offset = TransformNormal(offset, rotateMat_);
-
-				emitter_.translate_ = worldTransform_.translation_ + offset;
-			}
-
 			//for (size_t count = 0; count < emitter_.count_; count++) {
 
 			//	std::uniform_real_distribution<float> distVelocity(-particleVelocity_, particleVelocity_);
@@ -303,13 +293,6 @@ void Player::AttackUpdate(const std::list<std::unique_ptr<Enemy>>& enemies) {
 		case 2:
 
 			emitter_.count_ = 500;
-
-			if (!target_) {
-				Vector3 offset = { 0.0f,3.0f,10.0f };
-				offset = TransformNormal(offset, rotateMat_);
-
-				emitter_.translate_ = worldTransform_.translation_ + offset;
-			}
 
 			/*for (size_t count = 0; count < emitter_.count_; count++) {
 
@@ -447,34 +430,34 @@ void Player::DashUpdate() {
 
 }
 
-void Player::Search(const std::list<std::unique_ptr<Enemy>>& enemies) {
-
-	if (enemies.empty()) {
-		target_ = nullptr;
-		return;
-	}
-
-	//目標
-	///<playerとの距離、敵のポインタ>
-	std::list<std::pair<float, Enemy*>> targets;
-
-	for (const std::unique_ptr<Enemy>& enemy : enemies) {
-		
-		Vector3 distance = enemy->GetWorldTransform().translation_ - worldTransform_.translation_;
-
-		if (attackRange_ >= distance.Length()) {
-
-			targets.emplace_back(std::make_pair(distance.Length(), enemy.get()));
-
-		}
-
-		target_ = nullptr;
-		if (!targets.empty()) {
-			targets.sort([](auto& pair1, auto& pair2) {return pair1.first < pair2.first; });
-			target_ = targets.front().second;
-		}
-	}
-}
+//void Player::Search(const std::list<std::unique_ptr<Enemy>>& enemies) {
+//
+//	if (enemies.empty()) {
+//		target_ = nullptr;
+//		return;
+//	}
+//
+//	//目標
+//	///<playerとの距離、敵のポインタ>
+//	std::list<std::pair<float, Enemy*>> targets;
+//
+//	for (const std::unique_ptr<Enemy>& enemy : enemies) {
+//		
+//		Vector3 distance = enemy->GetWorldTransform().translation_ - worldTransform_.translation_;
+//
+//		if (attackRange_ >= distance.Length()) {
+//
+//			targets.emplace_back(std::make_pair(distance.Length(), enemy.get()));
+//
+//		}
+//
+//		target_ = nullptr;
+//		if (!targets.empty()) {
+//			targets.sort([](auto& pair1, auto& pair2) {return pair1.first < pair2.first; });
+//			target_ = targets.front().second;
+//		}
+//	}
+//}
 
 void Player::FloatingGimmickInit() {
 
