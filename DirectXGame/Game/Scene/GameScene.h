@@ -18,6 +18,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "EnemyBullet.h"
+#include "Boss.h"
 #include "FollowCamera.h"
 
 
@@ -44,9 +45,9 @@ public:
 
 	GameScene() :randomEngine(seedGenerator()) {}
 
-	Enemy* EnemyPop(std::vector<std::shared_ptr<Model>> modelHandles, Vector3 pos);
+	//Enemy* EnemyPop(std::vector<std::shared_ptr<Model>> modelHandles, Vector3 pos);
 	
-	void AddEnemyBullet(EnemyBullet* enemyBullet);
+	//void AddEnemyBullet(EnemyBullet* enemyBullet);
 
 	void AddParticle(Particle::ParticleData particle);
 
@@ -63,8 +64,9 @@ private: //オブジェクト
 	std::unique_ptr<Ground> ground_;
 
 	std::unique_ptr<Player> player_;
-	std::list<std::unique_ptr<Enemy>> enemies_;
-	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
+	/*std::list<std::unique_ptr<Enemy>> enemies_;
+	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;*/
+	std::unique_ptr<Boss> boss_;
 
 	std::unique_ptr<FollowCamera> followCamera_;
 

@@ -22,8 +22,8 @@ void SceneManager::Init() {
 
 	fadeTex_ = TextureManager::Load("Black.png");
 
-	fade_.reset(new Sprite(fadeTex_, { 640.0f,360.0f }, { 1280.0f, 720.0f }));
-	fade_->Initialize();
+	fade_.reset(Sprite::Create(fadeTex_, { 640.0f,360.0f }));
+	fade_->SetSize({ 1280.0f,720.0f });
 	fade_->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
 
 }
@@ -70,15 +70,6 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	postEffect_->PreDrawScene(commandList);
 
-	
-
-	///パーティクル
-	Particle::preDraw();
-
-	scene_->DrawParticle();
-
-	Particle::postDraw();
-
 	postEffect_->PostDrawScene(commandList);
 
 	DirectXCommon::GetInstance()->preDraw();
@@ -98,6 +89,13 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 	scene_->DrawModel();
 
 	Object3d::postDraw();
+
+	///パーティクル
+	Particle::preDraw();
+
+	scene_->DrawParticle();
+
+	Particle::postDraw();
 
 	postEffect_->Draw(commandList);
 
