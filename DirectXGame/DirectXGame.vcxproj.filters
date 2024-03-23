@@ -134,6 +134,7 @@
       <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="ElementBall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -241,5 +242,6 @@
       <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Boss.h" />
+    <ClInclude Include="ElementBall.h" />
   </ItemGroup>
 </Project>

@@ -9,6 +9,8 @@
 #include <optional>
 #include "Particle.h"
 
+class GameScene;
+
 class Boss{
 public:
 
@@ -45,6 +47,11 @@ public:
 		float param = 0.0f;
 	};
 
+	struct WorkAttack {
+		uint32_t coolTime = 60 * 5;
+		uint32_t param = 0;
+	};
+
 private:
 
 	std::vector<std::unique_ptr<Object3d>> obj_;
@@ -55,10 +62,15 @@ private:
 	Vector3 size_ = {};
 
 	static const WorldTransform* target_;
+	GameScene* gameScene_ = nullptr;
 
 	Matrix4x4 rotateMat_ = MakeIdentity44();
 
 	WorkAppear workAppear_;
+	WorkAttack workAttack_;
+
+	uint32_t coolTime_ = 0;
+	uint32_t attackTimer_ = 0;
 
 	float floatingParameter_ = 0.0f;
 	// 浮遊の振幅
@@ -83,6 +95,9 @@ public:
 	void FloatingGimmickUpdate();
 
 	static void SetTarget(const WorldTransform* target) { target_ = target; }
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
+	void ChangeBehavior(Behavior behavior);
+	bool IsAttack() const { return (behavior_ == Behavior::kAttack) ? true : false; }
 
 };
 
