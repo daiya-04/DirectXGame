@@ -26,9 +26,9 @@ void GameScene::Init(){
 	uint32_t circle = TextureManager::Load("circle.png");
 	uint32_t bgTex = TextureManager::Load("finish.png");
 
-	Model_ = ModelManager::Load("plane");
-	Model2_ = ModelManager::Load("cube");
-	terrainModel_ = ModelManager::Load("terrain");
+	Model_ = ModelManager::LoadOBJ("plane");
+	Model2_ = ModelManager::LoadOBJ("cube");
+	terrainModel_ = ModelManager::LoadOBJ("terrain");
 
 	//levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("stage"));
 

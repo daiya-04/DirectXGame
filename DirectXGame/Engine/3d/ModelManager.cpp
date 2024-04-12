@@ -1,8 +1,5 @@
 #include "ModelManager.h"
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 #include "DirectXCommon.h"
 #include <fstream>
 #include <sstream>
@@ -80,11 +77,15 @@ ModelManager* ModelManager::GetInstance() {
 	return &instance;
 }
 
-std::shared_ptr<Model> ModelManager::Load(const std::string& modelName) {
-	return ModelManager::GetInstance()->LoadInternal(modelName);
+std::shared_ptr<Model> ModelManager::LoadOBJ(const std::string& modelName) {
+	return ModelManager::GetInstance()->LoadInternal(modelName,"obj");
 }
 
-std::shared_ptr<Model> ModelManager::LoadInternal(const std::string& modelName) {
+std::shared_ptr<Model> ModelManager::LoadGLTF(const std::string& modelName) {
+	return ModelManager::GetInstance()->LoadInternal(modelName,"gltf");
+}
+
+std::shared_ptr<Model> ModelManager::LoadInternal(const std::string& modelName, const std::string& extension) {
 
 	assert(useModelNum_ < kNumModel);
 	uint32_t handle = useModelNum_;
@@ -100,7 +101,12 @@ std::shared_ptr<Model> ModelManager::LoadInternal(const std::string& modelName) 
 
 	models_[handle]->name_ = modelName;
 
-	LoadObjFile(modelName);
+	if (extension == "obj") {
+		LoadObjFile(modelName);
+	}else if (extension == "gltf") {
+		LoadGltfFile(modelName);
+	}
+	
 
 	models_[handle]->CreateBuffer();
 
@@ -164,6 +170,64 @@ void ModelManager::LoadObjFile(const std::string& modelName) {
 
 }
 
+void ModelManager::LoadGltfFile(const std::string& modelName) {
+
+	std::vector<Vector4> positions;  //位置
+	std::vector<Vector3> normals;  //法線
+	std::vector<Vector2> texcoords;  //テクスチャ座標
+	std::string line;  //ファイルから呼んだ1行を格納するもの
+
+	Assimp::Importer importer;
+	filename_ = modelName + ".gltf";
+	directoryPath_ = "Resources/model/" + modelName + "/";
+	std::string filePath = directoryPath_ + filename_;
+	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
+	assert(scene->HasMeshes());
+
+	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
+
+		aiMesh* mesh = scene->mMeshes[meshIndex];
+		assert(mesh->HasNormals());
+		assert(mesh->HasTextureCoords(0));
+
+		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
+
+			aiFace& face = mesh->mFaces[faceIndex];
+			assert(face.mNumIndices == 3);
+
+			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
+				uint32_t vertexIndex = face.mIndices[element];
+				aiVector3D& position = mesh->mVertices[vertexIndex];
+				aiVector3D& normal = mesh->mNormals[vertexIndex];
+				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+
+				Model::VertexData vertex;
+				vertex.pos_ = { position.x, position.y, position.z, 1.0f };
+				vertex.normal = { normal.x,normal.y ,normal.z };
+				vertex.uv_ = { texcoord.x,texcoord.y };
+
+				vertex.pos_.x *= -1.0f;
+				vertex.normal.x *= -1.0f;
+				models_.back()->vertices_.push_back(vertex);
+			}
+		}
+	}
+
+	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
+		aiMaterial* material = scene->mMaterials[materialIndex];
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+			aiString textureFilePath;
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+			std::string materialFilename;
+			materialFilename = directoryPath_ + textureFilePath.C_Str();
+			models_.back()->uvHandle_ = TextureManager::GetInstance()->LoadUv(textureFilePath.C_Str(), materialFilename);
+		}
+	}
+
+	models_.back()->rootNode_ = ReadNode(scene->mRootNode);
+
+}
+
 void ModelManager::LoadMaterialTemplateFile(const std::string& fileName) {
 
 	std::string textureFilePath;
@@ -188,3 +252,22 @@ void ModelManager::LoadMaterialTemplateFile(const std::string& fileName) {
 
 }
 
+Model::Node ModelManager::ReadNode(aiNode* node) {
+
+	Model::Node result;
+	aiMatrix4x4 aiLocalMatrix = node->mTransformation; //nodeのlocalMatrix取得
+	aiLocalMatrix.Transpose(); //列ベクトル形式を行ベクトル形式に転置
+	for (uint32_t row = 0; row < 4; row++) {
+		for (uint32_t column = 0; column < 4; column++) {
+			result.localMatrix_.m[row][column] = aiLocalMatrix[row][column];
+		}
+	}
+
+	result.name_ = node->mName.C_Str(); //Node名を格納
+	result.children_.resize(node->mNumChildren); //子供の数だけ確保
+	for (size_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex) {
+		result.children_[childIndex] = ReadNode(node->mChildren[childIndex]);
+	}
+
+	return result;
+}
