@@ -27,15 +27,15 @@ void GameScene::Init(){
 
 	/// モデルの読み込み
 
-	std::shared_ptr<Model> skydomeModel = ModelManager::Load("skydome",false);
-	std::shared_ptr<Model> groundModel = ModelManager::Load("ground");
-	std::shared_ptr<Model> playerBodyModel = ModelManager::Load("float_Body");
-	std::shared_ptr<Model> playerHeadModel = ModelManager::Load("float_Head");
+	std::shared_ptr<Model> skydomeModel = ModelManager::LoadOBJ("skydome",false);
+	std::shared_ptr<Model> groundModel = ModelManager::LoadOBJ("ground");
+	std::shared_ptr<Model> playerBodyModel = ModelManager::LoadOBJ("float_Body");
+	std::shared_ptr<Model> playerHeadModel = ModelManager::LoadOBJ("float_Head");
 	//enemyBodyModel_ = ModelManager::Load("EnemyBody");
 	//enemyHeadModel_ = ModelManager::Load("EnemyHead");
 	//bulletModel_ = ModelManager::Load("EnemyBullet");
-	std::shared_ptr<Model> bossBodyModel = ModelManager::Load("BossBody");
-	std::shared_ptr<Model> bossHeadModel = ModelManager::Load("BossHead");
+	std::shared_ptr<Model> bossBodyModel = ModelManager::LoadOBJ("BossBody");
+	std::shared_ptr<Model> bossHeadModel = ModelManager::LoadOBJ("BossHead");
 
 	///
 
