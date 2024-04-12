@@ -113,6 +113,7 @@ void GameScene::Init(){
 
 
 	Update();
+
 }
 
 void GameScene::Update(){
@@ -145,8 +146,6 @@ void GameScene::Update(){
 	}
 
 #endif // _DEBUG
-
-	
 
 
 	/*if (gameCount_ >= 20) {
@@ -340,7 +339,6 @@ void GameScene::DebugGUI(){
 	}
 
 	ImGui::End();
-	
 
 #endif // _DEBUG
 }

@@ -52,7 +52,7 @@ public:
 	void AddParticle(Particle::ParticleData particle);
 
 private:
-
+  
 	Camera camera_;
 
 	PointLight pointLight_;
