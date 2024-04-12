@@ -65,6 +65,8 @@ public:
 	Node rootNode_;
 	//uv
 	int32_t uvHandle_ = 0;
+	//Lightingの有無
+	bool isLighting_ = true;
 	//modelファイルの名前
 	std::string name_;
 
@@ -101,13 +103,13 @@ public:
 
 	static ModelManager* GetInstance();
 
-	static std::shared_ptr<Model> LoadOBJ(const std::string& modelName);
+	static std::shared_ptr<Model> LoadOBJ(const std::string& modelName, bool isLighting = true);
 
-	static std::shared_ptr<Model> LoadGLTF(const std::string& modelName);
+	static std::shared_ptr<Model> LoadGLTF(const std::string& modelName, bool isLighting = true);
 
 private:
 
-	std::shared_ptr<Model> LoadInternal(const std::string& modelName, const std::string& extension);
+	std::shared_ptr<Model> LoadInternal(const std::string& modelName, bool isLighting, const std::string& extension);
 
 	void LoadObjFile(const std::string& modelName);
 
