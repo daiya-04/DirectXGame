@@ -13,7 +13,7 @@
 GameScene::~GameScene() {}
 
 void GameScene::Init(){
-
+  
 	camera_.Init();
 	pointLight_.Init();
 	pointLight_.intensity_ = 0.0f;
@@ -266,7 +266,6 @@ void GameScene::DrawModel(){
 	for (const auto& bullet : enemyBullets_) {
 		bullet->Draw(camera_);
 	}*/
-  
 }
 
 void GameScene::DrawParticleModel(){
@@ -296,7 +295,7 @@ void GameScene::DebugGUI(){
 #ifdef _DEBUG
   
 	ImGui::Begin("window");
-
+  
 	int count = gameCount_ / 60;
 	ImGui::InputInt("gameTime", &count);
 
