@@ -1,5 +1,8 @@
 #pragma once
 #include <xaudio2.h>
+#include <mfapi.h>
+#include <mfidl.h>
+#include <mfreadwrite.h>
 #include <wrl.h>
 
 #include <fstream>
@@ -13,23 +16,6 @@ private:
 public:
 	static const size_t kMaxNumPlayHandles = 256;
 
-	//チャンクヘッダー
-	struct ChunkHeader {
-		char id[4]; //チャンク毎のID
-		uint32_t size; //チャンクファイル
-	};
-
-	//RIFFヘッダチャンク
-	struct RiffHeader {
-		ChunkHeader chunk; // "RIFF"
-		char type[4]; // "WAVE"
-	};
-
-	//FMTチャンク
-	struct FormatChunk {
-		ChunkHeader chunk; // "fmt"
-		WAVEFORMATEX fmt; //波形フォーマット
-	};
 	//音声データ
 	struct SoundData {
 		std::string filename;
@@ -43,7 +29,7 @@ public:
 public:
 	static Audio* GetInstance();
 
-	static size_t LoadWave(const std::string& filename);
+	static size_t Load(const std::string& filename);
 private:
 
 	size_t FindUnUsedPlayHandle();
@@ -56,12 +42,12 @@ public:
 	//音声データの解放
 	void SoundUnload(size_t soundHandle);
 	//音声再生
-	size_t SoundPlayWave(size_t soundHandle, float volume = 1.0f,bool loop = false);
+	size_t Play(size_t soundHandle, float volume = 1.0f,bool loop = false);
 
-	//size_t SoundPlayLoopStart(size_t soundHandle);
 	void SoundPlayLoopEnd(size_t playhandle);
 	//音声ロード
-	size_t LoadWaveInternal(const std::string& filename);
+
+	size_t LoadInternal(const std::string& filename);
 
 	void StopSound(size_t playhandle);
 	void SetPitch(size_t playHandle, float pitch);

@@ -26,6 +26,7 @@ public:
 
 	void Init();
 	void UpdateMatrix();
+	void Map();
 
 	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {
 		return cBuffer_->GetGPUVirtualAddress();
@@ -33,7 +34,7 @@ public:
 
 private:
 
-	void Map();
+	
 	void CreateCBuffer();
 
 private:

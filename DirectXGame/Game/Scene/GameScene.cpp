@@ -13,7 +13,7 @@
 GameScene::~GameScene() {}
 
 void GameScene::Init(){
-
+  
 	camera_.Init();
 	pointLight_.Init();
 	pointLight_.intensity_ = 0.0f;
@@ -27,15 +27,15 @@ void GameScene::Init(){
 
 	/// モデルの読み込み
 
-	std::shared_ptr<Model> skydomeModel = ModelManager::Load("skydome",false);
-	std::shared_ptr<Model> groundModel = ModelManager::Load("ground");
-	std::shared_ptr<Model> playerBodyModel = ModelManager::Load("float_Body");
-	std::shared_ptr<Model> playerHeadModel = ModelManager::Load("float_Head");
+	std::shared_ptr<Model> skydomeModel = ModelManager::LoadOBJ("skydome",false);
+	std::shared_ptr<Model> groundModel = ModelManager::LoadOBJ("ground");
+	std::shared_ptr<Model> playerBodyModel = ModelManager::LoadOBJ("float_Body");
+	std::shared_ptr<Model> playerHeadModel = ModelManager::LoadOBJ("float_Head");
 	//enemyBodyModel_ = ModelManager::Load("EnemyBody");
 	//enemyHeadModel_ = ModelManager::Load("EnemyHead");
 	//bulletModel_ = ModelManager::Load("EnemyBullet");
-	std::shared_ptr<Model> bossBodyModel = ModelManager::Load("BossBody");
-	std::shared_ptr<Model> bossHeadModel = ModelManager::Load("BossHead");
+	std::shared_ptr<Model> bossBodyModel = ModelManager::LoadOBJ("BossBody");
+	std::shared_ptr<Model> bossHeadModel = ModelManager::LoadOBJ("BossHead");
 
 	///
 
@@ -48,7 +48,6 @@ void GameScene::Init(){
 
 
 	///
-
 	///オブジェクト初期化
 	
 	//天球
@@ -116,6 +115,7 @@ void GameScene::Init(){
 
 
 	Update();
+
 }
 
 void GameScene::Update(){
@@ -282,7 +282,6 @@ void GameScene::DrawModel(){
 	for (const auto& bullet : enemyBullets_) {
 		bullet->Draw(camera_);
 	}*/
-  
 }
 
 void GameScene::DrawParticleModel(){
@@ -312,13 +311,12 @@ void GameScene::DebugGUI(){
 #ifdef _DEBUG
   
 	ImGui::Begin("window");
-
+  
 	int count = gameCount_ / 60;
 	ImGui::InputInt("gameTime", &count);
 
 	count = finishCount_ / 60;
 	ImGui::InputInt("ScenChangeCount", &count);
-
 	
 	ImGui::DragFloat2("XButton", &pos1.x, 1.0f);
 	
@@ -355,7 +353,6 @@ void GameScene::DebugGUI(){
 	}
 
 	ImGui::End();
-	
 
 #endif // _DEBUG
 }

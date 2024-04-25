@@ -9,7 +9,6 @@ class Skydome{
 private:
 
 	std::unique_ptr<Object3d> obj_;
-	WorldTransform worldTransform_;
 
 public:
 	//初期化

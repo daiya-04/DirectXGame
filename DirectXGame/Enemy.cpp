@@ -78,7 +78,7 @@ void Enemy::Update(){
 void Enemy::Draw(const Camera& camera){
 
 	for (size_t index = 0; index < partsWorldTransform_.size(); index++) {
-		obj_[index]->Draw(partsWorldTransform_[index], camera);
+		obj_[index]->Draw(camera);
 	}
 
 }

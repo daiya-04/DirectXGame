@@ -1,5 +1,8 @@
 #pragma once
 #include <d3d12.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 #include <wrl.h>
 #include <string>
 #include <vector>
@@ -28,7 +31,13 @@ public:
 		Matrix4x4 uvtransform_;
 		float shininess_;
 	};
-  
+
+	struct Node {
+		Matrix4x4 localMatrix_;
+		std::string name_;
+		std::vector<Node> children_;
+	};
+
 private:
 
 	//リソースの生成
@@ -53,6 +62,7 @@ public:
 public:
 
 	std::vector<VertexData> vertices_;
+	Node rootNode_;
 	//uv
 	int32_t uvHandle_ = 0;
 	//Lightingの有無
@@ -93,15 +103,21 @@ public:
 
 	static ModelManager* GetInstance();
 
-	static std::shared_ptr<Model> Load(const std::string& modelName,bool isLighting = true);
+	static std::shared_ptr<Model> LoadOBJ(const std::string& modelName, bool isLighting = true);
+
+	static std::shared_ptr<Model> LoadGLTF(const std::string& modelName, bool isLighting = true);
 
 private:
 
-	std::shared_ptr<Model> LoadInternal(const std::string& modelName, bool isLighting);
+	std::shared_ptr<Model> LoadInternal(const std::string& modelName, bool isLighting, const std::string& extension);
 
 	void LoadObjFile(const std::string& modelName);
 
+	void LoadGltfFile(const std::string& modelName);
+
 	void LoadMaterialTemplateFile(const std::string& fileName);
+
+	Model::Node ReadNode(aiNode* node);
 
 private:
 

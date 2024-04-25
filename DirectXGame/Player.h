@@ -90,7 +90,6 @@ private:
 
 	std::vector<std::unique_ptr<Object3d>> obj_;
 	WorldTransform worldTransform_;
-	std::array<WorldTransform, kPartsNum> partsWorldTransform_;
 	Vector3 size_ = { 1.0f,2.0f,1.0f };
 
 	uint32_t life = 5;

@@ -28,7 +28,7 @@ void EnemyBullet::Update(){
 
 void EnemyBullet::Draw(const Camera& camera){
 
-	obj_->Draw(worldTransform_, camera);
+	obj_->Draw(camera);
 
 }
 

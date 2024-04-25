@@ -2,24 +2,21 @@
 
 void Ground::Init(std::shared_ptr<Model> modelHandle){
 
-	worldTransform_.Init();
-
 	obj_ = std::make_unique<Object3d>();
 	obj_.reset(Object3d::Create(modelHandle));
 
-	worldTransform_.scale_ = { 100.0f,1.0f,100.0f };
+	obj_->worldTransform_.scale_ = { 100.0f,1.0f,100.0f };
 
-	worldTransform_.UpdateMatrix();
 }
 
 void Ground::Update(){
 
 
-	worldTransform_.UpdateMatrix();
+	obj_->Update();
 }
 
 void Ground::Draw(const Camera& camera){
 
-	obj_->Draw(worldTransform_, camera);
+	obj_->Draw(camera);
 
 }
