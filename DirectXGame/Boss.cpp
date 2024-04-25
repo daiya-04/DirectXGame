@@ -131,7 +131,7 @@ void Boss::AttackInit() {
 
 	for (size_t index = 0; index < 4; index++) {
 		ElementBall* newElementBall = new ElementBall();
-		std::shared_ptr<Model> model = ModelManager::Load("ElementBall");
+		std::shared_ptr<Model> model = ModelManager::LoadOBJ("ElementBall");
 		newElementBall->Init(model, worldTransform_.translation_ + offset[index]);
 		newElementBall->SetShotCount((uint32_t)index + 2);
 		gameScene_->AddElementBall(newElementBall);
