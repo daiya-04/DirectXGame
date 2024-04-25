@@ -50,6 +50,12 @@
     <Filter Include="Engine\Audio">
       <UniqueIdentifier>{951f94c5-20fb-491b-b20e-c5528d356ac4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\3d\Light">
+      <UniqueIdentifier>{190090c4-36c4-43e6-a3c0-0bf83446cbe6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Loader">
+      <UniqueIdentifier>{4adaf229-8558-45a3-b1b9-00efe9cfdacd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -101,9 +107,6 @@
     <ClCompile Include="Engine\Camera\Camera.cpp">
       <Filter>Engine\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\DirectionalLight.cpp">
-      <Filter>Engine\3d</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\DebugText\GlobalVariables.cpp">
       <Filter>Engine\DebugText</Filter>
     </ClCompile>
@@ -113,15 +116,23 @@
     <ClCompile Include="Engine\3d\WorldTransform.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\PointLight.cpp">
-      <Filter>Engine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\SpotLight.cpp">
-      <Filter>Engine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="Engine\2d\PostEffect.cpp">
       <Filter>Engine\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Animation.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Light\DirectionalLight.cpp">
+      <Filter>Engine\3d\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Light\PointLight.cpp">
+      <Filter>Engine\3d\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Light\SpotLight.cpp">
+      <Filter>Engine\3d\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Loader\LevelLoader.cpp">
+      <Filter>Engine\Loader</Filter>
     </ClCompile>
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="Ground.cpp" />
@@ -211,24 +222,29 @@
     <ClInclude Include="Engine\3d\Object3d.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\DirectionalLight.h">
-      <Filter>Engine\3d</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\DebugText\GlobalVariables.h">
       <Filter>Engine\DebugText</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Audio\Audio.h">
       <Filter>Engine\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\PointLight.h">
-      <Filter>Engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\SpotLight.h">
-      <Filter>Engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="Engine\2d\PostEffect.h">
       <Filter>Engine\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Animation.h">
+      <Filter>Engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Light\DirectionalLight.h">
+      <Filter>Engine\3d\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Light\PointLight.h">
+      <Filter>Engine\3d\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Light\SpotLight.h">
+      <Filter>Engine\3d\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Loader\LevelLoader.h">
+      <Filter>Engine\Loader</Filter>
     </ClInclude>
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="Ground.h" />

@@ -48,7 +48,6 @@ void GameScene::Init(){
 
 
 	///
-
 	///オブジェクト初期化
 	
 	//天球
@@ -301,7 +300,6 @@ void GameScene::DebugGUI(){
 
 	count = finishCount_ / 60;
 	ImGui::InputInt("ScenChangeCount", &count);
-
 	
 	ImGui::DragFloat2("XButton", &pos1.x, 1.0f);
 	
