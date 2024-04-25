@@ -3,6 +3,8 @@
 #include <numbers>
 #include "ModelManager.h"
 #include "Easing.h"
+#include "GameScene.h"
+#include "ModelManager.h"
 
 const WorldTransform* Boss::target_ = nullptr;
 
@@ -103,26 +105,45 @@ void Boss::FloatingGimmickUpdate() {
 
 void Boss::RootInit() {
 
+	workAttack_.param = 0;
 
 
 }
 
 void Boss::RootUpdate() {
 
+	if (++workAttack_.param > workAttack_.coolTime) {
+		behaviorRequest_ = Behavior::kAttack;
+	}
+	
 
 	FloatingGimmickUpdate();
-
 }
 
 void Boss::AttackInit() {
 
+	Vector3 offset[4] = {
+		{5.0f,-2.0f,3.0f},
+		{-5.0f,-2.0f,3.0f},
+		{5.0f,-2.0f,-3.0f},
+		{-5.0f,-2.0f,-3.0f},
+	};
+
+	for (size_t index = 0; index < 4; index++) {
+		ElementBall* newElementBall = new ElementBall();
+		std::shared_ptr<Model> model = ModelManager::Load("ElementBall");
+		newElementBall->Init(model, worldTransform_.translation_ + offset[index]);
+		newElementBall->SetShotCount((uint32_t)index + 2);
+		gameScene_->AddElementBall(newElementBall);
+	}
+	
 
 }
 
 void Boss::AttackUpdate() {
 
 
-
+	FloatingGimmickUpdate();
 }
 
 void Boss::AppearInit() {
@@ -143,5 +164,21 @@ void Boss::AppearUpdate() {
 	worldTransform_.translation_ = Lerp(T, workAppear_.startPos, workAppear_.endPos);
 
 	workAppear_.param += 0.005f;
+
+}
+
+void Boss::ChangeBehavior(Behavior behavior) {
+
+	switch (behavior) {
+		case Behavior::kAppear:
+			behaviorRequest_ = Behavior::kAppear;
+			break;
+		case Behavior::kAttack:
+			behaviorRequest_ = Behavior::kAttack;
+			break;
+		case Behavior::kRoot:
+			behaviorRequest_ = Behavior::kRoot;
+			break;
+	}
 
 }
