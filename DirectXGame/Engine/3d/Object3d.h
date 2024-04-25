@@ -13,6 +13,7 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "ModelManager.h"
+#include "Animation.h"
 
 class Object3d{
 private:
@@ -53,7 +54,7 @@ public: //静的メンバ関数
 	//静的初期化
 	static void StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 	//モデルの生成
-	static Object3d* Create(std::shared_ptr<Model> model);
+	static Object3d* Create(std::shared_ptr<Model> model,bool isAnimation = false);
 	//描画前処理
 	static void preDraw();
 	//描画後処理
@@ -77,13 +78,20 @@ private:
 private: //メンバ変数
 
 	std::shared_ptr<Model> model_;
+	WorldTransform worldTransform_;
+	bool isAnimation_ = false;
+	Animation animation_;
 
 public: //メンバ関数
 
 	//初期化
-	void Initialize(std::shared_ptr<Model> model);
+	void Initialize(std::shared_ptr<Model> model,bool isAnimation);
+	//更新
+	void Update();
 	//描画
-	void Draw(const WorldTransform& worldTransform,const Camera& camera);
+	void Draw(const Camera& camera);
+
+	void SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
 	
 	void SetModelHandle(std::shared_ptr<Model> model) { model_ = model; }
 
