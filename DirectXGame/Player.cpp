@@ -20,8 +20,6 @@ void Player::Init(std::vector<std::shared_ptr<Model>> modelHandles){
 	uint32_t particleTex2 = TextureManager::Load("star.png");
 
 	worldTransform_.Init();
-	partsWorldTransform_[Body].Init();
-	partsWorldTransform_[Head].Init();
 
 	obj_.resize(modelHandles.size());
 	for (size_t index = 0; index < obj_.size(); ++index) {
@@ -37,10 +35,10 @@ void Player::Init(std::vector<std::shared_ptr<Model>> modelHandles){
 	behaviorRequest_ = Behavior::kRoot;
 
 	worldTransform_.scale_ = { 0.5f,0.5f,0.5f };
-	partsWorldTransform_[Head].translation_ = { 0.0f,6.5f,0.0f };	
+	obj_[Head]->worldTransform_.translation_ = { 0.0f,6.5f,0.0f };
 
-	partsWorldTransform_[Body].parent_ = &worldTransform_;
-	partsWorldTransform_[Head].parent_ = &partsWorldTransform_[Body];
+	obj_[Body]->worldTransform_.parent_ = &worldTransform_;
+	obj_[Head]->worldTransform_.parent_ = &obj_[Body]->worldTransform_;
 
 	FloatingGimmickInit();
 
@@ -50,8 +48,8 @@ void Player::Init(std::vector<std::shared_ptr<Model>> modelHandles){
 	Matrix4x4 T = MakeTranslateMatrix(worldTransform_.translation_);
 	worldTransform_.matWorld_ = S * rotateMat_ * T;
 	//worldTransform_.UpdateMatrix();
-	for (size_t index = 0; index < partsWorldTransform_.size(); index++) {
-		partsWorldTransform_[index].UpdateMatrix();
+	for (const auto& obj : obj_) {
+		obj->Update();
 	}
 }
 
@@ -95,15 +93,15 @@ void Player::Update(){
 	Matrix4x4 T = MakeTranslateMatrix(worldTransform_.translation_);
 	worldTransform_.matWorld_ = S * rotateMat_ * T;
 	//worldTransform_.UpdateMatrix();
-	for (size_t index = 0; index < partsWorldTransform_.size(); index++) {
-		partsWorldTransform_[index].UpdateMatrix();
+	for (const auto& obj : obj_) {
+		obj->Update();
 	}
 }
 
 void Player::Draw(const Camera& camera){
 
-	obj_[Body]->Draw(partsWorldTransform_[Body], camera);
-	obj_[Head]->Draw(partsWorldTransform_[Head], camera);
+	obj_[Body]->Draw(camera);
+	obj_[Head]->Draw(camera);
 
 }
 
@@ -474,7 +472,7 @@ void Player::FloatingGimmickUpdate() {
 
 	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * (float)std::numbers::pi);
 
-	partsWorldTransform_[Body].translation_.y = std::sinf(floatingParameter_) * amplitude;
+	obj_[Body]->worldTransform_.translation_.y = std::sinf(floatingParameter_) * amplitude;
 
 }
 

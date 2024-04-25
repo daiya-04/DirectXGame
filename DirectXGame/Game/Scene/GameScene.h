@@ -20,6 +20,7 @@
 #include "EnemyBullet.h"
 #include "Boss.h"
 #include "FollowCamera.h"
+#include "ElementBall.h"
 
 
 class GameScene : public IScene {
@@ -49,6 +50,8 @@ public:
 	
 	//void AddEnemyBullet(EnemyBullet* enemyBullet);
 
+	void AddElementBall(ElementBall* elementBall);
+
 	void AddParticle(Particle::ParticleData particle);
 
 private:
@@ -67,6 +70,8 @@ private: //オブジェクト
 	/*std::list<std::unique_ptr<Enemy>> enemies_;
 	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;*/
 	std::unique_ptr<Boss> boss_;
+
+	std::list<std::unique_ptr<ElementBall>> elementBalls_;
 
 	std::unique_ptr<FollowCamera> followCamera_;
 

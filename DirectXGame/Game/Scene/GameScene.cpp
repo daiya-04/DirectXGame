@@ -48,7 +48,6 @@ void GameScene::Init(){
 
 
 	///
-
 	///オブジェクト初期化
 	
 	//天球
@@ -66,6 +65,7 @@ void GameScene::Init(){
 	//ボス
 	boss_ = std::make_unique<Boss>();
 	boss_->Init({ bossBodyModel,bossHeadModel });
+	boss_->SetGameScene(this);
 
 	//敵
 	/*uint32_t enemyNum = 3;
@@ -90,6 +90,8 @@ void GameScene::Init(){
 	}
 
 	Enemy::SetTarget(&player_->GetWorldTransform());*/
+
+	ElementBall::SetTarget(&player_->GetWorldTransform());
 
 	//追従カメラ
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -147,7 +149,6 @@ void GameScene::Update(){
 
 #endif // _DEBUG
 
-
 	/*if (gameCount_ >= 20) {
 		if (--spawnCount_ <= 0) {
 			spawnCount_ = spawnCoolTime_;
@@ -159,6 +160,16 @@ void GameScene::Update(){
 		}
 	}*/
 	
+	elementBalls_.remove_if([](const std::unique_ptr<ElementBall>& elementBall) {
+		if (elementBall->IsLife()) {
+			return true;
+		}
+		return false;
+	});
+
+	if (boss_->IsAttack() && elementBalls_.empty()) {
+		boss_->ChangeBehavior(Boss::Behavior::kRoot);
+	}
 
 	skydome_->Update();
 	ground_->Update();
@@ -167,7 +178,9 @@ void GameScene::Update(){
 	}*/
 	player_->Update();
 	boss_->Update();
-	
+	for (const auto& elementBall : elementBalls_) {
+		elementBall->Update();
+	}
 	/*for (const auto& bullet : enemyBullets_) {
 		bullet->Update();
 	}*/
@@ -260,6 +273,9 @@ void GameScene::DrawModel(){
 	ground_->Draw(camera_);
 	player_->Draw(camera_);
 	boss_->Draw(camera_);
+	for (const auto& elementBall : elementBalls_) {
+		elementBall->Draw(camera_);
+	}
 	/*for (const auto& enemy : enemies_) {
 		enemy->Draw(camera_);
 	}
@@ -301,7 +317,6 @@ void GameScene::DebugGUI(){
 
 	count = finishCount_ / 60;
 	ImGui::InputInt("ScenChangeCount", &count);
-
 	
 	ImGui::DragFloat2("XButton", &pos1.x, 1.0f);
 	
@@ -357,6 +372,10 @@ void GameScene::DebugGUI(){
 //void GameScene::AddEnemyBullet(EnemyBullet* enemyBullet) {
 //	enemyBullets_.push_back(std::unique_ptr<EnemyBullet>(enemyBullet));
 //}
+
+void GameScene::AddElementBall(ElementBall* elementBall) {
+	elementBalls_.push_back(std::unique_ptr<ElementBall>(elementBall));
+}
 
 void GameScene::AddParticle(Particle::ParticleData particle) {
 	particles_.push_back(particle);
