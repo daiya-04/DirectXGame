@@ -78,9 +78,12 @@ private:
 private: //メンバ変数
 
 	std::shared_ptr<Model> model_;
-	WorldTransform worldTransform_;
 	bool isAnimation_ = false;
 	Animation animation_;
+
+public:
+
+	WorldTransform worldTransform_;
 
 public: //メンバ関数
 

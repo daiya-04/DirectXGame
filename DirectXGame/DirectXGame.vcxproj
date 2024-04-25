@@ -112,7 +112,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Animation.cpp" />
     <ClCompile Include="Engine\3d\Light\PointLight.cpp" />
     <ClCompile Include="Boss.cpp" />
-    <ClCompile Include="Engine\3d\PointLight.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyBullet.cpp" />
@@ -128,7 +127,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Collision\Hit.cpp" />
     <ClCompile Include="Engine\DebugText\GlobalVariables.cpp" />
     <ClCompile Include="Engine\Loader\LevelLoader.cpp" />
-    <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\3d\ModelManager.cpp" />
@@ -186,8 +184,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DebugText\GlobalVariables.h" />
     <ClInclude Include="Engine\3d\Light\SpotLight.h" />
     <ClInclude Include="Engine\Loader\LevelLoader.h" />
-    <ClInclude Include="Engine\3d\SpotLight.h" />
-    <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Skydome.h" />

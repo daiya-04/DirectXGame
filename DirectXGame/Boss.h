@@ -49,7 +49,6 @@ private:
 
 	std::vector<std::unique_ptr<Object3d>> obj_;
 	WorldTransform worldTransform_;
-	std::array<WorldTransform, partsNum> partsWorldTransform_;
 	bool isDead_ = false;
 
 	Vector3 size_ = {};

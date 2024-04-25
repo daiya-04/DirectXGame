@@ -97,13 +97,5 @@ private: //オブジェクト
 	Vector2 pos1 = {};
 	Vector2 pos2 = {};
 
-	Camera camera_;
-
-	PointLight pointLight_;
-	SpotLight spotLight_;
-
-	std::unique_ptr<Object3d> cube_;
-	std::shared_ptr<Model> cubeModel_;
-
 };
 
