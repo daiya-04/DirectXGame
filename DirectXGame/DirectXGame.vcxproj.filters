@@ -134,6 +134,17 @@
     <ClCompile Include="Engine\Loader\LevelLoader.cpp">
       <Filter>Engine\Loader</Filter>
     </ClCompile>
+    <ClCompile Include="Skydome.cpp" />
+    <ClCompile Include="Ground.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="FollowCamera.cpp" />
+    <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyBullet.cpp" />
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Boss.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -235,5 +246,16 @@
     <ClInclude Include="Engine\Loader\LevelLoader.h">
       <Filter>Engine\Loader</Filter>
     </ClInclude>
+    <ClInclude Include="Skydome.h" />
+    <ClInclude Include="Ground.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="FollowCamera.h" />
+    <ClInclude Include="Easing.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyBullet.h" />
+    <ClInclude Include="TitleScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Boss.h" />
   </ItemGroup>
 </Project>

@@ -12,9 +12,9 @@ void MyGame::Init(){
 
 	DSFramework::Init();
 
-	SceneManager::GetInstance()->ChangeScene("Game");
-
 	TextureManager::Load("white.png");
+
+	SceneManager::GetInstance()->ChangeScene("Title");
 
 	/*postEffect_ = std::make_unique<PostEffect>();
 	postEffect_->Init();*/

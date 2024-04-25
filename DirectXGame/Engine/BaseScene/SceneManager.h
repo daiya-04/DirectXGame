@@ -3,6 +3,7 @@
 #include "IScene.h"
 #include "AbstractSceneFactory.h"
 #include "PostEffect.h"
+#include "Sprite.h"
 #include <memory>
 
 class SceneManager final {
@@ -14,6 +15,10 @@ private:
 	std::unique_ptr<IScene> nextScene_;
 
 	std::unique_ptr<PostEffect> postEffect_;
+
+	uint32_t fadeTex_ = 0;
+	std::unique_ptr<Sprite> fade_;
+	float alpha_ = 0.0f;
 
 public:
 
