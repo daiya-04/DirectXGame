@@ -8,7 +8,7 @@ Animation Animation::LoadAnimationFile(const std::string& filename) {
 
 	Animation animation;
 	Assimp::Importer importer;
-	std::string directoryPath = "Resources/model/";
+	std::string directoryPath = "Resources/model/" + filename + "/";
 	std::string filePath = directoryPath + filename + ".gltf";
 	const aiScene* scene = importer.ReadFile(filePath.c_str(), 0);
 	assert(scene->mNumAnimations != 0);
@@ -47,4 +47,49 @@ Animation Animation::LoadAnimationFile(const std::string& filename) {
 	}
 
 	return animation;
+}
+
+void Animation::Play(const Model::Node& rootNode) {
+
+	animationTime_ += 1.0f / 60.0f;
+	animationTime_ = std::fmod(animationTime_, duration_);
+	NodeAnimation& rootNodeAnimation = nodeAnimations_[rootNode.name_];
+	Vector3 translate = CalcValue(rootNodeAnimation.translate_.Keyframes_, animationTime_);
+	Quaternion rotate = CalcValue(rootNodeAnimation.rotate_.Keyframes_, animationTime_);
+	Vector3 scale = CalcValue(rootNodeAnimation.scale_.Keyframes_, animationTime_);
+
+	localMatrix_ = MakeTranslateMatrix(translate) * rotate.MakeRotateMatrix() * MakeScaleMatrix(scale);
+}
+
+Vector3 Animation::CalcValue(const std::vector<KeyframeVector3>& keyframe, float time) {
+	assert(!keyframe.empty()); //キーが入っているか
+	if (keyframe.size() == 1 || time <= keyframe[0].time_) {
+		return keyframe[0].value_;
+	}
+
+	for (size_t index = 0; index < keyframe.size() - 1; ++index) {
+		size_t nextIndex = index + 1;
+		if (keyframe[index].time_ <= time && time <= keyframe[nextIndex].time_) {
+			float t = (time - keyframe[index].time_) / (keyframe[nextIndex].time_ - keyframe[index].time_);
+			return Lerp(t, keyframe[index].value_, keyframe[nextIndex].value_);
+		}
+	}
+
+	return (*keyframe.begin()).value_;
+}
+
+Quaternion Animation::CalcValue(const std::vector<KeyframeQuaternion>& keyframe, float time) {
+	assert(!keyframe.empty()); //キーが入っているか
+	if (keyframe.size() == 1 || time <= keyframe[0].time_) {
+		return keyframe[0].value_;
+	}
+	for (size_t index = 0; index < keyframe.size() - 1; ++index) {
+		size_t nextIndex = index + 1;
+		if (keyframe[index].time_ <= time && time <= keyframe[nextIndex].time_) {
+			float t = (time - keyframe[index].time_) / (keyframe[nextIndex].time_ - keyframe[index].time_);
+			return Slerp(keyframe[index].value_, keyframe[nextIndex].value_, t);
+		}
+	}
+
+	return (*keyframe.begin()).value_;
 }
