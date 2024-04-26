@@ -6,7 +6,8 @@ const WorldTransform* ElementBall::target_ = nullptr;
 
 void ElementBall::Init(std::shared_ptr<Model> model, const Vector3& startPos) {
 
-	obj_.reset(Object3d::Create(model));
+	obj_.reset(Object3d::Create(model,true));
+	obj_->worldTransform_.scale_ = { 1.2f,1.2f,1.2f };
 
 	phaseRequest_ = Phase::kSet;
 
@@ -59,24 +60,31 @@ void ElementBall::Draw(const Camera& camera) {
 
 void ElementBall::SetInit() {
 
-	Vector3 offset = {0.0f,17.0f,0.0f};
+	/*Vector3 offset = {0.0f,17.0f,0.0f};
 	workSet_.end = workSet_.start + offset;
 	obj_->worldTransform_.translation_ = workSet_.start;
-	workSet_.param = 0.0f;
+	workSet_.param = 0.0f;*/
+
+	obj_->worldTransform_.translation_ = workSet_.start;
+	obj_->AnimationOn();
 
 }
 
 void ElementBall::SetUpdate() {
 
-	float T = Easing::easeInOutQuint(workSet_.param);
+	//float T = Easing::easeInOutQuint(workSet_.param);
 
-	obj_->worldTransform_.translation_ = Lerp(T, workSet_.start, workSet_.end);
+	//obj_->worldTransform_.translation_ = Lerp(T, workSet_.start, workSet_.end);
 
-	workSet_.param += 0.005f;
-	
-	if (workSet_.param >= 1.0f) {
+	//workSet_.param += 0.005f;
+	//
+	//if (workSet_.param >= 1.0f) {
+	//	phaseRequest_ = Phase::kCharge;
+	//	//workSet_.param = 1.0f;
+	//}
+
+	if (obj_->GetAnimation().GetAnimationEnd()) {
 		phaseRequest_ = Phase::kCharge;
-		//workSet_.param = 1.0f;
 	}
 
 }
@@ -84,6 +92,11 @@ void ElementBall::SetUpdate() {
 void ElementBall::ChargeInit() {
 
 	workCharge_.param = 0;
+	obj_->AnimationOff();
+
+	obj_->worldTransform_.translation_.x = obj_->worldTransform_.matWorld_.m[3][0];
+	obj_->worldTransform_.translation_.y = obj_->worldTransform_.matWorld_.m[3][1];
+	obj_->worldTransform_.translation_.z = obj_->worldTransform_.matWorld_.m[3][2];
 
 }
 
@@ -99,6 +112,7 @@ void ElementBall::ShotInit() {
 
 	workShot_.move = {};
 	workShot_.isTrack = true;
+	obj_->AnimationOff();
 
 }
 

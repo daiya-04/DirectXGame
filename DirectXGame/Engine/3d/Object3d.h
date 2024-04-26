@@ -100,6 +100,11 @@ public: //メンバ関数
 
 	void SetColor(const Vector4& color) { model_->SetColor(color); }
 
+	void AnimationOn() { isAnimation_ = true; }
+	void AnimationOff() { isAnimation_ = false; }
+
+	Animation GetAnimation() const { return animation_; }
+
 private:
 	
 

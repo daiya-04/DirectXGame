@@ -52,7 +52,14 @@ Animation Animation::LoadAnimationFile(const std::string& filename) {
 void Animation::Play(const Model::Node& rootNode) {
 
 	animationTime_ += 1.0f / 60.0f;
-	animationTime_ = std::fmod(animationTime_, duration_);
+	if (animationTime_ >= duration_){ 
+		end_ = true;
+		animationTime_ = duration_;
+	}else {
+		end_ = false;
+		animationTime_ = std::fmod(animationTime_, duration_);
+	}
+	
 	NodeAnimation& rootNodeAnimation = nodeAnimations_[rootNode.name_];
 	Vector3 translate = CalcValue(rootNodeAnimation.translate_.Keyframes_, animationTime_);
 	Quaternion rotate = CalcValue(rootNodeAnimation.rotate_.Keyframes_, animationTime_);
