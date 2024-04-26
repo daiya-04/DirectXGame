@@ -313,7 +313,7 @@ void Object3d::Initialize(std::shared_ptr<Model> model, bool isAnimation) {
 void Object3d::Update() {
 
 	worldTransform_.UpdateMatrix();
-	worldTransform_.matWorld_ = model_->rootNode_.localMatrix_ * worldTransform_.matWorld_;
+	//worldTransform_.matWorld_ = model_->rootNode_.localMatrix_ * worldTransform_.matWorld_;
 
 	if (isAnimation_) {
 		animation_.Play(model_->rootNode_);

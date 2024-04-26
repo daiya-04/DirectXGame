@@ -48,7 +48,7 @@ public:
 	};
 
 	struct WorkAttack {
-		uint32_t coolTime = 60 * 5;
+		uint32_t coolTime = 60 * 1;
 		uint32_t param = 0;
 	};
 

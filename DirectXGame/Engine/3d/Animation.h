@@ -40,6 +40,10 @@ public:
 
 	Matrix4x4 GetLocalMatrix() const { return localMatrix_; }
 
+	float GetDuration() const { return duration_; }
+	float GetAnimationTime() const { return animationTime_; }
+	float GetAnimationEnd() const { return end_; }
+
 private:
 
 	Vector3 CalcValue(const std::vector<KeyframeVector3>& keyframe, float time);
@@ -49,6 +53,8 @@ private:
 
 	float duration_ = 0.0f;
 	float animationTime_ = 0.0f;
+
+	bool end_ = false;
 
 	std::map<std::string, NodeAnimation> nodeAnimations_;
 

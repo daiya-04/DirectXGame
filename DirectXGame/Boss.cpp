@@ -123,15 +123,15 @@ void Boss::RootUpdate() {
 void Boss::AttackInit() {
 
 	Vector3 offset[4] = {
-		{5.0f,-2.0f,3.0f},
-		{-5.0f,-2.0f,3.0f},
-		{5.0f,-2.0f,-3.0f},
-		{-5.0f,-2.0f,-3.0f},
+		{5.0f,0.0f,3.0f},
+		{-5.0f,0.0f,3.0f},
+		{5.0f,0.0f,-3.0f},
+		{-5.0f,0.0f,-3.0f},
 	};
 
 	for (size_t index = 0; index < 4; index++) {
 		ElementBall* newElementBall = new ElementBall();
-		std::shared_ptr<Model> model = ModelManager::LoadOBJ("ElementBall");
+		std::shared_ptr<Model> model = ModelManager::LoadGLTF("ElementBall");
 		newElementBall->Init(model, worldTransform_.translation_ + offset[index]);
 		newElementBall->SetShotCount((uint32_t)index + 2);
 		gameScene_->AddElementBall(newElementBall);

@@ -293,3 +293,17 @@ public:
 
 		return result;
 	}
+
+	inline Vector3 MakeScale(const Matrix4x4& matrix) {
+
+		Vector3 scaleX = { matrix.m[0][0],matrix.m[0][1] ,matrix.m[0][2] };
+		Vector3 scaleY = { matrix.m[1][0],matrix.m[1][1] ,matrix.m[1][2] };
+		Vector3 scaleZ = { matrix.m[2][0],matrix.m[2][1] ,matrix.m[2][2] };
+		Vector3 result;
+
+		result.x = scaleX.Length();
+		result.y = scaleY.Length();
+		result.z = scaleZ.Length();
+
+		return result;
+	}
