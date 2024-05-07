@@ -147,6 +147,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Collision\CollisionShapes.h" />
     <ClInclude Include="Engine\3d\Animation.h" />
     <ClInclude Include="Game\Charactor\Boss.h" />
     <ClInclude Include="Engine\Easing\Easing.h" />

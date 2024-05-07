@@ -17,11 +17,13 @@ using namespace Microsoft::WRL;
 //const float PostEffect::clearColor_[4] = { 0.1f,0.25f,0.5f,0.0f };
 const float PostEffect::clearColor_[4] = { 0.0f,0.0f,0.0f,0.0f };
 
-PostEffect::PostEffect() {
+PostEffect* PostEffect::GetInstance() {
+	static PostEffect instance;
 
+	return &instance;
 }
 
-void PostEffect::Init() {
+PostEffect::PostEffect() {
 	HRESULT hr;
 
 	CreateGraphicsPipelineState();
@@ -74,7 +76,7 @@ void PostEffect::Init() {
 	hr = texBuff_->WriteToSubresource(0, nullptr, img, rowPitch, depthPitch);
 	assert(SUCCEEDED(hr));
 	delete[] img;
-	
+
 	textureSrvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), DirectXCommon::GetInstance()->GetSrvHeapCount());
 	textureSrvHandleGPU_ = GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), DirectXCommon::GetInstance()->GetSrvHeapCount());
 
@@ -138,6 +140,9 @@ void PostEffect::Init() {
 
 	//DSVHeapの先頭にDSVを作る
 	DirectXCommon::GetInstance()->GetDevice()->CreateDepthStencilView(depthBuff_.Get(), &dsvDesc, dsvHandleCPU_);
+}
+
+void PostEffect::Init() {
 
 	//頂点バッファ生成
 	vertexBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(VertexData) * 4);
@@ -167,6 +172,11 @@ void PostEffect::Init() {
 	materialBuff_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	materialData_->color_ = Vector4({ 1.0f,1.0f,1.0f,1.0f });
 
+	grayScaleBuffer_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(GrayScale));
+	grayScaleBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&grayScaleData_));
+	grayScaleData_->isGrayScale_ = false;
+	grayScaleData_->param_ = 0.0f;
+
 }
 
 void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList) {
@@ -175,6 +185,11 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList) {
 	Matrix4x4 wvpMatrix = worldMatrix * viewMatrix * projectionMatrix_;
 	Matrix4x4* wvpData = nullptr;
 	*wvpData_ = wvpMatrix;*/
+
+	if (grayScaleData_->isGrayScale_) {
+		grayScaleData_->param_ += 0.01f;
+		grayScaleData_->param_ = min(grayScaleData_->param_, 1.0f);
+	}
 
 	cmdList->SetGraphicsRootSignature(rootSignature_.Get());
 
@@ -188,6 +203,7 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList) {
 	cmdList->SetGraphicsRootConstantBufferView(0, materialBuff_->GetGPUVirtualAddress());
 	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(cmdList, 2, textureHandle_);
 	cmdList->SetGraphicsRootDescriptorTable(1, textureSrvHandleGPU_);
+	cmdList->SetGraphicsRootConstantBufferView(2, grayScaleBuffer_->GetGPUVirtualAddress());
 
 	cmdList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
@@ -242,8 +258,6 @@ void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList) {
 	//描画用のDescriptorHeapの設定
 	ID3D12DescriptorHeap* descriptorHeaps[] = { DirectXCommon::GetInstance()->GetSrvHeap() };
 	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
-	
 
 }
 
@@ -335,7 +349,7 @@ void PostEffect::CreateGraphicsPipelineState() {
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[2] = {};
+	D3D12_ROOT_PARAMETER rootParameters[3] = {};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;   //PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0;   //レジスタ番号0とバインド
@@ -344,6 +358,10 @@ void PostEffect::CreateGraphicsPipelineState() {
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
 	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRange; //Tableの中身の配列を指定
 	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); //Tableで利用する数
+
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;   //PixelShaderで使う
+	rootParameters[2].Descriptor.ShaderRegister = 1;   //レジスタ番号1とバインド
 
 	//rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
 	//rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う

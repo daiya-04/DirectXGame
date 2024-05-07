@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Object3d.h"
 #include "Vec3.h"
+#include "CollisionShapes.h"
 #include <memory>
 #include <vector>
 #include <array>
@@ -48,7 +49,7 @@ public:
 	};
 
 	struct WorkAttack {
-		uint32_t coolTime = 60 * 1;
+		uint32_t coolTime = 60 * 3;
 		uint32_t param = 0;
 	};
 
@@ -58,7 +59,9 @@ private:
 	WorldTransform worldTransform_;
 	bool isDead_ = false;
 
-	Vector3 size_ = {};
+	Vector3 size_ = { 2.0f,4.0f,2.0f };
+
+	AABB collider_{};
 
 	static const WorldTransform* target_;
 	GameScene* gameScene_ = nullptr;
@@ -84,6 +87,11 @@ public:
 	void Init(const std::vector<std::shared_ptr<Model>>& modelHandle);
 
 	void Update();
+	
+	void ColliderUpdate() {
+		collider_.max = GetWorldPos() + size_;
+		collider_.min = GetWorldPos() - size_;
+	}
 
 	void Draw(const Camera& camera);
 
@@ -97,6 +105,8 @@ public:
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	void ChangeBehavior(Behavior behavior);
 	bool IsAttack() const { return (behavior_ == Behavior::kAttack) ? true : false; }
+	Vector3 GetWorldPos() const;
+	AABB GetCollider(){ return collider_; }
 
 };
 

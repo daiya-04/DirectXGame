@@ -71,6 +71,8 @@ void Boss::Update() {
 	for (const auto& obj : obj_) {
 		obj->Update();
 	}
+
+	ColliderUpdate();
 }
 
 void Boss::Draw(const Camera& camera) {
@@ -181,4 +183,14 @@ void Boss::ChangeBehavior(Behavior behavior) {
 			break;
 	}
 
+}
+
+Vector3 Boss::GetWorldPos() const {
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1] + size_.y;
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
 }

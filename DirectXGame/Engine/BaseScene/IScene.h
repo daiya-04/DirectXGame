@@ -13,6 +13,7 @@ public:
 	virtual void DrawUI() = 0;
 	virtual void DrawParticle() = 0;
 	virtual void DrawParticleModel() = 0;
+	virtual void DrawPostEffect() = 0;
 
 	virtual void DebugGUI() = 0;
 
