@@ -56,6 +56,12 @@
     <Filter Include="Engine\Loader">
       <UniqueIdentifier>{4adaf229-8558-45a3-b1b9-00efe9cfdacd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Easing">
+      <UniqueIdentifier>{4bd20e2c-9833-48f9-b7e3-ec84d2465f35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor">
+      <UniqueIdentifier>{f0ddd313-3b86-42d0-a5c8-921747744e38}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -136,16 +142,24 @@
     </ClCompile>
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="Ground.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="FollowCamera.cpp" />
-    <ClCompile Include="Easing.cpp" />
-    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyBullet.cpp" />
-    <ClCompile Include="TitleScene.cpp">
+    <ClCompile Include="Game\Scene\TitleScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Boss.cpp" />
     <ClCompile Include="ElementBall.cpp" />
+    <ClCompile Include="Engine\Easing\Easing.cpp">
+      <Filter>Engine\Easing</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss.cpp">
+      <Filter>Game\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Enemy.cpp">
+      <Filter>Game\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Player.cpp">
+      <Filter>Game\Charactor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -249,15 +263,26 @@
     </ClInclude>
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="Ground.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="FollowCamera.h" />
-    <ClInclude Include="Easing.h" />
-    <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyBullet.h" />
-    <ClInclude Include="TitleScene.h">
+    <ClInclude Include="Game\Scene\TitleScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Boss.h" />
     <ClInclude Include="ElementBall.h" />
+    <ClInclude Include="Engine\Easing\Easing.h">
+      <Filter>Engine\Easing</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss.h">
+      <Filter>Game\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Enemy.h">
+      <Filter>Game\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Player.h">
+      <Filter>Game\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collision\CollisionShapes.h">
+      <Filter>Engine\Collision</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

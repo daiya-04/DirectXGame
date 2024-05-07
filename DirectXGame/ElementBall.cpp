@@ -50,12 +50,18 @@ void ElementBall::Update() {
 
 	//行列更新
 	obj_->Update();
+
+	ColliderUpdate();
 }
 
 void ElementBall::Draw(const Camera& camera) {
 
 	obj_->Draw(camera);
 
+}
+
+void ElementBall::OnCollision() {
+	isLife_ = true;
 }
 
 void ElementBall::SetInit() {

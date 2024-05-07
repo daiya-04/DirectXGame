@@ -42,6 +42,7 @@ void Player::Init(std::vector<std::shared_ptr<Model>> modelHandles){
 
 	FloatingGimmickInit();
 
+	ColliderUpdate();
 
 	//行列更新
 	Matrix4x4 S = MakeScaleMatrix(worldTransform_.scale_);
@@ -86,7 +87,6 @@ void Player::Update(){
 		break;
 	}
 
-	
 
 	//行列更新
 	Matrix4x4 S = MakeScaleMatrix(worldTransform_.scale_);
@@ -96,6 +96,26 @@ void Player::Update(){
 	for (const auto& obj : obj_) {
 		obj->Update();
 	}
+
+	ColliderUpdate();
+	AttackColliderUpdate();
+}
+
+void Player::AttackColliderUpdate() {
+
+	AttackCollider_.center = GetAttackPos();
+	switch (workAttack_.comboIndex_) {
+		case 0:
+			AttackCollider_.radius = 2.0f;
+			break;
+		case 1:
+			AttackCollider_.radius = 5.0f;
+			break;
+		case 2:
+			AttackCollider_.radius = 12.0f;
+			break;
+	}
+
 }
 
 void Player::Draw(const Camera& camera){
@@ -113,7 +133,7 @@ void Player::DrawParticle(const Camera& camera) {
 }
 
 void Player::OnCollision() {
-	life--;
+	life_--;
 }
 
 void Player::RootInit() {

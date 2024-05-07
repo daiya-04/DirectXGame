@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Object3d.h"
 #include "Vec3.h"
+#include "CollisionShapes.h"
 #include <memory>
 #include <optional>
 
@@ -54,6 +55,8 @@ private:
 	std::unique_ptr<Object3d> obj_;
 	Vector3 size_ = { 2.0f,2.0f,2.0f };
 
+	Sphere collider_{};
+
 	bool isLife_ = false;
 
 	WorkSet workSet_;
@@ -65,14 +68,22 @@ public:
 	void Init(std::shared_ptr<Model> model,const Vector3& startPos);
 
 	void Update();
+	void ColliderUpdate() {
+		collider_.center = obj_->GetWorldPos();
+		collider_.radius = size_.x;
+	}
 
 	void Draw(const Camera& camera);
+
+	void OnCollision();
 
 	static void SetTarget(const WorldTransform* target) { target_ = target; }
 
 	void SetShotCount(uint32_t seconds) { workCharge_.coolTime = 60 * seconds; }
 
 	bool IsLife() const { return isLife_; }
+
+	Sphere GetCollider() const { return collider_; }
 
 };
 

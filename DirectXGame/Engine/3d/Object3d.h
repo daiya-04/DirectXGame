@@ -104,6 +104,7 @@ public: //メンバ関数
 	void AnimationOff() { isAnimation_ = false; }
 
 	Animation GetAnimation() const { return animation_; }
+	Vector3 GetWorldPos() const;
 
 private:
 	

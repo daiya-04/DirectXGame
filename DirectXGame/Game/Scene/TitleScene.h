@@ -25,6 +25,8 @@ public:
 
 	void DrawUI()override;
 
+	void DrawPostEffect()override;
+
 	void DebugGUI()override;
 
 	~TitleScene()override;

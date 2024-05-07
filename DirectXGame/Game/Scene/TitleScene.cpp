@@ -78,6 +78,12 @@ void TitleScene::DrawUI(){
 
 }
 
+void TitleScene::DrawPostEffect() {
+
+
+
+}
+
 void TitleScene::DebugGUI(){
 #ifdef _DEBUG
 

@@ -17,9 +17,6 @@ void SceneManager::Init() {
 
 	sceneFactory_ = std::make_unique<SceneFactory>();
 
-	postEffect_ = std::make_unique<PostEffect>();
-	postEffect_->Init();
-
 	fadeTex_ = TextureManager::Load("Black.png");
 
 	fade_.reset(Sprite::Create(fadeTex_, { 640.0f,360.0f }));
@@ -68,9 +65,7 @@ void SceneManager::Update(){
 
 void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
-	postEffect_->PreDrawScene(commandList);
-
-	postEffect_->PostDrawScene(commandList);
+	scene_->DrawPostEffect();
 
 	DirectXCommon::GetInstance()->preDraw();
 
@@ -96,8 +91,6 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 	scene_->DrawParticle();
 
 	Particle::postDraw();
-
-	postEffect_->Draw(commandList);
 
 	///UI
 	Sprite::preDraw(commandList);

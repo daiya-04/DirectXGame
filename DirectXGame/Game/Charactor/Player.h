@@ -4,6 +4,7 @@
 #include "Object3d.h"
 #include "Vec3.h"
 #include "Matrix44.h"
+#include "CollisionShapes.h"
 #include <memory>
 #include <list>
 #include <vector>
@@ -92,7 +93,10 @@ private:
 	WorldTransform worldTransform_;
 	Vector3 size_ = { 1.0f,2.0f,1.0f };
 
-	uint32_t life = 5;
+	AABB collider_{};
+	Sphere AttackCollider_{};
+
+	uint32_t life_ = 4;
 
 	//Enemy* target_ = nullptr;
 
@@ -137,6 +141,12 @@ public:
 	void Init(std::vector<std::shared_ptr<Model>> modelHandles);
 	//更新
 	void Update();
+	//Collider更新
+	void ColliderUpdate() {
+		collider_.max = GetWorldPos() + size_;
+		collider_.min = GetWorldPos() - size_;
+	}
+	void AttackColliderUpdate();
 	//描画
 	void Draw(const Camera& camera);
 	//パーティクル描画
@@ -156,9 +166,10 @@ public:
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 	Vector3 GetWorldPos() const;
 	Vector3 GetAttackPos() const { return emitter_.translate_; }
-	Vector3 GetSize() const { return size_; }
-	uint32_t GetConboIndex() const { return workAttack_.comboIndex_; }
 	bool IsAttack() { return isAttack_; }
+	AABB GetCollider() const { return collider_; }
+	Sphere GetAttackCollider() const { return AttackCollider_; }
+	uint32_t GetLife() const { return life_; }
 
 };
 

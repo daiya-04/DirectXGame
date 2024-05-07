@@ -1,5 +1,6 @@
 #include "GameScene.h"
 
+#include "DirectXCommon.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
@@ -9,8 +10,15 @@
 #include "Input.h"
 #include "Hit.h"
 #include <random>
+#include <algorithm>
 
-GameScene::~GameScene() {}
+GameScene::GameScene() :randomEngine(seedGenerator()) {
+	
+}
+
+GameScene::~GameScene() {
+	postEffect_->SetGrayScaleEffect(false);
+}
 
 void GameScene::Init(){
   
@@ -44,8 +52,11 @@ void GameScene::Init(){
 	uint32_t particleTex = TextureManager::Load("circle.png");
 	uint32_t XButtonTex = TextureManager::Load("XButton.png");
 	uint32_t char_AttackTex = TextureManager::Load("char_Attack.png");
-	uint32_t finishTex = TextureManager::Load("finish.png");
+	uint32_t gameOverTex = TextureManager::Load("GameOver.png");
 
+	postEffect_ = PostEffect::GetInstance();
+	postEffect_->Init();
+	postEffect_->SetGrayScaleEffect(false);
 
 	///
 	///オブジェクト初期化
@@ -109,7 +120,7 @@ void GameScene::Init(){
 
 	char_Attack_.reset(Sprite::Create(char_AttackTex, {1100.0f,70.0f}));
 
-	finish_.reset(Sprite::Create(finishTex, { 670.0f,200.0f }));
+	gameOver_.reset(Sprite::Create(gameOverTex, { 670.0f,200.0f }));
 
 	///
 
@@ -121,26 +132,6 @@ void GameScene::Init(){
 void GameScene::Update(){
 	DebugGUI();
 
-	if (finishCount_ <= 0) {
-		SceneManager::GetInstance()->ChangeScene("Title");
-	}
-	
-	if (gameCount_ > 0) {
-		gameCount_--;
-	}
-
-	if (gameCount_ == 0) {
-		/*if (!enemies_.empty()) {
-			enemies_.clear();
-		}
-		if (!enemyBullets_.empty()) {
-			enemyBullets_.clear();
-		}*/
-
-		finishCount_--;
-		
-	}
-
 #ifdef _DEBUG
 
 	if (Input::GetInstance()->PushKey(DIK_1)) {
@@ -148,6 +139,22 @@ void GameScene::Update(){
 	}
 
 #endif // _DEBUG
+
+	if (eventRequest_) {
+
+		sceneEvent_ = eventRequest_.value();
+
+		switch (sceneEvent_) {
+			case SceneEvent::Battle:
+				BattleInit();
+				break;
+			case SceneEvent::PlayerDead:
+				PlayerDeadInit();
+				break;
+		}
+
+		eventRequest_ = std::nullopt;
+	}
 
 	/*if (gameCount_ >= 20) {
 		if (--spawnCount_ <= 0) {
@@ -167,86 +174,27 @@ void GameScene::Update(){
 		return false;
 	});
 
-	if (boss_->IsAttack() && elementBalls_.empty()) {
-		boss_->ChangeBehavior(Boss::Behavior::kRoot);
+	switch (sceneEvent_) {
+		case SceneEvent::Battle:
+			BattleUpdate();
+			break;
+		case SceneEvent::PlayerDead:
+			PlayerDeadUpdate();
+			break;
 	}
+
+	
 
 	skydome_->Update();
 	ground_->Update();
 	/*for (const auto& enemy : enemies_) {
 		enemy->Update();
 	}*/
-	player_->Update();
-	boss_->Update();
-	for (const auto& elementBall : elementBalls_) {
-		elementBall->Update();
-	}
+	
 	/*for (const auto& bullet : enemyBullets_) {
 		bullet->Update();
 	}*/
-	followCamera_->Update();
-
 	
-
-	///衝突判定
-
-	AABB player = {
-		player_->GetWorldPos() - player_->GetSize(),
-		player_->GetWorldPos() + player_->GetSize()
-	};
-
-	Sphere magicAttack = { player_->GetAttackPos(),0.0f };
-
-	switch (player_->GetConboIndex()) {
-	    case 0:
-			magicAttack.radius = 2.0f;
-	    	break;
-		case 1:
-			magicAttack.radius = 5.0f;
-			break;
-		case 2:
-			magicAttack.radius = 12.0f;
-			break;
-	}
-
-	//敵弾とプレイヤー
-	/*for (const auto& bullet : enemyBullets_) {
-		Sphere bulletHitRange = { bullet->GetWorldPos(),0.3f };
-		if (IsCollision(player, bulletHitRange)) {
-			bullet->OnCollision();
-			player_->OnCollision();
-		}
-	}*/
-
-	//魔法攻撃と敵
-	/*if (player_->IsAttack()) {
-		for (const auto& enemy : enemies_) {
-			AABB enemyBody = {
-				enemy->GetWorldPos() - enemy->GetSize(),
-				enemy->GetWorldPos() + enemy->GetSize()
-			};
-			if (IsCollision(enemyBody, magicAttack)) {
-				enemy->OnCollision();
-			}
-		}
-	}*/
-	
-
-	/*enemies_.remove_if([](const std::unique_ptr<Enemy>& enemy) {
-		if (enemy->IsDead()) {
-			return true;
-		}
-		return false;
-	});*/
-
-	/*enemyBullets_.remove_if([](const std::unique_ptr<EnemyBullet>& bullet) {
-		if (bullet->IsDead()) {
-			return true;
-		}
-		return false;
-	});*/
-
-	///
 
 	for (std::list<Particle::ParticleData>::iterator itParticle = particles_.begin(); itParticle != particles_.end(); itParticle++) {
 		(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_;
@@ -269,13 +217,7 @@ void GameScene::DrawBackGround(){
 
 void GameScene::DrawModel(){
 
-	skydome_->Draw(camera_);
-	ground_->Draw(camera_);
-	player_->Draw(camera_);
-	boss_->Draw(camera_);
-	for (const auto& elementBall : elementBalls_) {
-		elementBall->Draw(camera_);
-	}
+	postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 	/*for (const auto& enemy : enemies_) {
 		enemy->Draw(camera_);
 	}
@@ -292,30 +234,120 @@ void GameScene::DrawParticleModel(){
 
 void GameScene::DrawParticle(){
 
-	player_->DrawParticle(camera_);
-	particle_->Draw(particles_, camera_);
+	if (sceneEvent_ == SceneEvent::Battle) {
+		player_->DrawParticle(camera_);
+		particle_->Draw(particles_, camera_);
+	}
+	
 
 }
 
 void GameScene::DrawUI(){
 
-	if (gameCount_ <= 0) {
-		finish_->Draw();
+	if (sceneEvent_ == SceneEvent::Battle) {
+		XButton_->Draw();
+		char_Attack_->Draw();
 	}
-	XButton_->Draw();
-	char_Attack_->Draw();
+	if (sceneEvent_ == SceneEvent::PlayerDead) {
+		gameOver_->Draw();
+	}
 	
+}
+
+void GameScene::DrawPostEffect() {
+
+	postEffect_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+
+	Object3d::preDraw();
+	skydome_->Draw(camera_);
+	ground_->Draw(camera_);
+	if (sceneEvent_ == SceneEvent::Battle) {
+		player_->Draw(camera_);
+	}
+	
+	boss_->Draw(camera_);
+	for (const auto& elementBall : elementBalls_) {
+		elementBall->Draw(camera_);
+	}
+	Object3d::postDraw();
+
+	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+
+}
+
+void GameScene::BattleInit() {
+
+
+
+}
+
+void GameScene::BattleUpdate() {
+
+	if (boss_->IsAttack() && elementBalls_.empty()) {
+		boss_->ChangeBehavior(Boss::Behavior::kRoot);
+	}
+
+	player_->Update();
+	boss_->Update();
+	for (const auto& elementBall : elementBalls_) {
+		elementBall->Update();
+	}
+	followCamera_->Update();
+
+	///衝突判定
+
+	//プレイヤー攻撃とボス
+	if (IsCollision(boss_->GetCollider(), player_->GetAttackCollider())) {
+		player_->OnCollision();
+		boss_->OnCollision();
+	}
+
+	//エレメントボールとプレイヤー
+	for (const auto& elementBall : elementBalls_) {
+		if (IsCollision(player_->GetCollider(), elementBall->GetCollider())) {
+			player_->OnCollision();
+			elementBall->OnCollision();
+		}
+	}
+
+	///
+
+	if (player_->GetLife() == 0) {
+		postEffect_->SetGrayScaleEffect(true);
+		eventRequest_ = SceneEvent::PlayerDead;
+	}
+
+}
+
+void GameScene::PlayerDeadInit() {
+
+	elementBalls_.clear();
+	alpha_ = 0.0f;
+
+}
+
+void GameScene::PlayerDeadUpdate() {
+	alpha_ += 0.01f;
+	alpha_ = std::min(alpha_, 1.0f);
+
+	if (alpha_ >= 1.0f) {
+		finishCount_--;
+	}
+
+	if (finishCount_ <= 0) {
+		SceneManager::GetInstance()->ChangeScene("Title");
+	}
+
+
+	gameOver_->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
 }
 
 void GameScene::DebugGUI(){
 #ifdef _DEBUG
   
 	ImGui::Begin("window");
-  
-	int count = gameCount_ / 60;
-	ImGui::InputInt("gameTime", &count);
 
-	count = finishCount_ / 60;
+	int count = finishCount_ / 60;
 	ImGui::InputInt("ScenChangeCount", &count);
 	
 	ImGui::DragFloat2("XButton", &pos1.x, 1.0f);

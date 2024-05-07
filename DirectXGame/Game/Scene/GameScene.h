@@ -3,6 +3,7 @@
 #include <memory>
 #include <list>
 #include <vector>
+#include <optional>
 
 #include "Sprite.h"
 #include "Object3d.h"
@@ -12,6 +13,7 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "LevelLoader.h"
+#include "PostEffect.h"
 
 #include "Skydome.h"
 #include "Ground.h"
@@ -40,11 +42,13 @@ public:
 
 	void DrawUI()override;
 
+	void DrawPostEffect()override;
+
 	void DebugGUI()override;
 
 	~GameScene()override;
 
-	GameScene() :randomEngine(seedGenerator()) {}
+	GameScene();
 
 	//Enemy* EnemyPop(std::vector<std::shared_ptr<Model>> modelHandles, Vector3 pos);
 	
@@ -82,10 +86,7 @@ private: //オブジェクト
 	std::shared_ptr<Model> enemyHeadModel_ = 0;
 	std::shared_ptr<Model> bulletModel_ = 0;
 
-	uint32_t gameTime_ = 60 * 60;
-	uint32_t gameCount_ = gameTime_;
-
-	uint32_t finishTime_ = 60 * 5;
+	uint32_t finishTime_ = 60 * 3;
 	uint32_t finishCount_ = finishTime_;
 
 	uint32_t spawnCoolTime_ = 60 * 10;
@@ -97,10 +98,36 @@ private: //オブジェクト
 
 	std::unique_ptr<Sprite> XButton_;
 	std::unique_ptr<Sprite> char_Attack_;
-	std::unique_ptr<Sprite> finish_;
+	std::unique_ptr<Sprite> gameOver_;
+
+	float alpha_ = 0.0f;
 
 	Vector2 pos1 = {};
 	Vector2 pos2 = {};
+
+	PostEffect* postEffect_;
+
+private:
+
+	enum class SceneEvent {
+		Battle,
+		PlayerDead,
+	};
+
+private:
+
+	void BattleInit();
+
+	void BattleUpdate();
+
+	void PlayerDeadInit();
+
+	void PlayerDeadUpdate();
+
+private:
+
+	SceneEvent sceneEvent_ = SceneEvent::Battle;
+	std::optional<SceneEvent> eventRequest_ = SceneEvent::Battle;
 
 };
 

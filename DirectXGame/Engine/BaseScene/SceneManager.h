@@ -2,7 +2,6 @@
 #include <d3d12.h>
 #include "IScene.h"
 #include "AbstractSceneFactory.h"
-#include "PostEffect.h"
 #include "Sprite.h"
 #include <memory>
 
@@ -13,8 +12,6 @@ private:
 
 	std::unique_ptr<IScene> scene_;
 	std::unique_ptr<IScene> nextScene_;
-
-	std::unique_ptr<PostEffect> postEffect_;
 
 	uint32_t fadeTex_ = 0;
 	std::unique_ptr<Sprite> fade_;
