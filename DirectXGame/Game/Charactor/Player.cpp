@@ -50,7 +50,7 @@ void Player::Init(std::vector<std::shared_ptr<Model>> modelHandles){
 	worldTransform_.matWorld_ = S * rotateMat_ * T;
 	//worldTransform_.UpdateMatrix();
 	for (const auto& obj : obj_) {
-		obj->Update();
+		obj->worldTransform_.UpdateMatrix();
 	}
 }
 

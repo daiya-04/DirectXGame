@@ -6,7 +6,8 @@ const WorldTransform* ElementBall::target_ = nullptr;
 
 void ElementBall::Init(std::shared_ptr<Model> model, const Vector3& startPos) {
 
-	obj_.reset(Object3d::Create(model,true));
+	obj_.reset(Object3d::Create(model));
+	animation_.LoadAnimationFile(obj_->GetModel()->name_);
 	obj_->worldTransform_.scale_ = { 1.2f,1.2f,1.2f };
 
 	phaseRequest_ = Phase::kSet;
@@ -51,6 +52,13 @@ void ElementBall::Update() {
 	//行列更新
 	obj_->Update();
 
+	if (animation_.IsPlaying()) {
+		obj_->worldTransform_.matWorld_ = obj_->GetModel()->rootNode_.localMatrix_ * obj_->worldTransform_.matWorld_;
+
+		animation_.Play(obj_->GetModel()->rootNode_);
+		obj_->worldTransform_.matWorld_ = animation_.GetLocalMatrix() * obj_->worldTransform_.matWorld_;
+	}
+
 	ColliderUpdate();
 }
 
@@ -72,7 +80,7 @@ void ElementBall::SetInit() {
 	workSet_.param = 0.0f;*/
 
 	obj_->worldTransform_.translation_ = workSet_.start;
-	obj_->AnimationOn();
+	animation_.Start();
 
 }
 
@@ -89,8 +97,9 @@ void ElementBall::SetUpdate() {
 	//	//workSet_.param = 1.0f;
 	//}
 
-	if (obj_->GetAnimation().GetAnimationEnd()) {
+	if (!animation_.IsPlaying()) {
 		phaseRequest_ = Phase::kCharge;
+		animation_.End();
 	}
 
 }
@@ -98,8 +107,6 @@ void ElementBall::SetUpdate() {
 void ElementBall::ChargeInit() {
 
 	workCharge_.param = 0;
-	obj_->AnimationOff();
-
 	obj_->worldTransform_.translation_.x = obj_->worldTransform_.matWorld_.m[3][0];
 	obj_->worldTransform_.translation_.y = obj_->worldTransform_.matWorld_.m[3][1];
 	obj_->worldTransform_.translation_.z = obj_->worldTransform_.matWorld_.m[3][2];
@@ -118,7 +125,6 @@ void ElementBall::ShotInit() {
 
 	workShot_.move = {};
 	workShot_.isTrack = true;
-	obj_->AnimationOff();
 
 }
 

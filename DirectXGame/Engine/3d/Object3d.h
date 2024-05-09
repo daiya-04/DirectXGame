@@ -54,7 +54,7 @@ public: //静的メンバ関数
 	//静的初期化
 	static void StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 	//モデルの生成
-	static Object3d* Create(std::shared_ptr<Model> model,bool isAnimation = false);
+	static Object3d* Create(std::shared_ptr<Model> model);
 	//描画前処理
 	static void preDraw();
 	//描画後処理
@@ -78,8 +78,6 @@ private:
 private: //メンバ変数
 
 	std::shared_ptr<Model> model_;
-	bool isAnimation_ = false;
-	Animation animation_;
 
 public:
 
@@ -88,7 +86,7 @@ public:
 public: //メンバ関数
 
 	//初期化
-	void Initialize(std::shared_ptr<Model> model,bool isAnimation);
+	void Initialize(std::shared_ptr<Model> model);
 	//更新
 	void Update();
 	//描画
@@ -100,11 +98,8 @@ public: //メンバ関数
 
 	void SetColor(const Vector4& color) { model_->SetColor(color); }
 
-	void AnimationOn() { isAnimation_ = true; }
-	void AnimationOff() { isAnimation_ = false; }
-
-	Animation GetAnimation() const { return animation_; }
 	Vector3 GetWorldPos() const;
+	std::shared_ptr<Model> GetModel() const { return model_; }
 
 private:
 	

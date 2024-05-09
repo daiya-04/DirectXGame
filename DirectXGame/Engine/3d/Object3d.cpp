@@ -215,11 +215,11 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 }
 
-Object3d* Object3d::Create(std::shared_ptr<Model> model,bool isAnimation) {
+Object3d* Object3d::Create(std::shared_ptr<Model> model) {
 	
 
 	Object3d* obj = new Object3d();
-	obj->Initialize(model,isAnimation);
+	obj->Initialize(model);
 
 	return obj;
 
@@ -300,34 +300,30 @@ ComPtr<IDxcBlob> Object3d::CompileShader(const std::wstring& filePath, const wch
 }
 
 
-void Object3d::Initialize(std::shared_ptr<Model> model, bool isAnimation) {
+void Object3d::Initialize(std::shared_ptr<Model> model) {
 	model_ = model;
 	worldTransform_.Init();
-	isAnimation_ = isAnimation;
-	if (isAnimation_) {
-		animation_ = Animation::LoadAnimationFile(model_->name_);
-	}
 
 }
 
 void Object3d::Update() {
 
-	worldTransform_.UpdateMatrix();
+	//worldTransform_.UpdateMatrix();
 	//worldTransform_.matWorld_ = model_->rootNode_.localMatrix_ * worldTransform_.matWorld_;
 
-	if (isAnimation_) {
+	/*if (isAnimation_) {
 		animation_.Play(model_->rootNode_);
 		worldTransform_.matWorld_ = animation_.GetLocalMatrix() * worldTransform_.matWorld_;
-	}
+	}*/
 	
-	worldTransform_.Map();
 }
 
 void Object3d::Draw(const Camera& camera) {
 	
-	
+	worldTransform_.Map();
 
 	model_->SetVertexBuffers(commandList_);
+	model_->SetIndexBuffers(commandList_);
 	model_->SetGraphicsRootConstantBufferView(commandList_, (UINT)RootParameter::kMaterial);
 	//wvp用のCBufferの場所の設定
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kWorldTransform, worldTransform_.GetGPUVirtualAddress());
@@ -342,7 +338,7 @@ void Object3d::Draw(const Camera& camera) {
 
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kSpotLight, spotLight_->GetGPUVirtualAddress());
 
-	commandList_->DrawInstanced(model_->GetVertices(), 1, 0, 0);
+	commandList_->DrawIndexedInstanced((UINT)model_->indices_.size(), 1, 0, 0, 0);
 
 }
 

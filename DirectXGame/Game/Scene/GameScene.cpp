@@ -7,7 +7,6 @@
 #include "Audio.h"
 #include "Input.h"
 #include "SceneManager.h"
-#include "Input.h"
 #include "Hit.h"
 #include <random>
 #include <algorithm>
@@ -134,8 +133,11 @@ void GameScene::Update(){
 
 #ifdef _DEBUG
 
-	if (Input::GetInstance()->PushKey(DIK_1)) {
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_1)) {
 		SceneManager::GetInstance()->ChangeScene("Title");
+	}
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_3)) {
+		SceneManager::GetInstance()->ChangeScene("Debug");
 	}
 
 #endif // _DEBUG

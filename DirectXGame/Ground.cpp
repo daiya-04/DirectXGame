@@ -12,7 +12,7 @@ void Ground::Init(std::shared_ptr<Model> modelHandle){
 void Ground::Update(){
 
 
-	obj_->Update();
+	obj_->worldTransform_.UpdateMatrix();
 }
 
 void Ground::Draw(const Camera& camera){

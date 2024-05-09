@@ -14,7 +14,17 @@ void MyGame::Init(){
 
 	TextureManager::Load("white.png");
 
+#ifdef NDEBUG
 	SceneManager::GetInstance()->ChangeScene("Title");
+#endif // NDEBUG
+	
+
+#ifdef _DEBUG
+
+	SceneManager::GetInstance()->ChangeScene("Debug");
+
+#endif // _DEBUG
+
 
 	/*postEffect_ = std::make_unique<PostEffect>();
 	postEffect_->Init();*/

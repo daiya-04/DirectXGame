@@ -24,8 +24,11 @@ void TitleScene::Update(){
 
 #ifdef _DEBUG
 
-	if (Input::GetInstance()->PushKey(DIK_2)) {
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_2)) {
 		SceneManager::GetInstance()->ChangeScene("Game");
+	}
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_3)) {
+		SceneManager::GetInstance()->ChangeScene("Debug");
 	}
 
 #endif // _DEBUG

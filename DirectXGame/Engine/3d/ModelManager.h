@@ -8,10 +8,19 @@
 #include <vector>
 #include <array>
 #include <memory>
+#include <optional>
+#include <map>
 #include "Vec2.h"
 #include "Vec3.h"
 #include "Vec4.h"
+#include "Quaternion.h"
 #include "Matrix44.h"
+
+struct QuaternionTransform {
+	Vector3 translate_;
+	Quaternion rotate_;
+	Vector3 scale_;
+};
 
 class Model {
 private:
@@ -33,6 +42,7 @@ public:
 	};
 
 	struct Node {
+		QuaternionTransform transform_;
 		Matrix4x4 localMatrix_;
 		std::string name_;
 		std::vector<Node> children_;
@@ -50,6 +60,7 @@ public:
 	void CreateBuffer();
 
 	void SetVertexBuffers(ID3D12GraphicsCommandList* commandList);
+	void SetIndexBuffers(ID3D12GraphicsCommandList* commandList);
 
 	void SetGraphicsRootConstantBufferView(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex);
 
@@ -57,11 +68,10 @@ public:
 
 	uint32_t GetUvHandle() const { return uvHandle_; }
 
-	UINT GetVertices() const { return (UINT)vertices_.size(); }
-
 public:
 
 	std::vector<VertexData> vertices_;
+	std::vector<uint32_t> indices_;
 	Node rootNode_;
 	//uv
 	int32_t uvHandle_ = 0;
@@ -77,6 +87,10 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
 	ComPtr<ID3D12Resource> vertexResource_;
 	VertexData* vertexData = nullptr;
+
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
+	ComPtr<ID3D12Resource> indexResource_;
+	uint32_t* indexData_ = nullptr;
 	
 	ComPtr<ID3D12Resource> materialResource_;
 	Material* materialData = nullptr;
@@ -128,3 +142,33 @@ private:
 
 };
 
+class Skeleton {
+public:
+
+	struct Joint {
+		QuaternionTransform transform_;
+		Matrix4x4 localMat_;
+		Matrix4x4 skeletonSpaceMat_;
+		std::string name_;
+		std::vector<int32_t> children_; //子JointのIndexのリスト。いなければ空
+		int32_t index_; //自身のindex
+		std::optional<int32_t> parent_; //親Jointのindex。いなければnull
+	};
+
+public:
+
+	static Skeleton Create(const Model::Node& rootNode);
+
+	void Update();
+
+private:
+
+	int32_t CreateJoint(const Model::Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);
+
+public:
+
+	int32_t root_; //RootJointのIndex
+	std::map<std::string, int32_t> jointMap; //Joint名とIndexとの辞書
+	std::vector<Joint> joints_;
+
+};

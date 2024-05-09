@@ -10,7 +10,7 @@ void Skydome::Init(std::shared_ptr<Model> modelHandle) {
 void Skydome::Update() {
 
 
-	obj_->Update();
+	obj_->worldTransform_.UpdateMatrix();
 }
 
 void Skydome::Draw(const Camera& camera){

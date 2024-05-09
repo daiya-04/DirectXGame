@@ -49,16 +49,11 @@ Animation Animation::LoadAnimationFile(const std::string& filename) {
 	return animation;
 }
 
-void Animation::Play(const Model::Node& rootNode) {
+void Animation::Play(const Model::Node& rootNode, bool isLoop) {
 
-	animationTime_ += 1.0f / 60.0f;
-	if (animationTime_ >= duration_){ 
-		end_ = true;
-		animationTime_ = duration_;
-	}else {
-		end_ = false;
-		animationTime_ = std::fmod(animationTime_, duration_);
-	}
+	isLoop_ = isLoop;
+	isPlaying_ = true;
+	CountingAnimationTime();
 	
 	NodeAnimation& rootNodeAnimation = nodeAnimations_[rootNode.name_];
 	Vector3 translate = CalcValue(rootNodeAnimation.translate_.Keyframes_, animationTime_);
@@ -66,6 +61,21 @@ void Animation::Play(const Model::Node& rootNode) {
 	Vector3 scale = CalcValue(rootNodeAnimation.scale_.Keyframes_, animationTime_);
 
 	localMatrix_ = MakeTranslateMatrix(translate) * rotate.MakeRotateMatrix() * MakeScaleMatrix(scale);
+}
+
+void Animation::Play(Skeleton& skeleton) {
+
+	isPlaying_ = true;
+	CountingAnimationTime();
+
+	for (Skeleton::Joint& joint : skeleton.joints_) {
+		if (auto it = nodeAnimations_.find(joint.name_); it != nodeAnimations_.end()) {
+			const NodeAnimation& rootNodeAnimation = (*it).second;
+			joint.transform_.translate_ = CalcValue(rootNodeAnimation.translate_.Keyframes_, animationTime_);
+			joint.transform_.rotate_ = CalcValue(rootNodeAnimation.rotate_.Keyframes_, animationTime_);
+			joint.transform_.scale_ = CalcValue(rootNodeAnimation.scale_.Keyframes_, animationTime_);
+		}
+	}
 }
 
 Vector3 Animation::CalcValue(const std::vector<KeyframeVector3>& keyframe, float time) {
@@ -99,4 +109,18 @@ Quaternion Animation::CalcValue(const std::vector<KeyframeQuaternion>& keyframe,
 	}
 
 	return (*keyframe.begin()).value_;
+}
+
+void Animation::CountingAnimationTime() {
+
+	animationTime_ += 1.0f / 60.0f;
+	if (animationTime_ >= duration_) {
+		if (isLoop_) {
+			animationTime_ = std::fmod(animationTime_, duration_);
+		}else {
+			animationTime_ = duration_;
+			isPlaying_ = false;
+		}
+	}
+
 }

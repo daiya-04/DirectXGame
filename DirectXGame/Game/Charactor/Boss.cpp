@@ -69,7 +69,7 @@ void Boss::Update() {
 	Matrix4x4 T = MakeTranslateMatrix(worldTransform_.translation_);
 	worldTransform_.matWorld_ = S * rotateMat_ * T;
 	for (const auto& obj : obj_) {
-		obj->Update();
+		obj->worldTransform_.UpdateMatrix();
 	}
 
 	ColliderUpdate();

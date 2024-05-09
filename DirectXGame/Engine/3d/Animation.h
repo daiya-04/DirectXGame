@@ -36,25 +36,32 @@ public:
 	static Animation LoadAnimationFile(const std::string& filename);
 
 	//再生
-	void Play(const Model::Node& rootNode);
+	void Play(const Model::Node& rootNode, bool isLoop = true);
+	void Play(Skeleton& skeleton);
+
+	void Start() { isPlaying_ = true; }
+	void End() { isPlaying_ = false; }
 
 	Matrix4x4 GetLocalMatrix() const { return localMatrix_; }
 
 	float GetDuration() const { return duration_; }
 	float GetAnimationTime() const { return animationTime_; }
-	float GetAnimationEnd() const { return end_; }
+	bool IsPlaying() const { return isPlaying_; }
 
 private:
 
 	Vector3 CalcValue(const std::vector<KeyframeVector3>& keyframe, float time);
 	Quaternion CalcValue(const std::vector<KeyframeQuaternion>& keyframe, float time);
 
+	void CountingAnimationTime();
+
 private:
 
 	float duration_ = 0.0f;
 	float animationTime_ = 0.0f;
 
-	bool end_ = false;
+	bool isLoop_ = false;
+	bool isPlaying_ = false;
 
 	std::map<std::string, NodeAnimation> nodeAnimations_;
 
