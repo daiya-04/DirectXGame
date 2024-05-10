@@ -20,14 +20,14 @@ void Player::Init(std::vector<std::shared_ptr<Model>> models){
 	uint32_t particleTex2 = TextureManager::Load("star.png");
 	debugModel_ = ModelManager::LoadOBJ("cube", false);
 
-	animationMadels_ = models;
+	animationModels_ = models;
 	
-	obj_.reset(SkinningObject::Create(animationMadels_[action_]));
-	skinClusters_.resize(animationMadels_.size());
+	obj_.reset(SkinningObject::Create(animationModels_[action_]));
+	skinClusters_.resize(animationModels_.size());
 	for (size_t index = 0; index < Action::kActionNum; index++) {
-		animations_.emplace_back(Animation::LoadAnimationFile(animationMadels_[index]->name_));
-		skeletons_.emplace_back(Skeleton::Create(animationMadels_[index]->rootNode_));
-		skinClusters_[index].Create(skeletons_[index], animationMadels_[index]);
+		animations_.emplace_back(Animation::LoadAnimationFile(animationModels_[index]->name_));
+		skeletons_.emplace_back(Skeleton::Create(animationModels_[index]->rootNode_));
+		skinClusters_[index].Create(skeletons_[index], animationModels_[index]);
 	}
 	obj_->SetSkinCluster(&skinClusters_[action_]);
 
