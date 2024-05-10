@@ -5,6 +5,7 @@
 #include <sstream>
 #include <cassert>
 #include "TextureManager.h"
+#include "ModelManager.h"
 
 using namespace Microsoft::WRL;
 
@@ -22,6 +23,17 @@ void Model::CreateBuffer() {
 	//頂点リソースにデータを書き込む
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));  //書き込むためのアドレスを取得
 	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * vertices_.size());  //頂点データをリソースにコピー
+
+	//indexリソースを作る
+	indexResource_ = CreateBufferResource(device_, sizeof(uint32_t) * indices_.size());
+	//indexバッファビューを作成する
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	indexBufferView_.SizeInBytes = UINT(sizeof(uint32_t) * indices_.size());
+	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
+
+	//indexリソースにデータを書き込む
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+	std::memcpy(indexData_, indices_.data(), sizeof(uint32_t) * indices_.size());
 
 	//マテリアル用のリソースを作る。
 	materialResource_ = CreateBufferResource(device_, sizeof(Material));
@@ -61,6 +73,10 @@ ComPtr<ID3D12Resource> Model::CreateBufferResource(ComPtr<ID3D12Device> device, 
 
 void Model::SetVertexBuffers(ID3D12GraphicsCommandList* commandList) {
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+}
+
+void Model::SetIndexBuffers(ID3D12GraphicsCommandList* commandList) {
+	commandList->IASetIndexBuffer(&indexBufferView_);
 }
 
 void Model::SetGraphicsRootConstantBufferView(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex) {
@@ -131,30 +147,25 @@ void ModelManager::LoadObjFile(const std::string& modelName) {
 	assert(scene->HasMeshes());
 
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
-
 		aiMesh* mesh = scene->mMeshes[meshIndex];
 		assert(mesh->HasNormals());
 		assert(mesh->HasTextureCoords(0));
-		
-		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
+		models_.back()->vertices_.resize(mesh->mNumVertices);
+		for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex) {
+			aiVector3D& position = mesh->mVertices[vertexIndex];
+			aiVector3D& normal = mesh->mNormals[vertexIndex];
+			aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
 
+			models_.back()->vertices_[vertexIndex].pos_ = { -position.x,position.y,position.z,1.0f };
+			models_.back()->vertices_[vertexIndex].normal = { -normal.x,normal.y,normal.z };
+			models_.back()->vertices_[vertexIndex].uv_ = { texcoord.x,texcoord.y };
+		}
+		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
 			aiFace& face = mesh->mFaces[faceIndex];
 			assert(face.mNumIndices == 3);
-
 			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
 				uint32_t vertexIndex = face.mIndices[element];
-				aiVector3D& position = mesh->mVertices[vertexIndex];
-				aiVector3D& normal = mesh->mNormals[vertexIndex];
-				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
-
-				Model::VertexData vertex;
-				vertex.pos_ = { position.x, position.y, position.z, 1.0f };
-				vertex.normal = { normal.x,normal.y ,normal.z };
-				vertex.uv_ = { texcoord.x,texcoord.y };
-
-				vertex.pos_.x *= -1.0f;
-				vertex.normal.x *= -1.0f;
-				models_.back()->vertices_.push_back(vertex);
+				models_.back()->indices_.push_back(vertexIndex);
 			}
 		}
 	}
@@ -187,30 +198,43 @@ void ModelManager::LoadGltfFile(const std::string& modelName) {
 	assert(scene->HasMeshes());
 
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
-
 		aiMesh* mesh = scene->mMeshes[meshIndex];
 		assert(mesh->HasNormals());
 		assert(mesh->HasTextureCoords(0));
+		models_.back()->vertices_.resize(mesh->mNumVertices);
+		for (uint32_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; ++vertexIndex) {
+			aiVector3D& position = mesh->mVertices[vertexIndex];
+			aiVector3D& normal = mesh->mNormals[vertexIndex];
+			aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
 
+			models_.back()->vertices_[vertexIndex].pos_ = { -position.x,position.y,position.z,1.0f };
+			models_.back()->vertices_[vertexIndex].normal = { -normal.x,normal.y,normal.z };
+			models_.back()->vertices_[vertexIndex].uv_ = { texcoord.x,texcoord.y };
+		}
 		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
-
 			aiFace& face = mesh->mFaces[faceIndex];
 			assert(face.mNumIndices == 3);
-
 			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
 				uint32_t vertexIndex = face.mIndices[element];
-				aiVector3D& position = mesh->mVertices[vertexIndex];
-				aiVector3D& normal = mesh->mNormals[vertexIndex];
-				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+				models_.back()->indices_.push_back(vertexIndex);
+			}
+		}
+		for (uint32_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex) {
+			aiBone* bone = mesh->mBones[boneIndex];
+			std::string jointName = bone->mName.C_Str();
+			Model::JointWeightData& jointWeightData = models_.back()->skinClusterData_[jointName];
 
-				Model::VertexData vertex;
-				vertex.pos_ = { position.x, position.y, position.z, 1.0f };
-				vertex.normal = { normal.x,normal.y ,normal.z };
-				vertex.uv_ = { texcoord.x,texcoord.y };
-
-				vertex.pos_.x *= -1.0f;
-				vertex.normal.x *= -1.0f;
-				models_.back()->vertices_.push_back(vertex);
+			aiMatrix4x4 bindPoseMatrixAssimp = bone->mOffsetMatrix.Inverse();
+			aiVector3D translate, scale;
+			aiQuaternion rotate;
+			bindPoseMatrixAssimp.Decompose(scale, rotate, translate);
+			Quaternion q = { rotate.x, -rotate.y, -rotate.z, rotate.w };
+			Matrix4x4 TMat = MakeTranslateMatrix({ -translate.x, translate.y, translate.z });
+			Matrix4x4 SMat = MakeScaleMatrix({ scale.x,scale.y,scale.z });
+			Matrix4x4 bindPoseMat = SMat * q.MakeRotateMatrix() * TMat;
+			jointWeightData.inverseBindPoseMatrix_ = bindPoseMat.Inverse();
+			for (uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex) {
+				jointWeightData.vertexWeights_.push_back({ bone->mWeights[weightIndex].mWeight,bone->mWeights[weightIndex].mVertexId });
 			}
 		}
 	}
@@ -257,13 +281,13 @@ void ModelManager::LoadMaterialTemplateFile(const std::string& fileName) {
 Model::Node ModelManager::ReadNode(aiNode* node) {
 
 	Model::Node result;
-	aiMatrix4x4 aiLocalMatrix = node->mTransformation; //nodeのlocalMatrix取得
-	aiLocalMatrix.Transpose(); //列ベクトル形式を行ベクトル形式に転置
-	for (uint32_t row = 0; row < 4; row++) {
-		for (uint32_t column = 0; column < 4; column++) {
-			result.localMatrix_.m[row][column] = aiLocalMatrix[row][column];
-		}
-	}
+	aiVector3D translate, scale;
+	aiQuaternion rotate;
+	node->mTransformation.Decompose(scale, rotate, translate); //assimpの行列からSRTを抽出する
+	result.transform_.translate_ = { -translate.x,translate.y ,translate.z }; //x軸を反転、さらに回転方向が逆なので軸を反転させる
+	result.transform_.rotate_ = { rotate.x, -rotate.y, -rotate.z, rotate.w }; //x軸を反転
+	result.transform_.scale_ = { scale.x,scale.y,scale.z }; //scaleはそのまま
+	result.localMatrix_ = MakeScaleMatrix(result.transform_.scale_) * result.transform_.rotate_.MakeRotateMatrix() * MakeTranslateMatrix(result.transform_.translate_);
 
 	result.name_ = node->mName.C_Str(); //Node名を格納
 	result.children_.resize(node->mNumChildren); //子供の数だけ確保
@@ -272,4 +296,46 @@ Model::Node ModelManager::ReadNode(aiNode* node) {
 	}
 
 	return result;
+}
+
+Skeleton Skeleton::Create(const Model::Node& rootNade) {
+	Skeleton skeleton;
+	skeleton.root_ = CreateJoint(rootNade, {}, skeleton.joints_);
+
+	for (const Joint& joint : skeleton.joints_) {
+		skeleton.jointMap_.emplace(joint.name_, joint.index_);
+	}
+
+	return skeleton;
+}
+
+int32_t Skeleton::CreateJoint(const Model::Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints) {
+
+	Joint joint;
+	joint.name_ = node.name_;
+	joint.localMat_ = node.localMatrix_;
+	joint.skeletonSpaceMat_ = MakeIdentity44();
+	joint.transform_ = node.transform_;
+	joint.index_ = int32_t(joints.size());
+	joint.parent_ = parent;
+	joints.push_back(joint);
+	for (const Model::Node child : node.children_) {
+		int32_t childIndex = CreateJoint(child, joint.index_, joints);
+		joints[joint.index_].children_.push_back(childIndex);
+	}
+
+	return joint.index_;
+}
+
+void Skeleton::Update() {
+
+	for (Joint& joint : joints_) {
+		joint.localMat_ = MakeScaleMatrix(joint.transform_.scale_) * joint.transform_.rotate_.MakeRotateMatrix() * MakeTranslateMatrix(joint.transform_.translate_);
+		if (joint.parent_) {
+			joint.skeletonSpaceMat_ = joint.localMat_ * joints_[*joint.parent_].skeletonSpaceMat_;
+		}
+		else {
+			joint.skeletonSpaceMat_ = joint.localMat_;
+		}
+	}
 }

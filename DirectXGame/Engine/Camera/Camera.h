@@ -14,7 +14,7 @@ struct CBufferDataCamera {
 class Camera {
 public:
 
-	Vector3 translation_ = { 0.0f, 0.0f, -10.0f };
+	Vector3 translation_ = { 0.0f, 0.0f, -5.0f };
 	Vector3 rotation_ = {};
 
 	

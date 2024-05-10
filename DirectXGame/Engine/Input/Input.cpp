@@ -64,6 +64,14 @@ bool Input::TriggerKey(BYTE keyNumber) const{
 	return false;
 }
 
+bool Input::ReleaseKey(BYTE keyNumber) const {
+	if (!key[keyNumber] && preKey[keyNumber]) {
+		return true;
+	}
+
+	return false;
+}
+
 bool Input::GetJoystickState() {
 
 	DWORD dwResult;

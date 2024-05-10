@@ -36,6 +36,8 @@ public:
 	//キーのトリガーをチェック
 	bool TriggerKey(BYTE keyNumber) const;
 
+	bool ReleaseKey(BYTE keyNumber) const;
+
 	bool GetJoystickState();
 
 	Vector3 GetMoveXZ() {

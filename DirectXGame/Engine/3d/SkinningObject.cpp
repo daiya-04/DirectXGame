@@ -1,4 +1,4 @@
-#include "Object3d.h"
+#include "SkinningObject.h"
 #include <cassert>
 #include <format>
 #include <Windows.h>
@@ -12,21 +12,19 @@
 
 using namespace Microsoft::WRL;
 
-ID3D12Device* Object3d::device_ = nullptr;
-ID3D12GraphicsCommandList* Object3d::commandList_ = nullptr;
-ComPtr<ID3D12RootSignature> Object3d::rootSignature_;
-ComPtr<ID3D12PipelineState> Object3d::graphicsPipelineState_;
-PointLight* Object3d::pointLight_ = nullptr;
-SpotLight* Object3d::spotLight_ = nullptr;
+ID3D12Device* SkinningObject::device_ = nullptr;
+ID3D12GraphicsCommandList* SkinningObject::commandList_ = nullptr;
+ComPtr<ID3D12RootSignature> SkinningObject::rootSignature_;
+ComPtr<ID3D12PipelineState> SkinningObject::graphicsPipelineState_;
 
-void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
+void SkinningObject::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
 
 	assert(device);
 	assert(commandList);
 	device_ = device;
 	commandList_ = commandList;
 
-	
+
 
 	IDxcUtils* dxcUtils = nullptr;
 	IDxcCompiler3* dxcCompiler = nullptr;
@@ -46,9 +44,15 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
 	descriptorRange[0].BaseShaderRegister = 0; //0から始まる
-	descriptorRange[0].NumDescriptors =	1; //数は1つ
+	descriptorRange[0].NumDescriptors = 1; //数は1つ
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+	D3D12_DESCRIPTOR_RANGE descriptorRangeForMatrixPalette[1] = {};
+	descriptorRangeForMatrixPalette[0].BaseShaderRegister = 1; //0から始まる
+	descriptorRangeForMatrixPalette[0].NumDescriptors = 1; //数は1つ
+	descriptorRangeForMatrixPalette[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
+	descriptorRangeForMatrixPalette[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
 
 	//Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
@@ -86,13 +90,11 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	rootParameters[(size_t)RootParameter::kDirectionLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
 	rootParameters[(size_t)RootParameter::kDirectionLight].Descriptor.ShaderRegister = 3;  //レジスタ番号1を使う
 
-	rootParameters[(size_t)RootParameter::kPointLight].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  //CBVを使う
-	rootParameters[(size_t)RootParameter::kPointLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
-	rootParameters[(size_t)RootParameter::kPointLight].Descriptor.ShaderRegister = 4;  //レジスタ番号1を使う
+	rootParameters[(size_t)RootParameter::kMatrixPalette].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	rootParameters[(size_t)RootParameter::kMatrixPalette].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //VertexShaderで使う
+	rootParameters[(size_t)RootParameter::kMatrixPalette].DescriptorTable.pDescriptorRanges = descriptorRangeForMatrixPalette; //Tableの中身の配列を指定
+	rootParameters[(size_t)RootParameter::kMatrixPalette].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForMatrixPalette); //Tableで利用する数
 
-	rootParameters[(size_t)RootParameter::kSpotLight].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  //CBVを使う
-	rootParameters[(size_t)RootParameter::kSpotLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
-	rootParameters[(size_t)RootParameter::kSpotLight].Descriptor.ShaderRegister = 5;  //レジスタ番号1を使う
 
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
@@ -112,21 +114,36 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	assert(SUCCEEDED(hr));
 
 	//InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[5] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
+	inputElementDescs[0].InputSlot = 0;
 	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
 	inputElementDescs[1].SemanticName = "TEXCOORD";
 	inputElementDescs[1].SemanticIndex = 0;
+	inputElementDescs[1].InputSlot = 0;
 	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
 	inputElementDescs[2].SemanticName = "NORMAL";
 	inputElementDescs[2].SemanticIndex = 0;
+	inputElementDescs[2].InputSlot = 0;
 	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescs[3].SemanticName = "WEIGHT";
+	inputElementDescs[3].SemanticIndex = 0;
+	inputElementDescs[3].InputSlot = 1;
+	inputElementDescs[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementDescs[3].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescs[4].SemanticName = "INDEX";
+	inputElementDescs[4].SemanticIndex = 0;
+	inputElementDescs[4].InputSlot = 1;
+	inputElementDescs[4].Format = DXGI_FORMAT_R32G32B32A32_SINT;
+	inputElementDescs[4].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
@@ -143,23 +160,6 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-	//加算
-	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;*/
-	//減算
-	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;*/
-	//乗算
-	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;*/
-	//スクリーン
-	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;*/
-	//
 	//α値のブレンド設定で基本的に使わないからいじらない
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
@@ -173,10 +173,10 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	//Shaderをコンパイルする
-	ComPtr<IDxcBlob> verterShaderBlob = CompileShader(L"Resources/shaders/Object3d.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+	ComPtr<IDxcBlob> verterShaderBlob = CompileShader(L"Resources/shaders/SkinningObject.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(verterShaderBlob != nullptr);
 
-	ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Resources/shaders/Object3d.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+	ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Resources/shaders/SkinningObject.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(pixelShaderBlob != nullptr);
 
 	//DepthStencilStateの設定
@@ -215,17 +215,15 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 }
 
-Object3d* Object3d::Create(std::shared_ptr<Model> model) {
-	
+SkinningObject* SkinningObject::Create(std::shared_ptr<Model> model) {
 
-	Object3d* obj = new Object3d();
+	SkinningObject* obj = new SkinningObject();
 	obj->Initialize(model);
 
 	return obj;
-
 }
 
-void Object3d::preDraw() {
+void SkinningObject::preDraw() {
 
 	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
 
@@ -235,13 +233,13 @@ void Object3d::preDraw() {
 
 }
 
-void Object3d::postDraw() {
+void SkinningObject::postDraw() {
 
 
 
 }
 
-ComPtr<IDxcBlob> Object3d::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer) {
+ComPtr<IDxcBlob> SkinningObject::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer) {
 
 	//これからシェーダーをコンパイルする旨をログに出す
 	Log(ConvertString(std::format(L"Begin CompileShader, Path:{},profile:{}\n", filePath, profile)));
@@ -299,55 +297,35 @@ ComPtr<IDxcBlob> Object3d::CompileShader(const std::wstring& filePath, const wch
 
 }
 
-
-void Object3d::Initialize(std::shared_ptr<Model> model) {
+void SkinningObject::Initialize(std::shared_ptr<Model> model) {
 	model_ = model;
 	worldTransform_.Init();
 
 }
 
-void Object3d::Update() {
+void SkinningObject::Draw(const Camera& camera) {
 
-	//worldTransform_.UpdateMatrix();
-	//worldTransform_.matWorld_ = model_->rootNode_.localMatrix_ * worldTransform_.matWorld_;
-
-	/*if (isAnimation_) {
-		animation_.Play(model_->rootNode_);
-		worldTransform_.matWorld_ = animation_.GetLocalMatrix() * worldTransform_.matWorld_;
-	}*/
-	
-}
-
-void Object3d::Draw(const Camera& camera) {
-	
 	worldTransform_.Map();
 
-	model_->SetVertexBuffers(commandList_);
+	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
+		model_->GetVBV(),
+		skinCluster_->influenceBufferView_
+	};
+
+	commandList_->IASetVertexBuffers(0, 2, vbvs);
 	model_->SetIndexBuffers(commandList_);
 	model_->SetGraphicsRootConstantBufferView(commandList_, (UINT)RootParameter::kMaterial);
 	//wvp用のCBufferの場所の設定
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kWorldTransform, worldTransform_.GetGPUVirtualAddress());
 
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kCamera, camera.GetGPUVirtualAddress());
-	
+
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, model_->GetUvHandle());
 
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
 
-	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kPointLight, pointLight_->GetGPUVirtualAddress());
-
-	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kSpotLight, spotLight_->GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootDescriptorTable((UINT)RootParameter::kMatrixPalette, skinCluster_->paletteSrvHandle_.second);
 
 	commandList_->DrawIndexedInstanced((UINT)model_->indices_.size(), 1, 0, 0, 0);
 
-}
-
-Vector3 Object3d::GetWorldPos() const {
-	Vector3 worldPos;
-
-	worldPos.x = worldTransform_.matWorld_.m[3][0];
-	worldPos.y = worldTransform_.matWorld_.m[3][1];
-	worldPos.z = worldTransform_.matWorld_.m[3][2];
-
-	return worldPos;
 }

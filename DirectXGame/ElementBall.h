@@ -53,6 +53,7 @@ private:
 	static const WorldTransform* target_;
 
 	std::unique_ptr<Object3d> obj_;
+	Animation animation_;
 	Vector3 size_ = { 2.0f,2.0f,2.0f };
 
 	Sphere collider_{};

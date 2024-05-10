@@ -7,6 +7,7 @@
 #include "DirectionalLight.h"
 #include "Sprite.h"
 #include "Object3d.h"
+#include "SkinningObject.h"
 #include "Particle.h"
 #include "GlobalVariables.h"
 #include "Audio.h"
@@ -29,6 +30,7 @@ void DSFramework::Init(){
 
 	Sprite::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), WinApp::kClientWidth, WinApp::kClientHeight);
 	Object3d::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
+	SkinningObject::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 	Particle::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 
 	GlobalVariables::GetInstance()->LoadFiles();
