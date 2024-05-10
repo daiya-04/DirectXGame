@@ -36,8 +36,8 @@ void GameScene::Init(){
 
 	std::shared_ptr<Model> skydomeModel = ModelManager::LoadOBJ("skydome",false);
 	std::shared_ptr<Model> groundModel = ModelManager::LoadOBJ("ground");
-	std::shared_ptr<Model> playerBodyModel = ModelManager::LoadOBJ("float_Body");
-	std::shared_ptr<Model> playerHeadModel = ModelManager::LoadOBJ("float_Head");
+	std::shared_ptr<Model> playerStandingModel = ModelManager::LoadGLTF("Standing");
+	std::shared_ptr<Model> playerWalkingModel = ModelManager::LoadGLTF("Walking");
 	//enemyBodyModel_ = ModelManager::Load("EnemyBody");
 	//enemyHeadModel_ = ModelManager::Load("EnemyHead");
 	//bulletModel_ = ModelManager::Load("EnemyBullet");
@@ -70,7 +70,7 @@ void GameScene::Init(){
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
-	player_->Init({ playerBodyModel,playerHeadModel });
+	player_->Init({ playerStandingModel,playerWalkingModel });
 
 	//ボス
 	boss_ = std::make_unique<Boss>();
@@ -220,6 +220,18 @@ void GameScene::DrawBackGround(){
 void GameScene::DrawModel(){
 
 	postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
+
+#ifdef _DEBUG
+
+	DirectXCommon::GetInstance()->ClearDepthBaffer();
+	Object3d::preDraw();
+	if (sceneEvent_ == SceneEvent::Battle) {
+		player_->SkeletonDraw(camera_);
+	}
+	
+
+#endif // _DEBUG
+
 	/*for (const auto& enemy : enemies_) {
 		enemy->Draw(camera_);
 	}
@@ -263,15 +275,17 @@ void GameScene::DrawPostEffect() {
 	Object3d::preDraw();
 	skydome_->Draw(camera_);
 	ground_->Draw(camera_);
-	if (sceneEvent_ == SceneEvent::Battle) {
-		player_->Draw(camera_);
-	}
 	
 	boss_->Draw(camera_);
 	for (const auto& elementBall : elementBalls_) {
 		elementBall->Draw(camera_);
 	}
-	Object3d::postDraw();
+	
+	SkinningObject::preDraw();
+	if (sceneEvent_ == SceneEvent::Battle) {
+		player_->Draw(camera_);
+	}
+
 
 	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 

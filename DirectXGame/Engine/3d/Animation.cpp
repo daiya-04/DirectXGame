@@ -63,8 +63,9 @@ void Animation::Play(const Model::Node& rootNode, bool isLoop) {
 	localMatrix_ = MakeTranslateMatrix(translate) * rotate.MakeRotateMatrix() * MakeScaleMatrix(scale);
 }
 
-void Animation::Play(Skeleton& skeleton) {
+void Animation::Play(Skeleton& skeleton,bool isLoop) {
 
+	isLoop_ = isLoop;
 	isPlaying_ = true;
 	CountingAnimationTime();
 
@@ -112,8 +113,9 @@ Quaternion Animation::CalcValue(const std::vector<KeyframeQuaternion>& keyframe,
 }
 
 void Animation::CountingAnimationTime() {
-
-	animationTime_ += 1.0f / 60.0f;
+	if (isPlaying_) {
+		animationTime_ += 1.0f / 60.0f;
+	}
 	if (animationTime_ >= duration_) {
 		if (isLoop_) {
 			animationTime_ = std::fmod(animationTime_, duration_);

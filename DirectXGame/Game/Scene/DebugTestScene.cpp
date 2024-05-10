@@ -19,10 +19,21 @@ void DebugTestScene::Init() {
 	Object3d::SetPointLight(&pointLight_);
 	Object3d::SetSpotLight(&spotLight_);
 
-	humanModel_ = ModelManager::LoadGLTF("walk");
+	humanModel_ = ModelManager::LoadGLTF("Standing");
+	sneakModel_ = ModelManager::LoadGLTF("Walking");
+	debugModel_ = ModelManager::LoadOBJ("cube", false);
 
-	human_.reset(Object3d::Create(humanModel_));
-	animation_.LoadAnimationFile(humanModel_->name_);
+	human_.reset(SkinningObject::Create(humanModel_));
+	animation_ = Animation::LoadAnimationFile(humanModel_->name_);
+	skeleton_ = Skeleton::Create(humanModel_->rootNode_);
+	skinCluster_.Create(skeleton_, humanModel_);
+	human_->SetSkinCluster(&skinCluster_);
+
+	for (Skeleton::Joint& joint : skeleton_.joints_) {
+		debugObj_.emplace_back(Object3d::Create(debugModel_));
+	}
+
+	human_->worldTransform_.rotation_.y = 3.14f;
 
 }
 
@@ -38,11 +49,30 @@ void DebugTestScene::Update() {
 	}
 	
 #endif // _DEBUG
+	
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		human_->SetModelHandle(sneakModel_);
+		animation_ = Animation::LoadAnimationFile(sneakModel_->name_);
+		skeleton_ = Skeleton::Create(sneakModel_->rootNode_);
+		skinCluster_.Create(skeleton_, sneakModel_);
+	}
+	else if(Input::GetInstance()->ReleaseKey(DIK_SPACE)){
+		//human_->SetModelHandle(humanModel_);
+		animation_ = Animation::LoadAnimationFile(humanModel_->name_);
+		skeleton_ = Skeleton::Create(humanModel_->rootNode_);
+		skinCluster_.Create(skeleton_, humanModel_);
+	}
 
 	human_->worldTransform_.UpdateMatrix();
+	animation_.Play(skeleton_);
+	
+	
+	skeleton_.Update();
+	skinCluster_.Update(skeleton_);
 
-	
-	
+	for (Skeleton::Joint& joint : skeleton_.joints_) {
+		debugObj_[joint.index_]->worldTransform_.matWorld_ = joint.skeletonSpaceMat_ * human_->worldTransform_.matWorld_;
+	}
 
 	camera_.UpdateViewMatrix();
 	pointLight_.Update();
@@ -57,7 +87,14 @@ void DebugTestScene::DrawBackGround() {
 
 void DebugTestScene::DrawModel() {
 
+	SkinningObject::preDraw();
 	human_->Draw(camera_);
+
+	
+	Object3d::preDraw();
+	for (const auto& obj : debugObj_) {
+		obj->Draw(camera_);
+	}
 
 }
 

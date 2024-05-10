@@ -48,6 +48,16 @@ public:
 		std::vector<Node> children_;
 	};
 
+	struct VertexWeightData {
+		float weight_;
+		uint32_t vertexIndex_;
+	};
+
+	struct JointWeightData {
+		Matrix4x4 inverseBindPoseMatrix_;
+		std::vector<VertexWeightData> vertexWeights_;
+	};
+
 private:
 
 	//リソースの生成
@@ -67,6 +77,7 @@ public:
 	void SetColor(const Vector4& color) { materialData->color_ = color; }
 
 	uint32_t GetUvHandle() const { return uvHandle_; }
+	D3D12_VERTEX_BUFFER_VIEW GetVBV() const { return vertexBufferView_; }
 
 public:
 
@@ -79,6 +90,8 @@ public:
 	bool isLighting_ = true;
 	//modelファイルの名前
 	std::string name_;
+
+	std::map<std::string, JointWeightData> skinClusterData_;
 
 private:
 
@@ -163,12 +176,12 @@ public:
 
 private:
 
-	int32_t CreateJoint(const Model::Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);
+	static int32_t CreateJoint(const Model::Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);
 
 public:
 
 	int32_t root_; //RootJointのIndex
-	std::map<std::string, int32_t> jointMap; //Joint名とIndexとの辞書
+	std::map<std::string, int32_t> jointMap_; //Joint名とIndexとの辞書
 	std::vector<Joint> joints_;
 
 };

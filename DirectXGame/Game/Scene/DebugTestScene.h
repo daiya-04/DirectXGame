@@ -5,6 +5,8 @@
 
 #include "Sprite.h"
 #include "Object3d.h"
+#include "SkinningObject.h"
+#include "SkinCluster.h"
 #include "Particle.h"
 #include "Camera.h"
 #include "WorldTransform.h"
@@ -39,9 +41,15 @@ private:
 	PointLight pointLight_;
 	SpotLight spotLight_;
 
-	std::unique_ptr<Object3d> human_;
+	std::unique_ptr<SkinningObject> human_;
 	std::shared_ptr<Model> humanModel_;
+	std::shared_ptr<Model> sneakModel_;
 	Animation animation_;
+	Skeleton skeleton_;
+	SkinCluster skinCluster_;
+
+	std::vector<std::unique_ptr<Object3d>> debugObj_;
+	std::shared_ptr<Model> debugModel_;
 
 };
 

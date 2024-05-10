@@ -7,6 +7,7 @@
 
 #include "Sprite.h"
 #include "Object3d.h"
+#include "SkinningObject.h"
 #include "Particle.h"
 #include "Camera.h"
 #include "WorldTransform.h"

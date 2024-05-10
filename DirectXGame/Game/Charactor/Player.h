@@ -2,6 +2,9 @@
 #include "WorldTransform.h"
 #include "Camera.h"
 #include "Object3d.h"
+#include "SkinningObject.h"
+#include "Animation.h"
+#include "SkinCluster.h"
 #include "Vec3.h"
 #include "Matrix44.h"
 #include "CollisionShapes.h"
@@ -80,17 +83,26 @@ public:
 	static const int comboNum_ = 3;
 	static const std::array<ComboAttack, comboNum_> kComboAttacks_;
 
-	enum Parts {
-		Body,
-		Head,
+	enum Action {
+		Standing,
+		Walking,
 
-		kPartsNum,
+		kActionNum,
 	};
 
 private:
 
-	std::vector<std::unique_ptr<Object3d>> obj_;
-	WorldTransform worldTransform_;
+	std::unique_ptr<SkinningObject> obj_;
+	std::vector<std::shared_ptr<Model>> animationMadels_;
+	std::vector<Animation> animations_;
+	std::vector<Skeleton> skeletons_;
+	std::vector<SkinCluster> skinClusters_;
+
+	std::vector<std::unique_ptr<Object3d>> debugObj_;
+	std::shared_ptr<Model> debugModel_;
+
+	Action action_ = Action::Standing;
+
 	Vector3 size_ = { 1.0f,2.0f,1.0f };
 
 	AABB collider_{};
@@ -138,7 +150,7 @@ public:
 	Player() :randomEngine(seedGenerator()) {}
 
 	//初期化
-	void Init(std::vector<std::shared_ptr<Model>> modelHandles);
+	void Init(std::vector<std::shared_ptr<Model>> models);
 	//更新
 	void Update();
 	//Collider更新
@@ -149,6 +161,7 @@ public:
 	void AttackColliderUpdate();
 	//描画
 	void Draw(const Camera& camera);
+	void SkeletonDraw(const Camera& camera);
 	//パーティクル描画
 	void DrawParticle(const Camera& camera);
 
@@ -156,14 +169,10 @@ public:
 
 	void OnCollision();
 
-	void FloatingGimmickInit();
-
-	void FloatingGimmickUpdate();
-
 	//カメラの設定
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
 
-	const WorldTransform& GetWorldTransform() { return worldTransform_; }
+	const WorldTransform& GetWorldTransform() { return obj_->worldTransform_; }
 	Vector3 GetWorldPos() const;
 	Vector3 GetAttackPos() const { return emitter_.translate_; }
 	bool IsAttack() { return isAttack_; }

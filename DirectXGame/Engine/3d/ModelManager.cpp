@@ -5,6 +5,7 @@
 #include <sstream>
 #include <cassert>
 #include "TextureManager.h"
+#include "ModelManager.h"
 
 using namespace Microsoft::WRL;
 
@@ -218,6 +219,24 @@ void ModelManager::LoadGltfFile(const std::string& modelName) {
 				models_.back()->indices_.push_back(vertexIndex);
 			}
 		}
+		for (uint32_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex) {
+			aiBone* bone = mesh->mBones[boneIndex];
+			std::string jointName = bone->mName.C_Str();
+			Model::JointWeightData& jointWeightData = models_.back()->skinClusterData_[jointName];
+
+			aiMatrix4x4 bindPoseMatrixAssimp = bone->mOffsetMatrix.Inverse();
+			aiVector3D translate, scale;
+			aiQuaternion rotate;
+			bindPoseMatrixAssimp.Decompose(scale, rotate, translate);
+			Quaternion q = { rotate.x, -rotate.y, -rotate.z, rotate.w };
+			Matrix4x4 TMat = MakeTranslateMatrix({ -translate.x, translate.y, translate.z });
+			Matrix4x4 SMat = MakeScaleMatrix({ scale.x,scale.y,scale.z });
+			Matrix4x4 bindPoseMat = SMat * q.MakeRotateMatrix() * TMat;
+			jointWeightData.inverseBindPoseMatrix_ = bindPoseMat.Inverse();
+			for (uint32_t weightIndex = 0; weightIndex < bone->mNumWeights; ++weightIndex) {
+				jointWeightData.vertexWeights_.push_back({ bone->mWeights[weightIndex].mWeight,bone->mWeights[weightIndex].mVertexId });
+			}
+		}
 	}
 
 	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
@@ -268,7 +287,7 @@ Model::Node ModelManager::ReadNode(aiNode* node) {
 	result.transform_.translate_ = { -translate.x,translate.y ,translate.z }; //x軸を反転、さらに回転方向が逆なので軸を反転させる
 	result.transform_.rotate_ = { rotate.x, -rotate.y, -rotate.z, rotate.w }; //x軸を反転
 	result.transform_.scale_ = { scale.x,scale.y,scale.z }; //scaleはそのまま
-	result.localMatrix_ = MakeTranslateMatrix(result.transform_.translate_) * result.transform_.rotate_.MakeRotateMatrix() * MakeScaleMatrix(result.transform_.scale_);
+	result.localMatrix_ = MakeScaleMatrix(result.transform_.scale_) * result.transform_.rotate_.MakeRotateMatrix() * MakeTranslateMatrix(result.transform_.translate_);
 
 	result.name_ = node->mName.C_Str(); //Node名を格納
 	result.children_.resize(node->mNumChildren); //子供の数だけ確保
@@ -281,10 +300,10 @@ Model::Node ModelManager::ReadNode(aiNode* node) {
 
 Skeleton Skeleton::Create(const Model::Node& rootNade) {
 	Skeleton skeleton;
-	skeleton.root_;
+	skeleton.root_ = CreateJoint(rootNade, {}, skeleton.joints_);
 
 	for (const Joint& joint : skeleton.joints_) {
-		skeleton.jointMap.emplace(joint.name_, joint.index_);
+		skeleton.jointMap_.emplace(joint.name_, joint.index_);
 	}
 
 	return skeleton;
@@ -311,15 +330,12 @@ int32_t Skeleton::CreateJoint(const Model::Node& node, const std::optional<int32
 void Skeleton::Update() {
 
 	for (Joint& joint : joints_) {
-		joint.localMat_ = MakeTranslateMatrix(joint.transform_.translate_) * joint.transform_.rotate_.MakeRotateMatrix() * MakeScaleMatrix(joint.transform_.scale_);
+		joint.localMat_ = MakeScaleMatrix(joint.transform_.scale_) * joint.transform_.rotate_.MakeRotateMatrix() * MakeTranslateMatrix(joint.transform_.translate_);
 		if (joint.parent_) {
 			joint.skeletonSpaceMat_ = joint.localMat_ * joints_[*joint.parent_].skeletonSpaceMat_;
 		}
 		else {
 			joint.skeletonSpaceMat_ = joint.localMat_;
 		}
-
-
 	}
-
 }

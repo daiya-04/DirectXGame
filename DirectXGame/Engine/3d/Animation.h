@@ -37,7 +37,7 @@ public:
 
 	//再生
 	void Play(const Model::Node& rootNode, bool isLoop = true);
-	void Play(Skeleton& skeleton);
+	void Play(Skeleton& skeleton,bool isLoop = true);
 
 	void Start() { isPlaying_ = true; }
 	void End() { isPlaying_ = false; }

@@ -163,6 +163,12 @@
     <ClCompile Include="Game\Scene\DebugTestScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\3d\SkinningObject.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\SkinCluster.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -289,6 +295,12 @@
     </ClInclude>
     <ClInclude Include="Game\Scene\DebugTestScene.h">
       <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\SkinningObject.h">
+      <Filter>Engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\SkinCluster.h">
+      <Filter>Engine\3d</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

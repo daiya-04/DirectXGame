@@ -14,18 +14,28 @@ const std::array<Player::ComboAttack, Player::comboNum_> Player::kComboAttacks_ 
 	}
 };
 
-void Player::Init(std::vector<std::shared_ptr<Model>> modelHandles){
+void Player::Init(std::vector<std::shared_ptr<Model>> models){
 
 	uint32_t particleTex = TextureManager::Load("particle.png");
 	uint32_t particleTex2 = TextureManager::Load("star.png");
+	debugModel_ = ModelManager::LoadOBJ("cube", false);
 
-	worldTransform_.Init();
-
-	obj_.resize(modelHandles.size());
-	for (size_t index = 0; index < obj_.size(); ++index) {
-		obj_[index] = std::make_unique<Object3d>();
-		obj_[index].reset(Object3d::Create(modelHandles[index]));
+	animationMadels_ = models;
+	
+	obj_.reset(SkinningObject::Create(animationMadels_[action_]));
+	skinClusters_.resize(animationMadels_.size());
+	for (size_t index = 0; index < Action::kActionNum; index++) {
+		animations_.emplace_back(Animation::LoadAnimationFile(animationMadels_[index]->name_));
+		skeletons_.emplace_back(Skeleton::Create(animationMadels_[index]->rootNode_));
+		skinClusters_[index].Create(skeletons_[index], animationMadels_[index]);
 	}
+	obj_->SetSkinCluster(&skinClusters_[action_]);
+
+	for (Skeleton::Joint& joint : skeletons_[action_].joints_) {
+		debugObj_.emplace_back(Object3d::Create(debugModel_));
+	}
+	
+	obj_->worldTransform_.scale_ = { 5.0f,5.0f,5.0f };
 
 	magicParticle_ = std::make_unique<Particle>();
 	magicParticle_.reset(Particle::Create(particleTex, 10000));
@@ -34,24 +44,12 @@ void Player::Init(std::vector<std::shared_ptr<Model>> modelHandles){
 
 	behaviorRequest_ = Behavior::kRoot;
 
-	worldTransform_.scale_ = { 0.5f,0.5f,0.5f };
-	obj_[Head]->worldTransform_.translation_ = { 0.0f,6.5f,0.0f };
-
-	obj_[Body]->worldTransform_.parent_ = &worldTransform_;
-	obj_[Head]->worldTransform_.parent_ = &obj_[Body]->worldTransform_;
-
-	FloatingGimmickInit();
-
 	ColliderUpdate();
 
 	//行列更新
-	Matrix4x4 S = MakeScaleMatrix(worldTransform_.scale_);
-	Matrix4x4 T = MakeTranslateMatrix(worldTransform_.translation_);
-	worldTransform_.matWorld_ = S * rotateMat_ * T;
-	//worldTransform_.UpdateMatrix();
-	for (const auto& obj : obj_) {
-		obj->worldTransform_.UpdateMatrix();
-	}
+	Matrix4x4 S = MakeScaleMatrix(obj_->worldTransform_.scale_);
+	Matrix4x4 T = MakeTranslateMatrix(obj_->worldTransform_.translation_);
+	obj_->worldTransform_.matWorld_ = S * rotateMat_ * T;
 }
 
 void Player::Update(){
@@ -89,12 +87,16 @@ void Player::Update(){
 
 
 	//行列更新
-	Matrix4x4 S = MakeScaleMatrix(worldTransform_.scale_);
-	Matrix4x4 T = MakeTranslateMatrix(worldTransform_.translation_);
-	worldTransform_.matWorld_ = S * rotateMat_ * T;
-	//worldTransform_.UpdateMatrix();
-	for (const auto& obj : obj_) {
-		obj->Update();
+	Matrix4x4 S = MakeScaleMatrix(obj_->worldTransform_.scale_);
+	Matrix4x4 T = MakeTranslateMatrix(obj_->worldTransform_.translation_);
+	obj_->worldTransform_.matWorld_ = S * rotateMat_ * T;
+
+	animations_[action_].Play(skeletons_[action_]);
+	skeletons_[action_].Update();
+	skinClusters_[action_].Update(skeletons_[action_]);
+
+	for (Skeleton::Joint& joint : skeletons_[action_].joints_) {
+		debugObj_[joint.index_]->worldTransform_.matWorld_ = joint.skeletonSpaceMat_ * obj_->worldTransform_.matWorld_;
 	}
 
 	ColliderUpdate();
@@ -120,8 +122,15 @@ void Player::AttackColliderUpdate() {
 
 void Player::Draw(const Camera& camera){
 
-	obj_[Body]->Draw(camera);
-	obj_[Head]->Draw(camera);
+	obj_->Draw(camera);
+
+}
+
+void Player::SkeletonDraw(const Camera& camera) {
+
+	for (const auto& obj : debugObj_) {
+		obj->Draw(camera);
+	}
 
 }
 
@@ -153,30 +162,33 @@ void Player::RootUpdate() {
 	move = Input::GetInstance()->GetMoveXZ();
 	move = move / SHRT_MAX * speed;
 
-	//ダッシュ
+	//攻撃
 	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_X)) {
 		behaviorRequest_ = Behavior::kAttack;
 	}
 
-	//ダッシュ
-	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
-		behaviorRequest_ = Behavior::kDash;
-	}
+	////ダッシュ
+	//if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_RIGHT_SHOULDER)) {
+	//	behaviorRequest_ = Behavior::kDash;
+	//}
 
 	move = TransformNormal(move, MakeRotateYMatrix(followCamera_->GetCamera().rotation_.y));
 
-	worldTransform_.translation_ += move;
-	worldTransform_.translation_.y = 0.0f;
+	obj_->worldTransform_.translation_ += move;
+	obj_->worldTransform_.translation_.y = 0.0f;
 
 	if (move != zeroVector) {
 		rotate_ = move;
+		action_ = Action::Walking;
 	}
+	else {
+		action_ = Action::Standing;
+	}
+	obj_->SetSkinCluster(&skinClusters_[action_]);
 
 	//worldTransform_.rotation_.y = std::atan2(rotate_.x, rotate_.z);
 
 	rotateMat_ = DirectionToDirection(from_, rotate_);
-
-	FloatingGimmickUpdate();
 
 }
 
@@ -252,7 +264,7 @@ void Player::AttackUpdate() {
 		Vector3 offset = { 0.0f,3.0f,10.0f };
 		offset = TransformNormal(offset, rotateMat_);
 
-		emitter_.translate_ = worldTransform_.translation_ + offset;
+		emitter_.translate_ = obj_->worldTransform_.translation_ + offset;
 
 		//速度とパーティクルの数の設定と生成
 		switch (workAttack_.comboIndex_) {
@@ -440,7 +452,7 @@ void Player::DashUpdate() {
 		workDash_.dashDirection_ = { 0.0f,0.0f,1.0f };
 	}
 
-	worldTransform_.translation_ += workDash_.dashDirection_.Normalize() * dashSpeed;
+	obj_->worldTransform_.translation_ += workDash_.dashDirection_.Normalize() * dashSpeed;
 
 	if (++workDash_.dashParam_ >= workDash_.dashTime_) {
 		behaviorRequest_ = Behavior::kRoot;
@@ -477,32 +489,13 @@ void Player::DashUpdate() {
 //	}
 //}
 
-void Player::FloatingGimmickInit() {
-
-	floatingParameter_ = 0.0f;
-
-}
-
-void Player::FloatingGimmickUpdate() {
-
-	//1フレームでのパラメータ加算値
-	const float step = 2.0f * (float)std::numbers::pi / (float)cycle;
-
-	floatingParameter_ += step;
-
-	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * (float)std::numbers::pi);
-
-	obj_[Body]->worldTransform_.translation_.y = std::sinf(floatingParameter_) * amplitude;
-
-}
-
 Vector3 Player::GetWorldPos() const{
 
 	Vector3 worldPos;
 
-	worldPos.x = worldTransform_.matWorld_.m[3][0];
-	worldPos.y = worldTransform_.matWorld_.m[3][1] + size_.y;
-	worldPos.z = worldTransform_.matWorld_.m[3][2];
+	worldPos.x = obj_->worldTransform_.matWorld_.m[3][0];
+	worldPos.y = obj_->worldTransform_.matWorld_.m[3][1] + size_.y;
+	worldPos.z = obj_->worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
 }

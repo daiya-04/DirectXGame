@@ -21,7 +21,7 @@ void MyGame::Init(){
 
 #ifdef _DEBUG
 
-	SceneManager::GetInstance()->ChangeScene("Debug");
+	SceneManager::GetInstance()->ChangeScene("Title");
 
 #endif // _DEBUG
 

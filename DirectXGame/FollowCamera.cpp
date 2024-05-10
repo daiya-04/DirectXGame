@@ -57,7 +57,7 @@ void FollowCamera::Reset() {
 
 Vector3 FollowCamera::OffsetCalc() const {
 
-	Vector3 offset = { 0.0f,5.0f,-30.0f };
+	Vector3 offset = { 0.0f,7.0f,-30.0f };
 	Matrix4x4 rotateMatrix;
 
 	rotateMatrix = MakeRotateXMatrix(camera_.rotation_.x) *

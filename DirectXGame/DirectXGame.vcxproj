@@ -144,6 +144,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Light\SpotLight.cpp" />
     <ClCompile Include="Engine\2d\PostEffect.cpp" />
     <ClCompile Include="Game\Charactor\Player.cpp" />
+    <ClCompile Include="Engine\3d\SkinningObject.cpp" />
+    <ClCompile Include="Engine\3d\SkinCluster.cpp" />
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
   </ItemGroup>
@@ -191,6 +193,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Loader\LevelLoader.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="Game\Charactor\Player.h" />
+    <ClInclude Include="Engine\3d\SkinningObject.h" />
+    <ClInclude Include="Engine\3d\SkinCluster.h" />
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
   </ItemGroup>
