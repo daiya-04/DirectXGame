@@ -93,7 +93,7 @@ public:
 private:
 
 	std::unique_ptr<SkinningObject> obj_;
-	std::vector<std::shared_ptr<Model>> animationMadels_;
+	std::vector<std::shared_ptr<Model>> animationModels_;
 	std::vector<Animation> animations_;
 	std::vector<Skeleton> skeletons_;
 	std::vector<SkinCluster> skinClusters_;

@@ -9,7 +9,7 @@
 
 
 class ElementBall {
-private:
+public:
 
 	enum class Phase {
 		kSet,
@@ -85,6 +85,7 @@ public:
 	bool IsLife() const { return isLife_; }
 
 	Sphere GetCollider() const { return collider_; }
+	Phase GetPhase() const { return phase_; }
 
 };
 

@@ -8,26 +8,29 @@
 
 const WorldTransform* Boss::target_ = nullptr;
 
-void Boss::Init(const std::vector<std::shared_ptr<Model>>& modelHandle) {
+void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 
-	worldTransform_.Init();
+	animationModels_ = models;
+	debugModel_ = ModelManager::LoadOBJ("cube", false);
 
-	obj_.resize(modelHandle.size());
-	for (size_t index = 0; index < obj_.size(); index++) {
-		obj_[index].reset(Object3d::Create(modelHandle[index]));
+	obj_.reset(SkinningObject::Create(animationModels_[action_]));
+	skinClusters_.resize(animationModels_.size());
+	for (size_t index = 0; index < Action::ActionNum; index++) {
+		animations_.emplace_back(Animation::LoadAnimationFile(animationModels_[index]->name_));
+		skeletons_.emplace_back(Skeleton::Create(animationModels_[index]->rootNode_));
+		skinClusters_[index].Create(skeletons_[index], animationModels_[index]);
 	}
+	obj_->SetSkinCluster(&skinClusters_[action_]);
 
-	worldTransform_.translation_ = workAppear_.startPos;
-	worldTransform_.scale_ = { 2.0f,2.0f,2.0f };
-	obj_[Head]->worldTransform_.translation_ = { 0.0f,4.8f,0.0f };
-
-	obj_[Body]->worldTransform_.parent_ = &worldTransform_;
-	obj_[Head]->worldTransform_.parent_ = &obj_[Body]->worldTransform_;
+	for (Skeleton::Joint& joint : skeletons_[action_].joints_) {
+		debugObj_.emplace_back(Object3d::Create(debugModel_));
+	}
+	
+	obj_->worldTransform_.scale_ = { 5.5f,5.5f,5.5f };
+	rotateMat_ = DirectionToDirection({0.0f,0.0f,1.0f}, { 0.0f,0.0f,-1.0f });
 
 	behaviorRequest_ = Behavior::kAppear;
 
-
-	FloatingGimmickInit();
 }
 
 void Boss::Update() {
@@ -63,13 +66,24 @@ void Boss::Update() {
 			break;
 	}
 
+	obj_->SetSkinCluster(&skinClusters_[action_]);
 	//行列更新
 	//worldTransform_.UpdateMatrix();
-	Matrix4x4 S = MakeScaleMatrix(worldTransform_.scale_);
-	Matrix4x4 T = MakeTranslateMatrix(worldTransform_.translation_);
-	worldTransform_.matWorld_ = S * rotateMat_ * T;
-	for (const auto& obj : obj_) {
-		obj->worldTransform_.UpdateMatrix();
+	Matrix4x4 S = MakeScaleMatrix(obj_->worldTransform_.scale_);
+	Matrix4x4 T = MakeTranslateMatrix(obj_->worldTransform_.translation_);
+	obj_->worldTransform_.matWorld_ = S * rotateMat_ * T;
+
+	if (action_ == Action::Standing) {
+		animations_[action_].Play(skeletons_[action_]);
+	}else {
+		animations_[action_].Play(skeletons_[action_], false);
+	}
+	
+	skeletons_[action_].Update();
+	skinClusters_[action_].Update(skeletons_[action_]);
+
+	for (Skeleton::Joint& joint : skeletons_[action_].joints_) {
+		debugObj_[joint.index_]->worldTransform_.matWorld_ = joint.skeletonSpaceMat_ * obj_->worldTransform_.matWorld_;
 	}
 
 	ColliderUpdate();
@@ -77,38 +91,24 @@ void Boss::Update() {
 
 void Boss::Draw(const Camera& camera) {
 
-	obj_[Body]->Draw(camera);
-	obj_[Head]->Draw(camera);
+	obj_->Draw(camera);
 
+}
+
+void Boss::SkeletonDraw(const Camera& camera) {
+	for (const auto& obj : debugObj_) {
+		obj->Draw(camera);
+	}
 }
 
 void Boss::OnCollision() {
 
 }
 
-void Boss::FloatingGimmickInit() {
-
-	floatingParameter_ = 0.0f;
-
-}
-
-void Boss::FloatingGimmickUpdate() {
-
-	//1フレームでのパラメータ加算値
-	const float step = 2.0f * (float)std::numbers::pi / (float)cycle;
-
-	floatingParameter_ += step;
-
-	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * (float)std::numbers::pi);
-
-	obj_[Body]->worldTransform_.translation_.y = std::sinf(floatingParameter_) * amplitude;
-
-}
-
 void Boss::RootInit() {
 
 	workAttack_.param = 0;
-
+	action_ = Action::Standing;
 
 }
 
@@ -118,8 +118,6 @@ void Boss::RootUpdate() {
 		behaviorRequest_ = Behavior::kAttack;
 	}
 	
-
-	FloatingGimmickUpdate();
 }
 
 void Boss::AttackInit() {
@@ -134,23 +132,28 @@ void Boss::AttackInit() {
 	for (size_t index = 0; index < 4; index++) {
 		ElementBall* newElementBall = new ElementBall();
 		std::shared_ptr<Model> model = ModelManager::LoadGLTF("ElementBall");
-		newElementBall->Init(model, worldTransform_.translation_ + offset[index]);
+		newElementBall->Init(model, obj_->worldTransform_.translation_ + offset[index]);
 		newElementBall->SetShotCount((uint32_t)index + 2);
 		gameScene_->AddElementBall(newElementBall);
 	}
-	
+
+
+	action_ = Action::AttackSet;
+	animations_[action_].Play(skeletons_[action_]);
 
 }
 
 void Boss::AttackUpdate() {
 
-
-	FloatingGimmickUpdate();
+	if ((action_ == Action::Attack || action_ == Action::AttackSet) && !animations_[action_].IsPlaying()) {
+		action_ = Action::Standing;
+	}
+	
 }
 
 void Boss::AppearInit() {
 
-	worldTransform_.translation_ = workAppear_.startPos;
+	obj_->worldTransform_.translation_ = workAppear_.startPos;
 	workAppear_.param = 0.0f;
 
 }
@@ -163,7 +166,7 @@ void Boss::AppearUpdate() {
 	}
 
 	float T = Easing::easeInOutQuart(workAppear_.param);
-	worldTransform_.translation_ = Lerp(T, workAppear_.startPos, workAppear_.endPos);
+	obj_->worldTransform_.translation_ = Lerp(T, workAppear_.startPos, workAppear_.endPos);
 
 	workAppear_.param += 0.005f;
 
@@ -188,9 +191,9 @@ void Boss::ChangeBehavior(Behavior behavior) {
 Vector3 Boss::GetWorldPos() const {
 	Vector3 worldPos;
 
-	worldPos.x = worldTransform_.matWorld_.m[3][0];
-	worldPos.y = worldTransform_.matWorld_.m[3][1] + size_.y;
-	worldPos.z = worldTransform_.matWorld_.m[3][2];
+	worldPos.x = obj_->worldTransform_.matWorld_.m[3][0];
+	worldPos.y = obj_->worldTransform_.matWorld_.m[3][1] + size_.y;
+	worldPos.z = obj_->worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
 }

@@ -2,6 +2,10 @@
 #include "WorldTransform.h"
 #include "Camera.h"
 #include "Object3d.h"
+#include "SkinningObject.h"
+#include "SkinCluster.h"
+#include "ModelManager.h"
+#include "Animation.h"
 #include "Vec3.h"
 #include "CollisionShapes.h"
 #include <memory>
@@ -35,11 +39,12 @@ private:
 
 public:
 	
-	enum Parts {
-		Body,
-		Head,
+	enum Action {
+		Standing,
+		AttackSet,
+		Attack,
 
-		partsNum,
+		ActionNum,
 	};
 
 	struct WorkAppear{
@@ -55,8 +60,18 @@ public:
 
 private:
 
-	std::vector<std::unique_ptr<Object3d>> obj_;
-	WorldTransform worldTransform_;
+	std::unique_ptr<SkinningObject> obj_;
+	std::vector<std::shared_ptr<Model>> animationModels_;
+	std::vector<Animation> animations_;
+	std::vector<Skeleton> skeletons_;
+	std::vector<SkinCluster> skinClusters_;
+
+	std::vector<std::unique_ptr<Object3d>> debugObj_;
+	std::shared_ptr<Model> debugModel_;
+
+	Action action_ = Action::Standing;
+
+
 	bool isDead_ = false;
 
 	Vector3 size_ = { 2.0f,4.0f,2.0f };
@@ -84,7 +99,7 @@ public:
 
 	Boss() {};
 
-	void Init(const std::vector<std::shared_ptr<Model>>& modelHandle);
+	void Init(const std::vector<std::shared_ptr<Model>>& models);
 
 	void Update();
 	
@@ -94,19 +109,21 @@ public:
 	}
 
 	void Draw(const Camera& camera);
+	void SkeletonDraw(const Camera& camera);
 
 	void OnCollision();
-
-	void FloatingGimmickInit();
-
-	void FloatingGimmickUpdate();
 
 	static void SetTarget(const WorldTransform* target) { target_ = target; }
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	void ChangeBehavior(Behavior behavior);
+	void ChangeAction(Action action) {
+		action_ = action;
+		animations_[action_].Play(skeletons_[action_]);
+	}
 	bool IsAttack() const { return (behavior_ == Behavior::kAttack) ? true : false; }
 	Vector3 GetWorldPos() const;
 	AABB GetCollider(){ return collider_; }
+	Action GetAction() const { return action_; }
 
 };
 

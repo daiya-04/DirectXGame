@@ -41,8 +41,9 @@ void GameScene::Init(){
 	//enemyBodyModel_ = ModelManager::Load("EnemyBody");
 	//enemyHeadModel_ = ModelManager::Load("EnemyHead");
 	//bulletModel_ = ModelManager::Load("EnemyBullet");
-	std::shared_ptr<Model> bossBodyModel = ModelManager::LoadOBJ("BossBody");
-	std::shared_ptr<Model> bossHeadModel = ModelManager::LoadOBJ("BossHead");
+	std::shared_ptr<Model> bossStandingModel = ModelManager::LoadGLTF("Standing");
+	std::shared_ptr<Model> bossSetModel = ModelManager::LoadGLTF("SetMotion");
+	std::shared_ptr<Model> bossAttackModel = ModelManager::LoadGLTF("BossAttack");
 
 	///
 
@@ -74,7 +75,7 @@ void GameScene::Init(){
 
 	//ボス
 	boss_ = std::make_unique<Boss>();
-	boss_->Init({ bossBodyModel,bossHeadModel });
+	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel });
 	boss_->SetGameScene(this);
 
 	//敵
@@ -228,6 +229,7 @@ void GameScene::DrawModel(){
 	if (sceneEvent_ == SceneEvent::Battle) {
 		player_->SkeletonDraw(camera_);
 	}
+	boss_->SkeletonDraw(camera_);
 	
 
 #endif // _DEBUG
@@ -276,12 +278,13 @@ void GameScene::DrawPostEffect() {
 	skydome_->Draw(camera_);
 	ground_->Draw(camera_);
 	
-	boss_->Draw(camera_);
+	
 	for (const auto& elementBall : elementBalls_) {
 		elementBall->Draw(camera_);
 	}
 	
 	SkinningObject::preDraw();
+	boss_->Draw(camera_);
 	if (sceneEvent_ == SceneEvent::Battle) {
 		player_->Draw(camera_);
 	}
@@ -301,6 +304,12 @@ void GameScene::BattleUpdate() {
 
 	if (boss_->IsAttack() && elementBalls_.empty()) {
 		boss_->ChangeBehavior(Boss::Behavior::kRoot);
+	}
+
+	for (std::list<std::unique_ptr<ElementBall>>::iterator itBall = elementBalls_.begin(); itBall != elementBalls_.end(); itBall++) {
+		if (boss_->GetAction()!=Boss::Action::Attack && (*itBall)->GetPhase() == ElementBall::Phase::kShot) {
+			boss_->ChangeAction(Boss::Action::Attack);
+		}
 	}
 
 	player_->Update();
