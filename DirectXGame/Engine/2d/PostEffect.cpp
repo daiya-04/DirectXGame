@@ -172,10 +172,12 @@ void PostEffect::Init() {
 	materialBuff_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	materialData_->color_ = Vector4({ 1.0f,1.0f,1.0f,1.0f });
 
-	grayScaleBuffer_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(GrayScale));
-	grayScaleBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&grayScaleData_));
-	grayScaleData_->isGrayScale_ = false;
-	grayScaleData_->param_ = 0.0f;
+	grayScaleBuffer_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(DeadEffectData));
+	grayScaleBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&deadEffectData_));
+	deadEffectData_->isEffect_ = false;
+	deadEffectData_->param_ = 0.0f;
+	deadEffectData_->root_ = 1.5f;
+	deadEffectData_->brightness_ = 10.0f;
 
 }
 
@@ -186,9 +188,9 @@ void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList) {
 	Matrix4x4* wvpData = nullptr;
 	*wvpData_ = wvpMatrix;*/
 
-	if (grayScaleData_->isGrayScale_) {
-		grayScaleData_->param_ += 0.01f;
-		grayScaleData_->param_ = min(grayScaleData_->param_, 1.0f);
+	if (deadEffectData_->isEffect_) {
+		deadEffectData_->param_ += 0.01f;
+		deadEffectData_->param_ = min(deadEffectData_->param_, 1.0f);
 	}
 
 	cmdList->SetGraphicsRootSignature(rootSignature_.Get());

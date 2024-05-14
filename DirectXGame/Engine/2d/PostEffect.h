@@ -8,9 +8,11 @@
 #include <string>
 #include <array>
 
-struct GrayScale {
-	int32_t isGrayScale_;
+struct DeadEffectData {
+	int32_t isEffect_;
 	float param_;
+	float root_;
+	float brightness_;
 };
 
 class PostEffect {
@@ -43,7 +45,7 @@ public: //メンバ関数
 
 	void PostDrawScene(ID3D12GraphicsCommandList* cmdList);
 
-	void SetGrayScaleEffect(bool isGrayScale) { grayScaleData_->isGrayScale_ = isGrayScale; }
+	void SetGrayScaleEffect(bool isGrayScale) { deadEffectData_->isEffect_ = isGrayScale; }
 
 private:
 
@@ -86,7 +88,7 @@ private: //メンバ変数
 	MaterialData* materialData_ = nullptr;
 
 	ComPtr<ID3D12Resource> grayScaleBuffer_;
-	GrayScale* grayScaleData_ = nullptr;
+	DeadEffectData* deadEffectData_ = nullptr;
 
 };
 
