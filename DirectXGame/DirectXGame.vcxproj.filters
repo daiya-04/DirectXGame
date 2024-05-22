@@ -62,6 +62,9 @@
     <Filter Include="Game\Charactor">
       <UniqueIdentifier>{f0ddd313-3b86-42d0-a5c8-921747744e38}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Line">
+      <UniqueIdentifier>{4cdc3d87-ca5a-4b43-b7b9-91e46240f6d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -169,6 +172,10 @@
     <ClCompile Include="Engine\3d\SkinCluster.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Line\Line.cpp">
+      <Filter>Engine\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="ShapesDraw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -302,5 +309,9 @@
     <ClInclude Include="Engine\3d\SkinCluster.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Line\Line.h">
+      <Filter>Engine\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapesDraw.h" />
   </ItemGroup>
 </Project>

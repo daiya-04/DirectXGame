@@ -7,6 +7,8 @@
 #include "Audio.h"
 #include "Input.h"
 #include "SceneManager.h"
+#include "Line.h"
+#include "ShapesDraw.h"
 
 void DebugTestScene::Init() {
 
@@ -95,6 +97,10 @@ void DebugTestScene::DrawModel() {
 	for (const auto& obj : debugObj_) {
 		obj->Draw(camera_);
 	}
+
+	//ShapesDraw::DrawSphere(Shapes::Sphere({}, 1.0f), camera_);
+	//ShapesDraw::DrawPlane(Shapes::Plane({ 0.0f,0.0f,1.0f }, 10.0f), camera_);
+	//ShapesDraw::DrawAABB(Shapes::AABB({ -1.0,-1.0,-1.0f }, { 1.0f,1.0f,1.0f }), camera_);
 
 }
 
