@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Easing.h"
 #include "TextureManager.h"
+#include "ShapesDraw.h"
 
 #include "Enemy.h"
 
@@ -128,9 +129,12 @@ void Player::Draw(const Camera& camera){
 
 void Player::SkeletonDraw(const Camera& camera) {
 
+	ShapesDraw::DrawAABB(collider_, camera);
+
 	for (const auto& obj : debugObj_) {
 		obj->Draw(camera);
 	}
+
 
 }
 

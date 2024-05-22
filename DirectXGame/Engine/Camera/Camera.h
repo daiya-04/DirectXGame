@@ -48,7 +48,8 @@ public:
 		matView_ = matView;
 		cMap_->matView = matView;
 	}
-	const Matrix4x4& GetMatView() { return matView_; }
+	const Matrix4x4 GetMatView() const { return matView_; }
+	const Matrix4x4 GetMatProj() const { return matProjection_; }
 
 	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const { return cBuffer_->GetGPUVirtualAddress(); }
 

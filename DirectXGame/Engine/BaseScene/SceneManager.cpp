@@ -3,6 +3,7 @@
 #include "DirectXCommon.h"
 #include "Object3d.h"
 #include "Particle.h"
+#include "Line.h"
 #include "ImGuiManager.h"
 #include "TextureManager.h"
 #include <cassert>
@@ -88,6 +89,12 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 	scene_->DrawParticle();
 
 	Particle::postDraw();
+
+	Line::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+
+	Line::AllDraw();
+
+	Line::postDraw();
 
 	///UI
 	Sprite::preDraw(commandList);

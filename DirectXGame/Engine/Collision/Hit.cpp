@@ -44,7 +44,7 @@ bool IsCollision(const Segment& segment, const Plane& plane) {
 	return false;
 }
 
-bool IsCollision(const Line& line, const Plane& plane) {
+bool IsCollision(const StraightLine& line, const Plane& plane) {
 
 	float dot = Dot(plane.normal, line.diff);
 
@@ -110,7 +110,7 @@ bool IsCollision(const Triangle& triangle, const Segment& segment) {
 	return false;
 }
 
-bool IsCollision(const Triangle& triangle, const Line& line) {
+bool IsCollision(const Triangle& triangle, const StraightLine& line) {
 	Vector3 v01 = triangle.vertices[1] - triangle.vertices[0];
 	Vector3 v12 = triangle.vertices[2] - triangle.vertices[1];
 	Vector3 v20 = triangle.vertices[0] - triangle.vertices[2];
@@ -237,7 +237,7 @@ bool IsCollision(const AABB& aabb, const Segment& segment) {
 	return false;
 }
 
-bool IsCollision(const AABB& aabb, const Line& segment) {
+bool IsCollision(const AABB& aabb, const StraightLine& segment) {
 
 	float tXmin = (aabb.min.x - segment.origin.x) / segment.diff.x;
 	float tXmax = (aabb.max.x - segment.origin.x) / segment.diff.x;

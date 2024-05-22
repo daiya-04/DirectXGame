@@ -5,6 +5,7 @@
 #include "Easing.h"
 #include "GameScene.h"
 #include "ModelManager.h"
+#include "ShapesDraw.h"
 
 const WorldTransform* Boss::target_ = nullptr;
 
@@ -96,6 +97,7 @@ void Boss::Draw(const Camera& camera) {
 }
 
 void Boss::SkeletonDraw(const Camera& camera) {
+	ShapesDraw::DrawAABB(collider_, camera);
 	for (const auto& obj : debugObj_) {
 		obj->Draw(camera);
 	}

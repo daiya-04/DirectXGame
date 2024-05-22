@@ -9,6 +9,7 @@
 #include "Object3d.h"
 #include "SkinningObject.h"
 #include "Particle.h"
+#include "Line.h"
 #include "GlobalVariables.h"
 #include "Audio.h"
 
@@ -32,6 +33,7 @@ void DSFramework::Init(){
 	Object3d::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 	SkinningObject::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 	Particle::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
+	Line::Init(DirectXCommon::GetInstance()->GetDevice());
 
 	GlobalVariables::GetInstance()->LoadFiles();
 

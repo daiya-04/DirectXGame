@@ -56,7 +56,7 @@ private:
 	Animation animation_;
 	Vector3 size_ = { 2.0f,2.0f,2.0f };
 
-	Sphere collider_{};
+	Shapes::Sphere collider_{};
 
 	bool isLife_ = false;
 
@@ -84,7 +84,7 @@ public:
 
 	bool IsLife() const { return isLife_; }
 
-	Sphere GetCollider() const { return collider_; }
+	Shapes::Sphere GetCollider() const { return collider_; }
 	Phase GetPhase() const { return phase_; }
 
 };

@@ -2,6 +2,14 @@
 #include "Matrix44.h"
 #include "CollisionShapes.h"
 
+using Shapes::Segment;
+using Shapes::StraightLine;
+using Shapes::Ray;
+using Shapes::Sphere;
+using Shapes::Plane;
+using Shapes::Triangle;
+using Shapes::AABB;
+using Shapes::OBB;
 
 Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
 
@@ -32,7 +40,7 @@ bool IsCollision(const Segment& segment, const Plane& plane);
 /// <param name="line">直線</param>
 /// <param name="plane">平面</param>
 /// <returns></returns>
-bool IsCollision(const Line& line, const Plane& plane);
+bool IsCollision(const StraightLine& line, const Plane& plane);
 /// <summary>
 /// 半直線と平面との衝突判定
 /// </summary>
@@ -53,7 +61,7 @@ bool IsCollision(const Triangle& triangle, const Segment& segment);
 /// <param name="triangle">三角形</param>
 /// <param name="line">直線</param>
 /// <returns></returns>
-bool IsCollision(const Triangle& triangle, const Line& line);
+bool IsCollision(const Triangle& triangle, const StraightLine& line);
 /// <summary>
 /// 三角形と半直線との衝突判定
 /// </summary>
@@ -88,7 +96,7 @@ bool IsCollision(const AABB& aabb, const Segment& segment);
 /// <param name="aabb">AABB</param>
 /// <param name="segment">直線</param>
 /// <returns></returns>
-bool IsCollision(const AABB& aabb, const Line& segment);
+bool IsCollision(const AABB& aabb, const StraightLine& segment);
 /// <summary>
 ///AABBと半直線との衝突判定
 /// </summary>

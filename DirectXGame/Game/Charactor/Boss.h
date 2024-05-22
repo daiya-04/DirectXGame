@@ -74,9 +74,9 @@ private:
 
 	bool isDead_ = false;
 
-	Vector3 size_ = { 2.0f,4.0f,2.0f };
+	Vector3 size_ = { 2.0f,5.0f,2.0f };
 
-	AABB collider_{};
+	Shapes::AABB collider_{};
 
 	static const WorldTransform* target_;
 	GameScene* gameScene_ = nullptr;
@@ -122,7 +122,7 @@ public:
 	}
 	bool IsAttack() const { return (behavior_ == Behavior::kAttack) ? true : false; }
 	Vector3 GetWorldPos() const;
-	AABB GetCollider(){ return collider_; }
+	Shapes::AABB GetCollider(){ return collider_; }
 	Action GetAction() const { return action_; }
 
 };

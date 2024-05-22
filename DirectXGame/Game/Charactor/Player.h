@@ -103,9 +103,9 @@ private:
 
 	Action action_ = Action::Standing;
 
-	Vector3 size_ = { 1.0f,2.0f,1.0f };
+	Vector3 size_ = { 2.0f,5.0f,2.0f };
 
-	AABB collider_{};
+	Shapes::AABB collider_{};
 	Sphere AttackCollider_{};
 
 	uint32_t life_ = 4;
@@ -176,7 +176,7 @@ public:
 	Vector3 GetWorldPos() const;
 	Vector3 GetAttackPos() const { return emitter_.translate_; }
 	bool IsAttack() { return isAttack_; }
-	AABB GetCollider() const { return collider_; }
+	Shapes::AABB GetCollider() const { return collider_; }
 	Sphere GetAttackCollider() const { return AttackCollider_; }
 	uint32_t GetLife() const { return life_; }
 
