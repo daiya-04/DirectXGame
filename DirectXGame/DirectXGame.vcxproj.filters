@@ -176,6 +176,7 @@
       <Filter>Engine\Line</Filter>
     </ClCompile>
     <ClCompile Include="ShapesDraw.cpp" />
+    <ClCompile Include="SkyBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -313,5 +314,6 @@
       <Filter>Engine\Line</Filter>
     </ClInclude>
     <ClInclude Include="ShapesDraw.h" />
+    <ClInclude Include="SkyBox.h" />
   </ItemGroup>
 </Project>

@@ -33,15 +33,6 @@ private:
 		kParamNum,
 	};
 
-public:
-
-	enum ShapeType {
-		kCube,
-		kSphere,
-		kPlane,
-		kModel,
-	};
-
 private: //静的メンバ変数
 
 	static ID3D12Device* device_;

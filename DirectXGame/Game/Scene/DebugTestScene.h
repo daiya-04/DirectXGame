@@ -12,6 +12,7 @@
 #include "WorldTransform.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "SkyBox.h"
 
 class DebugTestScene : public IScene {
 public:
@@ -50,6 +51,9 @@ private:
 
 	std::vector<std::unique_ptr<Object3d>> debugObj_;
 	std::shared_ptr<Model> debugModel_;
+
+	uint32_t skyBoxTex_ = 0;
+	std::unique_ptr<SkyBox> skyBox_;
 
 };
 

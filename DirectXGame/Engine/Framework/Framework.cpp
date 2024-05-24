@@ -12,6 +12,7 @@
 #include "Line.h"
 #include "GlobalVariables.h"
 #include "Audio.h"
+#include "SkyBox.h"
 
 
 void DSFramework::Init(){
@@ -34,6 +35,7 @@ void DSFramework::Init(){
 	SkinningObject::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 	Particle::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 	Line::Init(DirectXCommon::GetInstance()->GetDevice());
+	SkyBox::StaticInit();
 
 	GlobalVariables::GetInstance()->LoadFiles();
 
