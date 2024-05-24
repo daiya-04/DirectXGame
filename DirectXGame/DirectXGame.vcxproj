@@ -148,6 +148,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\SkinningObject.cpp" />
     <ClCompile Include="Engine\3d\SkinCluster.cpp" />
     <ClCompile Include="ShapesDraw.cpp" />
+    <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
   </ItemGroup>
@@ -199,6 +200,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\SkinCluster.h" />
     <ClInclude Include="Engine\Line\Line.h" />
     <ClInclude Include="ShapesDraw.h" />
+    <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
   </ItemGroup>

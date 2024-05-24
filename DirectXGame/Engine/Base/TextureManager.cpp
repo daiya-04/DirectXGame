@@ -1,5 +1,6 @@
 #include "TextureManager.h"
 #include "DirectXCommon.h"
+#include "Log.h"
 
 #include <cassert>
 
@@ -87,23 +88,28 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName){
 	}
 	std::string fullPath = currentRelative ? fileName : directoryPath_ + fileName;
 
-	//ユニコード文字列に変換
-	wchar_t wFilePath[256];
-	MultiByteToWideChar(CP_ACP, 0, fullPath.c_str(), -1, wFilePath, _countof(wFilePath));
-
 	HRESULT hr;
 
 	
 	ScratchImage image{};
 
 	//WICテクスチャのロード
-	hr = LoadFromWICFile(wFilePath, WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	if (fullPath.ends_with(".dds")) {
+		hr = LoadFromDDSFile(ConvertString(fullPath).c_str(), DDS_FLAGS_NONE, nullptr, image);
+	}else {
+		hr = LoadFromWICFile(ConvertString(fullPath).c_str(), WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	}
 	assert(SUCCEEDED(hr));
 
 	ScratchImage mipImages{};
 	//みっぷマップ生成
-	hr = GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), TEX_FILTER_SRGB, 0, mipImages);
-	assert(SUCCEEDED(hr));
+	if (IsCompressed(image.GetMetadata().format)) { //圧縮フォーマットか調べる
+		mipImages = std::move(image);
+	}else {
+		hr = GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), TEX_FILTER_SRGB, 0, mipImages);
+		assert(SUCCEEDED(hr));
+	}
+	
 	const TexMetadata& metadata = mipImages.GetMetadata();
 
 	//metadataを基にResourceの設定
@@ -157,8 +163,16 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName){
 	//metadataを基にSRVの設定
 	srvDesc.Format = metadata.format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
-	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+
+	if (metadata.IsCubemap()) {
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+		srvDesc.TextureCube.MostDetailedMip = 0;
+		srvDesc.TextureCube.MipLevels = UINT_MAX;
+		srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
+	}else {
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
+		srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+	}
 
 	device_->CreateShaderResourceView(texture.resource.Get(), &srvDesc, texture.textureSrvHandleCPU_);
 

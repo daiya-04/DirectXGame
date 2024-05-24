@@ -25,6 +25,10 @@ void DebugTestScene::Init() {
 	sneakModel_ = ModelManager::LoadGLTF("Walking");
 	debugModel_ = ModelManager::LoadOBJ("cube", false);
 
+	skyBoxTex_ = TextureManager::Load("rostock_laage_airport_4k.dds");
+
+	skyBox_.reset(SkyBox::Create(skyBoxTex_));
+
 	human_.reset(SkinningObject::Create(humanModel_));
 	animation_ = Animation::LoadAnimationFile(humanModel_->name_);
 	skeleton_ = Skeleton::Create(humanModel_->rootNode_);
@@ -40,6 +44,7 @@ void DebugTestScene::Init() {
 }
 
 void DebugTestScene::Update() {
+	DebugGUI();
 
 #ifdef _DEBUG
 
@@ -98,6 +103,7 @@ void DebugTestScene::DrawModel() {
 		obj->Draw(camera_);
 	}
 
+	skyBox_->Draw(camera_);
 	//ShapesDraw::DrawSphere(Shapes::Sphere({}, 1.0f), camera_);
 	//ShapesDraw::DrawPlane(Shapes::Plane({ 0.0f,0.0f,1.0f }, 10.0f), camera_);
 	//ShapesDraw::DrawAABB(Shapes::AABB({ -1.0,-1.0,-1.0f }, { 1.0f,1.0f,1.0f }), camera_);
@@ -129,7 +135,12 @@ void DebugTestScene::DrawPostEffect() {
 }
 
 void DebugTestScene::DebugGUI() {
+#ifdef _DEBUG
+	ImGui::Begin("camera");
 
+	ImGui::DragFloat3("pos", &camera_.translation_.x, 0.01f);
+	ImGui::DragFloat3("rotate", &camera_.rotation_.x, 0.01f);
 
-
+	ImGui::End();
+#endif // _DEBUG
 }
