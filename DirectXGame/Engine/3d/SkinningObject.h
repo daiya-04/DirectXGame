@@ -74,8 +74,6 @@ public: //メンバ関数
 
 	void SetModelHandle(std::shared_ptr<Model> model) { model_ = model; }
 
-	void SetColor(const Vector4& color) { model_->SetColor(color); }
-
 	void SetSkinCluster(SkinCluster* skinCluster) { skinCluster_ = skinCluster; }
 
 	std::shared_ptr<Model> GetModel() const { return model_; }

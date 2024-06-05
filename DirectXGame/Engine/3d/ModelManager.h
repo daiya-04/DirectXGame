@@ -15,6 +15,8 @@
 #include "Vec4.h"
 #include "Quaternion.h"
 #include "Matrix44.h"
+#include "Mesh.h"
+#include "Material.h"
 
 struct QuaternionTransform {
 	Vector3 translate_;
@@ -25,21 +27,10 @@ struct QuaternionTransform {
 class Model {
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+	friend class ModelManager;
+
 public:
-
-	struct VertexData {
-		Vector4 pos_;
-		Vector2 uv_;
-		Vector3 normal;
-	};
-
-	struct Material {
-		Vector4 color_;
-		int32_t enableLightnig_;
-		float padding_[3];
-		Matrix4x4 uvtransform_;
-		float shininess_;
-	};
 
 	struct Node {
 		QuaternionTransform transform_;
@@ -58,55 +49,21 @@ public:
 		std::vector<VertexWeightData> vertexWeights_;
 	};
 
-private:
-
-	//リソースの生成
-	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
+public:
+	
 
 public:
 
-	static void SetDevice();
-
-	void CreateBuffer();
-
-	void SetVertexBuffers(ID3D12GraphicsCommandList* commandList);
-	void SetIndexBuffers(ID3D12GraphicsCommandList* commandList);
-
-	void SetGraphicsRootConstantBufferView(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex);
-
-	void SetColor(const Vector4& color) { materialData->color_ = color; }
-
-	uint32_t GetUvHandle() const { return uvHandle_; }
-	D3D12_VERTEX_BUFFER_VIEW GetVBV() const { return vertexBufferView_; }
-
-public:
-
-	std::vector<VertexData> vertices_;
-	std::vector<uint32_t> indices_;
+	
 	Node rootNode_;
-	//uv
-	int32_t uvHandle_ = 0;
-	//Lightingの有無
-	bool isLighting_ = true;
+	
+	std::vector<Mesh> meshes_;
+
+
 	//modelファイルの名前
 	std::string name_;
 
 	std::map<std::string, JointWeightData> skinClusterData_;
-
-private:
-
-	static ID3D12Device* device_;
-
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
-	ComPtr<ID3D12Resource> vertexResource_;
-	VertexData* vertexData = nullptr;
-
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
-	ComPtr<ID3D12Resource> indexResource_;
-	uint32_t* indexData_ = nullptr;
-	
-	ComPtr<ID3D12Resource> materialResource_;
-	Material* materialData = nullptr;
 
 };
 
@@ -116,7 +73,7 @@ private:
 
 public:
 
-	static const size_t kNumModel = 124;
+	static const size_t kNumModel = 128;
 
 private:
 
@@ -130,19 +87,19 @@ public:
 
 	static ModelManager* GetInstance();
 
-	static std::shared_ptr<Model> LoadOBJ(const std::string& modelName, bool isLighting = true);
+	static std::shared_ptr<Model> LoadOBJ(const std::string& modelName);
 
-	static std::shared_ptr<Model> LoadGLTF(const std::string& modelName, bool isLighting = true);
+	static std::shared_ptr<Model> LoadGLTF(const std::string& modelName);
 
 private:
 
-	std::shared_ptr<Model> LoadInternal(const std::string& modelName, bool isLighting, const std::string& extension);
+	std::shared_ptr<Model> LoadInternal(const std::string& modelName, const std::string& extension);
 
 	void LoadObjFile(const std::string& modelName);
 
 	void LoadGltfFile(const std::string& modelName);
 
-	void LoadMaterialTemplateFile(const std::string& fileName);
+	//void LoadMaterialTemplateFile(const std::string& fileName);
 
 	Model::Node ReadNode(aiNode* node);
 

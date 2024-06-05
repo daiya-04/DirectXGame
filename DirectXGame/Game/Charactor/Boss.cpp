@@ -12,7 +12,7 @@ const WorldTransform* Boss::target_ = nullptr;
 void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 
 	animationModels_ = models;
-	debugModel_ = ModelManager::LoadOBJ("cube", false);
+	debugModel_ = ModelManager::LoadOBJ("cube");
 
 	obj_.reset(SkinningObject::Create(animationModels_[action_]));
 	skinClusters_.resize(animationModels_.size());

@@ -19,7 +19,7 @@ void Player::Init(std::vector<std::shared_ptr<Model>> models){
 
 	uint32_t particleTex = TextureManager::Load("particle.png");
 	uint32_t particleTex2 = TextureManager::Load("star.png");
-	debugModel_ = ModelManager::LoadOBJ("cube", false);
+	debugModel_ = ModelManager::LoadOBJ("cube");
 
 	animationModels_ = models;
 	

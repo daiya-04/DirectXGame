@@ -28,15 +28,15 @@ void SkinCluster::Create(const Skeleton& skeleton,const std::shared_ptr<Model>& 
 	device->CreateShaderResourceView(paletteBuff_.Get(), &paletteSrvDesc, paletteSrvHandle_.first);
 
 	//influence用のResourceを確保。頂点ごとにinfluence情報を追加できるようにする
-	influenceBuff_ = CreateBufferResource(device, sizeof(VertexInfluence) * model->vertices_.size());
+	influenceBuff_ = CreateBufferResource(device, sizeof(VertexInfluence) * model->meshes_[0].vertices_.size());
 	VertexInfluence* mappedInfluence = nullptr;
 	influenceBuff_->Map(0, nullptr, reinterpret_cast<void**>(&mappedInfluence));
-	std::memset(mappedInfluence, 0, sizeof(VertexInfluence) * model->vertices_.size()); //0埋め。weightを0にしておく
-	mappedInfluence_ = { mappedInfluence,model->vertices_.size() };
+	std::memset(mappedInfluence, 0, sizeof(VertexInfluence) * model->meshes_[0].vertices_.size()); //0埋め。weightを0にしておく
+	mappedInfluence_ = { mappedInfluence,model->meshes_[0].vertices_.size() };
 
 	//influence用のVBVを作成
 	influenceBufferView_.BufferLocation = influenceBuff_->GetGPUVirtualAddress();
-	influenceBufferView_.SizeInBytes = UINT(sizeof(VertexInfluence) * model->vertices_.size());
+	influenceBufferView_.SizeInBytes = UINT(sizeof(VertexInfluence) * model->meshes_[0].vertices_.size());
 	influenceBufferView_.StrideInBytes = sizeof(VertexInfluence);
 
 	//InverseBindPoseMatrixを格納する場所を作成して、単位行列で埋める

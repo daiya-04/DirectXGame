@@ -23,7 +23,8 @@ void DebugTestScene::Init() {
 
 	humanModel_ = ModelManager::LoadGLTF("Standing");
 	sneakModel_ = ModelManager::LoadGLTF("Walking");
-	debugModel_ = ModelManager::LoadOBJ("cube", false);
+	debugModel_ = ModelManager::LoadOBJ("cube");
+	MultiMaterialModel_ = ModelManager::LoadOBJ("MultiMesh");
 
 	skyBoxTex_ = TextureManager::Load("rostock_laage_airport_4k.dds");
 
@@ -39,8 +40,12 @@ void DebugTestScene::Init() {
 		debugObj_.emplace_back(Object3d::Create(debugModel_));
 	}
 
+	MutiMaterial_.reset(Object3d::Create(MultiMaterialModel_));
+	MutiMaterial_->worldTransform_.rotation_.y = 3.14f;
+
 	human_->worldTransform_.rotation_.y = 3.14f;
 
+	Update();
 }
 
 void DebugTestScene::Update() {
@@ -80,6 +85,7 @@ void DebugTestScene::Update() {
 	for (Skeleton::Joint& joint : skeleton_.joints_) {
 		debugObj_[joint.index_]->worldTransform_.matWorld_ = joint.skeletonSpaceMat_ * human_->worldTransform_.matWorld_;
 	}
+	MutiMaterial_->worldTransform_.UpdateMatrix();
 
 	camera_.UpdateViewMatrix();
 	pointLight_.Update();
@@ -95,15 +101,16 @@ void DebugTestScene::DrawBackGround() {
 void DebugTestScene::DrawModel() {
 
 	SkinningObject::preDraw();
-	human_->Draw(camera_);
+	//human_->Draw(camera_);
 
 	
 	Object3d::preDraw();
-	for (const auto& obj : debugObj_) {
+	/*for (const auto& obj : debugObj_) {
 		obj->Draw(camera_);
-	}
+	}*/
+	MutiMaterial_->Draw(camera_);
 
-	skyBox_->Draw(camera_);
+	//skyBox_->Draw(camera_);
 	//ShapesDraw::DrawSphere(Shapes::Sphere({}, 1.0f), camera_);
 	//ShapesDraw::DrawPlane(Shapes::Plane({ 0.0f,0.0f,1.0f }, 10.0f), camera_);
 	//ShapesDraw::DrawAABB(Shapes::AABB({ -1.0,-1.0,-1.0f }, { 1.0f,1.0f,1.0f }), camera_);
@@ -142,5 +149,12 @@ void DebugTestScene::DebugGUI() {
 	ImGui::DragFloat3("rotate", &camera_.rotation_.x, 0.01f);
 
 	ImGui::End();
+
+	ImGui::Begin("object");
+
+	ImGui::DragFloat3("rotate", &MutiMaterial_->worldTransform_.rotation_.x, 0.01f);
+
+	ImGui::End();
+
 #endif // _DEBUG
 }

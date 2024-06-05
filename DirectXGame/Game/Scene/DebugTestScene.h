@@ -55,5 +55,8 @@ private:
 	uint32_t skyBoxTex_ = 0;
 	std::unique_ptr<SkyBox> skyBox_;
 
+	std::shared_ptr<Model> MultiMaterialModel_;
+	std::unique_ptr<Object3d> MutiMaterial_;
+
 };
 

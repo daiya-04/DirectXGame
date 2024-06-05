@@ -34,7 +34,7 @@ void GameScene::Init(){
 
 	/// モデルの読み込み
 
-	std::shared_ptr<Model> skydomeModel = ModelManager::LoadOBJ("skydome",false);
+	std::shared_ptr<Model> skydomeModel = ModelManager::LoadOBJ("skydome");
 	std::shared_ptr<Model> groundModel = ModelManager::LoadOBJ("ground");
 	std::shared_ptr<Model> playerStandingModel = ModelManager::LoadGLTF("Standing");
 	std::shared_ptr<Model> playerWalkingModel = ModelManager::LoadGLTF("Walking");
