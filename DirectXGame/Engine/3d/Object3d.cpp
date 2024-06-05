@@ -216,7 +216,6 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 }
 
 Object3d* Object3d::Create(std::shared_ptr<Model> model) {
-	
 
 	Object3d* obj = new Object3d();
 	obj->Initialize(model);
@@ -322,23 +321,29 @@ void Object3d::Draw(const Camera& camera) {
 	
 	worldTransform_.Map();
 
-	model_->SetVertexBuffers(commandList_);
-	model_->SetIndexBuffers(commandList_);
-	model_->SetGraphicsRootConstantBufferView(commandList_, (UINT)RootParameter::kMaterial);
-	//wvp用のCBufferの場所の設定
-	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kWorldTransform, worldTransform_.GetGPUVirtualAddress());
+	for (auto& mesh : model_->meshes_) {
 
-	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kCamera, camera.GetGPUVirtualAddress());
-	
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, model_->GetUvHandle());
+		commandList_->IASetVertexBuffers(0, 1, mesh.GetVBV());
+		commandList_->IASetIndexBuffer(mesh.GetIVB());
 
-	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
+		const auto& material = mesh.GetMaterial();
+		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kMaterial, material.GetGPUVirtualAddress());
+		//wvp用のCBufferの場所の設定
+		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kWorldTransform, worldTransform_.GetGPUVirtualAddress());
 
-	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kPointLight, pointLight_->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kCamera, camera.GetGPUVirtualAddress());
 
-	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kSpotLight, spotLight_->GetGPUVirtualAddress());
+		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, material.GetUVHandle());
 
-	commandList_->DrawIndexedInstanced((UINT)model_->indices_.size(), 1, 0, 0, 0);
+		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
+
+		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kPointLight, pointLight_->GetGPUVirtualAddress());
+
+		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kSpotLight, spotLight_->GetGPUVirtualAddress());
+
+		commandList_->DrawIndexedInstanced((UINT)mesh.indices_.size(), 1, 0, 0, 0);
+
+	}
 
 }
 

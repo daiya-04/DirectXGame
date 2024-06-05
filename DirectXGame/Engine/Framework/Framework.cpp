@@ -27,8 +27,6 @@ void DSFramework::Init(){
 	Audio::GetInstance()->Initialize();
 
 	TextureManager::GetInstance()->Initialize();
-	Model::SetDevice();
-	//TextureManager::Load("uvChecker.png");
 
 	Sprite::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), WinApp::kClientWidth, WinApp::kClientHeight);
 	Object3d::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());

@@ -175,8 +175,18 @@
     <ClCompile Include="Engine\Line\Line.cpp">
       <Filter>Engine\Line</Filter>
     </ClCompile>
-    <ClCompile Include="ShapesDraw.cpp" />
-    <ClCompile Include="SkyBox.cpp" />
+    <ClCompile Include="Engine\3d\SkyBox.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Collision\ShapesDraw.cpp">
+      <Filter>Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Mesh.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Material.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -313,7 +323,17 @@
     <ClInclude Include="Engine\Line\Line.h">
       <Filter>Engine\Line</Filter>
     </ClInclude>
-    <ClInclude Include="ShapesDraw.h" />
-    <ClInclude Include="SkyBox.h" />
+    <ClInclude Include="Engine\3d\SkyBox.h">
+      <Filter>Engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collision\ShapesDraw.h">
+      <Filter>Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Mesh.h">
+      <Filter>Engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Material.h">
+      <Filter>Engine\3d</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

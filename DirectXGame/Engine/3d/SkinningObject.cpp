@@ -307,25 +307,29 @@ void SkinningObject::Draw(const Camera& camera) {
 
 	worldTransform_.Map();
 
-	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
-		model_->GetVBV(),
+	for (auto& mesh : model_->meshes_) {
+		D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
+		*mesh.GetVBV(),
 		skinCluster_->influenceBufferView_
-	};
+		};
 
-	commandList_->IASetVertexBuffers(0, 2, vbvs);
-	model_->SetIndexBuffers(commandList_);
-	model_->SetGraphicsRootConstantBufferView(commandList_, (UINT)RootParameter::kMaterial);
-	//wvp用のCBufferの場所の設定
-	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kWorldTransform, worldTransform_.GetGPUVirtualAddress());
+		commandList_->IASetVertexBuffers(0, 2, vbvs);
+		commandList_->IASetIndexBuffer(mesh.GetIVB());
 
-	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kCamera, camera.GetGPUVirtualAddress());
+		const auto& material = mesh.GetMaterial();
+		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kMaterial, material.GetGPUVirtualAddress());
+		//wvp用のCBufferの場所の設定
+		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kWorldTransform, worldTransform_.GetGPUVirtualAddress());
 
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, model_->GetUvHandle());
+		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kCamera, camera.GetGPUVirtualAddress());
 
-	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
+		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, material.GetUVHandle());
 
-	commandList_->SetGraphicsRootDescriptorTable((UINT)RootParameter::kMatrixPalette, skinCluster_->paletteSrvHandle_.second);
+		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
 
-	commandList_->DrawIndexedInstanced((UINT)model_->indices_.size(), 1, 0, 0, 0);
+		commandList_->SetGraphicsRootDescriptorTable((UINT)RootParameter::kMatrixPalette, skinCluster_->paletteSrvHandle_.second);
+
+		commandList_->DrawIndexedInstanced((UINT)mesh.indices_.size(), 1, 0, 0, 0);
+	}
 
 }
