@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Object3d.h"
 #include "Vec3.h"
+#include "LevelLoader.h"
 #include <memory>
 
 class Ground{
@@ -17,6 +18,8 @@ public:
 	void Update();
 
 	void Draw(const Camera& camera);
+
+	void SetData(const LevelData::ObjectData& data);
 
 };
 

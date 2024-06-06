@@ -2,28 +2,6 @@
     "name": "scene",
     "objects": [
         {
-            "type": "MESH",
-            "name": "obj1",
-            "transform": {
-                "translation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scaling": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "file_name": "teapot"
-        },
-        {
             "type": "LIGHT",
             "name": "Light",
             "transform": {
@@ -67,7 +45,7 @@
         },
         {
             "type": "MESH",
-            "name": "平面",
+            "name": "Ground",
             "transform": {
                 "translation": [
                     0.0,
@@ -80,21 +58,21 @@
                     0.0
                 ],
                 "scaling": [
-                    1.0,
-                    1.0,
+                    100.0,
+                    100.0,
                     1.0
                 ]
             },
-            "file_name": "terrain"
+            "object_name": "Ground"
         },
         {
-            "type": "MESH",
-            "name": "立方体",
+            "type": "ARMATURE",
+            "name": "Player",
             "transform": {
                 "translation": [
                     0.0,
-                    7.110944747924805,
-                    3.3963959217071533
+                    0.0,
+                    0.0
                 ],
                 "rotation": [
                     0.0,
@@ -102,12 +80,90 @@
                     0.0
                 ],
                 "scaling": [
-                    1.0,
-                    1.0,
-                    1.0
+                    5.0,
+                    5.0,
+                    5.0
                 ]
             },
-            "file_name": "teapot"
+            "object_name": "Player",
+            "status": {
+                "HP": 100,
+                "power": 10,
+                "difense": 5
+            },
+            "children": [
+                {
+                    "type": "MESH",
+                    "name": "Ch45",
+                    "transform": {
+                        "translation": [
+                            -1.964878393323488e-08,
+                            0.2247558981180191,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            -0.0,
+                            -179.99998474121094
+                        ],
+                        "scaling": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "ARMATURE",
+            "name": "Boss",
+            "transform": {
+                "translation": [
+                    -50.0,
+                    0.0,
+                    -15.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    5.0,
+                    5.0,
+                    5.0
+                ]
+            },
+            "object_name": "Boss",
+            "status": {
+                "HP": 100,
+                "power": 10,
+                "difense": 5
+            },
+            "children": [
+                {
+                    "type": "MESH",
+                    "name": "Ch45.001",
+                    "transform": {
+                        "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            -0.0,
+                            -179.99998474121094
+                        ],
+                        "scaling": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                }
+            ]
         }
     ]
 }

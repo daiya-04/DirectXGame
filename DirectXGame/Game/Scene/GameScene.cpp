@@ -32,6 +32,8 @@ void GameScene::Init(){
 
 	finishCount_ = finishTime_;
 
+	levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("stage"));
+
 	/// モデルの読み込み
 
 	std::shared_ptr<Model> skydomeModel = ModelManager::LoadOBJ("skydome");
@@ -124,6 +126,17 @@ void GameScene::Init(){
 
 	///
 
+	for (auto& objectData : levelData_->objectDatas_) {
+		if (objectData.objectName == "Ground") {
+			ground_->SetData(objectData);
+		}
+		if (objectData.objectName == "Player") {
+			player_->SetData(objectData);
+		}
+		if (objectData.objectName == "Boss") {
+			boss_->SetData(objectData);
+		}
+	}
 
 	Update();
 
