@@ -8,6 +8,7 @@
 #include "Animation.h"
 #include "Vec3.h"
 #include "CollisionShapes.h"
+#include "LevelLoader.h"
 #include <memory>
 #include <vector>
 #include <array>
@@ -58,6 +59,12 @@ public:
 		uint32_t param = 0;
 	};
 
+	struct BaseStatus {
+		int32_t HP_;
+		int32_t power_;
+		int32_t difense_;
+	};
+
 private:
 
 	std::unique_ptr<SkinningObject> obj_;
@@ -86,14 +93,10 @@ private:
 	WorkAppear workAppear_;
 	WorkAttack workAttack_;
 
+	BaseStatus baseStatus_;
+
 	uint32_t coolTime_ = 0;
 	uint32_t attackTimer_ = 0;
-
-	float floatingParameter_ = 0.0f;
-	// 浮遊の振幅
-	float amplitude = 0.3f;
-	// 浮遊移動のサイクル<frame>
-	int cycle = 60;
 
 public:
 
@@ -112,6 +115,8 @@ public:
 	void SkeletonDraw(const Camera& camera);
 
 	void OnCollision();
+
+	void SetData(const LevelData::ObjectData& data);
 
 	static void SetTarget(const WorldTransform* target) { target_ = target; }
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }

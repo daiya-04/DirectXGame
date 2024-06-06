@@ -108,6 +108,8 @@ private: //オブジェクト
 
 	PostEffect* postEffect_;
 
+	std::unique_ptr<LevelData> levelData_;
+
 private:
 
 	enum class SceneEvent {

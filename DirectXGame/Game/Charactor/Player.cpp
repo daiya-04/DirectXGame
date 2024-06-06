@@ -35,8 +35,6 @@ void Player::Init(std::vector<std::shared_ptr<Model>> models){
 	for (Skeleton::Joint& joint : skeletons_[action_].joints_) {
 		debugObj_.emplace_back(Object3d::Create(debugModel_));
 	}
-	
-	obj_->worldTransform_.scale_ = { 5.0f,5.0f,5.0f };
 
 	magicParticle_ = std::make_unique<Particle>();
 	magicParticle_.reset(Particle::Create(particleTex, 10000));
@@ -143,6 +141,21 @@ void Player::DrawParticle(const Camera& camera) {
 	magicParticle_->Draw(particles_, camera);
 	magicParticle2_->Draw(particles2_, camera,false);
 
+}
+
+void Player::SetData(const LevelData::ObjectData& data) {
+
+	obj_->worldTransform_.translation_ = data.translation;
+	obj_->worldTransform_.scale_ = data.scaling;
+
+	baseStatus_.HP_ = data.status.HP;
+	baseStatus_.power_ = data.status.power;
+	baseStatus_.difense_ = data.status.defense;
+
+
+	Matrix4x4 S = MakeScaleMatrix(obj_->worldTransform_.scale_);
+	Matrix4x4 T = MakeTranslateMatrix(obj_->worldTransform_.translation_);
+	obj_->worldTransform_.matWorld_ = S * rotateMat_ * T;
 }
 
 void Player::OnCollision() {

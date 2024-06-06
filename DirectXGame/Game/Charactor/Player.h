@@ -8,6 +8,7 @@
 #include "Vec3.h"
 #include "Matrix44.h"
 #include "CollisionShapes.h"
+#include "LevelLoader.h"
 #include <memory>
 #include <list>
 #include <vector>
@@ -76,8 +77,12 @@ public:
 		uint32_t attackTime_;
 		//攻撃後の硬直時間
 		uint32_t recoveryTime_;
-		
+	};
 
+	struct BaseStatus {
+		int32_t HP_;
+		int32_t power_;
+		int32_t difense_;
 	};
 
 	static const int comboNum_ = 3;
@@ -122,6 +127,8 @@ private:
 	WorkDash workDash_;
 	WorkAttack workAttack_;
 
+	BaseStatus baseStatus_;
+
 	std::unique_ptr<Particle> magicParticle_;
 	std::unique_ptr<Particle> magicParticle2_;
 
@@ -138,12 +145,6 @@ private:
 	std::mt19937 randomEngine;
 
 	bool isAttack_ = false;
-
-	float floatingParameter_ = 0.0f;
-	// 浮遊の振幅
-	float amplitude = 0.5f;
-	// 浮遊移動のサイクル<frame>
-	int cycle = 60;
 
 public:
 
@@ -164,6 +165,8 @@ public:
 	void SkeletonDraw(const Camera& camera);
 	//パーティクル描画
 	void DrawParticle(const Camera& camera);
+
+	void SetData(const LevelData::ObjectData& data);
 
 	//void Search(const std::list<std::unique_ptr<Enemy>>& enemies);
 

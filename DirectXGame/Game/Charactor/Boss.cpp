@@ -27,7 +27,6 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 		debugObj_.emplace_back(Object3d::Create(debugModel_));
 	}
 	
-	obj_->worldTransform_.scale_ = { 5.5f,5.5f,5.5f };
 	rotateMat_ = DirectionToDirection({0.0f,0.0f,1.0f}, { 0.0f,0.0f,-1.0f });
 
 	behaviorRequest_ = Behavior::kAppear;
@@ -105,6 +104,21 @@ void Boss::SkeletonDraw(const Camera& camera) {
 
 void Boss::OnCollision() {
 
+}
+
+void Boss::SetData(const LevelData::ObjectData& data) {
+
+	obj_->worldTransform_.translation_ = data.translation;
+	obj_->worldTransform_.scale_ = data.scaling;
+
+	baseStatus_.HP_ = data.status.HP;
+	baseStatus_.power_ = data.status.power;
+	baseStatus_.difense_ = data.status.defense;
+
+
+	Matrix4x4 S = MakeScaleMatrix(obj_->worldTransform_.scale_);
+	Matrix4x4 T = MakeTranslateMatrix(obj_->worldTransform_.translation_);
+	obj_->worldTransform_.matWorld_ = S * rotateMat_ * T;
 }
 
 void Boss::RootInit() {
