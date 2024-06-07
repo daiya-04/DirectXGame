@@ -121,13 +121,16 @@ void Player::AttackColliderUpdate() {
 
 void Player::Draw(const Camera& camera){
 
+#ifdef _DEBUG
+	ShapesDraw::DrawAABB(collider_, camera);
+#endif // _DEBUG
+
+
 	obj_->Draw(camera);
 
 }
 
 void Player::SkeletonDraw(const Camera& camera) {
-
-	ShapesDraw::DrawAABB(collider_, camera);
 
 	for (const auto& obj : debugObj_) {
 		obj->Draw(camera);

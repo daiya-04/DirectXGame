@@ -44,6 +44,7 @@ private:
 
 	std::unique_ptr<SkinningObject> human_;
 	std::shared_ptr<Model> humanModel_;
+	std::shared_ptr<Model> standingModel_;
 	std::shared_ptr<Model> sneakModel_;
 	Animation animation_;
 	Skeleton skeleton_;

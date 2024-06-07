@@ -108,7 +108,7 @@ private:
 
 	Action action_ = Action::Standing;
 
-	Vector3 size_ = { 2.0f,5.0f,2.0f };
+	Vector3 size_ = { 0.7f,1.9f,0.7f };
 
 	Shapes::AABB collider_{};
 	Sphere AttackCollider_{};

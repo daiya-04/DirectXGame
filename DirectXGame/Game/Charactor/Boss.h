@@ -81,7 +81,7 @@ private:
 
 	bool isDead_ = false;
 
-	Vector3 size_ = { 2.0f,5.0f,2.0f };
+	Vector3 size_ = { 1.2f,3.0f,1.2f };
 
 	Shapes::AABB collider_{};
 

@@ -1,6 +1,7 @@
 #include "ElementBall.h"
 
 #include "Easing.h"
+#include "ShapesDraw.h"
 
 const WorldTransform* ElementBall::target_ = nullptr;
 
@@ -8,7 +9,7 @@ void ElementBall::Init(std::shared_ptr<Model> model, const Vector3& startPos) {
 
 	obj_.reset(Object3d::Create(model));
 	animation_ = Animation::LoadAnimationFile(obj_->GetModel()->name_);
-	obj_->worldTransform_.scale_ = { 1.2f,1.2f,1.2f };
+	obj_->worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 
 	phaseRequest_ = Phase::kSet;
 
@@ -61,6 +62,10 @@ void ElementBall::Update() {
 }
 
 void ElementBall::Draw(const Camera& camera) {
+
+#ifdef _DEBUG
+	ShapesDraw::DrawSphere(collider_, camera);
+#endif // _DEBUG
 
 	obj_->Draw(camera);
 

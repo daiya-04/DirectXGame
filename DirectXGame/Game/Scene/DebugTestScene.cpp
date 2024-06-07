@@ -21,7 +21,8 @@ void DebugTestScene::Init() {
 	Object3d::SetPointLight(&pointLight_);
 	Object3d::SetSpotLight(&spotLight_);
 
-	humanModel_ = ModelManager::LoadGLTF("Standing");
+	humanModel_ = ModelManager::LoadGLTF("Skin");
+	standingModel_ = ModelManager::LoadGLTF("Standing");
 	sneakModel_ = ModelManager::LoadGLTF("Walking");
 	debugModel_ = ModelManager::LoadOBJ("cube");
 	MultiMaterialModel_ = ModelManager::LoadOBJ("MultiMesh");
@@ -31,9 +32,9 @@ void DebugTestScene::Init() {
 	skyBox_.reset(SkyBox::Create(skyBoxTex_));
 
 	human_.reset(SkinningObject::Create(humanModel_));
-	animation_ = Animation::LoadAnimationFile(humanModel_->name_);
-	skeleton_ = Skeleton::Create(humanModel_->rootNode_);
-	skinCluster_.Create(skeleton_, humanModel_);
+	animation_ = Animation::LoadAnimationFile(standingModel_->name_);
+	skeleton_ = Skeleton::Create(standingModel_->rootNode_);
+	skinCluster_.Create(skeleton_, standingModel_);
 	human_->SetSkinCluster(&skinCluster_);
 
 	for (Skeleton::Joint& joint : skeleton_.joints_) {
@@ -70,9 +71,9 @@ void DebugTestScene::Update() {
 	}
 	else if(Input::GetInstance()->ReleaseKey(DIK_SPACE)){
 		//human_->SetModelHandle(humanModel_);
-		animation_ = Animation::LoadAnimationFile(humanModel_->name_);
-		skeleton_ = Skeleton::Create(humanModel_->rootNode_);
-		skinCluster_.Create(skeleton_, humanModel_);
+		animation_ = Animation::LoadAnimationFile(standingModel_->name_);
+		skeleton_ = Skeleton::Create(standingModel_->rootNode_);
+		skinCluster_.Create(skeleton_, standingModel_);
 	}
 
 	human_->worldTransform_.UpdateMatrix();
@@ -101,14 +102,15 @@ void DebugTestScene::DrawBackGround() {
 void DebugTestScene::DrawModel() {
 
 	SkinningObject::preDraw();
-	//human_->Draw(camera_);
+	human_->Draw(camera_);
 
 	
 	Object3d::preDraw();
-	/*for (const auto& obj : debugObj_) {
+	
+	for (const auto& obj : debugObj_) {
 		obj->Draw(camera_);
-	}*/
-	MutiMaterial_->Draw(camera_);
+	}
+	//MutiMaterial_->Draw(camera_);
 
 	//skyBox_->Draw(camera_);
 	//ShapesDraw::DrawSphere(Shapes::Sphere({}, 1.0f), camera_);
@@ -152,7 +154,7 @@ void DebugTestScene::DebugGUI() {
 
 	ImGui::Begin("object");
 
-	ImGui::DragFloat3("rotate", &MutiMaterial_->worldTransform_.rotation_.x, 0.01f);
+	ImGui::DragFloat3("rotate", &human_->worldTransform_.rotation_.x, 0.01f);
 
 	ImGui::End();
 
