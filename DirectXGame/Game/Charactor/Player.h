@@ -91,6 +91,7 @@ public:
 	enum Action {
 		Standing,
 		Walking,
+		Attack,
 
 		kActionNum,
 	};

@@ -42,6 +42,9 @@ public:
 	void Start() { isPlaying_ = true; }
 	void End() { isPlaying_ = false; }
 
+	void SetAnimationSpeed(float speed) { animationSpeed_ = speed; }
+	void TimeReset() { animationTime_ = 0.0f; }
+
 	Matrix4x4 GetLocalMatrix() const { return localMatrix_; }
 
 	float GetDuration() const { return duration_; }
@@ -59,6 +62,7 @@ private:
 
 	float duration_ = 0.0f;
 	float animationTime_ = 0.0f;
+	float animationSpeed_ = 1.0f / 60.0f;
 
 	bool isLoop_ = false;
 	bool isPlaying_ = false;

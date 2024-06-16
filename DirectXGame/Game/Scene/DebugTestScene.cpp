@@ -23,7 +23,7 @@ void DebugTestScene::Init() {
 
 	humanModel_ = ModelManager::LoadGLTF("Skin");
 	standingModel_ = ModelManager::LoadGLTF("Standing");
-	sneakModel_ = ModelManager::LoadGLTF("Walking");
+	sneakModel_ = ModelManager::LoadGLTF("PlayerAttack");
 	MultiMaterialModel_ = ModelManager::LoadOBJ("MultiMesh");
 
 	skyBoxTex_ = TextureManager::Load("rostock_laage_airport_4k.dds");
@@ -63,12 +63,14 @@ void DebugTestScene::Update() {
 		animation_ = Animation::LoadAnimationFile(sneakModel_->name_);
 		skeleton_ = Skeleton::Create(sneakModel_->rootNode_);
 		skinCluster_.Create(skeleton_, sneakModel_);
+		animation_.SetAnimationSpeed(1.0f / 30.0f);
 	}
 	else if(Input::GetInstance()->ReleaseKey(DIK_SPACE)){
 		//human_->SetModelHandle(humanModel_);
 		animation_ = Animation::LoadAnimationFile(standingModel_->name_);
 		skeleton_ = Skeleton::Create(standingModel_->rootNode_);
 		skinCluster_.Create(skeleton_, standingModel_);
+		animation_.SetAnimationSpeed(1.0f / 60.0f);
 	}
 
 	human_->worldTransform_.UpdateMatrix();

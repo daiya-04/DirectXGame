@@ -9,9 +9,9 @@
 
 const std::array<Player::ComboAttack, Player::comboNum_> Player::kComboAttacks_ = {
 	{
-		{0,20,5},
-		{0,20,5},
-		{0,30,10}
+		{1,30,5},
+		{1,30,5},
+		{1,30,10}
 	}
 };
 
@@ -153,6 +153,8 @@ void Player::RootInit() {
 	isAttack_ = false;
 	particles_.clear();
 	particles2_.clear();
+	action_ = Action::Standing;
+	obj_->SetSkinCluster(&skinClusters_[action_]);
 
 }
 
@@ -197,6 +199,10 @@ void Player::RootUpdate() {
 
 void Player::AttackInit() {
 
+	action_ = Action::Attack;
+	obj_->SetSkinCluster(&skinClusters_[action_]);
+	animations_[action_].SetAnimationSpeed(1.0f / 30.0f);
+	skeletons_[action_].Update();
 	workAttack_.attackParam_ = 0;
 	workAttack_.speed_ = 1.0f;
 	//Search(enemies);
@@ -242,6 +248,7 @@ void Player::AttackUpdate() {
 			workAttack_.comboIndex_++;
 
 			AttackInit();
+			animations_[action_].TimeReset();
 		}
 		else {
 			behaviorRequest_ = Behavior::kRoot;
@@ -264,10 +271,20 @@ void Player::AttackUpdate() {
 		direction = TransformNormal(direction, rotateMat_);
 		workAttack_.velocity_ = direction.Normalize() * workAttack_.speed_;
 		
-		Vector3 offset = { 0.0f,3.0f,10.0f };
+		Vector3 offset = { 0.0f,0.0f,10.0f };
 		offset = TransformNormal(offset, rotateMat_);
 
-		emitter_.translate_ = obj_->worldTransform_.translation_ + offset;
+		if (workAttack_.comboIndex_ == 0) {
+			Vector3 offset = { 0.0f,2.0f,10.0f };
+			offset = TransformNormal(offset, rotateMat_);
+			emitter_.translate_ = obj_->worldTransform_.translation_ + offset;
+		}
+		else {
+			Vector3 offset = { 0.0f,0.0f,1.0f };
+			offset = TransformNormal(offset, rotateMat_);
+			emitter_.translate_ = Transform(skeletons_[action_].GetSkeletonPos("mixamorig1:RightHand"), obj_->worldTransform_.matWorld_) + offset;
+		}
+		
 
 		//速度とパーティクルの数の設定と生成
 		switch (workAttack_.comboIndex_) {

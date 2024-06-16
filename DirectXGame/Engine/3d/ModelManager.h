@@ -135,6 +135,8 @@ public:
 
 	void Draw(const WorldTransform& worldTransform, const Camera& camera);
 
+	Vector3 GetSkeletonPos(const std::string& jointName);
+
 private:
 
 	static int32_t CreateJoint(const Model::Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);

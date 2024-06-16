@@ -291,3 +291,16 @@ void Skeleton::Draw(const WorldTransform& worldTransform, const Camera& camera) 
 
 	}
 }
+
+Vector3 Skeleton::GetSkeletonPos(const std::string& jointName) {
+
+	int32_t jointIndex = jointMap_[jointName];
+
+	Vector3 jointPos = {
+		joints_[jointIndex].skeletonSpaceMat_.m[3][0],
+		joints_[jointIndex].skeletonSpaceMat_.m[3][1],
+		joints_[jointIndex].skeletonSpaceMat_.m[3][2],
+	};
+
+	return jointPos;
+}

@@ -40,6 +40,7 @@ void GameScene::Init(){
 	std::shared_ptr<Model> groundModel = ModelManager::LoadOBJ("ground");
 	std::shared_ptr<Model> playerStandingModel = ModelManager::LoadGLTF("Standing");
 	std::shared_ptr<Model> playerWalkingModel = ModelManager::LoadGLTF("Walking");
+	std::shared_ptr<Model> playerAttackModel = ModelManager::LoadGLTF("PlayerAttack");
 	//enemyBodyModel_ = ModelManager::Load("EnemyBody");
 	//enemyHeadModel_ = ModelManager::Load("EnemyHead");
 	//bulletModel_ = ModelManager::Load("EnemyBullet");
@@ -73,7 +74,7 @@ void GameScene::Init(){
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
-	player_->Init({ playerStandingModel,playerWalkingModel });
+	player_->Init({ playerStandingModel,playerWalkingModel,playerAttackModel });
 
 	//ボス
 	boss_ = std::make_unique<Boss>();

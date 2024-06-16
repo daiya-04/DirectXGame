@@ -114,7 +114,7 @@ Quaternion Animation::CalcValue(const std::vector<KeyframeQuaternion>& keyframe,
 
 void Animation::CountingAnimationTime() {
 	if (isPlaying_) {
-		animationTime_ += 1.0f / 60.0f;
+		animationTime_ += animationSpeed_;
 	}
 	if (animationTime_ >= duration_) {
 		if (isLoop_) {
