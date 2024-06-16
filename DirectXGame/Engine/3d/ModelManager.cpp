@@ -268,6 +268,7 @@ void Skeleton::Update() {
 }
 
 void Skeleton::Draw(const WorldTransform& worldTransform, const Camera& camera) {
+#ifdef _DEBUG
 	for (auto& joint : joints_) {
 
 		if (!joint.parent_) { continue; }
@@ -289,7 +290,8 @@ void Skeleton::Draw(const WorldTransform& worldTransform, const Camera& camera) 
 
 		Line::Draw(start, end, camera);
 
-	}
+}
+#endif // _DEBUG
 }
 
 Vector3 Skeleton::GetSkeletonPos(const std::string& jointName) {
