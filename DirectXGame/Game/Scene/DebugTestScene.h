@@ -50,9 +50,6 @@ private:
 	Skeleton skeleton_;
 	SkinCluster skinCluster_;
 
-	std::vector<std::unique_ptr<Object3d>> debugObj_;
-	std::shared_ptr<Model> debugModel_;
-
 	uint32_t skyBoxTex_ = 0;
 	std::unique_ptr<SkyBox> skyBox_;
 

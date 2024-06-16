@@ -24,7 +24,6 @@ void DebugTestScene::Init() {
 	humanModel_ = ModelManager::LoadGLTF("Skin");
 	standingModel_ = ModelManager::LoadGLTF("Standing");
 	sneakModel_ = ModelManager::LoadGLTF("Walking");
-	debugModel_ = ModelManager::LoadOBJ("cube");
 	MultiMaterialModel_ = ModelManager::LoadOBJ("MultiMesh");
 
 	skyBoxTex_ = TextureManager::Load("rostock_laage_airport_4k.dds");
@@ -36,10 +35,6 @@ void DebugTestScene::Init() {
 	skeleton_ = Skeleton::Create(standingModel_->rootNode_);
 	skinCluster_.Create(skeleton_, standingModel_);
 	human_->SetSkinCluster(&skinCluster_);
-
-	for (Skeleton::Joint& joint : skeleton_.joints_) {
-		debugObj_.emplace_back(Object3d::Create(debugModel_));
-	}
 
 	MutiMaterial_.reset(Object3d::Create(MultiMaterialModel_));
 	MutiMaterial_->worldTransform_.rotation_.y = 3.14f;
@@ -83,9 +78,6 @@ void DebugTestScene::Update() {
 	skeleton_.Update();
 	skinCluster_.Update(skeleton_);
 
-	for (Skeleton::Joint& joint : skeleton_.joints_) {
-		debugObj_[joint.index_]->worldTransform_.matWorld_ = joint.skeletonSpaceMat_ * human_->worldTransform_.matWorld_;
-	}
 	MutiMaterial_->worldTransform_.UpdateMatrix();
 
 	camera_.UpdateViewMatrix();
@@ -103,13 +95,10 @@ void DebugTestScene::DrawModel() {
 
 	SkinningObject::preDraw();
 	human_->Draw(camera_);
+	skeleton_.Draw(human_->worldTransform_, camera_);
 
 	
 	Object3d::preDraw();
-	
-	for (const auto& obj : debugObj_) {
-		obj->Draw(camera_);
-	}
 	//MutiMaterial_->Draw(camera_);
 
 	//skyBox_->Draw(camera_);

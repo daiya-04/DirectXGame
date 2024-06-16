@@ -17,6 +17,8 @@
 #include "Matrix44.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "Camera.h"
+#include "WorldTransform.h"
 
 struct QuaternionTransform {
 	Vector3 translate_;
@@ -130,6 +132,8 @@ public:
 	static Skeleton Create(const Model::Node& rootNode);
 
 	void Update();
+
+	void Draw(const WorldTransform& worldTransform, const Camera& camera);
 
 private:
 

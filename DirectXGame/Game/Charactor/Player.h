@@ -103,9 +103,6 @@ private:
 	std::vector<Skeleton> skeletons_;
 	std::vector<SkinCluster> skinClusters_;
 
-	std::vector<std::unique_ptr<Object3d>> debugObj_;
-	std::shared_ptr<Model> debugModel_;
-
 	Action action_ = Action::Standing;
 
 	Vector3 size_ = { 0.7f,1.9f,0.7f };
@@ -162,7 +159,6 @@ public:
 	void AttackColliderUpdate();
 	//描画
 	void Draw(const Camera& camera);
-	void SkeletonDraw(const Camera& camera);
 	//パーティクル描画
 	void DrawParticle(const Camera& camera);
 

@@ -73,9 +73,6 @@ private:
 	std::vector<Skeleton> skeletons_;
 	std::vector<SkinCluster> skinClusters_;
 
-	std::vector<std::unique_ptr<Object3d>> debugObj_;
-	std::shared_ptr<Model> debugModel_;
-
 	Action action_ = Action::Standing;
 
 
@@ -112,7 +109,6 @@ public:
 	}
 
 	void Draw(const Camera& camera);
-	void SkeletonDraw(const Camera& camera);
 
 	void OnCollision();
 

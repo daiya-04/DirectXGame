@@ -12,7 +12,6 @@ const WorldTransform* Boss::target_ = nullptr;
 void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 
 	animationModels_ = models;
-	debugModel_ = ModelManager::LoadOBJ("cube");
 
 	obj_.reset(SkinningObject::Create(animationModels_[action_]));
 	skinClusters_.resize(animationModels_.size());
@@ -22,10 +21,6 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 		skinClusters_[index].Create(skeletons_[index], animationModels_[index]);
 	}
 	obj_->SetSkinCluster(&skinClusters_[action_]);
-
-	for (Skeleton::Joint& joint : skeletons_[action_].joints_) {
-		debugObj_.emplace_back(Object3d::Create(debugModel_));
-	}
 	
 	rotateMat_ = DirectionToDirection({0.0f,0.0f,1.0f}, { 0.0f,0.0f,-1.0f });
 
@@ -82,10 +77,6 @@ void Boss::Update() {
 	skeletons_[action_].Update();
 	skinClusters_[action_].Update(skeletons_[action_]);
 
-	for (Skeleton::Joint& joint : skeletons_[action_].joints_) {
-		debugObj_[joint.index_]->worldTransform_.matWorld_ = joint.skeletonSpaceMat_ * obj_->worldTransform_.matWorld_;
-	}
-
 	ColliderUpdate();
 }
 
@@ -97,14 +88,8 @@ void Boss::Draw(const Camera& camera) {
 
 
 	obj_->Draw(camera);
+	skeletons_[action_].Draw(obj_->worldTransform_, camera);
 
-}
-
-void Boss::SkeletonDraw(const Camera& camera) {
-	
-	for (const auto& obj : debugObj_) {
-		obj->Draw(camera);
-	}
 }
 
 void Boss::OnCollision() {

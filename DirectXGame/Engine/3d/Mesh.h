@@ -52,6 +52,7 @@ public:
 
 	std::vector<VertexData> vertices_;
 	std::vector<uint32_t> indices_;
+	//SkinCluster skinCluster_;
 
 };
 

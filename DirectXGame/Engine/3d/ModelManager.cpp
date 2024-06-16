@@ -6,6 +6,8 @@
 #include <cassert>
 #include "TextureManager.h"
 #include "ModelManager.h"
+#include "Line.h"
+#include "ShapesDraw.h"
 
 using namespace Microsoft::WRL;
 
@@ -262,5 +264,30 @@ void Skeleton::Update() {
 		else {
 			joint.skeletonSpaceMat_ = joint.localMat_;
 		}
+	}
+}
+
+void Skeleton::Draw(const WorldTransform& worldTransform, const Camera& camera) {
+	for (auto& joint : joints_) {
+
+		if (!joint.parent_) { continue; }
+
+		Matrix4x4 startPointMat = joint.skeletonSpaceMat_ * worldTransform.matWorld_;
+		Matrix4x4 endPointMat = joints_[*joint.parent_].skeletonSpaceMat_ * worldTransform.matWorld_;
+
+		Vector3 start = {
+			startPointMat.m[3][0],
+			startPointMat.m[3][1],
+			startPointMat.m[3][2],
+		};
+
+		Vector3 end = {
+			endPointMat.m[3][0],
+			endPointMat.m[3][1],
+			endPointMat.m[3][2],
+		};
+
+		Line::Draw(start, end, camera);
+
 	}
 }

@@ -239,10 +239,6 @@ void GameScene::DrawModel(){
 
 	DirectXCommon::GetInstance()->ClearDepthBaffer();
 	Object3d::preDraw();
-	if (sceneEvent_ == SceneEvent::Battle) {
-		player_->SkeletonDraw(camera_);
-	}
-	boss_->SkeletonDraw(camera_);
 	
 
 #endif // _DEBUG

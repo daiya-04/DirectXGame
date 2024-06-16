@@ -19,7 +19,6 @@ void Player::Init(std::vector<std::shared_ptr<Model>> models){
 
 	uint32_t particleTex = TextureManager::Load("particle.png");
 	uint32_t particleTex2 = TextureManager::Load("star.png");
-	debugModel_ = ModelManager::LoadOBJ("cube");
 
 	animationModels_ = models;
 	
@@ -31,10 +30,6 @@ void Player::Init(std::vector<std::shared_ptr<Model>> models){
 		skinClusters_[index].Create(skeletons_[index], animationModels_[index]);
 	}
 	obj_->SetSkinCluster(&skinClusters_[action_]);
-
-	for (Skeleton::Joint& joint : skeletons_[action_].joints_) {
-		debugObj_.emplace_back(Object3d::Create(debugModel_));
-	}
 
 	magicParticle_ = std::make_unique<Particle>();
 	magicParticle_.reset(Particle::Create(particleTex, 10000));
@@ -94,10 +89,6 @@ void Player::Update(){
 	skeletons_[action_].Update();
 	skinClusters_[action_].Update(skeletons_[action_]);
 
-	for (Skeleton::Joint& joint : skeletons_[action_].joints_) {
-		debugObj_[joint.index_]->worldTransform_.matWorld_ = joint.skeletonSpaceMat_ * obj_->worldTransform_.matWorld_;
-	}
-
 	ColliderUpdate();
 	AttackColliderUpdate();
 }
@@ -127,15 +118,7 @@ void Player::Draw(const Camera& camera){
 
 
 	obj_->Draw(camera);
-
-}
-
-void Player::SkeletonDraw(const Camera& camera) {
-
-	for (const auto& obj : debugObj_) {
-		obj->Draw(camera);
-	}
-
+	skeletons_[action_].Draw(obj_->worldTransform_, camera);
 
 }
 
