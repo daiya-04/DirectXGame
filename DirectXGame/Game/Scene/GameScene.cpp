@@ -61,6 +61,9 @@ void GameScene::Init(){
 	postEffect_->Init();
 	postEffect_->SetGrayScaleEffect(false);
 
+	outLine_ = OutLine::GetInstance();
+	outLine_->Init();
+
 	///
 	///オブジェクト初期化
 	
@@ -234,22 +237,8 @@ void GameScene::DrawBackGround(){
 
 void GameScene::DrawModel(){
 
-	postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
-
-#ifdef _DEBUG
-
-	DirectXCommon::GetInstance()->ClearDepthBaffer();
-	Object3d::preDraw();
 	
 
-#endif // _DEBUG
-
-	/*for (const auto& enemy : enemies_) {
-		enemy->Draw(camera_);
-	}
-	for (const auto& bullet : enemyBullets_) {
-		bullet->Draw(camera_);
-	}*/
 }
 
 void GameScene::DrawParticleModel(){
@@ -282,7 +271,19 @@ void GameScene::DrawUI(){
 
 void GameScene::DrawPostEffect() {
 
+	outLine_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+
+	SkinningObject::preDraw();
+	boss_->Draw(camera_);
+	if (sceneEvent_ == SceneEvent::Battle) {
+		player_->Draw(camera_);
+	}
+
+	outLine_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+
 	postEffect_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+
+	outLine_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 
 	Object3d::preDraw();
 	skydome_->Draw(camera_);
@@ -292,16 +293,14 @@ void GameScene::DrawPostEffect() {
 	for (const auto& elementBall : elementBalls_) {
 		elementBall->Draw(camera_);
 	}
-	
-	SkinningObject::preDraw();
-	boss_->Draw(camera_);
-	if (sceneEvent_ == SceneEvent::Battle) {
-		player_->Draw(camera_);
-	}
 
 
 	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
+}
+
+void GameScene::DrawRenderTexture() {
+	postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 }
 
 void GameScene::BattleInit() {

@@ -176,7 +176,7 @@ void DirectXCommon::InitializeRenderTargetView() {
 	//RTV用のヒープでディスクリプタの数は2。RTVはShader内で触るものではないので、ShaderVisibleはfalse
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
 	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	descriptorHeapDesc.NumDescriptors = 3;
+	descriptorHeapDesc.NumDescriptors = 32;
 	hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap_));
 	//ディスクリプタヒープが作れなかったので起動できない
 	assert(SUCCEEDED(hr));
@@ -295,7 +295,7 @@ void DirectXCommon::preDraw() {
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
 	//float clearColor[] = { 0.f,0.0f,0.0f,1.0f };//RGBAの順
 	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-	ClearDepthBaffer();
+	//ClearDepthBaffer();
 
 	//ビューポート
 	D3D12_VIEWPORT viewport{};

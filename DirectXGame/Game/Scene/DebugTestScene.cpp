@@ -134,6 +134,12 @@ void DebugTestScene::DrawPostEffect() {
 
 }
 
+void DebugTestScene::DrawRenderTexture() {
+
+
+
+}
+
 void DebugTestScene::DebugGUI() {
 #ifdef _DEBUG
 	ImGui::Begin("camera");
