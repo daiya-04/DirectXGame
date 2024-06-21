@@ -45,6 +45,8 @@ public:
 
 	void DrawPostEffect()override;
 
+	void DrawRenderTexture()override;
+
 	void DebugGUI()override;
 
 	~GameScene()override;

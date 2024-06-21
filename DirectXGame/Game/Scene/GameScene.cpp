@@ -234,22 +234,8 @@ void GameScene::DrawBackGround(){
 
 void GameScene::DrawModel(){
 
-	postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
-
-#ifdef _DEBUG
-
-	DirectXCommon::GetInstance()->ClearDepthBaffer();
-	Object3d::preDraw();
 	
 
-#endif // _DEBUG
-
-	/*for (const auto& enemy : enemies_) {
-		enemy->Draw(camera_);
-	}
-	for (const auto& bullet : enemyBullets_) {
-		bullet->Draw(camera_);
-	}*/
 }
 
 void GameScene::DrawParticleModel(){
@@ -302,6 +288,10 @@ void GameScene::DrawPostEffect() {
 
 	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
+}
+
+void GameScene::DrawRenderTexture() {
+	postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 }
 
 void GameScene::BattleInit() {

@@ -87,6 +87,12 @@ void TitleScene::DrawPostEffect() {
 
 }
 
+void TitleScene::DrawRenderTexture() {
+
+
+
+}
+
 void TitleScene::DebugGUI(){
 #ifdef _DEBUG
 

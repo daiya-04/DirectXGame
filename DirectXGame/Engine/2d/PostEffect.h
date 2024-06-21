@@ -49,8 +49,6 @@ public: //メンバ関数
 
 private:
 
-	void TransferVertex();
-
 	void CreateGraphicsPipelineState();
 
 	ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);
@@ -76,16 +74,6 @@ private: //メンバ変数
 
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandleCPU_{};
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandleCPU_{};
-
-	ComPtr<ID3D12Resource> vertexBuff_;
-	VertexData* vertexData_ = nullptr;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
-
-	ComPtr<ID3D12Resource> indexBuff_;
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
-
-	ComPtr<ID3D12Resource> materialBuff_;
-	MaterialData* materialData_ = nullptr;
 
 	ComPtr<ID3D12Resource> grayScaleBuffer_;
 	DeadEffectData* deadEffectData_ = nullptr;

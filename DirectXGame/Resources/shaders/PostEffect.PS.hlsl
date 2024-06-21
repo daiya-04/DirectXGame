@@ -1,11 +1,5 @@
 #include"PostEffect.hlsli"
 
-struct Material{
-	float32_t4 color;
-};
-
-ConstantBuffer<Material> gMaterial : register(b0);
-
 struct PixelShaderOutput {
 	float32_t4 color : SV_TARGET0;
 };
@@ -17,7 +11,7 @@ struct DeadEffect {
 	float32_t brightness;
 };
 
-ConstantBuffer<DeadEffect> gDeadEffect : register(b1);
+ConstantBuffer<DeadEffect> gDeadEffect : register(b0);
 
 Texture2D<float32_t4> gTexture : register(t0);
 //Texture2D<float32_t4> gBloomTex : register(t1);

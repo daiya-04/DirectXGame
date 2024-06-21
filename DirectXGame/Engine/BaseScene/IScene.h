@@ -14,6 +14,7 @@ public:
 	virtual void DrawParticle() = 0;
 	virtual void DrawParticleModel() = 0;
 	virtual void DrawPostEffect() = 0;
+	virtual void DrawRenderTexture() = 0;
 
 	virtual void DebugGUI() = 0;
 
