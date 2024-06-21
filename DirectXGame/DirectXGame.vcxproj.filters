@@ -187,6 +187,7 @@
     <ClCompile Include="Engine\3d\Material.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
+    <ClCompile Include="OutLine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -335,5 +336,6 @@
     <ClInclude Include="Engine\3d\Material.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
+    <ClInclude Include="OutLine.h" />
   </ItemGroup>
 </Project>

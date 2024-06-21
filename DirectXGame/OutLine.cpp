@@ -1,4 +1,4 @@
-#include "PostEffect.h"
+#include "OutLine.h"
 
 #include <d3dx12.h>
 #include <DirectXTex.h>
@@ -14,15 +14,15 @@
 
 using namespace Microsoft::WRL;
 
-const float PostEffect::clearColor_[4] = { 0.0f,0.0f,0.0f,1.0f };
+const float OutLine::clearColor_[4] = { 1.0f,1.0f,1.0f,1.0f };
 
-PostEffect* PostEffect::GetInstance() {
-	static PostEffect instance;
+OutLine* OutLine::GetInstance() {
+	static OutLine instance;
 
 	return &instance;
 }
 
-PostEffect::PostEffect() {
+OutLine::OutLine() {
 	HRESULT hr;
 
 	CreateGraphicsPipelineState();
@@ -83,37 +83,24 @@ PostEffect::PostEffect() {
 
 	dsvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetDsvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV), 0);
 
-	grayScaleBuffer_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(DeadEffectData));
-	grayScaleBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&deadEffectData_));
 }
 
-void PostEffect::Init() {
-	
-	deadEffectData_->isEffect_ = false;
-	deadEffectData_->param_ = 0.0f;
-	deadEffectData_->root_ = 1.5f;
-	deadEffectData_->brightness_ = 10.0f;
+void OutLine::Init() {
 
 }
 
-void PostEffect::Draw(ID3D12GraphicsCommandList* cmdList) {
-
-	if (deadEffectData_->isEffect_) {
-		deadEffectData_->param_ += 0.01f;
-		deadEffectData_->param_ = min(deadEffectData_->param_, 1.0f);
-	}
+void OutLine::Draw(ID3D12GraphicsCommandList* cmdList) {
 
 	cmdList->SetGraphicsRootSignature(rootSignature_.Get());
 
 	cmdList->SetPipelineState(piplineState_.Get());  //PSOを設定
 
 	cmdList->SetGraphicsRootDescriptorTable(0, textureSrvHandleGPU_);
-	cmdList->SetGraphicsRootConstantBufferView(1, grayScaleBuffer_->GetGPUVirtualAddress());
 
 	cmdList->DrawInstanced(3, 1, 0, 0);
 }
 
-void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList) {
+void OutLine::PreDrawScene(ID3D12GraphicsCommandList* cmdList) {
 
 	//リソースバリアの変更(シェーダーリソース描画可能)
 	D3D12_RESOURCE_BARRIER barrier{};
@@ -166,7 +153,7 @@ void PostEffect::PreDrawScene(ID3D12GraphicsCommandList* cmdList) {
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void PostEffect::PostDrawScene(ID3D12GraphicsCommandList* cmdList) {
+void OutLine::PostDrawScene(ID3D12GraphicsCommandList* cmdList) {
 
 	D3D12_RESOURCE_BARRIER barrier{};
 	//バリアを張る対象のリリース。現在のバックバッファに対して行う
@@ -180,7 +167,7 @@ void PostEffect::PostDrawScene(ID3D12GraphicsCommandList* cmdList) {
 
 }
 
-void PostEffect::CreateGraphicsPipelineState() {
+void OutLine::CreateGraphicsPipelineState() {
 
 	//dxcCompilerを初期化
 	IDxcUtils* dxcUtils = nullptr;
@@ -263,7 +250,7 @@ void PostEffect::CreateGraphicsPipelineState() {
 	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-	
+
 	//α値のブレンド設定で基本的に使わないからいじらない
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
@@ -280,7 +267,7 @@ void PostEffect::CreateGraphicsPipelineState() {
 	ComPtr<IDxcBlob> verterShaderBlob = CompileShader(L"Resources/shaders/PostEffect.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(verterShaderBlob != nullptr);
 
-	ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Resources/shaders/PostEffect.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+	ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Resources/shaders/OutLine.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(pixelShaderBlob != nullptr);
 
 	//DepthStencilStateの設定
@@ -319,7 +306,7 @@ void PostEffect::CreateGraphicsPipelineState() {
 
 }
 
-ComPtr<ID3D12Resource> PostEffect::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
+ComPtr<ID3D12Resource> OutLine::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
 	//リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapproperties{};
 	uploadHeapproperties.Type = D3D12_HEAP_TYPE_UPLOAD;//UploadHeapを使う
@@ -343,7 +330,7 @@ ComPtr<ID3D12Resource> PostEffect::CreateBufferResource(ID3D12Device* device, si
 	return Resource;
 }
 
-ComPtr<IDxcBlob> PostEffect::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer) {
+ComPtr<IDxcBlob> OutLine::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer) {
 
 	//これからシェーダーをコンパイルする旨をログに出す
 	Log(ConvertString(std::format(L"Begin CompileShader, Path:{},profile:{}\n", filePath, profile)));
@@ -401,13 +388,13 @@ ComPtr<IDxcBlob> PostEffect::CompileShader(const std::wstring& filePath, const w
 
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE PostEffect::GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index) {
+D3D12_CPU_DESCRIPTOR_HANDLE OutLine::GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index) {
 	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	handleCPU.ptr += (descriptorSize * index);
 	return handleCPU;
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE PostEffect::GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index) {
+D3D12_GPU_DESCRIPTOR_HANDLE OutLine::GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index) {
 	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
 	handleGPU.ptr += (descriptorSize * index);
 	return handleGPU;

@@ -8,22 +8,15 @@
 #include <string>
 #include <array>
 
-struct DeadEffectData {
-	int32_t isEffect_;
-	float param_;
-	float root_;
-	float brightness_;
-};
-
-class PostEffect {
+class OutLine {
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 public: //メンバ関数
 
-	static PostEffect* GetInstance();
+	static OutLine* GetInstance();
 
-	PostEffect();
+	OutLine();
 
 	void Init();
 
@@ -32,8 +25,6 @@ public: //メンバ関数
 	void PreDrawScene(ID3D12GraphicsCommandList* cmdList);
 
 	void PostDrawScene(ID3D12GraphicsCommandList* cmdList);
-
-	void SetGrayScaleEffect(bool isGrayScale) { deadEffectData_->isEffect_ = isGrayScale; }
 
 private:
 
@@ -61,9 +52,6 @@ private: //メンバ変数
 
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandleCPU_{};
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandleCPU_{};
-
-	ComPtr<ID3D12Resource> grayScaleBuffer_;
-	DeadEffectData* deadEffectData_ = nullptr;
 
 };
 

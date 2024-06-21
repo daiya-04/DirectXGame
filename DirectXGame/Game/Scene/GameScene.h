@@ -15,6 +15,7 @@
 #include "SpotLight.h"
 #include "LevelLoader.h"
 #include "PostEffect.h"
+#include "OutLine.h"
 
 #include "Skydome.h"
 #include "Ground.h"
@@ -109,6 +110,7 @@ private: //オブジェクト
 	Vector2 pos2 = {};
 
 	PostEffect* postEffect_;
+	OutLine* outLine_;
 
 	std::unique_ptr<LevelData> levelData_;
 

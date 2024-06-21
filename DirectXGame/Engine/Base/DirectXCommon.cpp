@@ -295,7 +295,7 @@ void DirectXCommon::preDraw() {
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
 	//float clearColor[] = { 0.f,0.0f,0.0f,1.0f };//RGBAの順
 	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-	ClearDepthBaffer();
+	//ClearDepthBaffer();
 
 	//ビューポート
 	D3D12_VIEWPORT viewport{};

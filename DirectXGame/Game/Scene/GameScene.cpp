@@ -61,6 +61,9 @@ void GameScene::Init(){
 	postEffect_->Init();
 	postEffect_->SetGrayScaleEffect(false);
 
+	outLine_ = OutLine::GetInstance();
+	outLine_->Init();
+
 	///
 	///オブジェクト初期化
 	
@@ -268,7 +271,19 @@ void GameScene::DrawUI(){
 
 void GameScene::DrawPostEffect() {
 
+	outLine_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+
+	SkinningObject::preDraw();
+	boss_->Draw(camera_);
+	if (sceneEvent_ == SceneEvent::Battle) {
+		player_->Draw(camera_);
+	}
+
+	outLine_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+
 	postEffect_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+
+	outLine_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 
 	Object3d::preDraw();
 	skydome_->Draw(camera_);
@@ -277,12 +292,6 @@ void GameScene::DrawPostEffect() {
 	
 	for (const auto& elementBall : elementBalls_) {
 		elementBall->Draw(camera_);
-	}
-	
-	SkinningObject::preDraw();
-	boss_->Draw(camera_);
-	if (sceneEvent_ == SceneEvent::Battle) {
-		player_->Draw(camera_);
 	}
 
 

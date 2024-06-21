@@ -66,6 +66,8 @@ void SceneManager::Update(){
 
 void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
+	DirectXCommon::GetInstance()->ClearDepthBaffer();
+
 	scene_->DrawPostEffect();
 
 	DirectXCommon::GetInstance()->preDraw();
