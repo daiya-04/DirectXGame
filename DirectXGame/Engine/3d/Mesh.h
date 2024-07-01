@@ -12,7 +12,7 @@ class Mesh {
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-private:
+public:
 
 	struct VertexData {
 		Vector4 pos_;
@@ -24,13 +24,24 @@ public:
 
 	void Init();
 
+	void SkinnedInit();
+
+	void UavInit();
+
+	void UpdateVertex();
+
 	void SetMaterial(const Material& material) { material_ = material; }
 
 	const D3D12_VERTEX_BUFFER_VIEW* GetVBV() const { return &vertexBufferView_; }
 	const D3D12_INDEX_BUFFER_VIEW* GetIVB() const { return &indexBufferView_; }
+	const D3D12_VERTEX_BUFFER_VIEW* GetSkinnedVBV() const { return &skinnedVBV_; }
 
 	Material GetMaterial() const { return material_; }
 
+	D3D12_GPU_DESCRIPTOR_HANDLE GetVertexUavHandleGPU() const { return vertexUavHandle_.second; }
+	D3D12_GPU_DESCRIPTOR_HANDLE GetVertexSrvhandleGPU() const { return vertexSrvHandle_.second; }
+
+	ID3D12Resource* GetUavResource() const { return uavResource_.Get(); }
 
 private:
 	//リソースの生成
@@ -42,11 +53,18 @@ private:
 	ComPtr<ID3D12Resource> vertexBuff_;
 	VertexData* vertexData_ = nullptr;
 
+	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> vertexSrvHandle_;
+
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
 	ComPtr<ID3D12Resource> indexBuff_;
 	uint32_t* indexData_ = nullptr;
 
 	Material material_;
+
+	ComPtr<ID3D12Resource> uavResource_;
+	D3D12_VERTEX_BUFFER_VIEW skinnedVBV_{};
+
+	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> vertexUavHandle_;
 
 public:
 

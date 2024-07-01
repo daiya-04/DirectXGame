@@ -26,9 +26,22 @@ private:
 		kCamera,
 		kTexture,
 		kDirectionLight,
-		kMatrixPalette,
 
 		kParamNum,
+	};
+
+	enum class ComputeRootParam {
+		kPalette,
+		kInputVertex,
+		kInfluence,
+		kOutputVertex,
+		kSkinningInfo,
+
+		kParamNum,
+	};
+
+	struct SkinningInfoData {
+		uint32_t numVertex_;
 	};
 
 private: //静的メンバ変数
@@ -36,7 +49,10 @@ private: //静的メンバ変数
 	static ID3D12Device* device_;
 	static ID3D12GraphicsCommandList* commandList_;
 	static ComPtr<ID3D12RootSignature> rootSignature_;
+	static ComPtr<ID3D12RootSignature> computeRootSignature_;
 	static ComPtr<ID3D12PipelineState> graphicsPipelineState_;
+	static ComPtr<ID3D12PipelineState> computePipelineState_;
+
 public: //静的メンバ関数
 
 	//静的初期化
@@ -48,6 +64,8 @@ public: //静的メンバ関数
 	//描画後処理
 	static void postDraw();
 
+	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
+
 private:
 	//シェーダのコンパイル
 	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
@@ -56,6 +74,9 @@ private: //メンバ変数
 
 	std::shared_ptr<Model> model_;
 	SkinCluster* skinCluster_;
+
+	ComPtr<ID3D12Resource> skinningInfoBuff_;
+	SkinningInfoData* skinningInfoData_;
 
 public:
 

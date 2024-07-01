@@ -45,6 +45,8 @@ public:
 	ComPtr<ID3D12Resource> influenceBuff_;
 	D3D12_VERTEX_BUFFER_VIEW influenceBufferView_;
 	std::span<VertexInfluence> mappedInfluence_;
+	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> influenceSrvHandle_;
+
 	ComPtr<ID3D12Resource> paletteBuff_;
 	std::span<WellForGPU> mappedPalette_;
 	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> paletteSrvHandle_;

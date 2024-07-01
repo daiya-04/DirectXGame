@@ -47,6 +47,9 @@ std::shared_ptr<Model> ModelManager::LoadInternal(const std::string& modelName, 
 	models_[handle]->name_ = modelName;
 	for(auto& mesh : models_[handle]->meshes_){
 		mesh.Init();
+		if (extension == "gltf") {
+			mesh.SkinnedInit();
+		}
 	}
 
 	useModelNum_++;

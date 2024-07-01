@@ -15,7 +15,9 @@ using namespace Microsoft::WRL;
 ID3D12Device* SkinningObject::device_ = nullptr;
 ID3D12GraphicsCommandList* SkinningObject::commandList_ = nullptr;
 ComPtr<ID3D12RootSignature> SkinningObject::rootSignature_;
+ComPtr<ID3D12RootSignature> SkinningObject::computeRootSignature_;
 ComPtr<ID3D12PipelineState> SkinningObject::graphicsPipelineState_;
+ComPtr<ID3D12PipelineState> SkinningObject::computePipelineState_;
 
 void SkinningObject::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList* commandList) {
 
@@ -47,12 +49,6 @@ void SkinningObject::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList*
 	descriptorRange[0].NumDescriptors = 1; //数は1つ
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
-
-	D3D12_DESCRIPTOR_RANGE descriptorRangeForMatrixPalette[1] = {};
-	descriptorRangeForMatrixPalette[0].BaseShaderRegister = 1; //0から始まる
-	descriptorRangeForMatrixPalette[0].NumDescriptors = 1; //数は1つ
-	descriptorRangeForMatrixPalette[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
-	descriptorRangeForMatrixPalette[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
 
 	//Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
@@ -90,11 +86,6 @@ void SkinningObject::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList*
 	rootParameters[(size_t)RootParameter::kDirectionLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
 	rootParameters[(size_t)RootParameter::kDirectionLight].Descriptor.ShaderRegister = 3;  //レジスタ番号1を使う
 
-	rootParameters[(size_t)RootParameter::kMatrixPalette].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
-	rootParameters[(size_t)RootParameter::kMatrixPalette].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //VertexShaderで使う
-	rootParameters[(size_t)RootParameter::kMatrixPalette].DescriptorTable.pDescriptorRanges = descriptorRangeForMatrixPalette; //Tableの中身の配列を指定
-	rootParameters[(size_t)RootParameter::kMatrixPalette].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForMatrixPalette); //Tableで利用する数
-
 
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
@@ -114,7 +105,7 @@ void SkinningObject::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList*
 	assert(SUCCEEDED(hr));
 
 	//InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[5] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
 	inputElementDescs[0].InputSlot = 0;
@@ -132,18 +123,6 @@ void SkinningObject::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList*
 	inputElementDescs[2].InputSlot = 0;
 	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs[3].SemanticName = "WEIGHT";
-	inputElementDescs[3].SemanticIndex = 0;
-	inputElementDescs[3].InputSlot = 1;
-	inputElementDescs[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	inputElementDescs[3].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs[4].SemanticName = "INDEX";
-	inputElementDescs[4].SemanticIndex = 0;
-	inputElementDescs[4].InputSlot = 1;
-	inputElementDescs[4].Format = DXGI_FORMAT_R32G32B32A32_SINT;
-	inputElementDescs[4].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
@@ -179,6 +158,9 @@ void SkinningObject::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList*
 	ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Resources/shaders/SkinningObject.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(pixelShaderBlob != nullptr);
 
+	ComPtr<IDxcBlob> computeShaderBlob = CompileShader(L"Resources/shaders/SkinningObject.CS.hlsl", L"cs_6_0", dxcUtils, dxcCompiler, includeHandler);
+	assert(verterShaderBlob != nullptr);
+
 	//DepthStencilStateの設定
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
 	//Depthの機能を有効化する
@@ -213,6 +195,81 @@ void SkinningObject::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList*
 	hr = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_));
 	assert(SUCCEEDED(hr));
 
+
+	D3D12_ROOT_SIGNATURE_DESC computeRootSignatureDesc{};
+	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	D3D12_DESCRIPTOR_RANGE DescRangeForPalette[1] = {};
+	DescRangeForPalette[0].BaseShaderRegister = 0; //0から始まる
+	DescRangeForPalette[0].NumDescriptors = 1; //数は1つ
+	DescRangeForPalette[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
+	DescRangeForPalette[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+	D3D12_DESCRIPTOR_RANGE DescRangeForInputVertex[1] = {};
+	DescRangeForInputVertex[0].BaseShaderRegister = 1; //0から始まる
+	DescRangeForInputVertex[0].NumDescriptors = 1; //数は1つ
+	DescRangeForInputVertex[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
+	DescRangeForInputVertex[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+	D3D12_DESCRIPTOR_RANGE DescRangeForInfluence[1] = {};
+	DescRangeForInfluence[0].BaseShaderRegister = 2; //0から始まる
+	DescRangeForInfluence[0].NumDescriptors = 1; //数は1つ
+	DescRangeForInfluence[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
+	DescRangeForInfluence[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+	D3D12_DESCRIPTOR_RANGE DescRangeForOutputVertex[1] = {};
+	DescRangeForOutputVertex[0].BaseShaderRegister = 0; //0から始まる
+	DescRangeForOutputVertex[0].NumDescriptors = 1; //数は1つ
+	DescRangeForOutputVertex[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV; //SRVを使う
+	DescRangeForOutputVertex[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+	D3D12_ROOT_PARAMETER computeRootParameters[(size_t)ComputeRootParam::kParamNum] = {};
+
+	computeRootParameters[(size_t)ComputeRootParam::kPalette].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	computeRootParameters[(size_t)ComputeRootParam::kPalette].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	computeRootParameters[(size_t)ComputeRootParam::kPalette].DescriptorTable.pDescriptorRanges = DescRangeForPalette;
+	computeRootParameters[(size_t)ComputeRootParam::kPalette].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForPalette);
+
+	computeRootParameters[(size_t)ComputeRootParam::kInputVertex].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	computeRootParameters[(size_t)ComputeRootParam::kInputVertex].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	computeRootParameters[(size_t)ComputeRootParam::kInputVertex].DescriptorTable.pDescriptorRanges = DescRangeForInputVertex;
+	computeRootParameters[(size_t)ComputeRootParam::kInputVertex].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForInputVertex);
+
+	computeRootParameters[(size_t)ComputeRootParam::kInfluence].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	computeRootParameters[(size_t)ComputeRootParam::kInfluence].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	computeRootParameters[(size_t)ComputeRootParam::kInfluence].DescriptorTable.pDescriptorRanges = DescRangeForInfluence;
+	computeRootParameters[(size_t)ComputeRootParam::kInfluence].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForInfluence);
+
+	computeRootParameters[(size_t)ComputeRootParam::kOutputVertex].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	computeRootParameters[(size_t)ComputeRootParam::kOutputVertex].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	computeRootParameters[(size_t)ComputeRootParam::kOutputVertex].DescriptorTable.pDescriptorRanges = DescRangeForOutputVertex;
+	computeRootParameters[(size_t)ComputeRootParam::kOutputVertex].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForOutputVertex);
+
+	computeRootParameters[(size_t)ComputeRootParam::kSkinningInfo].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	computeRootParameters[(size_t)ComputeRootParam::kSkinningInfo].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	computeRootParameters[(size_t)ComputeRootParam::kSkinningInfo].Descriptor.ShaderRegister = 0;
+
+	computeRootSignatureDesc.pParameters = computeRootParameters;   //ルートパラメータ配列へのポインタ
+	computeRootSignatureDesc.NumParameters = _countof(computeRootParameters);  //配列の長さ
+
+
+	ComPtr<ID3DBlob> CSignatureBlob;
+	ComPtr<ID3DBlob> CErrorBlob;
+	hr = D3D12SerializeRootSignature(&computeRootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &CSignatureBlob, &CErrorBlob);
+	if (FAILED(hr)) {
+		Log(reinterpret_cast<char*>(CErrorBlob->GetBufferPointer()));
+		assert(false);
+	}
+
+	hr = device_->CreateRootSignature(0, CSignatureBlob->GetBufferPointer(), CSignatureBlob->GetBufferSize(), IID_PPV_ARGS(&computeRootSignature_));
+	assert(SUCCEEDED(hr));
+
+	D3D12_COMPUTE_PIPELINE_STATE_DESC computePipelineStateDesc{};
+	computePipelineStateDesc.pRootSignature = computeRootSignature_.Get();
+	computePipelineStateDesc.CS = { computeShaderBlob->GetBufferPointer(),computeShaderBlob->GetBufferSize() };
+
+	hr = device_->CreateComputePipelineState(&computePipelineStateDesc, IID_PPV_ARGS(&computePipelineState_));
+	assert(SUCCEEDED(hr));
 }
 
 SkinningObject* SkinningObject::Create(std::shared_ptr<Model> model) {
@@ -225,9 +282,7 @@ SkinningObject* SkinningObject::Create(std::shared_ptr<Model> model) {
 
 void SkinningObject::preDraw() {
 
-	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
-
-	commandList_->SetPipelineState(graphicsPipelineState_.Get());  //PSOを設定
+	
 	//形状を設定。PSOに設定しているものとはまた別。設置物を設定すると考えておけばいい
 	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -301,6 +356,10 @@ void SkinningObject::Initialize(std::shared_ptr<Model> model) {
 	model_ = model;
 	worldTransform_.Init();
 
+	skinningInfoBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(uint32_t));
+
+	skinningInfoBuff_->Map(0, nullptr, reinterpret_cast<void**>(&skinningInfoData_));
+
 }
 
 void SkinningObject::Draw(const Camera& camera) {
@@ -308,12 +367,47 @@ void SkinningObject::Draw(const Camera& camera) {
 	worldTransform_.Map();
 
 	for (auto& mesh : model_->meshes_) {
-		D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
-		*mesh.GetVBV(),
-		skinCluster_->influenceBufferView_
-		};
 
-		commandList_->IASetVertexBuffers(0, 2, vbvs);
+		skinningInfoData_->numVertex_ = (uint32_t)mesh.vertices_.size();
+
+		D3D12_RESOURCE_BARRIER preBarrier = {};
+		preBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		preBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		preBarrier.Transition.pResource = mesh.GetUavResource();
+		preBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
+		preBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+		preBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		commandList_->ResourceBarrier(1, &preBarrier);
+
+
+		commandList_->SetComputeRootSignature(computeRootSignature_.Get());
+		commandList_->SetPipelineState(computePipelineState_.Get());
+
+		commandList_->SetComputeRootDescriptorTable((UINT)ComputeRootParam::kPalette, skinCluster_->paletteSrvHandle_.second);
+
+		commandList_->SetComputeRootDescriptorTable((UINT)ComputeRootParam::kInputVertex, mesh.GetVertexSrvhandleGPU());
+
+		commandList_->SetComputeRootDescriptorTable((UINT)ComputeRootParam::kInfluence, skinCluster_->influenceSrvHandle_.second);
+
+		commandList_->SetComputeRootDescriptorTable((UINT)ComputeRootParam::kOutputVertex, mesh.GetVertexUavHandleGPU());
+
+		commandList_->SetComputeRootConstantBufferView((UINT)ComputeRootParam::kSkinningInfo, skinningInfoBuff_->GetGPUVirtualAddress());
+
+		commandList_->Dispatch(UINT(mesh.vertices_.size() + 1023) / 1024, 1, 1);
+
+		D3D12_RESOURCE_BARRIER postBarrier = {};
+		postBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		postBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		postBarrier.Transition.pResource = mesh.GetUavResource();
+		postBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+		postBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
+		postBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		commandList_->ResourceBarrier(1, &postBarrier);
+
+		commandList_->SetGraphicsRootSignature(rootSignature_.Get());
+		commandList_->SetPipelineState(graphicsPipelineState_.Get());  //PSOを設定
+
+		commandList_->IASetVertexBuffers(0, 1, mesh.GetSkinnedVBV());
 		commandList_->IASetIndexBuffer(mesh.GetIVB());
 
 		const auto& material = mesh.GetMaterial();
@@ -327,9 +421,32 @@ void SkinningObject::Draw(const Camera& camera) {
 
 		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
 
-		commandList_->SetGraphicsRootDescriptorTable((UINT)RootParameter::kMatrixPalette, skinCluster_->paletteSrvHandle_.second);
-
 		commandList_->DrawIndexedInstanced((UINT)mesh.indices_.size(), 1, 0, 0, 0);
 	}
 
 }
+
+ComPtr<ID3D12Resource> SkinningObject::CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes) {
+	//リソース用のヒープの設定
+	D3D12_HEAP_PROPERTIES uploadHeapproperties{};
+	uploadHeapproperties.Type = D3D12_HEAP_TYPE_UPLOAD;//UploadHeapを使う
+	//リソースの設定
+	D3D12_RESOURCE_DESC ResourceDesc{};
+	//バッファリソース。テクスチャの場合はまた別の設定をする
+	ResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	ResourceDesc.Width = sizeInBytes; //リソースのサイズ。
+	//バッファの場合はこれにする決まり
+	ResourceDesc.Height = 1;
+	ResourceDesc.DepthOrArraySize = 1;
+	ResourceDesc.MipLevels = 1;
+	ResourceDesc.SampleDesc.Count = 1;
+	//バッファの場合はこれらにする決まり
+	ResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	//実際に頂点リソースを作る
+	ComPtr<ID3D12Resource> Resource = nullptr;
+	HRESULT hr = device->CreateCommittedResource(&uploadHeapproperties, D3D12_HEAP_FLAG_NONE, &ResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&Resource));
+	assert(SUCCEEDED(hr));
+
+	return Resource;
+}
+
