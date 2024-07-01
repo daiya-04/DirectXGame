@@ -39,6 +39,20 @@ void SkinCluster::Create(const Skeleton& skeleton,const std::shared_ptr<Model>& 
 	influenceBufferView_.SizeInBytes = UINT(sizeof(VertexInfluence) * model->meshes_[0].vertices_.size());
 	influenceBufferView_.StrideInBytes = sizeof(VertexInfluence);
 
+	influenceSrvHandle_.first = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	influenceSrvHandle_.second = GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	DirectXCommon::GetInstance()->IncrementSrvHeapCount();
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC influenceSrvDesc{};
+	influenceSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	influenceSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	influenceSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	influenceSrvDesc.Buffer.FirstElement = 0;
+	influenceSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	influenceSrvDesc.Buffer.NumElements = UINT(model->meshes_[0].vertices_.size());
+	influenceSrvDesc.Buffer.StructureByteStride = sizeof(VertexInfluence);
+	device->CreateShaderResourceView(influenceBuff_.Get(), &influenceSrvDesc, influenceSrvHandle_.first);
+
 	//InverseBindPoseMatrixを格納する場所を作成して、単位行列で埋める
 	inverseBindPoseMatrices_.resize(skeleton.joints_.size());
 	std::generate(inverseBindPoseMatrices_.begin(), inverseBindPoseMatrices_.end(), MakeIdentity44);
