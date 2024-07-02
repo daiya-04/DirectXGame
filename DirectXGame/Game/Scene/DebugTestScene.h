@@ -14,6 +14,8 @@
 #include "SpotLight.h"
 #include "SkyBox.h"
 
+#include "Dissolve.h"
+
 class DebugTestScene : public IScene {
 public:
 	void Init()override;
@@ -57,6 +59,11 @@ private:
 
 	std::shared_ptr<Model> MultiMaterialModel_;
 	std::unique_ptr<Object3d> MutiMaterial_;
+
+	Dissolve* dissolve_;
+
+	uint32_t tex_ = 0;
+	std::unique_ptr<Sprite> sprite_;
 
 };
 

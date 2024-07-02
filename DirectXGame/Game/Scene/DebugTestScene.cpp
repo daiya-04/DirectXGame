@@ -27,6 +27,7 @@ void DebugTestScene::Init() {
 	MultiMaterialModel_ = ModelManager::LoadOBJ("MultiMesh");
 
 	skyBoxTex_ = TextureManager::Load("rostock_laage_airport_4k.dds");
+	tex_ = TextureManager::Load("test.png");
 
 	skyBox_.reset(SkyBox::Create(skyBoxTex_));
 
@@ -39,6 +40,11 @@ void DebugTestScene::Init() {
 	MutiMaterial_.reset(Object3d::Create(MultiMaterialModel_));
 	MutiMaterial_->worldTransform_.rotation_.y = 3.14f;
 
+	sprite_.reset(Sprite::Create(tex_, { 640.0f,360.0f }));
+	
+	dissolve_ = Dissolve::GetInstance();
+	dissolve_->Init();
+
 	human_->worldTransform_.rotation_.y = 3.14f;
 
 	Update();
@@ -46,6 +52,7 @@ void DebugTestScene::Init() {
 
 void DebugTestScene::Update() {
 	DebugGUI();
+	dissolve_->DebugGUI();
 
 #ifdef _DEBUG
 
@@ -129,14 +136,17 @@ void DebugTestScene::DrawUI() {
 }
 
 void DebugTestScene::DrawPostEffect() {
+	dissolve_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
+	Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	sprite_->Draw();
 
-
+	dissolve_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 }
 
 void DebugTestScene::DrawRenderTexture() {
 
-
+	dissolve_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 
 }
 
