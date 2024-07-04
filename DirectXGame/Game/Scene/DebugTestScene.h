@@ -13,6 +13,7 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "SkyBox.h"
+#include "BurnScars.h"
 
 #include "Dissolve.h"
 
@@ -64,6 +65,9 @@ private:
 
 	uint32_t tex_ = 0;
 	std::unique_ptr<Sprite> sprite_;
+
+	uint32_t burnScarsTex_ = 0;
+	std::unique_ptr<BurnScars> burnScars_;
 
 };
 

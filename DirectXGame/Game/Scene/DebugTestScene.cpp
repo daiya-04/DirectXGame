@@ -28,6 +28,7 @@ void DebugTestScene::Init() {
 
 	skyBoxTex_ = TextureManager::Load("rostock_laage_airport_4k.dds");
 	tex_ = TextureManager::Load("test.png");
+	burnScarsTex_ = TextureManager::Load("monsterBall.png");
 
 	skyBox_.reset(SkyBox::Create(skyBoxTex_));
 
@@ -44,6 +45,8 @@ void DebugTestScene::Init() {
 	
 	dissolve_ = Dissolve::GetInstance();
 	dissolve_->Init();
+
+	burnScars_.reset(BurnScars::Create(burnScarsTex_));
 
 	human_->worldTransform_.rotation_.y = 3.14f;
 
@@ -114,6 +117,9 @@ void DebugTestScene::DrawModel() {
 	//ShapesDraw::DrawSphere(Shapes::Sphere({}, 1.0f), camera_);
 	//ShapesDraw::DrawPlane(Shapes::Plane({ 0.0f,0.0f,1.0f }, 10.0f), camera_);
 	//ShapesDraw::DrawAABB(Shapes::AABB({ -1.0,-1.0,-1.0f }, { 1.0f,1.0f,1.0f }), camera_);
+
+	BurnScars::preDraw();
+	burnScars_->Draw(camera_);
 
 }
 

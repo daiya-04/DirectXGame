@@ -189,6 +189,7 @@
     </ClCompile>
     <ClCompile Include="OutLine.cpp" />
     <ClCompile Include="Dissolve.cpp" />
+    <ClCompile Include="BurnScars.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -339,5 +340,6 @@
     </ClInclude>
     <ClInclude Include="OutLine.h" />
     <ClInclude Include="Dissolve.h" />
+    <ClInclude Include="BurnScars.h" />
   </ItemGroup>
 </Project>
