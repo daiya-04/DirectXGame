@@ -7,10 +7,13 @@
 #include "Object3d.h"
 #include "Particle.h"
 #include "SceneFactory.h"
+#include "BurnScars.h"
 
 void MyGame::Init(){
 
 	DSFramework::Init();
+
+	BurnScars::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 
 	TextureManager::Load("white.png");
 
@@ -21,7 +24,7 @@ void MyGame::Init(){
 
 #ifdef _DEBUG
 
-	SceneManager::GetInstance()->ChangeScene("Game");
+	SceneManager::GetInstance()->ChangeScene("Debug");
 
 #endif // _DEBUG
 

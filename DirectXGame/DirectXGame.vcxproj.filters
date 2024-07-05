@@ -188,6 +188,8 @@
       <Filter>Engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="OutLine.cpp" />
+    <ClCompile Include="Dissolve.cpp" />
+    <ClCompile Include="BurnScars.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -337,5 +339,7 @@
       <Filter>Engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="OutLine.h" />
+    <ClInclude Include="Dissolve.h" />
+    <ClInclude Include="BurnScars.h" />
   </ItemGroup>
 </Project>
