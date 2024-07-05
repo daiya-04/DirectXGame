@@ -79,7 +79,7 @@ public:
 
 	bool isLife_ = true;
 
-	int32_t lifeTime_ = 60 * 5;
+	int32_t lifeTime_ = 60 * 4;
 
 public: //メンバ関数
 
