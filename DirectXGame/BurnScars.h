@@ -71,11 +71,15 @@ public:
 	//座標
 	Vector3 position_{};
 	//倍率
-	Vector2 scale_ = { 1.0f,1.0f };
+	Vector2 scale_ = { 1.5f,1.5f };
 	//回転
 	float rotate_{};
 
 	float threshold_ = 0.0f;
+
+	bool isLife_ = true;
+
+	int32_t lifeTime_ = 60 * 5;
 
 public: //メンバ関数
 
@@ -85,6 +89,8 @@ public: //メンバ関数
 	void Update();
 	//描画
 	void Draw(const Camera& camera);
+
+	bool IsLife() const { return isLife_; }
 
 private:
 

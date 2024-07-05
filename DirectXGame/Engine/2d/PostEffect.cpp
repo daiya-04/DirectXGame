@@ -14,7 +14,7 @@
 
 using namespace Microsoft::WRL;
 
-const float PostEffect::clearColor_[4] = { 0.0f,0.0f,0.0f,1.0f };
+const float PostEffect::clearColor_[4] = { 0.0f,0.0f,0.0f,0.0f };
 
 PostEffect* PostEffect::GetInstance() {
 	static PostEffect instance;

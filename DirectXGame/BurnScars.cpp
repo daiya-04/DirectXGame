@@ -55,8 +55,8 @@ void BurnScars::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList* comm
 	//Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; //バイリニアフィルタ
-	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; //0~1の範囲外をリピート
-	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP; //0~1の範囲外をリピート
+	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;  //比較しない
 	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;  //ありったけのMipmapを使う
@@ -301,7 +301,18 @@ void BurnScars::Initialize(uint32_t textureHandle) {
 
 void BurnScars::Update() {
 
-	
+	lifeTime_--;
+
+	const int32_t kDissolveStartTime = 60 * 2;
+
+	if (lifeTime_ < kDissolveStartTime) {
+		threshold_ = float(kDissolveStartTime - lifeTime_) / (float)kDissolveStartTime;
+		threshold_ = std::clamp(threshold_, 0.0f, 1.0f);
+	}
+
+	if (threshold_ == 1.0f) {
+		isLife_ = false;
+	}
 	
 }
 
@@ -336,13 +347,13 @@ void BurnScars::TransferVertex() {
 	VertexData* vertexData = nullptr;
 	vertexBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//1枚目の三角形
-	vertexData[0].pos_ = { -1.0f,1.0f,0.0f,1.0f };//左上
+	vertexData[0].pos_ = { -1.0f,0.0f,1.0f,1.0f };//左上
 	vertexData[0].uv_ = { 0.0f,0.0f };
-	vertexData[1].pos_ = { -1.0f,-1.0f,0.0f,1.0f };//左下
+	vertexData[1].pos_ = { -1.0f,0.0f,-1.0f,1.0f };//左下
 	vertexData[1].uv_ = { 0.0f,1.0f };
-	vertexData[2].pos_ = { 1.0f,-1.0f,0.0f,1.0f };//右下
+	vertexData[2].pos_ = { 1.0f,0.0f,-1.0f,1.0f };//右下
 	vertexData[2].uv_ = { 1.0f,1.0f };
-	vertexData[3].pos_ = { 1.0f,1.0f,0.0f,1.0f };//右上
+	vertexData[3].pos_ = { 1.0f,0.0f,1.0f,1.0f };//右上
 	vertexData[3].uv_ = { 1.0f,0.0f };
 
 

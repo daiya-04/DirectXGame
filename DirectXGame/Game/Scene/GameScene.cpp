@@ -56,6 +56,7 @@ void GameScene::Init(){
 	uint32_t XButtonTex = TextureManager::Load("XButton.png");
 	uint32_t char_AttackTex = TextureManager::Load("char_Attack.png");
 	uint32_t gameOverTex = TextureManager::Load("GameOver.png");
+	burnScarsTex_ = TextureManager::Load("BurnScars.png");
 
 	postEffect_ = PostEffect::GetInstance();
 	postEffect_->Init();
@@ -194,6 +195,13 @@ void GameScene::Update(){
 		return false;
 	});
 
+	burnScarses_.remove_if([](const std::unique_ptr<BurnScars>& burnScars) {
+		if (!burnScars->IsLife()) {
+			return true;
+		}
+		return false;
+	});
+
 	switch (sceneEvent_) {
 		case SceneEvent::Battle:
 			BattleUpdate();
@@ -214,7 +222,6 @@ void GameScene::Update(){
 	/*for (const auto& bullet : enemyBullets_) {
 		bullet->Update();
 	}*/
-	
 
 	for (std::list<Particle::ParticleData>::iterator itParticle = particles_.begin(); itParticle != particles_.end(); itParticle++) {
 		(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_;
@@ -285,6 +292,12 @@ void GameScene::DrawPostEffect() {
 
 	outLine_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 
+	BurnScars::preDraw();
+
+	for (auto& burnScars : burnScarses_) {
+		burnScars->Draw(camera_);
+	}
+
 	Object3d::preDraw();
 	skydome_->Draw(camera_);
 	ground_->Draw(camera_);
@@ -293,6 +306,8 @@ void GameScene::DrawPostEffect() {
 	for (const auto& elementBall : elementBalls_) {
 		elementBall->Draw(camera_);
 	}
+
+	
 
 
 	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
@@ -328,6 +343,10 @@ void GameScene::BattleUpdate() {
 	}
 	followCamera_->Update();
 
+	for (auto& burnScars : burnScarses_) {
+		burnScars->Update();
+	}
+
 	///衝突判定
 
 	//プレイヤー攻撃とボス
@@ -341,6 +360,12 @@ void GameScene::BattleUpdate() {
 		if (IsCollision(player_->GetCollider(), elementBall->GetCollider())) {
 			player_->OnCollision();
 			elementBall->OnCollision();
+		}
+	}
+
+	for (const auto& elementBall : elementBalls_) {
+		if (elementBall->IsLife()) {
+			CreateBurnScars(elementBall->GetWorldPos());
 		}
 	}
 
@@ -445,4 +470,14 @@ void GameScene::AddElementBall(ElementBall* elementBall) {
 
 void GameScene::AddParticle(Particle::ParticleData particle) {
 	particles_.push_back(particle);
+}
+
+void GameScene::CreateBurnScars(const Vector3& createPos) {
+
+	auto& burnScars = burnScarses_.emplace_back(std::make_unique<BurnScars>());
+	burnScars.reset(BurnScars::Create(burnScarsTex_));
+
+	burnScars->position_ = createPos;
+	burnScars->position_.y = 0.01f;
+
 }

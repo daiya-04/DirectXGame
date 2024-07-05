@@ -16,6 +16,8 @@ SamplerState gSampler : register(s0);
 
 
 PixelShaderOutput main(VertexShaderOutput input){
+	PixelShaderOutput output;
+	output.color = gTexture.Sample(gSampler, input.texcoord);
 
 	float32_t mask = gMaskTex.Sample(gSampler, input.texcoord);
 	
@@ -23,10 +25,7 @@ PixelShaderOutput main(VertexShaderOutput input){
 		discard;
 	}
 
-	PixelShaderOutput output;
-
 	float32_t edge = 1.0f - smoothstep(gData.threshold, gData.threshold + 0.1f, mask);
-	output.color = gTexture.Sample(gSampler, input.texcoord);
 	
 	output.color.rgb -= edge * float32_t3(1.0f, 1.0f, 1.0f);
 	

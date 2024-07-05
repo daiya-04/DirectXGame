@@ -86,6 +86,7 @@ public:
 
 	Shapes::Sphere GetCollider() const { return collider_; }
 	Phase GetPhase() const { return phase_; }
+	const Vector3 GetWorldPos() const { return obj_->GetWorldPos(); }
 
 };
 

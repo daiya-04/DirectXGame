@@ -14,7 +14,7 @@
 
 using namespace Microsoft::WRL;
 
-const float OutLine::clearColor_[4] = { 1.0f,1.0f,1.0f,1.0f };
+const float OutLine::clearColor_[4] = { 0.0f,0.0f,0.0f,0.0f };
 
 OutLine* OutLine::GetInstance() {
 	static OutLine instance;

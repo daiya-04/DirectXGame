@@ -25,6 +25,7 @@
 #include "Boss.h"
 #include "FollowCamera.h"
 #include "ElementBall.h"
+#include "BurnScars.h"
 
 
 class GameScene : public IScene {
@@ -61,6 +62,8 @@ public:
 	void AddElementBall(ElementBall* elementBall);
 
 	void AddParticle(Particle::ParticleData particle);
+
+	void CreateBurnScars(const Vector3& createPos);
 
 private:
   
@@ -113,6 +116,9 @@ private: //オブジェクト
 	OutLine* outLine_;
 
 	std::unique_ptr<LevelData> levelData_;
+
+	uint32_t burnScarsTex_ = 0;
+	std::list<std::unique_ptr<BurnScars>> burnScarses_;
 
 private:
 
