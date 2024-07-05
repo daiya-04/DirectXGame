@@ -75,7 +75,7 @@ public:
 	//回転
 	float rotate_{};
 
-	float threshold_ = 0.5f;
+	float threshold_ = 0.0f;
 
 public: //メンバ関数
 

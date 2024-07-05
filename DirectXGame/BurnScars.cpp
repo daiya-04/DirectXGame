@@ -287,7 +287,7 @@ void BurnScars::Initialize(uint32_t textureHandle) {
 	uint32_t* indices = nullptr;
 	indexBuff_->Map(0, nullptr, reinterpret_cast<void**>(&indices));
 
-	indices[0] = 0;  indices[1] = 1;  indices[2] = 2;
+	indices[0] = 0;  indices[1] = 1;  indices[2] = 3;
 	indices[3] = 1;  indices[4] = 3;  indices[5] = 2;
 
 	worldMatBuff_ = CreateBufferResource(device_, sizeof(Matrix4x4));
@@ -336,13 +336,13 @@ void BurnScars::TransferVertex() {
 	VertexData* vertexData = nullptr;
 	vertexBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//1枚目の三角形
-	vertexData[0].pos_ = { -1.0f,0.0f,1.0f,1.0f };//左上
+	vertexData[0].pos_ = { -1.0f,1.0f,0.0f,1.0f };//左上
 	vertexData[0].uv_ = { 0.0f,0.0f };
-	vertexData[1].pos_ = { -1.0f,0.0f,-1.0f,1.0f };//左下
+	vertexData[1].pos_ = { -1.0f,-1.0f,0.0f,1.0f };//左下
 	vertexData[1].uv_ = { 0.0f,1.0f };
-	vertexData[2].pos_ = { 1.0f,0.0f,-1.0f,1.0f };//右下
+	vertexData[2].pos_ = { 1.0f,-1.0f,0.0f,1.0f };//右下
 	vertexData[2].uv_ = { 1.0f,1.0f };
-	vertexData[3].pos_ = { 1.0f,0.0f,1.0f,1.0f };//右上
+	vertexData[3].pos_ = { 1.0f,1.0f,0.0f,1.0f };//右上
 	vertexData[3].uv_ = { 1.0f,0.0f };
 
 

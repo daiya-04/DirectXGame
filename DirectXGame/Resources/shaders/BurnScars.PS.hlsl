@@ -27,8 +27,8 @@ PixelShaderOutput main(VertexShaderOutput input){
 
 	float32_t edge = 1.0f - smoothstep(gData.threshold, gData.threshold + 0.1f, mask);
 	output.color = gTexture.Sample(gSampler, input.texcoord);
-
-	output.color.rgb += edge * float32_t3(1.0f, 0.0f,0.0f);
+	
+	output.color.rgb -= edge * float32_t3(1.0f, 1.0f, 1.0f);
 	
 	return output;
 }
