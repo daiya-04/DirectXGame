@@ -65,6 +65,9 @@
     <Filter Include="Engine\Line">
       <UniqueIdentifier>{4cdc3d87-ca5a-4b43-b7b9-91e46240f6d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\PostEffect">
+      <UniqueIdentifier>{f2e40545-8620-46c2-b73c-dde6521abece}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -125,9 +128,6 @@
     <ClCompile Include="Engine\3d\WorldTransform.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\2d\PostEffect.cpp">
-      <Filter>Engine\2d</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\3d\Animation.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
@@ -143,7 +143,6 @@
     <ClCompile Include="Engine\Loader\LevelLoader.cpp">
       <Filter>Engine\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="EnemyBullet.cpp" />
@@ -187,9 +186,19 @@
     <ClCompile Include="Engine\3d\Material.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="OutLine.cpp" />
-    <ClCompile Include="Dissolve.cpp" />
     <ClCompile Include="BurnScars.cpp" />
+    <ClCompile Include="Engine\PostEffect\PostEffect.cpp">
+      <Filter>Engine\PostEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\PostEffect\Dissolve.cpp">
+      <Filter>Engine\PostEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Skydome.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\PostEffect\OutLine.cpp">
+      <Filter>Engine\PostEffect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -273,9 +282,6 @@
     <ClInclude Include="Engine\Audio\Audio.h">
       <Filter>Engine\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\2d\PostEffect.h">
-      <Filter>Engine\2d</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\3d\Animation.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
@@ -291,7 +297,6 @@
     <ClInclude Include="Engine\Loader\LevelLoader.h">
       <Filter>Engine\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="Skydome.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="FollowCamera.h" />
     <ClInclude Include="EnemyBullet.h" />
@@ -338,8 +343,18 @@
     <ClInclude Include="Engine\3d\Material.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="OutLine.h" />
-    <ClInclude Include="Dissolve.h" />
     <ClInclude Include="BurnScars.h" />
+    <ClInclude Include="Engine\PostEffect\PostEffect.h">
+      <Filter>Engine\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\PostEffect\Dissolve.h">
+      <Filter>Engine\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Skydome.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\PostEffect\OutLine.h">
+      <Filter>Engine\PostEffect</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
