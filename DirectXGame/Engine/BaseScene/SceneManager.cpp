@@ -58,9 +58,9 @@ void SceneManager::Update(){
 
 	ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
 
-	//ImGui::Text("SrvHeapCount : %d", DirectXCommon::GetInstance()->GetSrvHeapCount());
-	//ImGui::Text("DsvHeapCount : %d", DirectXCommon::GetInstance()->GetDsvHeapCount());
-	//ImGui::Text("RtvHeapCount : %d", DirectXCommon::GetInstance()->GetRtvHeapCount());
+	ImGui::Text("SrvHeapCount : %d", DirectXCommon::GetInstance()->GetSrvHeapCount());
+	ImGui::Text("DsvHeapCount : %d", DirectXCommon::GetInstance()->GetDsvHeapCount());
+	ImGui::Text("RtvHeapCount : %d", DirectXCommon::GetInstance()->GetRtvHeapCount());
 
 	ImGui::End();
 

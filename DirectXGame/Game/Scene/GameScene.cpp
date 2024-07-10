@@ -356,12 +356,12 @@ void GameScene::BattleUpdate() {
 	}
 
 	//エレメントボールとプレイヤー
-	for (const auto& elementBall : elementBalls_) {
+	/*for (const auto& elementBall : elementBalls_) {
 		if (IsCollision(player_->GetCollider(), elementBall->GetCollider())) {
 			player_->OnCollision();
 			elementBall->OnCollision();
 		}
-	}
+	}*/
 
 	for (const auto& elementBall : elementBalls_) {
 		if (elementBall->IsLife()) {
