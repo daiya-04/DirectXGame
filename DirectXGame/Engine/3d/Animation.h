@@ -10,6 +10,8 @@
 
 class Animation {
 private:
+	friend class AnimationManager;
+private:
 
 	template <typename Value>
 	struct Keyframe {
@@ -32,8 +34,6 @@ private:
 	};
 
 public:
-
-	static Animation LoadAnimationFile(const std::string& filename);
 
 	//再生
 	void Play(const Model::Node& rootNode, bool isLoop = true);
@@ -70,6 +70,8 @@ private:
 	std::map<std::string, NodeAnimation> nodeAnimations_;
 
 	Matrix4x4 localMatrix_;
+
+	std::string filename_;
 
 };
 

@@ -68,6 +68,9 @@
     <Filter Include="Engine\PostEffect">
       <UniqueIdentifier>{f2e40545-8620-46c2-b73c-dde6521abece}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\3d\Model">
+      <UniqueIdentifier>{09a5243c-6ffc-4d31-9229-9c39d87bd460}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -76,9 +79,6 @@
     </ClCompile>
     <ClCompile Include="Engine\Base\WinApp.cpp">
       <Filter>Engine\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\ModelManager.cpp">
-      <Filter>Engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\Object3d.cpp">
       <Filter>Engine\3d</Filter>
@@ -121,9 +121,6 @@
     </ClCompile>
     <ClCompile Include="Engine\DebugText\GlobalVariables.cpp">
       <Filter>Engine\DebugText</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Audio\Audio.cpp">
-      <Filter>Engine\Audio</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\WorldTransform.cpp">
       <Filter>Engine\3d</Filter>
@@ -199,6 +196,15 @@
     <ClCompile Include="Engine\PostEffect\OutLine.cpp">
       <Filter>Engine\PostEffect</Filter>
     </ClCompile>
+    <ClCompile Include="AnimationManager.cpp">
+      <Filter>Engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Audio\Audio.cpp">
+      <Filter>Engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Model\ModelManager.cpp">
+      <Filter>Engine\3d\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -206,9 +212,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Base\WinApp.h">
       <Filter>Engine\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\ModelManager.h">
-      <Filter>Engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="Engine\2d\Sprite.h">
       <Filter>Engine\2d</Filter>
@@ -355,6 +358,12 @@
     </ClInclude>
     <ClInclude Include="Engine\PostEffect\OutLine.h">
       <Filter>Engine\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationManager.h">
+      <Filter>Engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Model\ModelManager.h">
+      <Filter>Engine\3d\Model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

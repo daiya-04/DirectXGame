@@ -2,13 +2,14 @@
 
 #include "Easing.h"
 #include "ShapesDraw.h"
+#include "AnimationManager.h"
 
 const WorldTransform* ElementBall::target_ = nullptr;
 
 void ElementBall::Init(std::shared_ptr<Model> model, const Vector3& startPos) {
 
 	obj_.reset(Object3d::Create(model));
-	animation_ = Animation::LoadAnimationFile(obj_->GetModel()->name_);
+	animation_ = AnimationManager::Load(obj_->GetModel()->name_);
 	obj_->worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 
 	phaseRequest_ = Phase::kSet;

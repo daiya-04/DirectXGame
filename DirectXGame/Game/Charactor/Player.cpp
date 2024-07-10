@@ -4,6 +4,7 @@
 #include "Easing.h"
 #include "TextureManager.h"
 #include "ShapesDraw.h"
+#include "AnimationManager.h"
 
 #include "Enemy.h"
 
@@ -25,7 +26,7 @@ void Player::Init(std::vector<std::shared_ptr<Model>> models){
 	obj_.reset(SkinningObject::Create(animationModels_[action_]));
 	skinClusters_.resize(animationModels_.size());
 	for (size_t index = 0; index < Action::kActionNum; index++) {
-		animations_.emplace_back(Animation::LoadAnimationFile(animationModels_[index]->name_));
+		animations_.emplace_back(AnimationManager::Load(animationModels_[index]->name_));
 		skeletons_.emplace_back(Skeleton::Create(animationModels_[index]->rootNode_));
 		skinClusters_[index].Create(skeletons_[index], animationModels_[index]);
 	}

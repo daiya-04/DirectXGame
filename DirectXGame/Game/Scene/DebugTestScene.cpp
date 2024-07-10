@@ -4,6 +4,7 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
+#include "AnimationManager.h"
 #include "Audio.h"
 #include "Input.h"
 #include "SceneManager.h"
@@ -33,7 +34,7 @@ void DebugTestScene::Init() {
 	skyBox_.reset(SkyBox::Create(skyBoxTex_));
 
 	human_.reset(SkinningObject::Create(humanModel_));
-	animation_ = Animation::LoadAnimationFile(standingModel_->name_);
+	animation_ = AnimationManager::Load(standingModel_->name_);
 	skeleton_ = Skeleton::Create(standingModel_->rootNode_);
 	skinCluster_.Create(skeleton_, standingModel_);
 	human_->SetSkinCluster(&skinCluster_);
@@ -71,14 +72,14 @@ void DebugTestScene::Update() {
 	
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		human_->SetModelHandle(sneakModel_);
-		animation_ = Animation::LoadAnimationFile(sneakModel_->name_);
+		animation_ = AnimationManager::Load(sneakModel_->name_);
 		skeleton_ = Skeleton::Create(sneakModel_->rootNode_);
 		skinCluster_.Create(skeleton_, sneakModel_);
 		animation_.SetAnimationSpeed(1.0f / 30.0f);
 	}
 	else if(Input::GetInstance()->ReleaseKey(DIK_SPACE)){
 		//human_->SetModelHandle(humanModel_);
-		animation_ = Animation::LoadAnimationFile(standingModel_->name_);
+		animation_ = AnimationManager::Load(standingModel_->name_);
 		skeleton_ = Skeleton::Create(standingModel_->rootNode_);
 		skinCluster_.Create(skeleton_, standingModel_);
 		animation_.SetAnimationSpeed(1.0f / 60.0f);
