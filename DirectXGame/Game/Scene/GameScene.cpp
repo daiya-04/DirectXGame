@@ -79,6 +79,7 @@ void GameScene::Init(){
 	//プレイヤー
 	player_ = std::make_unique<Player>();
 	player_->Init({ playerStandingModel,playerWalkingModel,playerAttackModel });
+	player_->SetGameScene(this);
 
 	//ボス
 	boss_ = std::make_unique<Boss>();
@@ -195,6 +196,13 @@ void GameScene::Update(){
 		return false;
 	});
 
+	playerAttacks_.remove_if([](const std::unique_ptr<PlayerAttack>& playerAttack) {
+		if (!playerAttack->IsLife()) {
+			return true;
+		}
+		return false;
+	});
+
 	burnScarses_.remove_if([](const std::unique_ptr<BurnScars>& burnScars) {
 		if (!burnScars->IsLife()) {
 			return true;
@@ -306,7 +314,9 @@ void GameScene::DrawPostEffect() {
 	for (const auto& elementBall : elementBalls_) {
 		elementBall->Draw(camera_);
 	}
-
+	for (const auto& playerAttack : playerAttacks_) {
+		playerAttack->Draw(camera_);
+	}
 	
 
 
@@ -341,6 +351,9 @@ void GameScene::BattleUpdate() {
 	for (const auto& elementBall : elementBalls_) {
 		elementBall->Update();
 	}
+	for (const auto& playerAttack : playerAttacks_) {
+		playerAttack->Update();
+	}
 	followCamera_->Update();
 
 	for (auto& burnScars : burnScarses_) {
@@ -350,10 +363,10 @@ void GameScene::BattleUpdate() {
 	///衝突判定
 
 	//プレイヤー攻撃とボス
-	if (IsCollision(boss_->GetCollider(), player_->GetAttackCollider())) {
+	/*if (IsCollision(boss_->GetCollider(), player_->GetAttackCollider())) {
 		player_->OnCollision();
 		boss_->OnCollision();
-	}
+	}*/
 
 	//エレメントボールとプレイヤー
 	/*for (const auto& elementBall : elementBalls_) {
@@ -369,6 +382,13 @@ void GameScene::BattleUpdate() {
 		}
 	}
 
+	for (const auto& playerAttack : playerAttacks_) {
+		if (IsCollision(boss_->GetCollider(), playerAttack->GetCollider())) {
+			boss_->OnCollision();
+			playerAttack->OnCollision();
+		}
+	}
+
 	///
 
 	if (player_->GetLife() == 0) {
@@ -381,6 +401,7 @@ void GameScene::BattleUpdate() {
 void GameScene::PlayerDeadInit() {
 
 	elementBalls_.clear();
+	playerAttacks_.clear();
 	alpha_ = 0.0f;
 
 }
@@ -466,6 +487,10 @@ void GameScene::DebugGUI(){
 
 void GameScene::AddElementBall(ElementBall* elementBall) {
 	elementBalls_.push_back(std::unique_ptr<ElementBall>(elementBall));
+}
+
+void GameScene::AddPlayerAttack(PlayerAttack* playerAttack) {
+	playerAttacks_.push_back(std::unique_ptr<PlayerAttack>(playerAttack));
 }
 
 void GameScene::AddParticle(Particle::ParticleData particle) {

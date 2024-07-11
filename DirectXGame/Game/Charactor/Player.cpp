@@ -5,14 +5,15 @@
 #include "TextureManager.h"
 #include "ShapesDraw.h"
 #include "AnimationManager.h"
+#include "GameScene.h"
 
 #include "Enemy.h"
 
 const std::array<Player::ComboAttack, Player::comboNum_> Player::kComboAttacks_ = {
 	{
-		{1,30,5},
-		{1,30,5},
-		{1,30,10}
+		{18,20,5},
+		{18,20,5},
+		{18,20,10}
 	}
 };
 
@@ -244,12 +245,12 @@ void Player::AttackUpdate() {
 	}
 
 	if (workAttack_.attackParam_ >= totalAttackTime) {
+		animations_[action_].TimeReset();
 		if (workAttack_.comboNext_) {
 			workAttack_.comboNext_ = false;
 			workAttack_.comboIndex_++;
 
 			AttackInit();
-			animations_[action_].TimeReset();
 		}
 		else {
 			behaviorRequest_ = Behavior::kRoot;
@@ -272,8 +273,8 @@ void Player::AttackUpdate() {
 		direction = TransformNormal(direction, rotateMat_);
 		workAttack_.velocity_ = direction.Normalize() * workAttack_.speed_;
 		
-		Vector3 offset = { 0.0f,0.0f,10.0f };
-		offset = TransformNormal(offset, rotateMat_);
+		/*Vector3 offset = { 0.0f,0.0f,10.0f };
+		offset = TransformNormal(offset, rotateMat_);*/
 
 		if (workAttack_.comboIndex_ == 0) {
 			Vector3 offset = { 0.0f,2.0f,10.0f };
@@ -285,7 +286,18 @@ void Player::AttackUpdate() {
 			offset = TransformNormal(offset, rotateMat_);
 			emitter_.translate_ = Transform(skeletons_[action_].GetSkeletonPos("mixamorig1:RightHand"), obj_->worldTransform_.matWorld_) + offset;
 		}
+
+		///
 		
+		PlayerAttack* playerAttack = new PlayerAttack();
+		std::shared_ptr<Model> attackModel = ModelManager::LoadOBJ("PlayerBullet");
+		Vector3 offset = { 0.0f,0.0f,1.0f };
+		offset = TransformNormal(offset, rotateMat_);
+		Vector3 shotPos = Transform(skeletons_[action_].GetSkeletonPos("mixamorig1:RightHand"), obj_->worldTransform_.matWorld_) + offset;
+		playerAttack->Init(attackModel, shotPos, direction);
+		gameScene_->AddPlayerAttack(playerAttack);
+
+		///
 
 		//速度とパーティクルの数の設定と生成
 		switch (workAttack_.comboIndex_) {

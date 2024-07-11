@@ -25,6 +25,7 @@
 #include "Boss.h"
 #include "FollowCamera.h"
 #include "ElementBall.h"
+#include "PlayerAttack.h"
 #include "BurnScars.h"
 
 
@@ -61,6 +62,8 @@ public:
 
 	void AddElementBall(ElementBall* elementBall);
 
+	void AddPlayerAttack(PlayerAttack* playerAttack);
+
 	void AddParticle(Particle::ParticleData particle);
 
 	void CreateBurnScars(const Vector3& createPos);
@@ -83,6 +86,7 @@ private: //オブジェクト
 	std::unique_ptr<Boss> boss_;
 
 	std::list<std::unique_ptr<ElementBall>> elementBalls_;
+	std::list<std::unique_ptr<PlayerAttack>> playerAttacks_;
 
 	std::unique_ptr<FollowCamera> followCamera_;
 
