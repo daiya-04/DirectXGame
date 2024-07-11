@@ -17,7 +17,7 @@
 #include "FollowCamera.h"
 #include "Particle.h"
 
-//class Enemy;
+class GameScene;
 
 class Player{
 private: //ふるまい用メンバ変数
@@ -144,6 +144,8 @@ private:
 
 	bool isAttack_ = false;
 
+	GameScene* gameScene_ = nullptr;
+
 public:
 
 	Player() :randomEngine(seedGenerator()) {}
@@ -171,6 +173,8 @@ public:
 
 	//カメラの設定
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
+
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
 	const WorldTransform& GetWorldTransform() { return obj_->worldTransform_; }
 	Vector3 GetWorldPos() const;

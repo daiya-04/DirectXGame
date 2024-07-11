@@ -155,6 +155,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Material.cpp" />
     <ClCompile Include="Engine\3d\Mesh.cpp" />
     <ClCompile Include="Engine\PostEffect\OutLine.cpp" />
+    <ClCompile Include="PlayerAttack.cpp" />
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
   </ItemGroup>
@@ -213,6 +214,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\Material.h" />
     <ClInclude Include="Engine\3d\Mesh.h" />
     <ClInclude Include="Engine\PostEffect\OutLine.h" />
+    <ClInclude Include="PlayerAttack.h" />
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
   </ItemGroup>
