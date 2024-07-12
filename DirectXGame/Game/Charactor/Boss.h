@@ -59,12 +59,6 @@ public:
 		uint32_t param = 0;
 	};
 
-	struct BaseStatus {
-		int32_t HP_;
-		int32_t power_;
-		int32_t difense_;
-	};
-
 private:
 
 	std::unique_ptr<SkinningObject> obj_;
@@ -75,10 +69,11 @@ private:
 
 	Action action_ = Action::Standing;
 
+	uint32_t life_ = 6;
 
 	bool isDead_ = false;
 
-	Vector3 size_ = { 1.2f,3.0f,1.2f };
+	Vector3 size_{};
 
 	Shapes::AABB collider_{};
 
@@ -89,8 +84,6 @@ private:
 
 	WorkAppear workAppear_;
 	WorkAttack workAttack_;
-
-	BaseStatus baseStatus_;
 
 	uint32_t coolTime_ = 0;
 	uint32_t attackTimer_ = 0;
@@ -122,6 +115,7 @@ public:
 		animations_[action_].Play(skeletons_[action_]);
 	}
 	bool IsAttack() const { return (behavior_ == Behavior::kAttack) ? true : false; }
+	bool IsDead() const { return isDead_; }
 	Vector3 GetWorldPos() const;
 	Shapes::AABB GetCollider(){ return collider_; }
 	Action GetAction() const { return action_; }

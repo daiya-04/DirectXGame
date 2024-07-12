@@ -54,7 +54,7 @@ private:
 
 	std::unique_ptr<Object3d> obj_;
 	Animation animation_;
-	Vector3 size_ = { 1.5f,1.5f,1.5f };
+	Vector3 size_ = { 1.3f,1.3f,1.3f };
 
 	Shapes::Sphere collider_{};
 

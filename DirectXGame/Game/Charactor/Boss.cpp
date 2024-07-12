@@ -27,6 +27,8 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 
 	behaviorRequest_ = Behavior::kAppear;
 
+	life_ = 6;
+
 }
 
 void Boss::Update() {
@@ -94,7 +96,8 @@ void Boss::Draw(const Camera& camera) {
 }
 
 void Boss::OnCollision() {
-
+	life_--;
+	if (life_ == 0) { isDead_ = true; }
 }
 
 void Boss::SetData(const LevelData::ObjectData& data) {
@@ -102,12 +105,14 @@ void Boss::SetData(const LevelData::ObjectData& data) {
 	obj_->worldTransform_.translation_ = data.translation;
 	obj_->worldTransform_.scale_ = data.scaling;
 
-	baseStatus_.HP_ = data.status.HP;
-	baseStatus_.power_ = data.status.power;
-	baseStatus_.difense_ = data.status.defense;
+	workAppear_.startPos = data.translation;
+	workAppear_.endPos = data.translation;
+	workAppear_.endPos.y = 0.0f;
 
+	size_ = data.colliderSize;
 
 	Matrix4x4 S = MakeScaleMatrix(obj_->worldTransform_.scale_);
+	rotateMat_ = MakeRotateXMatrix(data.rotation.x) * MakeRotateYMatrix(data.rotation.y) * MakeRotateZMatrix(data.rotation.z);
 	Matrix4x4 T = MakeTranslateMatrix(obj_->worldTransform_.translation_);
 	obj_->worldTransform_.matWorld_ = S * rotateMat_ * T;
 }
@@ -130,10 +135,10 @@ void Boss::RootUpdate() {
 void Boss::AttackInit() {
 
 	Vector3 offset[4] = {
-		{5.0f,0.0f,3.0f},
-		{-5.0f,0.0f,3.0f},
-		{5.0f,0.0f,-3.0f},
-		{-5.0f,0.0f,-3.0f},
+		{4.0f,0.0f,2.0f},
+		{-4.0f,0.0f,2.0f},
+		{4.0f,0.0f,-2.0f},
+		{-4.0f,0.0f,-2.0f},
 	};
 
 	for (size_t index = 0; index < 4; index++) {

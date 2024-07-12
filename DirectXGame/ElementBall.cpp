@@ -78,28 +78,12 @@ void ElementBall::OnCollision() {
 
 void ElementBall::SetInit() {
 
-	/*Vector3 offset = {0.0f,17.0f,0.0f};
-	workSet_.end = workSet_.start + offset;
-	obj_->worldTransform_.translation_ = workSet_.start;
-	workSet_.param = 0.0f;*/
-
 	obj_->worldTransform_.translation_ = workSet_.start;
 	animation_.Start();
 
 }
 
 void ElementBall::SetUpdate() {
-
-	//float T = Easing::easeInOutQuint(workSet_.param);
-
-	//obj_->worldTransform_.translation_ = Lerp(T, workSet_.start, workSet_.end);
-
-	//workSet_.param += 0.005f;
-	//
-	//if (workSet_.param >= 1.0f) {
-	//	phaseRequest_ = Phase::kCharge;
-	//	//workSet_.param = 1.0f;
-	//}
 
 	if (!animation_.IsPlaying()) {
 		phaseRequest_ = Phase::kCharge;
@@ -137,7 +121,7 @@ void ElementBall::ShotUpdate() {
 
 	Vector3 diff = target_->translation_ - obj_->worldTransform_.translation_;
 	float distance = diff.Length();
-	const float kSpeed = 0.7f;
+	const float kSpeed = 0.5f;
 
 	if (distance < workShot_.trackingDist) {
 		workShot_.isTrack = false;

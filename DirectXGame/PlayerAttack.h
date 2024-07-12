@@ -21,6 +21,8 @@ public:
 
 	Shapes::Sphere GetCollider() const { return collider_; }
 
+	Vector3 GetWorldPos() const;
+
 private:
 
 	std::unique_ptr<Object3d> obj_;
