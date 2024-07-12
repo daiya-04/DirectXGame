@@ -79,12 +79,6 @@ public:
 		uint32_t recoveryTime_;
 	};
 
-	struct BaseStatus {
-		int32_t HP_;
-		int32_t power_;
-		int32_t difense_;
-	};
-
 	static const int comboNum_ = 3;
 	static const std::array<ComboAttack, comboNum_> kComboAttacks_;
 
@@ -106,14 +100,11 @@ private:
 
 	Action action_ = Action::Standing;
 
-	Vector3 size_ = { 0.7f,1.9f,0.7f };
+	Vector3 size_{};
 
 	Shapes::AABB collider_{};
-	Sphere AttackCollider_{};
 
 	uint32_t life_ = 4;
-
-	//Enemy* target_ = nullptr;
 
 	float attackRange_ = 35.0f;
 
@@ -125,22 +116,9 @@ private:
 	WorkDash workDash_;
 	WorkAttack workAttack_;
 
-	BaseStatus baseStatus_;
-
-	std::unique_ptr<Particle> magicParticle_;
-	std::unique_ptr<Particle> magicParticle2_;
-
-	std::list<Particle::ParticleData> particles_;
-	std::list<Particle::ParticleData> particles2_;
-	Particle::Emitter emitter_{};
-
-	float particleVelocity_ = 0.5f;
-
 	FollowCamera* followCamera_ = nullptr;
 
 	const float kDeltaTime_ = 1.0f / 60.0f;
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine;
 
 	bool isAttack_ = false;
 
@@ -148,7 +126,7 @@ private:
 
 public:
 
-	Player() :randomEngine(seedGenerator()) {}
+	Player(){}
 
 	//初期化
 	void Init(std::vector<std::shared_ptr<Model>> models);
@@ -159,15 +137,12 @@ public:
 		collider_.max = GetWorldPos() + size_;
 		collider_.min = GetWorldPos() - size_;
 	}
-	void AttackColliderUpdate();
 	//描画
 	void Draw(const Camera& camera);
 	//パーティクル描画
 	void DrawParticle(const Camera& camera);
 
 	void SetData(const LevelData::ObjectData& data);
-
-	//void Search(const std::list<std::unique_ptr<Enemy>>& enemies);
 
 	void OnCollision();
 
@@ -178,10 +153,8 @@ public:
 
 	const WorldTransform& GetWorldTransform() { return obj_->worldTransform_; }
 	Vector3 GetWorldPos() const;
-	Vector3 GetAttackPos() const { return emitter_.translate_; }
 	bool IsAttack() { return isAttack_; }
 	Shapes::AABB GetCollider() const { return collider_; }
-	Sphere GetAttackCollider() const { return AttackCollider_; }
 	uint32_t GetLife() const { return life_; }
 
 };

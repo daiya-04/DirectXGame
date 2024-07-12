@@ -11,7 +11,7 @@
 #include <random>
 #include <algorithm>
 
-GameScene::GameScene() :randomEngine(seedGenerator()) {
+GameScene::GameScene() {
 	
 }
 
@@ -39,7 +39,7 @@ void GameScene::Init(){
 	std::shared_ptr<Model> skydomeModel = ModelManager::LoadOBJ("skydome");
 	std::shared_ptr<Model> groundModel = ModelManager::LoadOBJ("ground");
 	std::shared_ptr<Model> playerStandingModel = ModelManager::LoadGLTF("Standing");
-	std::shared_ptr<Model> playerWalkingModel = ModelManager::LoadGLTF("Walking");
+	std::shared_ptr<Model> playerRunningModel = ModelManager::LoadGLTF("Running");
 	std::shared_ptr<Model> playerAttackModel = ModelManager::LoadGLTF("PlayerAttack");
 	//enemyBodyModel_ = ModelManager::Load("EnemyBody");
 	//enemyHeadModel_ = ModelManager::Load("EnemyHead");
@@ -52,7 +52,7 @@ void GameScene::Init(){
 
 	///テクスチャの読み込み
 
-	uint32_t particleTex = TextureManager::Load("circle.png");
+	uint32_t finishTex = TextureManager::Load("finish.png");
 	uint32_t XButtonTex = TextureManager::Load("XButton.png");
 	uint32_t char_AttackTex = TextureManager::Load("char_Attack.png");
 	uint32_t gameOverTex = TextureManager::Load("GameOver.png");
@@ -78,7 +78,7 @@ void GameScene::Init(){
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
-	player_->Init({ playerStandingModel,playerWalkingModel,playerAttackModel });
+	player_->Init({ playerStandingModel,playerRunningModel,playerAttackModel });
 	player_->SetGameScene(this);
 
 	//ボス
@@ -86,52 +86,7 @@ void GameScene::Init(){
 	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel });
 	boss_->SetGameScene(this);
 
-	//敵
-	/*uint32_t enemyNum = 3;
-
-	std::vector<Vector3> enemyPos(enemyNum);*/
-
-	/*enemyPos = {
-		{20.0f,0.0f,10.0f},
-		{-15.0f,0.0f,15.0f},
-		{-5.0f,0.0f,-20.0f}
-	};
-
-	for (size_t index = 0; index < enemyNum; index++) {
-		enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, enemyPos[index])));
-	}*/
-
-	/*for (size_t index = 0; index < spawnNum_; index++) {
-		std::uniform_int_distribution<int> distPosX(-60, 60);
-		std::uniform_int_distribution<int> distPosZ(50, 100);
-		Vector3 spawnPos = { (float)distPosX(randomEngine),0.0f,(float)distPosZ(randomEngine) };
-		enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, spawnPos)));
-	}
-
-	Enemy::SetTarget(&player_->GetWorldTransform());*/
-
-	ElementBall::SetTarget(&player_->GetWorldTransform());
-
-	//追従カメラ
-	followCamera_ = std::make_unique<FollowCamera>();
-	followCamera_->Init();
-	followCamera_->SetTarget(&player_->GetWorldTransform());
-	player_->SetFollowCamera(followCamera_.get());
-
-	//パーティクル
-	particle_ = std::make_unique<Particle>();
-	particle_.reset(Particle::Create(particleTex, 100));
-
-	//UI
-	
-	XButton_.reset(Sprite::Create(XButtonTex, {1200.0f,70.0f}));
-
-	char_Attack_.reset(Sprite::Create(char_AttackTex, {1100.0f,70.0f}));
-
-	gameOver_.reset(Sprite::Create(gameOverTex, { 670.0f,200.0f }));
-
-	///
-
+	//データのセット
 	for (auto& objectData : levelData_->objectDatas_) {
 		if (objectData.objectName == "Ground") {
 			ground_->SetData(objectData);
@@ -144,12 +99,34 @@ void GameScene::Init(){
 		}
 	}
 
+	ElementBall::SetTarget(&player_->GetWorldTransform());
+
+	//追従カメラ
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Init();
+	followCamera_->SetTarget(&player_->GetWorldTransform());
+	player_->SetFollowCamera(followCamera_.get());
+
+	//UI
+	
+	XButton_.reset(Sprite::Create(XButtonTex, {1200.0f,70.0f}));
+
+	char_Attack_.reset(Sprite::Create(char_AttackTex, {1100.0f,70.0f}));
+
+	gameOver_.reset(Sprite::Create(gameOverTex, { 670.0f,200.0f }));
+
+	finish_.reset(Sprite::Create(finishTex, { 670.0f,200.0f }));
+
+	///
+
 	Update();
 
 }
 
-void GameScene::Update(){
+void GameScene::Update() {
 	DebugGUI();
+
+	if (isGameStop_) { return; }
 
 #ifdef _DEBUG
 
@@ -173,6 +150,8 @@ void GameScene::Update(){
 			case SceneEvent::PlayerDead:
 				PlayerDeadInit();
 				break;
+			case SceneEvent::Clear:
+				ClearInit();
 		}
 
 		eventRequest_ = std::nullopt;
@@ -217,6 +196,9 @@ void GameScene::Update(){
 		case SceneEvent::PlayerDead:
 			PlayerDeadUpdate();
 			break;
+		case SceneEvent::Clear:
+			ClearUpdate();
+			break;
 	}
 
 	
@@ -231,10 +213,7 @@ void GameScene::Update(){
 		bullet->Update();
 	}*/
 
-	for (std::list<Particle::ParticleData>::iterator itParticle = particles_.begin(); itParticle != particles_.end(); itParticle++) {
-		(*itParticle).worldTransform_.translation_ += (*itParticle).velocity_;
-		(*itParticle).currentTime_++;
-	}
+	
 
 	camera_.SetMatView(followCamera_->GetCamera().GetMatView());
 
@@ -266,7 +245,6 @@ void GameScene::DrawParticle(){
 
 	if (sceneEvent_ == SceneEvent::Battle) {
 		player_->DrawParticle(camera_);
-		particle_->Draw(particles_, camera_);
 	}
 	
 
@@ -281,6 +259,9 @@ void GameScene::DrawUI(){
 	if (sceneEvent_ == SceneEvent::PlayerDead) {
 		gameOver_->Draw();
 	}
+	if (sceneEvent_ == SceneEvent::Clear) {
+		finish_->Draw();
+	}
 	
 }
 
@@ -289,8 +270,10 @@ void GameScene::DrawPostEffect() {
 	outLine_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
 	SkinningObject::preDraw();
-	boss_->Draw(camera_);
-	if (sceneEvent_ == SceneEvent::Battle) {
+	if (sceneEvent_ != SceneEvent::Clear) {
+		boss_->Draw(camera_);
+	}
+	if (sceneEvent_ != SceneEvent::PlayerDead) {
 		player_->Draw(camera_);
 	}
 
@@ -396,6 +379,10 @@ void GameScene::BattleUpdate() {
 		eventRequest_ = SceneEvent::PlayerDead;
 	}
 
+	if (boss_->IsDead()) {
+		eventRequest_ = SceneEvent::Clear;
+	}
+
 }
 
 void GameScene::PlayerDeadInit() {
@@ -422,10 +409,25 @@ void GameScene::PlayerDeadUpdate() {
 	gameOver_->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
 }
 
+void GameScene::ClearInit() {
+	elementBalls_.clear();
+	playerAttacks_.clear();
+}
+
+void GameScene::ClearUpdate() {
+
+	if (--finishCount_ <= 0) {
+		SceneManager::GetInstance()->ChangeScene("Title");
+	}
+
+}
+
 void GameScene::DebugGUI(){
 #ifdef _DEBUG
   
 	ImGui::Begin("window");
+
+	ImGui::Checkbox("GameStop", &isGameStop_);
 
 	int count = finishCount_ / 60;
 	ImGui::InputInt("ScenChangeCount", &count);
@@ -433,7 +435,10 @@ void GameScene::DebugGUI(){
 	ImGui::DragFloat2("XButton", &pos1.x, 1.0f);
 	
 	ImGui::DragFloat2("char_Attack", &pos2.x, 1.0f);
-	
+
+	if (ImGui::Button("StageFileLoad")) {
+		SceneManager::GetInstance()->ChangeScene("Game");
+	}
 
 	ImGui::End();
 
@@ -491,10 +496,6 @@ void GameScene::AddElementBall(ElementBall* elementBall) {
 
 void GameScene::AddPlayerAttack(PlayerAttack* playerAttack) {
 	playerAttacks_.push_back(std::unique_ptr<PlayerAttack>(playerAttack));
-}
-
-void GameScene::AddParticle(Particle::ParticleData particle) {
-	particles_.push_back(particle);
 }
 
 void GameScene::CreateBurnScars(const Vector3& createPos) {

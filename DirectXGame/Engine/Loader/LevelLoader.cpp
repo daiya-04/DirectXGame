@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <cassert>
+#include <numbers>
 
 LevelData* LevelLoader::LoadFile(const std::string& filename) {
 
@@ -45,8 +46,6 @@ LevelData* LevelLoader::LoadFile(const std::string& filename) {
 	//"objects"の全オブジェクトを走査
 	for (nlohmann::json& object : deserialized["objects"]) {
 
-		
-
 		ObjectScan(object, levelData);
 
 		//オブジェクト走査を再帰関数にまとめ、再帰呼出で枝を走査する
@@ -85,25 +84,27 @@ void LevelLoader::ObjectScan(nlohmann::json& object, LevelData* levelData) {
 		//トランスフォームのパラメータ読み込み
 		nlohmann::json& transform = object["transform"];
 		//平行移動
-		objectData.translation.x = (float)transform["translation"][1];
+		objectData.translation.x = (float)transform["translation"][0];
 		objectData.translation.y = (float)transform["translation"][2];
-		objectData.translation.z = -(float)transform["translation"][0];
+		objectData.translation.z = -(float)transform["translation"][1];
 		//回転角
-		objectData.rotation.x = -(float)transform["rotation"][1];
-		objectData.rotation.y = -(float)transform["rotation"][2];
-		objectData.rotation.z = (float)transform["rotation"][0];
+		objectData.rotation.x = (-(float)transform["rotation"][0] / 180.0f) * std::numbers::pi_v<float>;
+		objectData.rotation.y = (-(float)transform["rotation"][2] / 180.0f) * std::numbers::pi_v<float>;
+		objectData.rotation.z = (-(float)transform["rotation"][1] / 180.0f) * std::numbers::pi_v<float>;
 		//スケーリング
-		objectData.scaling.x = (float)transform["scaling"][1];
+		objectData.scaling.x = (float)transform["scaling"][0];
 		objectData.scaling.y = (float)transform["scaling"][2];
-		objectData.scaling.z = (float)transform["scaling"][0];
+		objectData.scaling.z = (float)transform["scaling"][1];
 
-		//
-		if (object.contains("status")) {
-			nlohmann::json& status = object["status"];
-			objectData.status.HP = (int32_t)status["HP"];
-			objectData.status.power = (int32_t)status["power"];
-			objectData.status.defense = (int32_t)status["difense"];
+		if (object.contains("collider")) {
+			nlohmann::json& collider = object["collider"];
+
+			objectData.colliderSize.x = (float)collider["size"][0] * objectData.scaling.x;
+			objectData.colliderSize.y = (float)collider["size"][2] * objectData.scaling.y;
+			objectData.colliderSize.z = (float)collider["size"][1] * objectData.scaling.z;
 		}
+
+		
 	}
 
 }

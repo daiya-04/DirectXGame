@@ -9,6 +9,9 @@ void PlayerAttack::Init(std::shared_ptr<Model> model, const Vector3& startPos, c
 
 	velocity_ = direction.Normalize() * speed_;
 
+	collider_.center = GetWorldPos();
+	collider_.radius = 0.3f;
+
 }
 
 void PlayerAttack::Update() {
@@ -26,6 +29,7 @@ void PlayerAttack::Update() {
 	}
 
 	obj_->worldTransform_.UpdateMatrix();
+	collider_.center = GetWorldPos();
 }
 
 void PlayerAttack::Draw(const Camera& camera) {
@@ -36,4 +40,8 @@ void PlayerAttack::Draw(const Camera& camera) {
 
 void PlayerAttack::OnCollision() {
 	isLife_ = false;
+}
+
+Vector3 PlayerAttack::GetWorldPos() const {
+	return { obj_->worldTransform_.matWorld_.m[3][0],obj_->worldTransform_.matWorld_.m[3][1] ,obj_->worldTransform_.matWorld_.m[3][2] };
 }

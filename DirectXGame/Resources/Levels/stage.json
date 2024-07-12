@@ -2,6 +2,122 @@
     "name": "scene",
     "objects": [
         {
+            "type": "ARMATURE",
+            "name": "Player",
+            "transform": {
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "object_name": "Player",
+            "collider": {
+                "type": "BOX",
+                "center": [
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "size": [
+                    0.4000000059604645,
+                    0.4000000059604645,
+                    1.0
+                ]
+            },
+            "children": [
+                {
+                    "type": "MESH",
+                    "name": "Ch45",
+                    "transform": {
+                        "translation": [
+                            0.25871917605400085,
+                            1.1308974201540423e-08,
+                            -0.3482758104801178
+                        ],
+                        "rotation": [
+                            90.00000762939453,
+                            -4.739396347004711e-21,
+                            -4.739396347004711e-21
+                        ],
+                        "scaling": [
+                            0.009999999776482582,
+                            0.009999999776482582,
+                            0.009999999776482582
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "ARMATURE",
+            "name": "Boss",
+            "transform": {
+                "translation": [
+                    0.0,
+                    -30.0,
+                    -5.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -179.99998474121094
+                ],
+                "scaling": [
+                    2.0,
+                    2.0,
+                    2.0
+                ]
+            },
+            "object_name": "Boss",
+            "collider": {
+                "type": "BOX",
+                "center": [
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "size": [
+                    0.4000000059604645,
+                    0.4000000059604645,
+                    1.0
+                ]
+            },
+            "children": [
+                {
+                    "type": "MESH",
+                    "name": "Ch45.001",
+                    "transform": {
+                        "translation": [
+                            0.2524677813053131,
+                            0.0,
+                            -0.36467576026916504
+                        ],
+                        "rotation": [
+                            90.00001525878906,
+                            -0.0,
+                            0.0
+                        ],
+                        "scaling": [
+                            0.009999999776482582,
+                            0.009999996982514858,
+                            0.009999996982514858
+                        ]
+                    }
+                }
+            ]
+        },
+        {
             "type": "LIGHT",
             "name": "Light",
             "transform": {
@@ -45,7 +161,7 @@
         },
         {
             "type": "MESH",
-            "name": "Ground",
+            "name": "ground",
             "transform": {
                 "translation": [
                     0.0,
@@ -58,112 +174,12 @@
                     0.0
                 ],
                 "scaling": [
-                    100.0,
-                    100.0,
+                    1.0,
+                    1.0,
                     1.0
                 ]
             },
             "object_name": "Ground"
-        },
-        {
-            "type": "ARMATURE",
-            "name": "Player",
-            "transform": {
-                "translation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scaling": [
-                    1.9,
-                    1.9,
-                    1.9
-                ]
-            },
-            "object_name": "Player",
-            "status": {
-                "HP": 100,
-                "power": 10,
-                "difense": 5
-            },
-            "children": [
-                {
-                    "type": "MESH",
-                    "name": "Ch45",
-                    "transform": {
-                        "translation": [
-                            -1.964878393323488e-08,
-                            0.2247558981180191,
-                            0.0
-                        ],
-                        "rotation": [
-                            0.0,
-                            -0.0,
-                            -179.99998474121094
-                        ],
-                        "scaling": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "type": "ARMATURE",
-            "name": "Boss",
-            "transform": {
-                "translation": [
-                    -50.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scaling": [
-                    3.0,
-                    3.0,
-                    3.0
-                ]
-            },
-            "object_name": "Boss",
-            "status": {
-                "HP": 100,
-                "power": 10,
-                "difense": 5
-            },
-            "children": [
-                {
-                    "type": "MESH",
-                    "name": "Ch45.001",
-                    "transform": {
-                        "translation": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "rotation": [
-                            0.0,
-                            -0.0,
-                            -179.99998474121094
-                        ],
-                        "scaling": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ]
-                    }
-                }
-            ]
         }
     ]
 }

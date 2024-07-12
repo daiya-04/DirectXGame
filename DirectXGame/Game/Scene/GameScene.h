@@ -64,8 +64,6 @@ public:
 
 	void AddPlayerAttack(PlayerAttack* playerAttack);
 
-	void AddParticle(Particle::ParticleData particle);
-
 	void CreateBurnScars(const Vector3& createPos);
 
 private:
@@ -90,9 +88,7 @@ private: //オブジェクト
 
 	std::unique_ptr<FollowCamera> followCamera_;
 
-	std::unique_ptr<Particle> particle_;
-	std::list<Particle::ParticleData> particles_;
-
+	
 	std::shared_ptr<Model> enemyBodyModel_ = 0;
 	std::shared_ptr<Model> enemyHeadModel_ = 0;
 	std::shared_ptr<Model> bulletModel_ = 0;
@@ -100,16 +96,10 @@ private: //オブジェクト
 	uint32_t finishTime_ = 60 * 3;
 	uint32_t finishCount_ = finishTime_;
 
-	uint32_t spawnCoolTime_ = 60 * 10;
-	uint32_t spawnCount_ = spawnCoolTime_;
-	uint32_t spawnNum_ = 30;
-
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine;
-
 	std::unique_ptr<Sprite> XButton_;
 	std::unique_ptr<Sprite> char_Attack_;
 	std::unique_ptr<Sprite> gameOver_;
+	std::unique_ptr<Sprite> finish_;
 
 	float alpha_ = 0.0f;
 
@@ -124,11 +114,15 @@ private: //オブジェクト
 	uint32_t burnScarsTex_ = 0;
 	std::list<std::unique_ptr<BurnScars>> burnScarses_;
 
+
+	bool isGameStop_ = false;
+
 private:
 
 	enum class SceneEvent {
 		Battle,
 		PlayerDead,
+		Clear,
 	};
 
 private:
@@ -140,6 +134,10 @@ private:
 	void PlayerDeadInit();
 
 	void PlayerDeadUpdate();
+
+	void ClearInit();
+
+	void ClearUpdate();
 
 private:
 

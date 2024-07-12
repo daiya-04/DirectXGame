@@ -9,16 +9,6 @@
 class LevelData {
 public:
 
-	struct Status {
-		//体力
-		int32_t HP;
-		//攻撃力
-		int32_t power;
-		//防御力
-		int32_t defense;
-
-	};
-
 	struct ObjectData {
 
 		std::string objectName;
@@ -31,7 +21,7 @@ public:
 
 		Vector3 scaling;
 
-		Status status;
+		Vector3 colliderSize;
 
 		std::vector<ObjectData> children;
 
