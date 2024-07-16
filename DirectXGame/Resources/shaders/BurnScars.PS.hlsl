@@ -67,7 +67,7 @@ PixelShaderOutput main(VertexShaderOutput input){
 
 	float n = step(0.955,1-abs(n1-n2));
 
-	output.color += float32_t4(n,n,n,1.0) * float32_t4(0.96f,0.13f,0.04f,1.0f);
+	output.color += float32_t4(n,n,n,output.color.a) * float32_t4(0.96f,0.13f,0.04f,output.color.a);
 
 	float32_t mask = gMaskTex.Sample(gSampler, input.texcoord);
 	

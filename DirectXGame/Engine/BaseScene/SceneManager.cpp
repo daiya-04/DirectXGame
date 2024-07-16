@@ -85,6 +85,8 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	DirectXCommon::GetInstance()->ClearDepthBaffer();
 
+	scene_->DrawRenderTexture();
+
 	///3dオブジェクト
 
 	Object3d::preDraw();
@@ -99,8 +101,6 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 	scene_->DrawParticle();
 
 	Particle::postDraw();
-
-	scene_->DrawRenderTexture();
 
 	Line::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 

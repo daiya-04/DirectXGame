@@ -283,11 +283,7 @@ void GameScene::DrawPostEffect() {
 
 	outLine_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 
-	BurnScars::preDraw();
-
-	for (auto& burnScars : burnScarses_) {
-		burnScars->Draw(camera_);
-	}
+	
 
 	Object3d::preDraw();
 	skydome_->Draw(camera_);
@@ -301,7 +297,11 @@ void GameScene::DrawPostEffect() {
 		playerAttack->Draw(camera_);
 	}
 	
+	BurnScars::preDraw();
 
+	for (auto& burnScars : burnScarses_) {
+		burnScars->Draw(camera_);
+	}
 
 	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
