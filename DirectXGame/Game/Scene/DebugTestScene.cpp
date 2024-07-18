@@ -52,6 +52,8 @@ void DebugTestScene::Init() {
 	human_->worldTransform_.rotation_.y = 3.14f;
 	human_->worldTransform_.translation_.z = 10.0f;
 
+	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png")));
+
 	Update();
 }
 
@@ -108,8 +110,8 @@ void DebugTestScene::DrawBackGround() {
 void DebugTestScene::DrawModel() {
 
 	SkinningObject::preDraw();
-	human_->Draw(camera_);
-	skeleton_.Draw(human_->worldTransform_, camera_);
+	//human_->Draw(camera_);
+	//skeleton_.Draw(human_->worldTransform_, camera_);
 
 	
 	Object3d::preDraw();
@@ -121,7 +123,7 @@ void DebugTestScene::DrawModel() {
 	//ShapesDraw::DrawAABB(Shapes::AABB({ -1.0,-1.0,-1.0f }, { 1.0f,1.0f,1.0f }), camera_);
 
 	BurnScars::preDraw();
-	burnScars_->Draw(camera_);
+	//burnScars_->Draw(camera_);
 
 }
 
@@ -133,7 +135,10 @@ void DebugTestScene::DrawParticleModel() {
 
 void DebugTestScene::DrawParticle() {
 
+	
+	GPUParticle::preDraw();
 
+	particle_->Draw(camera_);
 
 }
 
@@ -147,7 +152,7 @@ void DebugTestScene::DrawPostEffect() {
 	dissolve_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
 	Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
-	sprite_->Draw();
+	//sprite_->Draw();
 
 	dissolve_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 }

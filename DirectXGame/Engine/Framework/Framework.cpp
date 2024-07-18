@@ -13,6 +13,7 @@
 #include "GlobalVariables.h"
 #include "Audio.h"
 #include "SkyBox.h"
+#include "GPUParticle.h"
 
 
 void DSFramework::Init(){
@@ -34,6 +35,8 @@ void DSFramework::Init(){
 	Particle::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 	Line::Init(DirectXCommon::GetInstance()->GetDevice());
 	SkyBox::StaticInit();
+	GPUParticle::StaticInit();
+
 
 	GlobalVariables::GetInstance()->LoadFiles();
 
