@@ -87,9 +87,10 @@ void DebugTestScene::Update() {
 		animation_.SetAnimationSpeed(1.0f / 60.0f);
 	}
 
+	particle_->Update();
+
 	human_->worldTransform_.UpdateMatrix();
 	animation_.Play(skeleton_);
-	
 	
 	skeleton_.Update();
 	skinCluster_.Update(skeleton_);

@@ -28,6 +28,16 @@ private:
 
 	enum class InitParticleRootParam {
 		kParticles,
+		kCounter,
+
+		kParamNum,
+	};
+
+	enum class EmitterRootParam {
+		kParticles,
+		kEmitter,
+		kPerFrame,
+		kCounter,
 
 		kParamNum,
 	};
@@ -51,6 +61,20 @@ private:
 		Matrix4x4 billboardMat_;
 	};
 
+	struct EmitterSphere {
+		Vector3 translate;
+		float radius;
+		uint32_t count; //射出数
+		float frequency; //射出間隔
+		float frequencyTime; //射出間隔調整用時間
+		uint32_t emit; //射出許可
+	};
+
+	struct PerFrame {
+		float time;
+		float deltaTime;
+	};
+
 private:
 
 	static ID3D12Device* device_;
@@ -60,6 +84,9 @@ private:
 
 	static ComPtr<ID3D12RootSignature> initRootSignature_;
 	static ComPtr<ID3D12PipelineState> initComputePS_;
+
+	static ComPtr<ID3D12RootSignature> emitRootSignature_;
+	static ComPtr<ID3D12PipelineState> emitComputePS_;
 
 public:
 
@@ -82,9 +109,18 @@ private:
 private:
 
 	
-	ComPtr<ID3D12Resource> particleResource_;
+	ComPtr<ID3D12Resource> particleBuff_;
 	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> uavHandle_;
 	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> srvHandle_;
+
+	ComPtr<ID3D12Resource> emitterBuff_;
+	EmitterSphere* emitterSphereData_ = nullptr;
+
+	ComPtr<ID3D12Resource> perFrameBuff_;
+	PerFrame* perFrameData = nullptr;
+
+	ComPtr<ID3D12Resource> counterBuff_;
+	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> counterUavHandle_;
 
 	ComPtr<ID3D12Resource> vertexBuff_;
 	D3D12_VERTEX_BUFFER_VIEW vbv_{};
@@ -98,6 +134,8 @@ private:
 public:
 
 	void Init(uint32_t textureHandle);
+
+	void Update();
 
 	void Draw(const Camera& camera);
 
