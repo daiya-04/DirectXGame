@@ -42,6 +42,13 @@ private:
 		kParamNum,
 	};
 
+	enum class UpdateRootParam {
+		kParticles,
+		kPerFrame,
+
+		kParamNum,
+	};
+
 	struct ParticleCS {
 		Vector3 translation;
 		Vector3 scale;
@@ -87,6 +94,9 @@ private:
 
 	static ComPtr<ID3D12RootSignature> emitRootSignature_;
 	static ComPtr<ID3D12PipelineState> emitComputePS_;
+
+	static ComPtr<ID3D12RootSignature> updateRootSignature_;
+	static ComPtr<ID3D12PipelineState> updateComputePS_;
 
 public:
 

@@ -24,6 +24,9 @@ ComPtr<ID3D12PipelineState> GPUParticle::initComputePS_;
 ComPtr<ID3D12RootSignature> GPUParticle::emitRootSignature_;
 ComPtr<ID3D12PipelineState> GPUParticle::emitComputePS_;
 
+ComPtr<ID3D12RootSignature> GPUParticle::updateRootSignature_;
+ComPtr<ID3D12PipelineState> GPUParticle::updateComputePS_;
+
 
 void GPUParticle::StaticInit() {
 
@@ -172,6 +175,9 @@ void GPUParticle::StaticInit() {
 	ComPtr<IDxcBlob> emitComputeShaderBlob = CompileShader(L"Resources/shaders/EmitParticle.CS.hlsl", L"cs_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(emitComputeShaderBlob != nullptr);
 
+	ComPtr<IDxcBlob> updateComputeShaderBlob = CompileShader(L"Resources/shaders/UpdateParticle.CS.hlsl", L"cs_6_0", dxcUtils, dxcCompiler, includeHandler);
+	assert(updateComputeShaderBlob != nullptr);
+
 	//DepthStencilStateの設定
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
 	//Depthの機能を有効化する
@@ -304,6 +310,42 @@ void GPUParticle::StaticInit() {
 	hr = device_->CreateComputePipelineState(&emitPSDesc, IID_PPV_ARGS(&emitComputePS_));
 	assert(SUCCEEDED(hr));
 
+	//Update用ComputeShaderの設定
+	D3D12_ROOT_SIGNATURE_DESC updateRootSignatureDesc{};
+	updateRootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	D3D12_ROOT_PARAMETER updateRootParams[(size_t)UpdateRootParam::kParamNum] = {};
+
+	updateRootParams[(size_t)UpdateRootParam::kParticles].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	updateRootParams[(size_t)UpdateRootParam::kParticles].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //VertexShaderで使う
+	updateRootParams[(size_t)UpdateRootParam::kParticles].DescriptorTable.pDescriptorRanges = DescRangeForParticles; //Tableの中身の配列を指定
+	updateRootParams[(size_t)UpdateRootParam::kParticles].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForParticles); //Tableで利用する数
+
+	updateRootParams[(size_t)UpdateRootParam::kPerFrame].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	updateRootParams[(size_t)UpdateRootParam::kPerFrame].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	updateRootParams[(size_t)UpdateRootParam::kPerFrame].Descriptor.ShaderRegister = 0;
+
+	updateRootSignatureDesc.pParameters = updateRootParams;   //ルートパラメータ配列へのポインタ
+	updateRootSignatureDesc.NumParameters = _countof(updateRootParams);  //配列の長さ
+
+	ComPtr<ID3DBlob> updateCSignatureBlob;
+	ComPtr<ID3DBlob> updateCErrorBlob;
+	hr = D3D12SerializeRootSignature(&updateRootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &updateCSignatureBlob, &updateCErrorBlob);
+	if (FAILED(hr)) {
+		Log(reinterpret_cast<char*>(updateCErrorBlob->GetBufferPointer()));
+		assert(false);
+	}
+
+	hr = device_->CreateRootSignature(0, updateCSignatureBlob->GetBufferPointer(), updateCSignatureBlob->GetBufferSize(), IID_PPV_ARGS(&updateRootSignature_));
+	assert(SUCCEEDED(hr));
+
+	D3D12_COMPUTE_PIPELINE_STATE_DESC updatePSDesc{};
+	updatePSDesc.pRootSignature = updateRootSignature_.Get();
+	updatePSDesc.CS = { updateComputeShaderBlob->GetBufferPointer(),updateComputeShaderBlob->GetBufferSize() };
+
+	hr = device_->CreateComputePipelineState(&updatePSDesc, IID_PPV_ARGS(&updateComputePS_));
+	assert(SUCCEEDED(hr));
+
 
 }
 
@@ -403,6 +445,21 @@ void GPUParticle::Update() {
 
 	commandList_->Dispatch(1, 1, 1);
 
+	D3D12_RESOURCE_BARRIER connectBarrier{};
+	connectBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
+	connectBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	connectBarrier.UAV.pResource = particleBuff_.Get();
+
+	commandList_->ResourceBarrier(1, &connectBarrier);
+
+	commandList_->SetComputeRootSignature(updateRootSignature_.Get());
+	commandList_->SetPipelineState(updateComputePS_.Get());
+
+	commandList_->SetComputeRootDescriptorTable((UINT)UpdateRootParam::kParticles, uavHandle_.second);
+	commandList_->SetComputeRootConstantBufferView((UINT)UpdateRootParam::kPerFrame, perFrameBuff_->GetGPUVirtualAddress());
+
+	commandList_->Dispatch(1, 1, 1);
+
 	D3D12_RESOURCE_BARRIER postBarrier = {};
 	postBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	postBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
@@ -411,6 +468,8 @@ void GPUParticle::Update() {
 	postBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
 	postBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	commandList_->ResourceBarrier(1, &postBarrier);
+
+
 
 }
 
@@ -493,7 +552,7 @@ void GPUParticle::CreateBuffer() {
 	emitterBuff_->Map(0, nullptr, reinterpret_cast<void**>(&emitterSphereData_));
 	emitterSphereData_->translate = Vector3(0.0f, 0.0f, 0.0f);
 	emitterSphereData_->radius = 1.0f;
-	emitterSphereData_->count = 10;
+	emitterSphereData_->count = 100;
 	emitterSphereData_->frequency = 0.5f;
 	emitterSphereData_->frequencyTime = 0.0f;
 	emitterSphereData_->emit = 0;

@@ -78,6 +78,8 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
                 gParticles[particleIndex].scale = float32_t3(0.5f, 0.5f, 0.5f);
                 gParticles[particleIndex].color.rgb = generator.Generate3d();
                 gParticles[particleIndex].color.a = 1.0f;
+                gParticles[particleIndex].velocity = (generator.Generate3d() - 0.5f) * 2;
+                gParticles[particleIndex].lifeTime = generator.Generate1d() * 3;
             }
         }
     }
