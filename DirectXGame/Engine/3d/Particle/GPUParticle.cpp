@@ -220,11 +220,17 @@ void GPUParticle::StaticInit() {
 	DescRangeForParticles[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV; //SRVを使う
 	DescRangeForParticles[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
 
-	D3D12_DESCRIPTOR_RANGE DescRangeForCounter[1] = {};
-	DescRangeForCounter[0].BaseShaderRegister = 1; //0から始まる
-	DescRangeForCounter[0].NumDescriptors = 1; //数は1つ
-	DescRangeForCounter[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV; //SRVを使う
-	DescRangeForCounter[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+	D3D12_DESCRIPTOR_RANGE DescRangeForFreeListIndex[1] = {};
+	DescRangeForFreeListIndex[0].BaseShaderRegister = 1; //0から始まる
+	DescRangeForFreeListIndex[0].NumDescriptors = 1; //数は1つ
+	DescRangeForFreeListIndex[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV; //SRVを使う
+	DescRangeForFreeListIndex[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+	D3D12_DESCRIPTOR_RANGE DescRangeForFreeList[1] = {};
+	DescRangeForFreeList[0].BaseShaderRegister = 2; //0から始まる
+	DescRangeForFreeList[0].NumDescriptors = 1; //数は1つ
+	DescRangeForFreeList[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV; //SRVを使う
+	DescRangeForFreeList[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
 
 	D3D12_ROOT_SIGNATURE_DESC initParticleRootSignatureDesc{};
 	initParticleRootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -236,10 +242,15 @@ void GPUParticle::StaticInit() {
 	initParticleRootParams[(size_t)InitParticleRootParam::kParticles].DescriptorTable.pDescriptorRanges = DescRangeForParticles; //Tableの中身の配列を指定
 	initParticleRootParams[(size_t)InitParticleRootParam::kParticles].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForParticles); //Tableで利用する数
 
-	initParticleRootParams[(size_t)InitParticleRootParam::kCounter].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
-	initParticleRootParams[(size_t)InitParticleRootParam::kCounter].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //VertexShaderで使う
-	initParticleRootParams[(size_t)InitParticleRootParam::kCounter].DescriptorTable.pDescriptorRanges = DescRangeForCounter; //Tableの中身の配列を指定
-	initParticleRootParams[(size_t)InitParticleRootParam::kCounter].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForCounter); //Tableで利用する数
+	initParticleRootParams[(size_t)InitParticleRootParam::kFreeListIndex].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	initParticleRootParams[(size_t)InitParticleRootParam::kFreeListIndex].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //VertexShaderで使う
+	initParticleRootParams[(size_t)InitParticleRootParam::kFreeListIndex].DescriptorTable.pDescriptorRanges = DescRangeForFreeListIndex; //Tableの中身の配列を指定
+	initParticleRootParams[(size_t)InitParticleRootParam::kFreeListIndex].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForFreeListIndex); //Tableで利用する数
+
+	initParticleRootParams[(size_t)InitParticleRootParam::kFreeList].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	initParticleRootParams[(size_t)InitParticleRootParam::kFreeList].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //VertexShaderで使う
+	initParticleRootParams[(size_t)InitParticleRootParam::kFreeList].DescriptorTable.pDescriptorRanges = DescRangeForFreeList; //Tableの中身の配列を指定
+	initParticleRootParams[(size_t)InitParticleRootParam::kFreeList].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForFreeList); //Tableで利用する数
 
 
 	initParticleRootSignatureDesc.pParameters = initParticleRootParams;   //ルートパラメータ配列へのポインタ
@@ -284,10 +295,15 @@ void GPUParticle::StaticInit() {
 	emitterRootParams[(size_t)EmitterRootParam::kPerFrame].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 	emitterRootParams[(size_t)EmitterRootParam::kPerFrame].Descriptor.ShaderRegister = 1;
 
-	emitterRootParams[(size_t)EmitterRootParam::kCounter].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
-	emitterRootParams[(size_t)EmitterRootParam::kCounter].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //VertexShaderで使う
-	emitterRootParams[(size_t)EmitterRootParam::kCounter].DescriptorTable.pDescriptorRanges = DescRangeForCounter; //Tableの中身の配列を指定
-	emitterRootParams[(size_t)EmitterRootParam::kCounter].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForCounter); //Tableで利用する数
+	emitterRootParams[(size_t)EmitterRootParam::kFreeListIndex].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	emitterRootParams[(size_t)EmitterRootParam::kFreeListIndex].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //VertexShaderで使う
+	emitterRootParams[(size_t)EmitterRootParam::kFreeListIndex].DescriptorTable.pDescriptorRanges = DescRangeForFreeListIndex; //Tableの中身の配列を指定
+	emitterRootParams[(size_t)EmitterRootParam::kFreeListIndex].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForFreeListIndex); //Tableで利用する数
+
+	emitterRootParams[(size_t)EmitterRootParam::kFreeList].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	emitterRootParams[(size_t)EmitterRootParam::kFreeList].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //VertexShaderで使う
+	emitterRootParams[(size_t)EmitterRootParam::kFreeList].DescriptorTable.pDescriptorRanges = DescRangeForFreeList; //Tableの中身の配列を指定
+	emitterRootParams[(size_t)EmitterRootParam::kFreeList].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForFreeList); //Tableで利用する数
 
 	emitterRootSignatureDesc.pParameters = emitterRootParams;   //ルートパラメータ配列へのポインタ
 	emitterRootSignatureDesc.NumParameters = _countof(emitterRootParams);  //配列の長さ
@@ -324,6 +340,16 @@ void GPUParticle::StaticInit() {
 	updateRootParams[(size_t)UpdateRootParam::kPerFrame].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	updateRootParams[(size_t)UpdateRootParam::kPerFrame].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 	updateRootParams[(size_t)UpdateRootParam::kPerFrame].Descriptor.ShaderRegister = 0;
+
+	updateRootParams[(size_t)UpdateRootParam::kFreeListIndex].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	updateRootParams[(size_t)UpdateRootParam::kFreeListIndex].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //VertexShaderで使う
+	updateRootParams[(size_t)UpdateRootParam::kFreeListIndex].DescriptorTable.pDescriptorRanges = DescRangeForFreeListIndex; //Tableの中身の配列を指定
+	updateRootParams[(size_t)UpdateRootParam::kFreeListIndex].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForFreeListIndex); //Tableで利用する数
+
+	updateRootParams[(size_t)UpdateRootParam::kFreeList].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	updateRootParams[(size_t)UpdateRootParam::kFreeList].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //VertexShaderで使う
+	updateRootParams[(size_t)UpdateRootParam::kFreeList].DescriptorTable.pDescriptorRanges = DescRangeForFreeList; //Tableの中身の配列を指定
+	updateRootParams[(size_t)UpdateRootParam::kFreeList].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForFreeList); //Tableで利用する数
 
 	updateRootSignatureDesc.pParameters = updateRootParams;   //ルートパラメータ配列へのポインタ
 	updateRootSignatureDesc.NumParameters = _countof(updateRootParams);  //配列の長さ
@@ -393,7 +419,8 @@ void GPUParticle::Init(uint32_t textureHandle) {
 	commandList_->SetPipelineState(initComputePS_.Get());
 
 	commandList_->SetComputeRootDescriptorTable((UINT)InitParticleRootParam::kParticles, uavHandle_.second);
-	commandList_->SetComputeRootDescriptorTable((UINT)InitParticleRootParam::kCounter, counterUavHandle_.second);
+	commandList_->SetComputeRootDescriptorTable((UINT)InitParticleRootParam::kFreeListIndex, freeListIndexUavHandle_.second);
+	commandList_->SetComputeRootDescriptorTable((UINT)InitParticleRootParam::kFreeList, freeListUavHandle_.second);
 
 	commandList_->Dispatch(1, 1, 1);
 
@@ -441,7 +468,8 @@ void GPUParticle::Update() {
 	commandList_->SetComputeRootDescriptorTable((UINT)EmitterRootParam::kParticles, uavHandle_.second);
 	commandList_->SetComputeRootConstantBufferView((UINT)EmitterRootParam::kEmitter, emitterBuff_->GetGPUVirtualAddress());
 	commandList_->SetComputeRootConstantBufferView((UINT)EmitterRootParam::kPerFrame, perFrameBuff_->GetGPUVirtualAddress());
-	commandList_->SetComputeRootDescriptorTable((UINT)EmitterRootParam::kCounter, counterUavHandle_.second);
+	commandList_->SetComputeRootDescriptorTable((UINT)EmitterRootParam::kFreeListIndex, freeListIndexUavHandle_.second);
+	commandList_->SetComputeRootDescriptorTable((UINT)EmitterRootParam::kFreeList, freeListUavHandle_.second);
 
 	commandList_->Dispatch(1, 1, 1);
 
@@ -449,7 +477,6 @@ void GPUParticle::Update() {
 	connectBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
 	connectBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	connectBarrier.UAV.pResource = particleBuff_.Get();
-
 	commandList_->ResourceBarrier(1, &connectBarrier);
 
 	commandList_->SetComputeRootSignature(updateRootSignature_.Get());
@@ -457,6 +484,8 @@ void GPUParticle::Update() {
 
 	commandList_->SetComputeRootDescriptorTable((UINT)UpdateRootParam::kParticles, uavHandle_.second);
 	commandList_->SetComputeRootConstantBufferView((UINT)UpdateRootParam::kPerFrame, perFrameBuff_->GetGPUVirtualAddress());
+	commandList_->SetComputeRootDescriptorTable((UINT)UpdateRootParam::kFreeListIndex, freeListIndexUavHandle_.second);
+	commandList_->SetComputeRootDescriptorTable((UINT)UpdateRootParam::kFreeList, freeListUavHandle_.second);
 
 	commandList_->Dispatch(1, 1, 1);
 
@@ -619,36 +648,67 @@ void GPUParticle::CreateUav() {
 
 	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(particleBuff_.Get(), &srvDesc, srvHandle_.first);
 
-	//counterBuff_の生成
-	D3D12_HEAP_PROPERTIES counterHeapProp{};
-	counterHeapProp.Type = D3D12_HEAP_TYPE_DEFAULT;
+	//freeListIndexBuff_の生成
+	D3D12_HEAP_PROPERTIES freeListIndexHeapProp{};
+	freeListIndexHeapProp.Type = D3D12_HEAP_TYPE_DEFAULT;
 
-	D3D12_RESOURCE_DESC counterResourceDesc{};
-	counterResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	counterResourceDesc.Width = sizeof(uint32_t);
-	counterResourceDesc.Height = 1;
-	counterResourceDesc.DepthOrArraySize = 1;
-	counterResourceDesc.MipLevels = 1;
-	counterResourceDesc.SampleDesc.Count = 1;
-	counterResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	counterResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+	D3D12_RESOURCE_DESC freeListIndexResourceDesc{};
+	freeListIndexResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	freeListIndexResourceDesc.Width = sizeof(uint32_t);
+	freeListIndexResourceDesc.Height = 1;
+	freeListIndexResourceDesc.DepthOrArraySize = 1;
+	freeListIndexResourceDesc.MipLevels = 1;
+	freeListIndexResourceDesc.SampleDesc.Count = 1;
+	freeListIndexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	freeListIndexResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
-	hr = device_->CreateCommittedResource(&counterHeapProp, D3D12_HEAP_FLAG_NONE, &counterResourceDesc, D3D12_RESOURCE_STATE_COMMON, nullptr, IID_PPV_ARGS(&counterBuff_));
+	hr = device_->CreateCommittedResource(&freeListIndexHeapProp, D3D12_HEAP_FLAG_NONE, &freeListIndexResourceDesc, D3D12_RESOURCE_STATE_COMMON, nullptr, IID_PPV_ARGS(&freeListIndexBuff_));
 	assert(SUCCEEDED(hr));
 
-	D3D12_UNORDERED_ACCESS_VIEW_DESC counterUavDesc{};
-	counterUavDesc.Format = DXGI_FORMAT_UNKNOWN;
-	counterUavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
-	counterUavDesc.Buffer.FirstElement = 0;
-	counterUavDesc.Buffer.NumElements = 1;
-	counterUavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
-	counterUavDesc.Buffer.StructureByteStride = sizeof(uint32_t);
+	D3D12_UNORDERED_ACCESS_VIEW_DESC freeListIndexUavDesc{};
+	freeListIndexUavDesc.Format = DXGI_FORMAT_UNKNOWN;
+	freeListIndexUavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+	freeListIndexUavDesc.Buffer.FirstElement = 0;
+	freeListIndexUavDesc.Buffer.NumElements = 1;
+	freeListIndexUavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
+	freeListIndexUavDesc.Buffer.StructureByteStride = sizeof(uint32_t);
 	handleSize = DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	counterUavHandle_.first = DirectXCommon::GetInstance()->GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), handleSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
-	counterUavHandle_.second = DirectXCommon::GetInstance()->GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), handleSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	freeListIndexUavHandle_.first = DirectXCommon::GetInstance()->GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), handleSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	freeListIndexUavHandle_.second = DirectXCommon::GetInstance()->GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), handleSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
 	DirectXCommon::GetInstance()->IncrementSrvHeapCount();
 
-	DirectXCommon::GetInstance()->GetDevice()->CreateUnorderedAccessView(counterBuff_.Get(), nullptr, &counterUavDesc, counterUavHandle_.first);
+	DirectXCommon::GetInstance()->GetDevice()->CreateUnorderedAccessView(freeListIndexBuff_.Get(), nullptr, &freeListIndexUavDesc, freeListIndexUavHandle_.first);
+
+	//freeListBuff_の生成
+	D3D12_HEAP_PROPERTIES freeListHeapProp{};
+	freeListHeapProp.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+	D3D12_RESOURCE_DESC freeListResourceDesc{};
+	freeListResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	freeListResourceDesc.Width = sizeof(uint32_t) * 1024;
+	freeListResourceDesc.Height = 1;
+	freeListResourceDesc.DepthOrArraySize = 1;
+	freeListResourceDesc.MipLevels = 1;
+	freeListResourceDesc.SampleDesc.Count = 1;
+	freeListResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	freeListResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
+	hr = device_->CreateCommittedResource(&freeListHeapProp, D3D12_HEAP_FLAG_NONE, &freeListResourceDesc, D3D12_RESOURCE_STATE_COMMON, nullptr, IID_PPV_ARGS(&freeListBuff_));
+	assert(SUCCEEDED(hr));
+
+	D3D12_UNORDERED_ACCESS_VIEW_DESC freeListUavDesc{};
+	freeListUavDesc.Format = DXGI_FORMAT_UNKNOWN;
+	freeListUavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+	freeListUavDesc.Buffer.FirstElement = 0;
+	freeListUavDesc.Buffer.NumElements = 1024;
+	freeListUavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
+	freeListUavDesc.Buffer.StructureByteStride = sizeof(uint32_t);
+	handleSize = DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	freeListUavHandle_.first = DirectXCommon::GetInstance()->GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), handleSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	freeListUavHandle_.second = DirectXCommon::GetInstance()->GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), handleSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	DirectXCommon::GetInstance()->IncrementSrvHeapCount();
+
+	DirectXCommon::GetInstance()->GetDevice()->CreateUnorderedAccessView(freeListBuff_.Get(), nullptr, &freeListUavDesc, freeListUavHandle_.first);
 
 
 }

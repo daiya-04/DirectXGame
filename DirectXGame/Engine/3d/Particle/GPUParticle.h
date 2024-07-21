@@ -28,7 +28,8 @@ private:
 
 	enum class InitParticleRootParam {
 		kParticles,
-		kCounter,
+		kFreeListIndex,
+		kFreeList,
 
 		kParamNum,
 	};
@@ -37,7 +38,8 @@ private:
 		kParticles,
 		kEmitter,
 		kPerFrame,
-		kCounter,
+		kFreeListIndex,
+		kFreeList,
 
 		kParamNum,
 	};
@@ -45,6 +47,8 @@ private:
 	enum class UpdateRootParam {
 		kParticles,
 		kPerFrame,
+		kFreeListIndex,
+		kFreeList,
 
 		kParamNum,
 	};
@@ -129,8 +133,11 @@ private:
 	ComPtr<ID3D12Resource> perFrameBuff_;
 	PerFrame* perFrameData = nullptr;
 
-	ComPtr<ID3D12Resource> counterBuff_;
-	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> counterUavHandle_;
+	ComPtr<ID3D12Resource> freeListIndexBuff_;
+	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> freeListIndexUavHandle_;
+
+	ComPtr<ID3D12Resource> freeListBuff_;
+	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> freeListUavHandle_;
 
 	ComPtr<ID3D12Resource> vertexBuff_;
 	D3D12_VERTEX_BUFFER_VIEW vbv_{};

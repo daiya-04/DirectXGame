@@ -42,7 +42,8 @@ struct Particle {
 };
 
 RWStructuredBuffer<Particle> gParticles : register(u0);
-RWStructuredBuffer<int32_t> gFreeCounter : register(u1);
+RWStructuredBuffer<int32_t> gFreeListIndex : register(u1);
+RWStructuredBuffer<int32_t> gFreeList : register(u2);
 
 struct EmitterSphere {
     float32_t3 translate;
@@ -70,16 +71,21 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
 
     if(gEmitter.emit != 0){
         for(uint32_t countIndex = 0; countIndex < gEmitter.count; ++countIndex){
-            int32_t particleIndex;
-            InterlockedAdd(gFreeCounter[0], 1, particleIndex);
+            int32_t freeListIndex;
+            InterlockedAdd(gFreeListIndex[0], -1, freeListIndex);
 
-            if(particleIndex < kMaxParticles) {
-                gParticles[particleIndex].translate = (generator.Generate3d() - 0.5f);
+            if((0 <= freeListIndex) && (freeListIndex < kMaxParticles)) {
+                uint32_t particleIndex = gFreeList[freeListIndex];
+                gParticles[particleIndex].translate = (generator.Generate3d() - 0.5f) * 0;
                 gParticles[particleIndex].scale = float32_t3(0.5f, 0.5f, 0.5f);
                 gParticles[particleIndex].color.rgb = generator.Generate3d();
                 gParticles[particleIndex].color.a = 1.0f;
                 gParticles[particleIndex].velocity = (generator.Generate3d() - 0.5f) * 2;
-                gParticles[particleIndex].lifeTime = generator.Generate1d() * 3;
+                gParticles[particleIndex].lifeTime = generator.Generate1d() * 2;
+                gParticles[particleIndex].currentTime = 0.0f;
+            }else {
+                InterlockedAdd(gFreeListIndex[0], 1);
+                break;
             }
         }
     }
