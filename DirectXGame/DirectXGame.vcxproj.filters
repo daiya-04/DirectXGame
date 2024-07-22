@@ -206,6 +206,9 @@
       <Filter>Engine\3d\Model</Filter>
     </ClCompile>
     <ClCompile Include="PlayerAttack.cpp" />
+    <ClCompile Include="Engine\3d\Particle\GPUParticle.cpp">
+      <Filter>Engine\3d\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -367,5 +370,8 @@
       <Filter>Engine\3d\Model</Filter>
     </ClInclude>
     <ClInclude Include="PlayerAttack.h" />
+    <ClInclude Include="Engine\3d\Particle\GPUParticle.h">
+      <Filter>Engine\3d\Particle</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

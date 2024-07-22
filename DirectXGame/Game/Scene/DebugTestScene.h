@@ -14,6 +14,7 @@
 #include "SpotLight.h"
 #include "SkyBox.h"
 #include "BurnScars.h"
+#include "GPUParticle.h"
 
 #include "Dissolve.h"
 
@@ -68,6 +69,8 @@ private:
 
 	uint32_t burnScarsTex_ = 0;
 	std::unique_ptr<BurnScars> burnScars_;
+
+	std::unique_ptr<GPUParticle> particle_;
 
 };
 

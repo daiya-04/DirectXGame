@@ -159,7 +159,7 @@ void SkinningObject::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList*
 	assert(pixelShaderBlob != nullptr);
 
 	ComPtr<IDxcBlob> computeShaderBlob = CompileShader(L"Resources/shaders/SkinningObject.CS.hlsl", L"cs_6_0", dxcUtils, dxcCompiler, includeHandler);
-	assert(verterShaderBlob != nullptr);
+	assert(computeShaderBlob != nullptr);
 
 	//DepthStencilStateの設定
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
@@ -197,7 +197,7 @@ void SkinningObject::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 
 	D3D12_ROOT_SIGNATURE_DESC computeRootSignatureDesc{};
-	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	computeRootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	D3D12_DESCRIPTOR_RANGE DescRangeForPalette[1] = {};
 	DescRangeForPalette[0].BaseShaderRegister = 0; //0から始まる
