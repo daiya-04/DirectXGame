@@ -52,7 +52,7 @@ void DebugTestScene::Init() {
 	human_->worldTransform_.rotation_.y = 3.14f;
 	human_->worldTransform_.translation_.z = 10.0f;
 
-	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png")));
+	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),100000));
 
 	Update();
 }

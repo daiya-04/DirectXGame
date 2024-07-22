@@ -1,4 +1,4 @@
-static const uint32_t kMaxParticles = 1024;
+static const uint32_t kMaxParticles = 100000;
 
 float32_t rand3dTo1d(float32_t3 value, float32_t3 dotDir = float32_t3(12.9898, 78.233, 37.719)){
     //make value smaller to avoid artefacts
@@ -76,12 +76,12 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
 
             if((0 <= freeListIndex) && (freeListIndex < kMaxParticles)) {
                 uint32_t particleIndex = gFreeList[freeListIndex];
-                gParticles[particleIndex].translate = (generator.Generate3d() - 0.5f) * 0;
-                gParticles[particleIndex].scale = float32_t3(0.5f, 0.5f, 0.5f);
-                gParticles[particleIndex].color.rgb = generator.Generate3d();
+                gParticles[particleIndex].translate = gEmitter.translate + (generator.Generate3d() - 0.5f) * gEmitter.radius;
+                gParticles[particleIndex].scale = float32_t3(0.1f, 0.1f, 0.1f);
+                gParticles[particleIndex].color.rgb = float32_t3(generator.Generate1d(), generator.Generate1d(), generator.Generate1d());
                 gParticles[particleIndex].color.a = 1.0f;
                 gParticles[particleIndex].velocity = (generator.Generate3d() - 0.5f) * 2;
-                gParticles[particleIndex].lifeTime = generator.Generate1d() * 2;
+                gParticles[particleIndex].lifeTime = generator.Generate1d() * 3;
                 gParticles[particleIndex].currentTime = 0.0f;
             }else {
                 InterlockedAdd(gFreeListIndex[0], 1);

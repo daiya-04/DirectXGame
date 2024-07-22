@@ -107,7 +107,7 @@ public:
 	//静的初期化
 	static void StaticInit();
 
-	static GPUParticle* Create(uint32_t textureHandle);
+	static GPUParticle* Create(uint32_t textureHandle, int32_t particleNum);
 	//描画前処理
 	static void preDraw();
 	//描画後処理
@@ -148,9 +148,11 @@ private:
 
 	int32_t uvHandle_ = 0;
 
+	int32_t maxParticleNum_ = 0;
+
 public:
 
-	void Init(uint32_t textureHandle);
+	void Init(uint32_t textureHandle, int32_t particleNum);
 
 	void Update();
 

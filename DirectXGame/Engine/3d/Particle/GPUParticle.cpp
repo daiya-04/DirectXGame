@@ -375,11 +375,11 @@ void GPUParticle::StaticInit() {
 
 }
 
-GPUParticle* GPUParticle::Create(uint32_t textureHandle) {
+GPUParticle* GPUParticle::Create(uint32_t textureHandle, int32_t particleNum) {
 
 	GPUParticle* particle = new GPUParticle();
 
-	particle->Init(textureHandle);
+	particle->Init(textureHandle, particleNum);
 
 	return particle;
 }
@@ -396,9 +396,10 @@ void GPUParticle::preDraw() {
 
 void GPUParticle::postDraw() {}
 
-void GPUParticle::Init(uint32_t textureHandle) {
+void GPUParticle::Init(uint32_t textureHandle, int32_t particleNum) {
 
 	uvHandle_ = textureHandle;
+	maxParticleNum_ = particleNum;
 
 	CreateBuffer();
 
@@ -422,7 +423,7 @@ void GPUParticle::Init(uint32_t textureHandle) {
 	commandList_->SetComputeRootDescriptorTable((UINT)InitParticleRootParam::kFreeListIndex, freeListIndexUavHandle_.second);
 	commandList_->SetComputeRootDescriptorTable((UINT)InitParticleRootParam::kFreeList, freeListUavHandle_.second);
 
-	commandList_->Dispatch(1, 1, 1);
+	commandList_->Dispatch(UINT(maxParticleNum_ + 1023) / 1024, 1, 1);
 
 	D3D12_RESOURCE_BARRIER postBarrier = {};
 	postBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -487,7 +488,7 @@ void GPUParticle::Update() {
 	commandList_->SetComputeRootDescriptorTable((UINT)UpdateRootParam::kFreeListIndex, freeListIndexUavHandle_.second);
 	commandList_->SetComputeRootDescriptorTable((UINT)UpdateRootParam::kFreeList, freeListUavHandle_.second);
 
-	commandList_->Dispatch(1, 1, 1);
+	commandList_->Dispatch(UINT(maxParticleNum_ + 1023) / 1024, 1, 1);
 
 	D3D12_RESOURCE_BARRIER postBarrier = {};
 	postBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -527,7 +528,7 @@ void GPUParticle::Draw(const Camera& camera) {
 	//SRVのDescriptorTableの先頭を設定。
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, uvHandle_);
 
-	commandList_->DrawIndexedInstanced(6, 1024, 0, 0, 0);
+	commandList_->DrawIndexedInstanced(6, maxParticleNum_, 0, 0, 0);
 
 }
 
@@ -580,9 +581,9 @@ void GPUParticle::CreateBuffer() {
 
 	emitterBuff_->Map(0, nullptr, reinterpret_cast<void**>(&emitterSphereData_));
 	emitterSphereData_->translate = Vector3(0.0f, 0.0f, 0.0f);
-	emitterSphereData_->radius = 1.0f;
-	emitterSphereData_->count = 100;
-	emitterSphereData_->frequency = 0.5f;
+	emitterSphereData_->radius = 5.0f;
+	emitterSphereData_->count = 5000;
+	emitterSphereData_->frequency = 0.3f;
 	emitterSphereData_->frequencyTime = 0.0f;
 	emitterSphereData_->emit = 0;
 
@@ -606,7 +607,7 @@ void GPUParticle::CreateUav() {
 	D3D12_RESOURCE_DESC ResourceDesc{};
 	//バッファリソース。テクスチャの場合はまた別の設定をする
 	ResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	ResourceDesc.Width = sizeof(ParticleCS) * 1024; //リソースのサイズ。
+	ResourceDesc.Width = sizeof(ParticleCS) * maxParticleNum_; //リソースのサイズ。
 	//バッファの場合はこれにする決まり
 	ResourceDesc.Height = 1;
 	ResourceDesc.DepthOrArraySize = 1;
@@ -623,7 +624,7 @@ void GPUParticle::CreateUav() {
 	uavDesc.Format = DXGI_FORMAT_UNKNOWN;
 	uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
 	uavDesc.Buffer.FirstElement = 0;
-	uavDesc.Buffer.NumElements = 1024;
+	uavDesc.Buffer.NumElements = maxParticleNum_;
 	uavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
 	uavDesc.Buffer.StructureByteStride = sizeof(ParticleCS);
 	UINT handleSize = DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -639,7 +640,7 @@ void GPUParticle::CreateUav() {
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	srvDesc.Buffer.FirstElement = 0;
 	srvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	srvDesc.Buffer.NumElements = 1024;
+	srvDesc.Buffer.NumElements = maxParticleNum_;
 	srvDesc.Buffer.StructureByteStride = sizeof(ParticleCS);
 	handleSize = DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	srvHandle_.first = DirectXCommon::GetInstance()->GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), handleSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
@@ -685,7 +686,7 @@ void GPUParticle::CreateUav() {
 
 	D3D12_RESOURCE_DESC freeListResourceDesc{};
 	freeListResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	freeListResourceDesc.Width = sizeof(uint32_t) * 1024;
+	freeListResourceDesc.Width = sizeof(uint32_t) * maxParticleNum_;
 	freeListResourceDesc.Height = 1;
 	freeListResourceDesc.DepthOrArraySize = 1;
 	freeListResourceDesc.MipLevels = 1;
@@ -700,7 +701,7 @@ void GPUParticle::CreateUav() {
 	freeListUavDesc.Format = DXGI_FORMAT_UNKNOWN;
 	freeListUavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
 	freeListUavDesc.Buffer.FirstElement = 0;
-	freeListUavDesc.Buffer.NumElements = 1024;
+	freeListUavDesc.Buffer.NumElements = maxParticleNum_;
 	freeListUavDesc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_NONE;
 	freeListUavDesc.Buffer.StructureByteStride = sizeof(uint32_t);
 	handleSize = DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
