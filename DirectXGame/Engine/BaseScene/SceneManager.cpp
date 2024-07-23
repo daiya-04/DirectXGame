@@ -24,6 +24,9 @@ void SceneManager::Init() {
 	fade_->SetSize({ 1280.0f,720.0f });
 	fade_->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
 
+	hsvFilter_ = HSVFilter::GetInstance();
+	hsvFilter_->Init();
+
 }
 
 void SceneManager::Update(){
@@ -64,6 +67,8 @@ void SceneManager::Update(){
 
 	ImGui::End();
 
+	hsvFilter_->DebugGUI();
+
 #endif // _DEBUG
 
 }
@@ -73,6 +78,12 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 	DirectXCommon::GetInstance()->ClearDepthBaffer();
 
 	scene_->DrawPostEffect();
+
+	hsvFilter_->PreDrawScene();
+
+	scene_->DrawRenderTexture();
+
+	hsvFilter_->PostDrawScene();
 
 	DirectXCommon::GetInstance()->preDraw();
 
@@ -85,7 +96,7 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	DirectXCommon::GetInstance()->ClearDepthBaffer();
 
-	scene_->DrawRenderTexture();
+	hsvFilter_->Draw();
 
 	///3dオブジェクト
 

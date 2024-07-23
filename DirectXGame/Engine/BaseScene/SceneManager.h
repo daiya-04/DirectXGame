@@ -3,6 +3,7 @@
 #include "IScene.h"
 #include "AbstractSceneFactory.h"
 #include "Sprite.h"
+#include "HSVFilter.h"
 #include <memory>
 
 class SceneManager final {
@@ -16,6 +17,8 @@ private:
 	uint32_t fadeTex_ = 0;
 	std::unique_ptr<Sprite> fade_;
 	float alpha_ = 0.0f;
+
+	HSVFilter* hsvFilter_ = nullptr;
 
 public:
 

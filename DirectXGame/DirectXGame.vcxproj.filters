@@ -209,6 +209,9 @@
     <ClCompile Include="Engine\3d\Particle\GPUParticle.cpp">
       <Filter>Engine\3d\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\PostEffect\HSVFilter.cpp">
+      <Filter>Engine\PostEffect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -372,6 +375,9 @@
     <ClInclude Include="PlayerAttack.h" />
     <ClInclude Include="Engine\3d\Particle\GPUParticle.h">
       <Filter>Engine\3d\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\PostEffect\HSVFilter.h">
+      <Filter>Engine\PostEffect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
