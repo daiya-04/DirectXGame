@@ -16,7 +16,7 @@
 
 using namespace Microsoft::WRL;
 
-const float HSVFilter::clearColor_[4] = { 0.0f,0.0f,0.0f,0.0f };
+const float HSVFilter::clearColor_[4] = { 0.1f,0.25f,0.5f,1.0f };
 
 HSVFilter* HSVFilter::GetInstance() {
 	static HSVFilter instance;
@@ -272,7 +272,7 @@ void HSVFilter::CreateGraphicsPipelineState() {
 	D3D12_BLEND_DESC blendDesc{};
 	//すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	blendDesc.RenderTarget[0].BlendEnable = FALSE;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 
 	//ここをいじるといろいろなブレンドモードを設定できる
 	//ノーマルブレンド

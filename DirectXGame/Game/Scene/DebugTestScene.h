@@ -17,6 +17,7 @@
 #include "GPUParticle.h"
 
 #include "Dissolve.h"
+#include "PostEffect.h"
 
 class DebugTestScene : public IScene {
 public:
@@ -63,6 +64,7 @@ private:
 	std::unique_ptr<Object3d> MutiMaterial_;
 
 	Dissolve* dissolve_;
+	PostEffect* postEffect_ = nullptr;
 
 	uint32_t tex_ = 0;
 	std::unique_ptr<Sprite> sprite_;

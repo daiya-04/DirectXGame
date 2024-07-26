@@ -74,11 +74,14 @@ private:
 
 	struct EmitterSphere {
 		Vector3 translate;
-		float radius;
+		float size;
+		float scale;
 		uint32_t count; //射出数
 		float frequency; //射出間隔
 		float frequencyTime; //射出間隔調整用時間
 		uint32_t emit; //射出許可
+		Vector3 direction;
+		float angle;
 	};
 
 	struct PerFrame {

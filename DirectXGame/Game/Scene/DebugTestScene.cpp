@@ -47,6 +47,9 @@ void DebugTestScene::Init() {
 	dissolve_ = Dissolve::GetInstance();
 	dissolve_->Init();
 
+	postEffect_ = PostEffect::GetInstance();
+	postEffect_->Init();
+
 	burnScars_.reset(BurnScars::Create(burnScarsTex_));
 
 	human_->worldTransform_.rotation_.y = 3.14f;
@@ -114,7 +117,7 @@ void DebugTestScene::DrawModel() {
 	//human_->Draw(camera_);
 	//skeleton_.Draw(human_->worldTransform_, camera_);
 
-	
+
 	Object3d::preDraw();
 	//MutiMaterial_->Draw(camera_);
 
@@ -136,9 +139,7 @@ void DebugTestScene::DrawParticleModel() {
 
 void DebugTestScene::DrawParticle() {
 
-	
 	GPUParticle::preDraw();
-
 	particle_->Draw(camera_);
 
 }
@@ -150,16 +151,19 @@ void DebugTestScene::DrawUI() {
 }
 
 void DebugTestScene::DrawPostEffect() {
-	dissolve_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+	/*dissolve_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
 	Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
-	//sprite_->Draw();
+	sprite_->Draw();
 
-	dissolve_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+	dissolve_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());*/
+
 }
 
 void DebugTestScene::DrawRenderTexture() {
 
+	
+	//postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 	//dissolve_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 
 }

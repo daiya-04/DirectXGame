@@ -1,11 +1,11 @@
 static const uint32_t kMaxParticles = 100000;
 
 float32_t rand3dTo1d(float32_t3 value, float32_t3 dotDir = float32_t3(12.9898, 78.233, 37.719)){
-    //make value smaller to avoid artefacts
+    
     float32_t3 smallValue = sin(value);
-    //get scalar value from 3d vector
+    
     float32_t random = dot(smallValue, dotDir);
-    //make value more random by making it bigger and then taking teh factional part
+    
     random = frac(sin(random) * 143758.5453);
     return random;
 }
@@ -47,11 +47,14 @@ RWStructuredBuffer<int32_t> gFreeList : register(u2);
 
 struct EmitterSphere {
     float32_t3 translate;
-    float32_t radius;
+    float32_t size;
+    float32_t scale;
     uint32_t count;
     float32_t frequency;
     float32_t frequencyTime;
     uint32_t emit;
+    float32_t3 direction;
+    float32_t angle;
 };
 
 ConstantBuffer<EmitterSphere> gEmitter : register(b0);
@@ -62,6 +65,45 @@ struct PerFrame {
 };
 
 ConstantBuffer<PerFrame> gPerFrame : register(b1);
+
+float32_t4x4 MakeRotateXMat(float32_t angleRad){
+    return float32_t4x4(
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, cos(angleRad), sin(angleRad), 0.0f,
+        0.0f,-sin(angleRad), cos(angleRad), 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    );
+}
+
+float32_t4x4 MakeRotateYMat(float32_t angleRad){
+    return float32_t4x4(
+        cos(angleRad), 0.0f,-sin(angleRad), 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        sin(angleRad), 0.0f, cos(angleRad), 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    );
+}
+
+float32_t4x4 MakeRotateZMat(float32_t angleRad){
+    return float32_t4x4(
+        cos(angleRad), sin(angleRad), 0.0f, 0.0f,
+        -sin(angleRad), cos(angleRad), 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    );
+}
+
+float32_t3 ShotDirection(RandomGenerator generator) {
+
+    float32_t angleX = (generator.Generate1d() - 0.5f) * gEmitter.angle;
+    float32_t angleY = (generator.Generate1d() - 0.5f) * gEmitter.angle;
+    float32_t angleZ = (generator.Generate1d() - 0.5f) * gEmitter.angle;
+
+    float32_t4x4 rotateMat = mul(mul(MakeRotateXMat(radians(angleX)),MakeRotateYMat(radians(angleY))), MakeRotateZMat(radians(angleZ)));
+
+    return mul(float32_t4(gEmitter.direction, 1.0f), rotateMat).xyz;
+
+}
 
 [numthreads(1, 1, 1)]
 void main(uint32_t3 DTid : SV_DispatchThreadID) {
@@ -76,11 +118,11 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
 
             if((0 <= freeListIndex) && (freeListIndex < kMaxParticles)) {
                 uint32_t particleIndex = gFreeList[freeListIndex];
-                gParticles[particleIndex].translate = gEmitter.translate + (generator.Generate3d() - 0.5f) * gEmitter.radius;
-                gParticles[particleIndex].scale = float32_t3(0.1f, 0.1f, 0.1f);
+                gParticles[particleIndex].translate = gEmitter.translate + (generator.Generate3d() - 0.5f) * gEmitter.size;
+                gParticles[particleIndex].scale = float32_t3(gEmitter.scale, gEmitter.scale, gEmitter.scale);
                 gParticles[particleIndex].color.rgb = float32_t3(generator.Generate1d(), generator.Generate1d(), generator.Generate1d());
                 gParticles[particleIndex].color.a = 1.0f;
-                gParticles[particleIndex].velocity = (generator.Generate3d() - 0.5f) * 2;
+                gParticles[particleIndex].velocity = ShotDirection(generator) * (generator.Generate1d() * 2);
                 gParticles[particleIndex].lifeTime = generator.Generate1d() * 3;
                 gParticles[particleIndex].currentTime = 0.0f;
             }else {
