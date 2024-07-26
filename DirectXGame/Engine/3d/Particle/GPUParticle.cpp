@@ -581,11 +581,14 @@ void GPUParticle::CreateBuffer() {
 
 	emitterBuff_->Map(0, nullptr, reinterpret_cast<void**>(&emitterSphereData_));
 	emitterSphereData_->translate = Vector3(0.0f, 0.0f, 0.0f);
-	emitterSphereData_->radius = 5.0f;
-	emitterSphereData_->count = 5000;
-	emitterSphereData_->frequency = 0.3f;
+	emitterSphereData_->size = 0.1f;
+	emitterSphereData_->scale = 0.1f;
+	emitterSphereData_->count = 100;
+	emitterSphereData_->frequency = 0.1f;
 	emitterSphereData_->frequencyTime = 0.0f;
 	emitterSphereData_->emit = 0;
+	emitterSphereData_->direction = Vector3(1.0f, 0.0f, 0.0f).Normalize();
+	emitterSphereData_->angle = 120.0f;
 
 	perFrameBuff_ = CreateBufferResource(device_, sizeof(PerFrame));
 	
