@@ -252,6 +252,11 @@ void GPUParticle::StaticInit() {
 	initParticleRootParams[(size_t)InitParticleRootParam::kFreeList].DescriptorTable.pDescriptorRanges = DescRangeForFreeList; //Tableの中身の配列を指定
 	initParticleRootParams[(size_t)InitParticleRootParam::kFreeList].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForFreeList); //Tableで利用する数
 
+	initParticleRootParams[(size_t)InitParticleRootParam::kMaxNum].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	initParticleRootParams[(size_t)InitParticleRootParam::kMaxNum].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	initParticleRootParams[(size_t)InitParticleRootParam::kMaxNum].Descriptor.ShaderRegister = 0;
+
+
 
 	initParticleRootSignatureDesc.pParameters = initParticleRootParams;   //ルートパラメータ配列へのポインタ
 	initParticleRootSignatureDesc.NumParameters = _countof(initParticleRootParams);  //配列の長さ
@@ -305,6 +310,10 @@ void GPUParticle::StaticInit() {
 	emitterRootParams[(size_t)EmitterRootParam::kFreeList].DescriptorTable.pDescriptorRanges = DescRangeForFreeList; //Tableの中身の配列を指定
 	emitterRootParams[(size_t)EmitterRootParam::kFreeList].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForFreeList); //Tableで利用する数
 
+	emitterRootParams[(size_t)EmitterRootParam::kMaxNum].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	emitterRootParams[(size_t)EmitterRootParam::kMaxNum].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	emitterRootParams[(size_t)EmitterRootParam::kMaxNum].Descriptor.ShaderRegister = 2;
+
 	emitterRootSignatureDesc.pParameters = emitterRootParams;   //ルートパラメータ配列へのポインタ
 	emitterRootSignatureDesc.NumParameters = _countof(emitterRootParams);  //配列の長さ
 
@@ -350,6 +359,10 @@ void GPUParticle::StaticInit() {
 	updateRootParams[(size_t)UpdateRootParam::kFreeList].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //VertexShaderで使う
 	updateRootParams[(size_t)UpdateRootParam::kFreeList].DescriptorTable.pDescriptorRanges = DescRangeForFreeList; //Tableの中身の配列を指定
 	updateRootParams[(size_t)UpdateRootParam::kFreeList].DescriptorTable.NumDescriptorRanges = _countof(DescRangeForFreeList); //Tableで利用する数
+
+	updateRootParams[(size_t)UpdateRootParam::kMaxNum].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	updateRootParams[(size_t)UpdateRootParam::kMaxNum].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	updateRootParams[(size_t)UpdateRootParam::kMaxNum].Descriptor.ShaderRegister = 1;
 
 	updateRootSignatureDesc.pParameters = updateRootParams;   //ルートパラメータ配列へのポインタ
 	updateRootSignatureDesc.NumParameters = _countof(updateRootParams);  //配列の長さ
@@ -422,6 +435,7 @@ void GPUParticle::Init(uint32_t textureHandle, int32_t particleNum) {
 	commandList_->SetComputeRootDescriptorTable((UINT)InitParticleRootParam::kParticles, uavHandle_.second);
 	commandList_->SetComputeRootDescriptorTable((UINT)InitParticleRootParam::kFreeListIndex, freeListIndexUavHandle_.second);
 	commandList_->SetComputeRootDescriptorTable((UINT)InitParticleRootParam::kFreeList, freeListUavHandle_.second);
+	commandList_->SetComputeRootConstantBufferView((UINT)InitParticleRootParam::kMaxNum, maxParticleNumBuff_->GetGPUVirtualAddress());
 
 	commandList_->Dispatch(UINT(maxParticleNum_ + 1023) / 1024, 1, 1);
 
@@ -440,15 +454,17 @@ void GPUParticle::Update() {
 
 	perFrameData->time += (1.0f / 60.0f);
 
-	emitterSphereData_->frequencyTime += (1.0f / 60.0f);
+	emitter_.frequencyTime += (1.0f / 60.0f);
 
-	if (emitterSphereData_->frequency <= emitterSphereData_->frequencyTime) {
-		emitterSphereData_->frequencyTime -= emitterSphereData_->frequency;
-		emitterSphereData_->emit = 1;
+	if (emitter_.frequency <= emitter_.frequencyTime) {
+		emitter_.frequencyTime -= emitter_.frequency;
+		emitter_.emit = 1;
 	}
 	else {
-		emitterSphereData_->emit = 0;
+		emitter_.emit = 0;
 	}
+
+	*emitterSphereData_ = emitter_;
 
 	//描画用のDescriptorHeapの設定
 	ID3D12DescriptorHeap* descriptorHeaps[] = { DirectXCommon::GetInstance()->GetSrvHeap() };
@@ -471,6 +487,7 @@ void GPUParticle::Update() {
 	commandList_->SetComputeRootConstantBufferView((UINT)EmitterRootParam::kPerFrame, perFrameBuff_->GetGPUVirtualAddress());
 	commandList_->SetComputeRootDescriptorTable((UINT)EmitterRootParam::kFreeListIndex, freeListIndexUavHandle_.second);
 	commandList_->SetComputeRootDescriptorTable((UINT)EmitterRootParam::kFreeList, freeListUavHandle_.second);
+	commandList_->SetComputeRootConstantBufferView((UINT)EmitterRootParam::kMaxNum, maxParticleNumBuff_->GetGPUVirtualAddress());
 
 	commandList_->Dispatch(1, 1, 1);
 
@@ -487,6 +504,7 @@ void GPUParticle::Update() {
 	commandList_->SetComputeRootConstantBufferView((UINT)UpdateRootParam::kPerFrame, perFrameBuff_->GetGPUVirtualAddress());
 	commandList_->SetComputeRootDescriptorTable((UINT)UpdateRootParam::kFreeListIndex, freeListIndexUavHandle_.second);
 	commandList_->SetComputeRootDescriptorTable((UINT)UpdateRootParam::kFreeList, freeListUavHandle_.second);
+	commandList_->SetComputeRootConstantBufferView((UINT)UpdateRootParam::kMaxNum, maxParticleNumBuff_->GetGPUVirtualAddress());
 
 	commandList_->Dispatch(UINT(maxParticleNum_ + 1023) / 1024, 1, 1);
 
@@ -529,6 +547,15 @@ void GPUParticle::Draw(const Camera& camera) {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, uvHandle_);
 
 	commandList_->DrawIndexedInstanced(6, maxParticleNum_, 0, 0, 0);
+
+	D3D12_RESOURCE_BARRIER postBarrier = {};
+	postBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	postBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	postBarrier.Transition.pResource = particleBuff_.Get();
+	postBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE;
+	postBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
+	postBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	commandList_->ResourceBarrier(1, &postBarrier);
 
 }
 
@@ -580,21 +607,17 @@ void GPUParticle::CreateBuffer() {
 	emitterBuff_ = CreateBufferResource(device_, sizeof(EmitterSphere));
 
 	emitterBuff_->Map(0, nullptr, reinterpret_cast<void**>(&emitterSphereData_));
-	emitterSphereData_->translate = Vector3(0.0f, 0.0f, 0.0f);
-	emitterSphereData_->size = 0.1f;
-	emitterSphereData_->scale = 0.1f;
-	emitterSphereData_->count = 100;
-	emitterSphereData_->frequency = 0.1f;
-	emitterSphereData_->frequencyTime = 0.0f;
-	emitterSphereData_->emit = 0;
-	emitterSphereData_->direction = Vector3(1.0f, 0.0f, 0.0f).Normalize();
-	emitterSphereData_->angle = 120.0f;
 
 	perFrameBuff_ = CreateBufferResource(device_, sizeof(PerFrame));
 	
 	perFrameBuff_->Map(0, nullptr, reinterpret_cast<void**>(&perFrameData));
 	perFrameData->time = 0;
 	perFrameData->deltaTime = 1.0f / 60.0f;
+
+	maxParticleNumBuff_ = CreateBufferResource(device_, sizeof(MaxParticleNum));
+
+	maxParticleNumBuff_->Map(0, nullptr, reinterpret_cast<void**>(&maxParticleNumData_));
+	maxParticleNumData_->maxNum = maxParticleNum_;
 
 	CreateUav();
 

@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "Log.h"
 #include <string>
+#include <memory>
 
 
 class GPUParticle {
@@ -30,6 +31,7 @@ private:
 		kParticles,
 		kFreeListIndex,
 		kFreeList,
+		kMaxNum,
 
 		kParamNum,
 	};
@@ -40,6 +42,7 @@ private:
 		kPerFrame,
 		kFreeListIndex,
 		kFreeList,
+		kMaxNum,
 
 		kParamNum,
 	};
@@ -49,9 +52,12 @@ private:
 		kPerFrame,
 		kFreeListIndex,
 		kFreeList,
+		kMaxNum,
 
 		kParamNum,
 	};
+
+public:
 
 	struct ParticleCS {
 		Vector3 translation;
@@ -87,6 +93,10 @@ private:
 	struct PerFrame {
 		float time;
 		float deltaTime;
+	};
+
+	struct MaxParticleNum {
+		int32_t maxNum;
 	};
 
 private:
@@ -136,6 +146,9 @@ private:
 	ComPtr<ID3D12Resource> perFrameBuff_;
 	PerFrame* perFrameData = nullptr;
 
+	ComPtr<ID3D12Resource> maxParticleNumBuff_;
+	MaxParticleNum* maxParticleNumData_ = nullptr;
+
 	ComPtr<ID3D12Resource> freeListIndexBuff_;
 	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> freeListIndexUavHandle_;
 
@@ -152,6 +165,10 @@ private:
 	int32_t uvHandle_ = 0;
 
 	int32_t maxParticleNum_ = 0;
+
+public:
+
+	EmitterSphere emitter_;
 
 public:
 

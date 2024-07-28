@@ -71,6 +71,12 @@
     <Filter Include="Engine\3d\Model">
       <UniqueIdentifier>{09a5243c-6ffc-4d31-9229-9c39d87bd460}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Charactor\Player">
+      <UniqueIdentifier>{7bbaccff-a584-43bb-b2b2-cf59682098ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Boss">
+      <UniqueIdentifier>{e96c1dfa-b868-45f9-a794-eecee36d27a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -146,17 +152,10 @@
     <ClCompile Include="Game\Scene\TitleScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="ElementBall.cpp" />
     <ClCompile Include="Engine\Easing\Easing.cpp">
       <Filter>Engine\Easing</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Charactor\Boss.cpp">
-      <Filter>Game\Charactor</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Charactor\Enemy.cpp">
-      <Filter>Game\Charactor</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Charactor\Player.cpp">
       <Filter>Game\Charactor</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scene\DebugTestScene.cpp">
@@ -196,7 +195,7 @@
     <ClCompile Include="Engine\PostEffect\OutLine.cpp">
       <Filter>Engine\PostEffect</Filter>
     </ClCompile>
-    <ClCompile Include="AnimationManager.cpp">
+    <ClCompile Include="Engine\3d\AnimationManager.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Audio\Audio.cpp">
@@ -205,12 +204,23 @@
     <ClCompile Include="Engine\3d\Model\ModelManager.cpp">
       <Filter>Engine\3d\Model</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerAttack.cpp" />
     <ClCompile Include="Engine\3d\Particle\GPUParticle.cpp">
       <Filter>Engine\3d\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Engine\PostEffect\HSVFilter.cpp">
       <Filter>Engine\PostEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\Boss.cpp">
+      <Filter>Game\Charactor\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Player\Player.cpp">
+      <Filter>Game\Charactor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Player\PlayerAttack.cpp">
+      <Filter>Game\Charactor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\ElementBall.cpp">
+      <Filter>Game\Charactor\Boss</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,17 +323,10 @@
     <ClInclude Include="Game\Scene\TitleScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="ElementBall.h" />
     <ClInclude Include="Engine\Easing\Easing.h">
       <Filter>Engine\Easing</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Charactor\Boss.h">
-      <Filter>Game\Charactor</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Charactor\Enemy.h">
-      <Filter>Game\Charactor</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Charactor\Player.h">
       <Filter>Game\Charactor</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Collision\CollisionShapes.h">
@@ -366,18 +369,29 @@
     <ClInclude Include="Engine\PostEffect\OutLine.h">
       <Filter>Engine\PostEffect</Filter>
     </ClInclude>
-    <ClInclude Include="AnimationManager.h">
+    <ClInclude Include="Engine\3d\AnimationManager.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Model\ModelManager.h">
       <Filter>Engine\3d\Model</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerAttack.h" />
     <ClInclude Include="Engine\3d\Particle\GPUParticle.h">
       <Filter>Engine\3d\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Engine\PostEffect\HSVFilter.h">
       <Filter>Engine\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\Boss.h">
+      <Filter>Game\Charactor\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Player\Player.h">
+      <Filter>Game\Charactor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Player\PlayerAttack.h">
+      <Filter>Game\Charactor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\ElementBall.h">
+      <Filter>Game\Charactor\Boss</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

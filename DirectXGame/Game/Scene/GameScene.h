@@ -9,6 +9,7 @@
 #include "Object3d.h"
 #include "SkinningObject.h"
 #include "Particle.h"
+#include "GPUParticle.h"
 #include "Camera.h"
 #include "WorldTransform.h"
 #include "PointLight.h"

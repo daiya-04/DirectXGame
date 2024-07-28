@@ -4,6 +4,7 @@
 #include "Object3d.h"
 #include "Vec3.h"
 #include "CollisionShapes.h"
+#include "GPUParticle.h"
 #include <memory>
 
 class PlayerAttack {
@@ -14,6 +15,8 @@ public:
 	void Update();
 
 	void Draw(const Camera& camera);
+
+	void DrawParticle(const Camera& camera);
 
 	void OnCollision();
 
@@ -28,7 +31,7 @@ private:
 	std::unique_ptr<Object3d> obj_;
 	Shapes::Sphere collider_;
 
-	float speed_ = 0.3f;
+	float speed_ = 0.5f;
 	Vector3 velocity_{};
 
 	int32_t lifeTime_ = 60 * 2;
@@ -36,6 +39,12 @@ private:
 
 	bool isLife_ = true;
 
+	std::unique_ptr<GPUParticle> particle_;
+
+	Vector3 startPos_{};
+
+	//射程
+	float firingRange_ = 20.0f;
 
 };
 
