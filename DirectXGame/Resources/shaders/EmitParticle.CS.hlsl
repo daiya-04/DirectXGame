@@ -1,4 +1,4 @@
-static const uint32_t kMaxParticles = 100000;
+//static const uint32_t kMaxParticles = 100000;
 
 float32_t rand3dTo1d(float32_t3 value, float32_t3 dotDir = float32_t3(12.9898, 78.233, 37.719)){
     
@@ -66,6 +66,12 @@ struct PerFrame {
 
 ConstantBuffer<PerFrame> gPerFrame : register(b1);
 
+struct MaxParticleNum{
+    int32_t maxNum;
+};
+
+ConstantBuffer<MaxParticleNum> gMaxParticles : register(b2);
+
 float32_t4x4 MakeRotateXMat(float32_t angleRad){
     return float32_t4x4(
         1.0f, 0.0f, 0.0f, 0.0f,
@@ -116,14 +122,14 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
             int32_t freeListIndex;
             InterlockedAdd(gFreeListIndex[0], -1, freeListIndex);
 
-            if((0 <= freeListIndex) && (freeListIndex < kMaxParticles)) {
+            if((0 <= freeListIndex) && (freeListIndex < gMaxParticles.maxNum)) {
                 uint32_t particleIndex = gFreeList[freeListIndex];
                 gParticles[particleIndex].translate = gEmitter.translate + (generator.Generate3d() - 0.5f) * gEmitter.size;
                 gParticles[particleIndex].scale = float32_t3(gEmitter.scale, gEmitter.scale, gEmitter.scale);
                 gParticles[particleIndex].color.rgb = float32_t3(generator.Generate1d(), generator.Generate1d(), generator.Generate1d());
                 gParticles[particleIndex].color.a = 1.0f;
-                gParticles[particleIndex].velocity = ShotDirection(generator) * (generator.Generate1d() * 2);
-                gParticles[particleIndex].lifeTime = generator.Generate1d() * 3;
+                gParticles[particleIndex].velocity = ShotDirection(generator) * (generator.Generate1d() * 5);
+                gParticles[particleIndex].lifeTime = generator.Generate1d() * 2;
                 gParticles[particleIndex].currentTime = 0.0f;
             }else {
                 InterlockedAdd(gFreeListIndex[0], 1);

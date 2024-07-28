@@ -201,7 +201,7 @@ void GameScene::Update() {
 			break;
 	}
 
-	
+
 
 	skydome_->Update();
 	ground_->Update();
@@ -246,6 +246,8 @@ void GameScene::DrawParticle(){
 	if (sceneEvent_ == SceneEvent::Battle) {
 		player_->DrawParticle(camera_);
 	}
+
+	
 	
 
 }
@@ -301,6 +303,11 @@ void GameScene::DrawPostEffect() {
 
 	for (auto& burnScars : burnScarses_) {
 		burnScars->Draw(camera_);
+	}
+
+	GPUParticle::preDraw();
+	for (auto& playerAttack : playerAttacks_) {
+		playerAttack->DrawParticle(camera_);
 	}
 
 	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());

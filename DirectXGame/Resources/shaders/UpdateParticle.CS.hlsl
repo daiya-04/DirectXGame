@@ -1,4 +1,4 @@
-static const uint32_t kMaxParticles = 100000;
+//static const uint32_t kMaxParticles = 100000;
 
 struct Particle {
     float32_t3 translate;
@@ -20,12 +20,18 @@ struct PerFrame {
 
 ConstantBuffer<PerFrame> gPerFrame : register(b0);
 
+struct MaxParticleNum{
+    int32_t maxNum;
+};
+
+ConstantBuffer<MaxParticleNum> gMaxParticles : register(b1);
+
 [numthreads(1024, 1, 1)]
 void main(uint32_t3 DTid : SV_DispatchThreadID) {
 
     uint32_t particleIndex = DTid.x;
 
-    if(particleIndex < kMaxParticles){
+    if(particleIndex < gMaxParticles.maxNum){
         if(gParticles[particleIndex].color.a != 0){
             gParticles[particleIndex].translate += gParticles[particleIndex].velocity * gPerFrame.deltaTime;
             gParticles[particleIndex].currentTime += gPerFrame.deltaTime;
@@ -38,7 +44,7 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
             int32_t freeListIndex;
             InterlockedAdd(gFreeListIndex[0], 1, freeListIndex);
 
-            if((freeListIndex + 1) < kMaxParticles){
+            if((freeListIndex + 1) < gMaxParticles.maxNum){
                 gFreeList[freeListIndex + 1] = particleIndex;
             }else {
                 InterlockedAdd(gFreeListIndex[0], -1, freeListIndex);

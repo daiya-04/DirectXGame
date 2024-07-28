@@ -1,22 +1,35 @@
 #include "PlayerAttack.h"
 
+#include "TextureManager.h"
+
 
 void PlayerAttack::Init(std::shared_ptr<Model> model, const Vector3& startPos, const Vector3& direction) {
 
 	obj_.reset(Object3d::Create(model));
 
 	obj_->worldTransform_.translation_ = startPos;
+	startPos_ = startPos;
 
 	velocity_ = direction.Normalize() * speed_;
 
 	collider_.center = GetWorldPos();
 	collider_.radius = 0.3f;
 
+	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1000));
+
+	particle_->emitter_.size = 0.5f;
+	particle_->emitter_.scale = 0.2f;
+	particle_->emitter_.angle = 30.0f;
+	particle_->emitter_.frequency = 0.01f;
+	particle_->emitter_.count = 50;
+
 }
 
 void PlayerAttack::Update() {
 
 	obj_->worldTransform_.translation_ += velocity_;
+
+	
 
 	if (--lifeCount_ <= 0) {
 		obj_->worldTransform_.scale_ -= Vector3(0.1f, 0.1f, 0.1f);
@@ -28,14 +41,28 @@ void PlayerAttack::Update() {
 		isLife_ = false;
 	}
 
+	particle_->emitter_.direction = -velocity_.Normalize();
+
 	obj_->worldTransform_.UpdateMatrix();
+	particle_->emitter_.translate = GetWorldPos();
 	collider_.center = GetWorldPos();
+	
+	particle_->Update();
+
+	if ((GetWorldPos() - startPos_).Length() >= firingRange_) {
+		isLife_ = false;
+	}
+
 }
 
 void PlayerAttack::Draw(const Camera& camera) {
 
 	obj_->Draw(camera);
 
+}
+
+void PlayerAttack::DrawParticle(const Camera& camera) {
+	particle_->Draw(camera);
 }
 
 void PlayerAttack::OnCollision() {
