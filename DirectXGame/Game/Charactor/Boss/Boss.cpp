@@ -2,6 +2,7 @@
 #include <cmath>
 #include <numbers>
 #include "ModelManager.h"
+#include "TextureManager.h"
 #include "Easing.h"
 #include "GameScene.h"
 #include "ModelManager.h"
@@ -13,6 +14,7 @@ const WorldTransform* Boss::target_ = nullptr;
 void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 
 	animationModels_ = models;
+	hpBerTex_ = TextureManager::Load("Boss_HP.png");
 
 	obj_.reset(SkinningObject::Create(animationModels_[action_]));
 	skinClusters_.resize(animationModels_.size());
@@ -27,7 +29,11 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 
 	behaviorRequest_ = Behavior::kAppear;
 
-	life_ = 6;
+	life_ = maxHp_;
+
+	hpBer_.reset(Sprite::Create(hpBerTex_, { 390.0f,40.0f }));
+	hpBer_->SetAnchorpoint({ 0.0f,0.5f });
+	hpBer_->SetSize({ 500.0f,10.0f });
 
 }
 
@@ -80,7 +86,15 @@ void Boss::Update() {
 	skeletons_[action_].Update();
 	skinClusters_[action_].Update(skeletons_[action_]);
 
+	UIUpdate();
 	ColliderUpdate();
+}
+
+void Boss::UIUpdate() {
+
+	float percent = float(life_) / (float)maxHp_;
+
+	hpBer_->SetSize({ 500.0f * percent,10.0f });
 }
 
 void Boss::Draw(const Camera& camera) {
@@ -93,6 +107,10 @@ void Boss::Draw(const Camera& camera) {
 	obj_->Draw(camera);
 	skeletons_[action_].Draw(obj_->worldTransform_, camera);
 
+}
+
+void Boss::DrawUI() {
+	hpBer_->Draw();
 }
 
 void Boss::OnCollision() {
@@ -134,21 +152,29 @@ void Boss::RootUpdate() {
 
 void Boss::AttackInit() {
 
-	Vector3 offset[4] = {
+	
+
+	if (attackType_ == AttackType::kElementBall) {
+		Vector3 offset[4] = {
 		{4.0f,0.0f,2.0f},
 		{-4.0f,0.0f,2.0f},
 		{4.0f,0.0f,-2.0f},
 		{-4.0f,0.0f,-2.0f},
-	};
+		};
 
-	for (size_t index = 0; index < 4; index++) {
-		ElementBall* newElementBall = new ElementBall();
-		std::shared_ptr<Model> model = ModelManager::LoadGLTF("ElementBall");
-		newElementBall->Init(model, obj_->worldTransform_.translation_ + offset[index]);
-		newElementBall->SetShotCount((uint32_t)index + 2);
-		gameScene_->AddElementBall(newElementBall);
+		for (size_t index = 0; index < 4; index++) {
+			ElementBall* newElementBall = new ElementBall();
+			std::shared_ptr<Model> model = ModelManager::LoadGLTF("ElementBall");
+			newElementBall->Init(model, obj_->worldTransform_.translation_ + offset[index]);
+			newElementBall->SetShotCount((uint32_t)index + 2);
+			gameScene_->AddElementBall(newElementBall);
+		}
+		attackType_ = AttackType::kGroundFlare;
+		
+	}else if (attackType_ == AttackType::kGroundFlare) {
+		GroundFlare::GetInstance()->AttackStart();
+		attackType_ = AttackType::kElementBall;
 	}
-
 
 	action_ = Action::AttackSet;
 	animations_[action_].Play(skeletons_[action_]);

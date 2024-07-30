@@ -16,6 +16,7 @@
 #include <optional>
 #include "FollowCamera.h"
 #include "Particle.h"
+#include "Sprite.h"
 
 class GameScene;
 
@@ -92,6 +93,8 @@ public:
 
 private:
 
+	const WorldTransform* target_;
+
 	std::unique_ptr<SkinningObject> obj_;
 	std::vector<std::shared_ptr<Model>> animationModels_;
 	std::vector<Animation> animations_;
@@ -104,9 +107,10 @@ private:
 
 	Shapes::AABB collider_{};
 
-	uint32_t life_ = 4;
+	int32_t maxHp_ = 10;
+	int32_t life_ = maxHp_;
 
-	float attackRange_ = 35.0f;
+	float attackRange_ = 20.0f;
 
 	Matrix4x4 rotateMat_ = MakeIdentity44();
 	Vector3 rotate_ = { 0.0f,0.0f,1.0f };
@@ -124,6 +128,9 @@ private:
 
 	GameScene* gameScene_ = nullptr;
 
+	uint32_t hpBerTex_ = 0;
+	std::unique_ptr<Sprite> hpBer_;
+
 public:
 
 	Player(){}
@@ -137,10 +144,13 @@ public:
 		collider_.max = GetWorldPos() + size_;
 		collider_.min = GetWorldPos() - size_;
 	}
+	void UIUpdate();
 	//描画
 	void Draw(const Camera& camera);
 	//パーティクル描画
 	void DrawParticle(const Camera& camera);
+
+	void DrawUI();
 
 	void SetData(const LevelData::ObjectData& data);
 
@@ -148,6 +158,8 @@ public:
 
 	//カメラの設定
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
+
+	void SetTerget(const WorldTransform* target) { target_ = target; }
 
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 

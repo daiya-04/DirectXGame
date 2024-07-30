@@ -70,6 +70,9 @@ void GameScene::Init(){
 	outLine_ = OutLine::GetInstance();
 	outLine_->Init();
 
+	hsvFilter_ = HSVFilter::GetInstance();
+	hsvFilter_->Init();
+
 	///
 	///オブジェクト初期化
 	
@@ -90,6 +93,7 @@ void GameScene::Init(){
 	boss_ = std::make_unique<Boss>();
 	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel });
 	boss_->SetGameScene(this);
+	player_->SetTerget(&boss_->GetWorldTransform());
 
 	//データのセット
 	for (auto& objectData : levelData_->objectDatas_) {
@@ -266,6 +270,8 @@ void GameScene::DrawUI(){
 	if (sceneEvent_ == SceneEvent::Battle) {
 		XButton_->Draw();
 		char_Attack_->Draw();
+		player_->DrawUI();
+		boss_->DrawUI();
 	}
 	if (sceneEvent_ == SceneEvent::PlayerDead) {
 		gameOver_->Draw();
@@ -273,6 +279,8 @@ void GameScene::DrawUI(){
 	if (sceneEvent_ == SceneEvent::Clear) {
 		finish_->Draw();
 	}
+
+
 	
 }
 
@@ -320,15 +328,24 @@ void GameScene::DrawPostEffect() {
 	for (auto& playerAttack : playerAttacks_) {
 		playerAttack->DrawParticle(camera_);
 	}
+	for (const auto& elementBall : elementBalls_) {
+		elementBall->DrawParticle(camera_);
+	}
 
 	groundFlare_->DrawParticle(camera_);
 
 	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
+	hsvFilter_->PreDrawScene();
+
+	postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
+
+	hsvFilter_->PostDrawScene();
+
 }
 
 void GameScene::DrawRenderTexture() {
-	postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
+	hsvFilter_->Draw();
 }
 
 void GameScene::BattleInit() {
@@ -339,7 +356,11 @@ void GameScene::BattleInit() {
 
 void GameScene::BattleUpdate() {
 
-	if (boss_->IsAttack() && elementBalls_.empty()) {
+	if (boss_->IsAttack() && elementBalls_.empty()&& !groundFlare_->IsAttack()) {
+		boss_->ChangeBehavior(Boss::Behavior::kRoot);
+	}
+
+	if (groundFlare_->AttackFinish()) {
 		boss_->ChangeBehavior(Boss::Behavior::kRoot);
 	}
 
@@ -347,6 +368,10 @@ void GameScene::BattleUpdate() {
 		if (boss_->GetAction()!=Boss::Action::Attack && (*itBall)->GetPhase() == ElementBall::Phase::kShot) {
 			boss_->ChangeAction(Boss::Action::Attack);
 		}
+	}
+
+	if (groundFlare_->FireStartFlag()) {
+		boss_->ChangeAction(Boss::Action::Attack);
 	}
 
 	if (!groundFlare_->IsAttack() && Input::GetInstance()->TriggerKey(DIK_K)) {
@@ -378,12 +403,19 @@ void GameScene::BattleUpdate() {
 	}*/
 
 	//エレメントボールとプレイヤー
-	/*for (const auto& elementBall : elementBalls_) {
+	for (const auto& elementBall : elementBalls_) {
 		if (IsCollision(player_->GetCollider(), elementBall->GetCollider())) {
 			player_->OnCollision();
 			elementBall->OnCollision();
 		}
-	}*/
+	}
+
+	if (groundFlare_->IsHit()) {
+		if (IsCollision(groundFlare_->GetCollider(), player_->GetCollider())) {
+			player_->OnCollision();
+			groundFlare_->OnCollision();
+		}
+	}
 
 	for (const auto& elementBall : elementBalls_) {
 		if (elementBall->IsLife()) {
@@ -467,6 +499,8 @@ void GameScene::DebugGUI(){
 	}
 
 	ImGui::End();
+
+	hsvFilter_->DebugGUI();
 
 	ImGui::Begin("Light");
 

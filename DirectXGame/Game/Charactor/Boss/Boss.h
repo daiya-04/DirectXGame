@@ -14,6 +14,7 @@
 #include <array>
 #include <optional>
 #include "Particle.h"
+#include "Sprite.h"
 
 class GameScene;
 
@@ -48,6 +49,11 @@ public:
 		ActionNum,
 	};
 
+	enum AttackType {
+		kElementBall,
+		kGroundFlare,
+	};
+
 	struct WorkAppear{
 		Vector3 startPos = { 0.0f,-15.0f,50.0f };
 		Vector3 endPos = { 0.0f, 0.0f,50.0f };
@@ -68,8 +74,10 @@ private:
 	std::vector<SkinCluster> skinClusters_;
 
 	Action action_ = Action::Standing;
+	AttackType attackType_ = AttackType::kElementBall;
 
-	uint32_t life_ = 6;
+	uint32_t maxHp_ = 20;
+	uint32_t life_ = maxHp_;
 
 	bool isDead_ = false;
 
@@ -88,6 +96,9 @@ private:
 	uint32_t coolTime_ = 0;
 	uint32_t attackTimer_ = 0;
 
+	uint32_t hpBerTex_ = 0;
+	std::unique_ptr<Sprite> hpBer_;
+
 public:
 
 	Boss() {};
@@ -101,7 +112,11 @@ public:
 		collider_.min = GetWorldPos() - size_;
 	}
 
+	void UIUpdate();
+
 	void Draw(const Camera& camera);
+
+	void DrawUI();
 
 	void OnCollision();
 
@@ -119,6 +134,7 @@ public:
 	Vector3 GetWorldPos() const;
 	Shapes::AABB GetCollider(){ return collider_; }
 	Action GetAction() const { return action_; }
+	const WorldTransform& GetWorldTransform() { return obj_->worldTransform_; }
 
 };
 

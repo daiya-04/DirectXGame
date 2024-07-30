@@ -129,7 +129,7 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
                 gParticles[particleIndex].color.rgb = float32_t3(generator.Generate1d(), generator.Generate1d(), generator.Generate1d());
                 gParticles[particleIndex].color.a = 1.0f;
                 gParticles[particleIndex].velocity = ShotDirection(generator) * (generator.Generate1d() * 5);
-                gParticles[particleIndex].lifeTime = generator.Generate1d() * 2;
+                gParticles[particleIndex].lifeTime = generator.Generate1d() * 1.5f;
                 gParticles[particleIndex].currentTime = 0.0f;
             }else {
                 InterlockedAdd(gFreeListIndex[0], 1);

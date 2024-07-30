@@ -17,7 +17,7 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 	}
 
 	for (auto& particle : particles_) {
-		particle.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 5000));
+		particle.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 5000));
 		particle->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f).Normalize();
 		particle->emitter_.angle = 15.0f;
 	}
@@ -34,6 +34,9 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 }
 
 void GroundFlare::Update() {
+
+	preIsAttack_ = isAttack_;
+	preIsHit_ = isHit_;
 
 	if (phaseRequest_) {
 
@@ -102,6 +105,10 @@ void GroundFlare::DrawParticle(const Camera& camera) {
 
 }
 
+void GroundFlare::OnCollision() {
+	isHit_ = false;
+}
+
 void GroundFlare::AttackStart() {
 
 	phaseRequest_ = Phase::kWarning;
@@ -147,7 +154,7 @@ void GroundFlare::WarningInit() {
 
 void GroundFlare::WarningUpdate() {
 
-	workWarning_.param_ += 0.005f;
+	workWarning_.param_ += 0.01f;
 	float T = Easing::easeInSine(workWarning_.param_);
 
 	for (auto& warningZone : warningZones_) {
@@ -166,7 +173,7 @@ void GroundFlare::FireInit() {
 	workFire_.param_ = 0;
 
 	for (auto& particle : particles_) {
-		particle->emitter_.scale = 0.5f;
+		particle->emitter_.scale = 0.7f;
 		particle->emitter_.size = 0.7f;
 		particle->emitter_.frequency = 0.1f;
 		particle->emitter_.count = 50;
@@ -186,6 +193,7 @@ void GroundFlare::FireUpdate() {
 
 	if (workFire_.param_ >= workFire_.fireCount_) {
 		phaseRequest_ = Phase::kRoot;
+
 	}
 
 }

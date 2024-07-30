@@ -4,6 +4,7 @@
 #include "Object3d.h"
 #include "Vec3.h"
 #include "CollisionShapes.h"
+#include "GPUParticle.h"
 #include <memory>
 #include <optional>
 
@@ -64,6 +65,8 @@ private:
 	WorkCharge workCharge_;
 	WorkShot workShot_;
 
+	std::unique_ptr<GPUParticle> particle_;
+
 public:
 
 	void Init(std::shared_ptr<Model> model,const Vector3& startPos);
@@ -75,6 +78,8 @@ public:
 	}
 
 	void Draw(const Camera& camera);
+
+	void DrawParticle(const Camera& camera);
 
 	void OnCollision();
 

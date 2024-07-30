@@ -58,6 +58,8 @@ public:
 	void Draw(const Camera& camera);
 	void DrawParticle(const Camera& camera);
 
+	void OnCollision();
+
 	void AttackStart();
 
 	void SetTerget(const WorldTransform* target) { target_ = target; }
@@ -66,6 +68,9 @@ public:
 
 	bool IsAttack() const { return isAttack_; }
 	bool IsHit() const { return isHit_; }
+
+	bool AttackFinish() const { return (!isAttack_ && preIsAttack_); }
+	bool FireStartFlag() const { return(isHit_ && !preIsHit_); }
 
 private:
 
@@ -87,8 +92,10 @@ private:
 
 	//攻撃中か
 	bool isAttack_ = false;
+	bool preIsAttack_ = false;
 	//衝突判定の有無
 	bool isHit_ = false;
+	bool preIsHit_ = false;
 
 private:
 

@@ -17,6 +17,7 @@
 #include "LevelLoader.h"
 #include "PostEffect.h"
 #include "OutLine.h"
+#include "HSVFilter.h"
 
 #include "Skydome.h"
 #include "Ground.h"
@@ -110,6 +111,7 @@ private: //オブジェクト
 
 	PostEffect* postEffect_;
 	OutLine* outLine_;
+	HSVFilter* hsvFilter_ = nullptr;
 
 	std::unique_ptr<LevelData> levelData_;
 
