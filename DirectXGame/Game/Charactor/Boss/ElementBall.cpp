@@ -3,6 +3,7 @@
 #include "Easing.h"
 #include "ShapesDraw.h"
 #include "AnimationManager.h"
+#include "TextureManager.h"
 
 const WorldTransform* ElementBall::target_ = nullptr;
 
@@ -15,6 +16,15 @@ void ElementBall::Init(std::shared_ptr<Model> model, const Vector3& startPos) {
 	phaseRequest_ = Phase::kSet;
 
 	workSet_.start = startPos;
+
+	particle_.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 2000));
+
+	particle_->emitter_.size = 1.3f;
+	particle_->emitter_.scale = 0.5f;
+	particle_->emitter_.direction = Vector3(1.0f, 0.0f, 0.0f).Normalize();
+	particle_->emitter_.angle = 360.0f;
+	particle_->emitter_.frequency = 0.01f;
+	particle_->emitter_.count = 50;
 
 }
 
@@ -59,6 +69,9 @@ void ElementBall::Update() {
 		obj_->worldTransform_.matWorld_ = animation_.GetLocalMatrix() * obj_->worldTransform_.matWorld_;
 	}
 
+	particle_->emitter_.translate = GetWorldPos();
+	particle_->Update();
+
 	ColliderUpdate();
 }
 
@@ -70,6 +83,10 @@ void ElementBall::Draw(const Camera& camera) {
 
 	obj_->Draw(camera);
 
+}
+
+void ElementBall::DrawParticle(const Camera& camera) {
+	particle_->Draw(camera);
 }
 
 void ElementBall::OnCollision() {

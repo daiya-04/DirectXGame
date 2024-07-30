@@ -17,6 +17,7 @@
 #include "LevelLoader.h"
 #include "PostEffect.h"
 #include "OutLine.h"
+#include "HSVFilter.h"
 
 #include "Skydome.h"
 #include "Ground.h"
@@ -28,6 +29,7 @@
 #include "ElementBall.h"
 #include "PlayerAttack.h"
 #include "BurnScars.h"
+#include "GroundFlare.h"
 
 
 class GameScene : public IScene {
@@ -109,11 +111,14 @@ private: //オブジェクト
 
 	PostEffect* postEffect_;
 	OutLine* outLine_;
+	HSVFilter* hsvFilter_ = nullptr;
 
 	std::unique_ptr<LevelData> levelData_;
 
 	uint32_t burnScarsTex_ = 0;
 	std::list<std::unique_ptr<BurnScars>> burnScarses_;
+
+	GroundFlare* groundFlare_ = nullptr;
 
 
 	bool isGameStop_ = false;

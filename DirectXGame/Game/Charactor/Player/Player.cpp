@@ -20,6 +20,7 @@ const std::array<Player::ComboAttack, Player::comboNum_> Player::kComboAttacks_ 
 void Player::Init(std::vector<std::shared_ptr<Model>> models){
 
 	animationModels_ = models;
+	hpBerTex_ = TextureManager::Load("Player_HP.png");
 	
 	obj_.reset(SkinningObject::Create(animationModels_[action_]));
 	skinClusters_.resize(animationModels_.size());
@@ -31,6 +32,12 @@ void Player::Init(std::vector<std::shared_ptr<Model>> models){
 	obj_->SetSkinCluster(&skinClusters_[action_]);
 
 	behaviorRequest_ = Behavior::kRoot;
+
+	life_ = maxHp_;
+
+	hpBer_.reset(Sprite::Create(hpBerTex_, { 440.0f,700.0f }));
+	hpBer_->SetAnchorpoint({ 0.0f,0.5f });
+	hpBer_->SetSize({ 400.0f,10.0f });
 
 	ColliderUpdate();
 
@@ -83,7 +90,15 @@ void Player::Update(){
 	skeletons_[action_].Update();
 	skinClusters_[action_].Update(skeletons_[action_]);
 
+	UIUpdate();
 	ColliderUpdate();
+}
+
+void Player::UIUpdate() {
+
+	float percent = (float)life_ / (float)maxHp_;
+
+	hpBer_->SetSize({ 400.0f * percent,10.0f });
 }
 
 void Player::Draw(const Camera& camera){
@@ -100,6 +115,10 @@ void Player::Draw(const Camera& camera){
 
 void Player::DrawParticle(const Camera& camera) {
 
+}
+
+void Player::DrawUI() {
+	hpBer_->Draw();
 }
 
 void Player::SetData(const LevelData::ObjectData& data) {
@@ -178,12 +197,15 @@ void Player::AttackInit() {
 	workAttack_.speed_ = 1.0f;
 	//Search(enemies);
 
-	/*if (target_) {
+	if (target_) {
 
-		Vector3 direction = target_->GetWorldTransform().translation_ - worldTransform_.translation_;
+		Vector3 direction = target_->translation_ - obj_->worldTransform_.translation_;
 
-		rotateMat_ = DirectionToDirection(from_, direction);
-	}*/
+		if (direction.Length() <= attackRange_) {
+			rotateMat_ = DirectionToDirection(from_, direction);
+		}
+		
+	}
 	
 }
 

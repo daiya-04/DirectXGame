@@ -48,6 +48,11 @@ void GameScene::Init(){
 	std::shared_ptr<Model> bossSetModel = ModelManager::LoadGLTF("SetMotion");
 	std::shared_ptr<Model> bossAttackModel = ModelManager::LoadGLTF("BossAttack");
 
+	std::shared_ptr<Model> elementBallModel = ModelManager::LoadGLTF("ElementBall");
+	std::shared_ptr<Model> playerBulletModel = ModelManager::LoadOBJ("PlayerBullet");
+
+	std::shared_ptr<Model> warningZoneModel = ModelManager::LoadOBJ("WarningZone");
+
 	///
 
 	///テクスチャの読み込み
@@ -64,6 +69,9 @@ void GameScene::Init(){
 
 	outLine_ = OutLine::GetInstance();
 	outLine_->Init();
+
+	hsvFilter_ = HSVFilter::GetInstance();
+	hsvFilter_->Init();
 
 	///
 	///オブジェクト初期化
@@ -85,6 +93,7 @@ void GameScene::Init(){
 	boss_ = std::make_unique<Boss>();
 	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel });
 	boss_->SetGameScene(this);
+	player_->SetTerget(&boss_->GetWorldTransform());
 
 	//データのセット
 	for (auto& objectData : levelData_->objectDatas_) {
@@ -100,6 +109,10 @@ void GameScene::Init(){
 	}
 
 	ElementBall::SetTarget(&player_->GetWorldTransform());
+
+	groundFlare_ = GroundFlare::GetInstance();
+	groundFlare_->Init(warningZoneModel);
+	groundFlare_->SetTerget(&player_->GetWorldTransform());
 
 	//追従カメラ
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -257,6 +270,8 @@ void GameScene::DrawUI(){
 	if (sceneEvent_ == SceneEvent::Battle) {
 		XButton_->Draw();
 		char_Attack_->Draw();
+		player_->DrawUI();
+		boss_->DrawUI();
 	}
 	if (sceneEvent_ == SceneEvent::PlayerDead) {
 		gameOver_->Draw();
@@ -264,6 +279,8 @@ void GameScene::DrawUI(){
 	if (sceneEvent_ == SceneEvent::Clear) {
 		finish_->Draw();
 	}
+
+
 	
 }
 
@@ -298,6 +315,8 @@ void GameScene::DrawPostEffect() {
 	for (const auto& playerAttack : playerAttacks_) {
 		playerAttack->Draw(camera_);
 	}
+
+	groundFlare_->Draw(camera_);
 	
 	BurnScars::preDraw();
 
@@ -309,13 +328,24 @@ void GameScene::DrawPostEffect() {
 	for (auto& playerAttack : playerAttacks_) {
 		playerAttack->DrawParticle(camera_);
 	}
+	for (const auto& elementBall : elementBalls_) {
+		elementBall->DrawParticle(camera_);
+	}
+
+	groundFlare_->DrawParticle(camera_);
 
 	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+
+	hsvFilter_->PreDrawScene();
+
+	postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
+
+	hsvFilter_->PostDrawScene();
 
 }
 
 void GameScene::DrawRenderTexture() {
-	postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
+	hsvFilter_->Draw();
 }
 
 void GameScene::BattleInit() {
@@ -326,7 +356,11 @@ void GameScene::BattleInit() {
 
 void GameScene::BattleUpdate() {
 
-	if (boss_->IsAttack() && elementBalls_.empty()) {
+	if (boss_->IsAttack() && elementBalls_.empty()&& !groundFlare_->IsAttack()) {
+		boss_->ChangeBehavior(Boss::Behavior::kRoot);
+	}
+
+	if (groundFlare_->AttackFinish()) {
 		boss_->ChangeBehavior(Boss::Behavior::kRoot);
 	}
 
@@ -334,6 +368,14 @@ void GameScene::BattleUpdate() {
 		if (boss_->GetAction()!=Boss::Action::Attack && (*itBall)->GetPhase() == ElementBall::Phase::kShot) {
 			boss_->ChangeAction(Boss::Action::Attack);
 		}
+	}
+
+	if (groundFlare_->FireStartFlag()) {
+		boss_->ChangeAction(Boss::Action::Attack);
+	}
+
+	if (!groundFlare_->IsAttack() && Input::GetInstance()->TriggerKey(DIK_K)) {
+		GroundFlare::GetInstance()->AttackStart();
 	}
 
 	player_->Update();
@@ -345,6 +387,8 @@ void GameScene::BattleUpdate() {
 		playerAttack->Update();
 	}
 	followCamera_->Update();
+
+	groundFlare_->Update();
 
 	for (auto& burnScars : burnScarses_) {
 		burnScars->Update();
@@ -359,12 +403,19 @@ void GameScene::BattleUpdate() {
 	}*/
 
 	//エレメントボールとプレイヤー
-	/*for (const auto& elementBall : elementBalls_) {
+	for (const auto& elementBall : elementBalls_) {
 		if (IsCollision(player_->GetCollider(), elementBall->GetCollider())) {
 			player_->OnCollision();
 			elementBall->OnCollision();
 		}
-	}*/
+	}
+
+	if (groundFlare_->IsHit()) {
+		if (IsCollision(groundFlare_->GetCollider(), player_->GetCollider())) {
+			player_->OnCollision();
+			groundFlare_->OnCollision();
+		}
+	}
 
 	for (const auto& elementBall : elementBalls_) {
 		if (elementBall->IsLife()) {
@@ -448,6 +499,8 @@ void GameScene::DebugGUI(){
 	}
 
 	ImGui::End();
+
+	hsvFilter_->DebugGUI();
 
 	ImGui::Begin("Light");
 
