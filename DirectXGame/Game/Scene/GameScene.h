@@ -28,6 +28,7 @@
 #include "ElementBall.h"
 #include "PlayerAttack.h"
 #include "BurnScars.h"
+#include "GroundFlare.h"
 
 
 class GameScene : public IScene {
@@ -114,6 +115,8 @@ private: //オブジェクト
 
 	uint32_t burnScarsTex_ = 0;
 	std::list<std::unique_ptr<BurnScars>> burnScarses_;
+
+	GroundFlare* groundFlare_ = nullptr;
 
 
 	bool isGameStop_ = false;

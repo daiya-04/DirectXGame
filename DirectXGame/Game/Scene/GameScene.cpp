@@ -48,6 +48,11 @@ void GameScene::Init(){
 	std::shared_ptr<Model> bossSetModel = ModelManager::LoadGLTF("SetMotion");
 	std::shared_ptr<Model> bossAttackModel = ModelManager::LoadGLTF("BossAttack");
 
+	std::shared_ptr<Model> elementBallModel = ModelManager::LoadGLTF("ElementBall");
+	std::shared_ptr<Model> playerBulletModel = ModelManager::LoadOBJ("PlayerBullet");
+
+	std::shared_ptr<Model> warningZoneModel = ModelManager::LoadOBJ("WarningZone");
+
 	///
 
 	///テクスチャの読み込み
@@ -100,6 +105,10 @@ void GameScene::Init(){
 	}
 
 	ElementBall::SetTarget(&player_->GetWorldTransform());
+
+	groundFlare_ = GroundFlare::GetInstance();
+	groundFlare_->Init(warningZoneModel);
+	groundFlare_->SetTerget(&player_->GetWorldTransform());
 
 	//追従カメラ
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -298,6 +307,8 @@ void GameScene::DrawPostEffect() {
 	for (const auto& playerAttack : playerAttacks_) {
 		playerAttack->Draw(camera_);
 	}
+
+	groundFlare_->Draw(camera_);
 	
 	BurnScars::preDraw();
 
@@ -309,6 +320,8 @@ void GameScene::DrawPostEffect() {
 	for (auto& playerAttack : playerAttacks_) {
 		playerAttack->DrawParticle(camera_);
 	}
+
+	groundFlare_->DrawParticle(camera_);
 
 	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
@@ -336,6 +349,10 @@ void GameScene::BattleUpdate() {
 		}
 	}
 
+	if (!groundFlare_->IsAttack() && Input::GetInstance()->TriggerKey(DIK_K)) {
+		GroundFlare::GetInstance()->AttackStart();
+	}
+
 	player_->Update();
 	boss_->Update();
 	for (const auto& elementBall : elementBalls_) {
@@ -345,6 +362,8 @@ void GameScene::BattleUpdate() {
 		playerAttack->Update();
 	}
 	followCamera_->Update();
+
+	groundFlare_->Update();
 
 	for (auto& burnScars : burnScarses_) {
 		burnScars->Update();
