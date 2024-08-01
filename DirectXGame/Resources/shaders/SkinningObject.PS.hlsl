@@ -27,6 +27,7 @@ struct PixelShaderOutput {
 };
 
 Texture2D<float32_t4> gTexture : register(t0);
+TextureCube<float32_t4> gEnvironmentTex : register(t1);
 SamplerState gSampler : register(s0);
 
 
@@ -57,9 +58,14 @@ PixelShaderOutput main(VertexShaderOutput input){
 
 		float32_t3 diffuseDL = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
 		float32_t3 specularDL = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float32_t3(1.0f,1.0f,1.0f);
+
+		//環境マップ
+		float32_t3 cameraToPosition = normalize(input.worldPosition - gCamera.cameraPos);
+		float32_t3 reflectedVector = reflect(cameraToPosition,normalize(input.normal));
+		float32_t4 environmentColor = gEnvironmentTex.Sample(gSampler,reflectedVector);
 		
 		//合計
-		output.color.rgb = diffuseDL + specularDL;
+		output.color.rgb = diffuseDL + specularDL + (environmentColor.rgb * 0.2f);
         output.color.a = gMaterial.color.a * textureColor.a;
 	} else {
 	    output.color = gMaterial.color * textureColor;

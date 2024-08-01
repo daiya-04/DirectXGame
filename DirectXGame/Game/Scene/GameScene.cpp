@@ -62,6 +62,7 @@ void GameScene::Init(){
 	uint32_t char_AttackTex = TextureManager::Load("char_Attack.png");
 	uint32_t gameOverTex = TextureManager::Load("GameOver.png");
 	burnScarsTex_ = TextureManager::Load("BurnScars.png");
+	skyBoxTex_ = TextureManager::Load("skyBox.dds");
 
 	postEffect_ = PostEffect::GetInstance();
 	postEffect_->Init();
@@ -77,8 +78,7 @@ void GameScene::Init(){
 	///オブジェクト初期化
 	
 	//天球
-	skydome_ = std::make_unique<Skydome>();
-	skydome_->Init(skydomeModel);
+	skyBox_.reset(SkyBox::Create(skyBoxTex_));
 
 	//地面
 	ground_ = std::make_unique<Ground>();
@@ -216,7 +216,7 @@ void GameScene::Update() {
 
 
 
-	skydome_->Update();
+	
 	ground_->Update();
 	/*for (const auto& enemy : enemies_) {
 		enemy->Update();
@@ -305,9 +305,8 @@ void GameScene::DrawPostEffect() {
 	
 
 	Object3d::preDraw();
-	skydome_->Draw(camera_);
-	ground_->Draw(camera_);
 	
+	ground_->Draw(camera_);
 	
 	for (const auto& elementBall : elementBalls_) {
 		elementBall->Draw(camera_);
@@ -323,6 +322,8 @@ void GameScene::DrawPostEffect() {
 	for (auto& burnScars : burnScarses_) {
 		burnScars->Draw(camera_);
 	}
+
+	skyBox_->Draw(camera_);
 
 	GPUParticle::preDraw();
 	for (auto& playerAttack : playerAttacks_) {

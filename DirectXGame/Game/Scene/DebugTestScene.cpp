@@ -27,7 +27,7 @@ void DebugTestScene::Init() {
 	sneakModel_ = ModelManager::LoadGLTF("PlayerAttack");
 	MultiMaterialModel_ = ModelManager::LoadOBJ("MultiMesh");
 
-	skyBoxTex_ = TextureManager::Load("rostock_laage_airport_4k.dds");
+	skyBoxTex_ = TextureManager::Load("skyBox.dds");
 	tex_ = TextureManager::Load("test.png");
 	burnScarsTex_ = TextureManager::Load("BurnScars.png");
 
@@ -121,7 +121,7 @@ void DebugTestScene::DrawModel() {
 	Object3d::preDraw();
 	//MutiMaterial_->Draw(camera_);
 
-	//skyBox_->Draw(camera_);
+	skyBox_->Draw(camera_);
 	//ShapesDraw::DrawSphere(Shapes::Sphere({}, 1.0f), camera_);
 	//ShapesDraw::DrawPlane(Shapes::Plane({ 0.0f,0.0f,1.0f }, 10.0f), camera_);
 	//ShapesDraw::DrawAABB(Shapes::AABB({ -1.0,-1.0,-1.0f }, { 1.0f,1.0f,1.0f }), camera_);

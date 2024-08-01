@@ -50,6 +50,12 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
 
+	D3D12_DESCRIPTOR_RANGE descriptorRangeForETex[1] = {};
+	descriptorRangeForETex[0].BaseShaderRegister = 1; //0から始まる
+	descriptorRangeForETex[0].NumDescriptors = 1; //数は1つ
+	descriptorRangeForETex[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
+	descriptorRangeForETex[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
 	//Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; //バイリニアフィルタ
@@ -81,6 +87,11 @@ void Object3d::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	rootParameters[(size_t)RootParameter::kTexture].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //PixelShaderで使う
 	rootParameters[(size_t)RootParameter::kTexture].DescriptorTable.pDescriptorRanges = descriptorRange; //Tableの中身の配列を指定
 	rootParameters[(size_t)RootParameter::kTexture].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); //Tableで利用する数
+
+	rootParameters[(size_t)RootParameter::kEnvironmentTex].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	rootParameters[(size_t)RootParameter::kEnvironmentTex].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //PixelShaderで使う
+	rootParameters[(size_t)RootParameter::kEnvironmentTex].DescriptorTable.pDescriptorRanges = descriptorRangeForETex; //Tableの中身の配列を指定
+	rootParameters[(size_t)RootParameter::kEnvironmentTex].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForETex); //Tableで利用する数
 
 	rootParameters[(size_t)RootParameter::kDirectionLight].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  //CBVを使う
 	rootParameters[(size_t)RootParameter::kDirectionLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
@@ -334,6 +345,8 @@ void Object3d::Draw(const Camera& camera) {
 		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kCamera, camera.GetGPUVirtualAddress());
 
 		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, material.GetUVHandle());
+
+		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kEnvironmentTex, TextureManager::Load("skyBox.dds"));
 
 		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
 
