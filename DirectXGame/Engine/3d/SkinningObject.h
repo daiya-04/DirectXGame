@@ -25,6 +25,7 @@ private:
 		kWorldTransform,
 		kCamera,
 		kTexture,
+		kEnvironmentTex,
 		kDirectionLight,
 
 		kParamNum,

@@ -18,8 +18,8 @@
 #include "PostEffect.h"
 #include "OutLine.h"
 #include "HSVFilter.h"
+#include "SkyBox.h"
 
-#include "Skydome.h"
 #include "Ground.h"
 #include "Player.h"
 #include "Enemy.h"
@@ -78,7 +78,7 @@ private:
 
 private: //オブジェクト
 
-	std::unique_ptr<Skydome> skydome_;
+	
 	std::unique_ptr<Ground> ground_;
 
 	std::unique_ptr<Player> player_;
@@ -122,6 +122,9 @@ private: //オブジェクト
 
 
 	bool isGameStop_ = false;
+
+	uint32_t skyBoxTex_ = 0;
+	std::unique_ptr<SkyBox> skyBox_;
 
 private:
 

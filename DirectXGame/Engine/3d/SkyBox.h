@@ -56,7 +56,7 @@ private:
 
 	WorldTransform worldTransform_;
 
-	float scale_ = 100.0f;
+	float scale_ = 1000.0f;
 
 public:
 
