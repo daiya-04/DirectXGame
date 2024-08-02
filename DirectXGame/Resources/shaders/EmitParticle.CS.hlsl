@@ -47,7 +47,7 @@ RWStructuredBuffer<int32_t> gFreeList : register(u2);
 
 struct EmitterSphere {
     float32_t3 translate;
-    float32_t size;
+    float32_t3 size;
     float32_t scale;
     uint32_t count;
     float32_t frequency;
@@ -55,6 +55,9 @@ struct EmitterSphere {
     uint32_t emit;
     float32_t3 direction;
     float32_t angle;
+    float32_t4 color;
+    float32_t lifeTime;
+    float32_t speed;
 };
 
 ConstantBuffer<EmitterSphere> gEmitter : register(b0);
@@ -126,10 +129,9 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
                 uint32_t particleIndex = gFreeList[freeListIndex];
                 gParticles[particleIndex].translate = gEmitter.translate + (generator.Generate3d() - 0.5f) * gEmitter.size;
                 gParticles[particleIndex].scale = float32_t3(gEmitter.scale, gEmitter.scale, gEmitter.scale);
-                gParticles[particleIndex].color.rgb = float32_t3(generator.Generate1d(), generator.Generate1d(), generator.Generate1d());
-                gParticles[particleIndex].color.a = 1.0f;
-                gParticles[particleIndex].velocity = ShotDirection(generator) * (generator.Generate1d() * 5);
-                gParticles[particleIndex].lifeTime = generator.Generate1d() * 1.5f;
+                gParticles[particleIndex].color = gEmitter.color;
+                gParticles[particleIndex].velocity = ShotDirection(generator) * (generator.Generate1d() * gEmitter.speed);
+                gParticles[particleIndex].lifeTime = generator.Generate1d() * gEmitter.lifeTime;
                 gParticles[particleIndex].currentTime = 0.0f;
             }else {
                 InterlockedAdd(gFreeListIndex[0], 1);

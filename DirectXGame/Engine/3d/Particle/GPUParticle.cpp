@@ -464,7 +464,7 @@ void GPUParticle::Update() {
 		emitter_.emit = 0;
 	}
 
-	*emitterSphereData_ = emitter_;
+	std::memcpy(emitterSphereData_, &emitter_, sizeof(EmitterSphere));
 
 	//描画用のDescriptorHeapの設定
 	ID3D12DescriptorHeap* descriptorHeaps[] = { DirectXCommon::GetInstance()->GetSrvHeap() };

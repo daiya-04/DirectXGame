@@ -55,7 +55,18 @@ void DebugTestScene::Init() {
 	human_->worldTransform_.rotation_.y = 3.14f;
 	human_->worldTransform_.translation_.z = 10.0f;
 
-	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),100000));
+	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),10000));
+	particle_->emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
+	particle_->emitter_.size = Vector3(0.0f,0.0f,0.0f);
+	particle_->emitter_.scale = 0.05f;
+	particle_->emitter_.count = 100;
+	particle_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
+	particle_->emitter_.angle = 45.0f;
+	particle_->emitter_.frequency = 0.5f;
+	particle_->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	particle_->emitter_.lifeTime = 1.5f;
+	particle_->emitter_.speed = 5.0f;
+
 
 	Update();
 }
@@ -121,7 +132,7 @@ void DebugTestScene::DrawModel() {
 	Object3d::preDraw();
 	//MutiMaterial_->Draw(camera_);
 
-	skyBox_->Draw(camera_);
+	//skyBox_->Draw(camera_);
 	//ShapesDraw::DrawSphere(Shapes::Sphere({}, 1.0f), camera_);
 	//ShapesDraw::DrawPlane(Shapes::Plane({ 0.0f,0.0f,1.0f }, 10.0f), camera_);
 	//ShapesDraw::DrawAABB(Shapes::AABB({ -1.0,-1.0,-1.0f }, { 1.0f,1.0f,1.0f }), camera_);

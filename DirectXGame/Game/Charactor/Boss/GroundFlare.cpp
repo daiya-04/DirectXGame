@@ -20,6 +20,7 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 		particle.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 5000));
 		particle->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f).Normalize();
 		particle->emitter_.angle = 15.0f;
+		particle->emitter_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 
@@ -173,10 +174,12 @@ void GroundFlare::FireInit() {
 	workFire_.param_ = 0;
 
 	for (auto& particle : particles_) {
-		particle->emitter_.scale = 0.7f;
-		particle->emitter_.size = 0.7f;
-		particle->emitter_.frequency = 0.1f;
+		particle->emitter_.scale = 1.0f;
+		particle->emitter_.size = Vector3(0.7f, 0.7f, 0.7f);
+		particle->emitter_.frequency = 0.05f;
 		particle->emitter_.count = 50;
+		particle->emitter_.speed = 10.0f;
+		particle->emitter_.lifeTime = 1.0f;
 	}
 
 }
