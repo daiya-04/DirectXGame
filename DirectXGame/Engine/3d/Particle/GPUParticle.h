@@ -80,7 +80,8 @@ public:
 
 	struct EmitterSphere {
 		Vector3 translate;
-		float size;
+		Vector3 size;
+		float padding1;
 		float scale;
 		uint32_t count; //射出数
 		float frequency; //射出間隔
@@ -88,6 +89,9 @@ public:
 		uint32_t emit; //射出許可
 		Vector3 direction;
 		float angle;
+		Vector4 color;
+		float lifeTime;
+		float speed;
 	};
 
 	struct PerFrame {

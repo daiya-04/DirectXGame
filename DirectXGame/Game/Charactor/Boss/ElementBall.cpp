@@ -19,12 +19,15 @@ void ElementBall::Init(std::shared_ptr<Model> model, const Vector3& startPos) {
 
 	particle_.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 2000));
 
-	particle_->emitter_.size = 1.3f;
+	particle_->emitter_.size = Vector3(1.3f, 1.3f, 1.3f);
 	particle_->emitter_.scale = 0.5f;
 	particle_->emitter_.direction = Vector3(1.0f, 0.0f, 0.0f).Normalize();
 	particle_->emitter_.angle = 360.0f;
 	particle_->emitter_.frequency = 0.01f;
 	particle_->emitter_.count = 50;
+	particle_->emitter_.speed = 2.0f;
+	particle_->emitter_.lifeTime = 1.0f;
+	particle_->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 
 }
 
