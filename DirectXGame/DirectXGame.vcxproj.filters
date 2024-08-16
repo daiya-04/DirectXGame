@@ -225,6 +225,12 @@
     <ClCompile Include="Game\Charactor\Boss\GroundFlare.cpp">
       <Filter>Game\Charactor\Boss</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\Icicle.cpp">
+      <Filter>Game\Charactor\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\IcicleManager.cpp">
+      <Filter>Game\Charactor\Boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -397,6 +403,12 @@
       <Filter>Game\Charactor\Boss</Filter>
     </ClInclude>
     <ClInclude Include="Game\Charactor\Boss\GroundFlare.h">
+      <Filter>Game\Charactor\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\Icicle.h">
+      <Filter>Game\Charactor\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\IcicleManager.h">
       <Filter>Game\Charactor\Boss</Filter>
     </ClInclude>
   </ItemGroup>

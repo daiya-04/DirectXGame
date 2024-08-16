@@ -30,6 +30,7 @@
 #include "PlayerAttack.h"
 #include "BurnScars.h"
 #include "GroundFlare.h"
+#include "IcicleManager.h"
 
 
 class GameScene : public IScene {
@@ -119,6 +120,7 @@ private: //オブジェクト
 	std::list<std::unique_ptr<BurnScars>> burnScarses_;
 
 	GroundFlare* groundFlare_ = nullptr;
+	IcicleManager* icicle_ = nullptr;
 
 
 	bool isGameStop_ = false;

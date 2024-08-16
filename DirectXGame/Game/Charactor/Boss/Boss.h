@@ -52,6 +52,7 @@ public:
 	enum AttackType {
 		kElementBall,
 		kGroundFlare,
+		kIcicle,
 	};
 
 	struct WorkAppear{

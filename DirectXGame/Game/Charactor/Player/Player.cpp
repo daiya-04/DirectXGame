@@ -42,9 +42,7 @@ void Player::Init(std::vector<std::shared_ptr<Model>> models){
 	ColliderUpdate();
 
 	//行列更新
-	Matrix4x4 S = MakeScaleMatrix(obj_->worldTransform_.scale_);
-	Matrix4x4 T = MakeTranslateMatrix(obj_->worldTransform_.translation_);
-	obj_->worldTransform_.matWorld_ = S * rotateMat_ * T;
+	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
 }
 
 void Player::Update(){
@@ -82,9 +80,7 @@ void Player::Update(){
 
 
 	//行列更新
-	Matrix4x4 S = MakeScaleMatrix(obj_->worldTransform_.scale_);
-	Matrix4x4 T = MakeTranslateMatrix(obj_->worldTransform_.translation_);
-	obj_->worldTransform_.matWorld_ = S * rotateMat_ * T;
+	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
 
 	animations_[action_].Play(skeletons_[action_]);
 	skeletons_[action_].Update();
@@ -129,10 +125,9 @@ void Player::SetData(const LevelData::ObjectData& data) {
 	size_ = data.colliderSize;
 
 
-	Matrix4x4 S = MakeScaleMatrix(obj_->worldTransform_.scale_);
+	
 	rotateMat_ = MakeRotateXMatrix(data.rotation.x) * MakeRotateYMatrix(data.rotation.y) * MakeRotateZMatrix(data.rotation.z);
-	Matrix4x4 T = MakeTranslateMatrix(obj_->worldTransform_.translation_);
-	obj_->worldTransform_.matWorld_ = S * rotateMat_ * T;
+	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
 	rotate_ = Transform(rotate_, rotateMat_);
 }
 

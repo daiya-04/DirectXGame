@@ -137,6 +137,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Line\Line.cpp" />
     <ClCompile Include="Engine\PostEffect\HSVFilter.cpp" />
     <ClCompile Include="Game\Charactor\Boss\GroundFlare.cpp" />
+    <ClCompile Include="Game\Charactor\Boss\Icicle.cpp" />
+    <ClCompile Include="Game\Charactor\Boss\IcicleManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\3d\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\3d\Object3d.cpp" />
@@ -221,6 +223,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\PostEffect\HSVFilter.h" />
     <ClInclude Include="Game\Charactor\Player\PlayerAttack.h" />
     <ClInclude Include="Game\Charactor\Boss\GroundFlare.h" />
+    <ClInclude Include="Game\Charactor\Boss\Icicle.h" />
+    <ClInclude Include="Game\Charactor\Boss\IcicleManager.h" />
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
   </ItemGroup>

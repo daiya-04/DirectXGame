@@ -72,10 +72,8 @@ void Boss::Update() {
 
 	obj_->SetSkinCluster(&skinClusters_[action_]);
 	//行列更新
-	//worldTransform_.UpdateMatrix();
-	Matrix4x4 S = MakeScaleMatrix(obj_->worldTransform_.scale_);
-	Matrix4x4 T = MakeTranslateMatrix(obj_->worldTransform_.translation_);
-	obj_->worldTransform_.matWorld_ = S * rotateMat_ * T;
+	
+	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
 
 	if (action_ == Action::Standing) {
 		animations_[action_].Play(skeletons_[action_]);
@@ -129,10 +127,9 @@ void Boss::SetData(const LevelData::ObjectData& data) {
 
 	size_ = data.colliderSize;
 
-	Matrix4x4 S = MakeScaleMatrix(obj_->worldTransform_.scale_);
+	
 	rotateMat_ = MakeRotateXMatrix(data.rotation.x) * MakeRotateYMatrix(data.rotation.y) * MakeRotateZMatrix(data.rotation.z);
-	Matrix4x4 T = MakeTranslateMatrix(obj_->worldTransform_.translation_);
-	obj_->worldTransform_.matWorld_ = S * rotateMat_ * T;
+	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
 }
 
 void Boss::RootInit() {
@@ -173,6 +170,11 @@ void Boss::AttackInit() {
 		
 	}else if (attackType_ == AttackType::kGroundFlare) {
 		GroundFlare::GetInstance()->AttackStart();
+		attackType_ = AttackType::kIcicle;
+	}
+	else if (attackType_ == AttackType::kIcicle) {
+		IcicleManager::GetInstanse()->AttackStart();
+		IcicleManager::GetInstanse()->SetAttackData(GetWorldPos(), Vector3(0.0f, 0.0f, -1.0f));
 		attackType_ = AttackType::kElementBall;
 	}
 
