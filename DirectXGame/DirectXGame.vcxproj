@@ -63,7 +63,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)externals\assimp\include;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\BaseScene;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\DebugText;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;$(ProjectDir)Engine\3d\Light;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Loader;$(ProjectDir)Engine\Easing;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\Line;$(ProjectDir)Game\;$(ProjectDir)Game\Scene;$(ProjectDir)Game\Charactor;$(ProjectDir)Game\Charactor\Player;$(ProjectDir)Game\Charactor\Boss;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)externals\assimp\include;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\BaseScene;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\DebugText;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;$(ProjectDir)Engine\3d\Light;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Loader;$(ProjectDir)Engine\Easing;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\Line;$(ProjectDir)Game\;$(ProjectDir)Game\Scene;$(ProjectDir)Game\Charactor;$(ProjectDir)Game\Charactor\Player;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -90,7 +90,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)externals\assimp\include;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\BaseScene;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\DebugText;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;$(ProjectDir)Engine\3d\Light;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Loader;$(ProjectDir)Engine\Easing;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\Line;$(ProjectDir)Game\;$(ProjectDir)Game\Scene;$(ProjectDir)Game\Charactor;$(ProjectDir)Game\Charactor\Player;$(ProjectDir)Game\Charactor\Boss;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)externals\assimp\include;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\BaseScene;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\DebugText;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;$(ProjectDir)Engine\3d\Light;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Loader;$(ProjectDir)Engine\Easing;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\Line;$(ProjectDir)Game\;$(ProjectDir)Game\Scene;$(ProjectDir)Game\Charactor;$(ProjectDir)Game\Charactor\Player;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -137,8 +137,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Line\Line.cpp" />
     <ClCompile Include="Engine\PostEffect\HSVFilter.cpp" />
     <ClCompile Include="Game\Charactor\Boss\GroundFlare.cpp" />
-    <ClCompile Include="Game\Charactor\Boss\Icicle.cpp" />
-    <ClCompile Include="Game\Charactor\Boss\IcicleManager.cpp" />
+    <ClCompile Include="Game\Charactor\Boss\Icicle\Icicle.cpp" />
+    <ClCompile Include="Game\Charactor\Boss\Icicle\IcicleManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\3d\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\3d\Object3d.cpp" />
@@ -161,6 +161,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Mesh.cpp" />
     <ClCompile Include="Engine\PostEffect\OutLine.cpp" />
     <ClCompile Include="Game\Charactor\Player\PlayerAttack.cpp" />
+    <ClCompile Include="Game\Charactor\Boss\PlasmaShot\PlasmaShot.cpp" />
+    <ClCompile Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.cpp" />
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
   </ItemGroup>
@@ -223,8 +225,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\PostEffect\HSVFilter.h" />
     <ClInclude Include="Game\Charactor\Player\PlayerAttack.h" />
     <ClInclude Include="Game\Charactor\Boss\GroundFlare.h" />
-    <ClInclude Include="Game\Charactor\Boss\Icicle.h" />
-    <ClInclude Include="Game\Charactor\Boss\IcicleManager.h" />
+    <ClInclude Include="Game\Charactor\Boss\Icicle\Icicle.h" />
+    <ClInclude Include="Game\Charactor\Boss\Icicle\IcicleManager.h" />
+    <ClInclude Include="Game\Charactor\Boss\PlasmaShot\PlasmaShot.h" />
+    <ClInclude Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.h" />
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
   </ItemGroup>

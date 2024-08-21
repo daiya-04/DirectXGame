@@ -31,6 +31,7 @@
 #include "BurnScars.h"
 #include "GroundFlare.h"
 #include "IcicleManager.h"
+#include "PlasmaShotManager.h"
 
 
 class GameScene : public IScene {
@@ -121,6 +122,7 @@ private: //オブジェクト
 
 	GroundFlare* groundFlare_ = nullptr;
 	IcicleManager* icicle_ = nullptr;
+	PlasmaShotManager* plasmaShot_ = nullptr;
 
 
 	bool isGameStop_ = false;

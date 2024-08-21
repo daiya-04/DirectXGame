@@ -10,8 +10,6 @@ void Icicle::Init(const std::shared_ptr<Model>& model) {
 
 	collider_.radius = 1.0f;
 
-	obj_->worldTransform_.translation_.y = 5.0f;
-
 	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),5000));
 	particle_->emitter_.direction = Vector3(0.0f, 0.0f, 1.0f);
 	particle_->emitter_.color = Vector4(0.05f, 0.94f, 0.85f, 1.0f);

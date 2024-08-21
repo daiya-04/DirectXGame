@@ -53,6 +53,7 @@ public:
 		kElementBall,
 		kGroundFlare,
 		kIcicle,
+		kPlasmaShot,
 	};
 
 	struct WorkAppear{
@@ -75,7 +76,7 @@ private:
 	std::vector<SkinCluster> skinClusters_;
 
 	Action action_ = Action::Standing;
-	AttackType attackType_ = AttackType::kElementBall;
+	AttackType attackType_ = AttackType::kIcicle;
 
 	uint32_t maxHp_ = 20;
 	uint32_t life_ = maxHp_;
@@ -86,9 +87,10 @@ private:
 
 	Shapes::AABB collider_{};
 
-	static const WorldTransform* target_;
+	const WorldTransform* target_;
 	GameScene* gameScene_ = nullptr;
 
+	Vector3 direction_ = { 0.0f,0.0f,-1.0f };
 	Matrix4x4 rotateMat_ = MakeIdentity44();
 
 	WorkAppear workAppear_;
@@ -123,7 +125,7 @@ public:
 
 	void SetData(const LevelData::ObjectData& data);
 
-	static void SetTarget(const WorldTransform* target) { target_ = target; }
+	void SetTarget(const WorldTransform* target) { target_ = target; }
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	void ChangeBehavior(Behavior behavior);
 	void ChangeAction(Action action) {

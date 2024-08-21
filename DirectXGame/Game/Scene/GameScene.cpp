@@ -53,6 +53,7 @@ void GameScene::Init(){
 
 	std::shared_ptr<Model> warningZoneModel = ModelManager::LoadOBJ("WarningZone");
 	std::shared_ptr<Model> icicleModel = ModelManager::LoadOBJ("Icicle");
+	std::shared_ptr<Model> plasmaBallModel = ModelManager::LoadOBJ("PlasmaBall");
 
 	///
 
@@ -94,6 +95,7 @@ void GameScene::Init(){
 	boss_ = std::make_unique<Boss>();
 	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel });
 	boss_->SetGameScene(this);
+	boss_->SetTarget(&player_->GetWorldTransform());
 	player_->SetTerget(&boss_->GetWorldTransform());
 
 	///データのセット
@@ -124,6 +126,11 @@ void GameScene::Init(){
 	icicle_ = IcicleManager::GetInstanse();
 	icicle_->Init(icicleModel);
 	icicle_->SetTarget(&player_->GetWorldTransform());
+
+	//電気玉
+	plasmaShot_ = PlasmaShotManager::GetInstance();
+	plasmaShot_->Init(plasmaBallModel);
+	plasmaShot_->SetTarget(&player_->GetWorldTransform());
 
 	///
 
@@ -329,6 +336,7 @@ void GameScene::DrawPostEffect() {
 	}
 
 	icicle_->Draw(camera_);
+	plasmaShot_->Draw(camera_);
 
 	groundFlare_->Draw(camera_);
 	
@@ -350,6 +358,7 @@ void GameScene::DrawPostEffect() {
 
 	groundFlare_->DrawParticle(camera_);
 	icicle_->DrawParticle(camera_);
+	plasmaShot_->DrawParticle(camera_);
 
 	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
@@ -373,11 +382,11 @@ void GameScene::BattleInit() {
 
 void GameScene::BattleUpdate() {
 
-	if (boss_->IsAttack() && elementBalls_.empty() && !groundFlare_->IsAttack() && !icicle_->IsAttack()) {
+	if (boss_->IsAttack() && elementBalls_.empty() && !groundFlare_->IsAttack() && !icicle_->IsAttack() && !plasmaShot_->IsAttack()) {
 		boss_->ChangeBehavior(Boss::Behavior::kRoot);
 	}
 
-	if (groundFlare_->AttackFinish() || icicle_->AttackFinish()) {
+	if (groundFlare_->AttackFinish() || icicle_->AttackFinish() || plasmaShot_->AttackFinish()) {
 		boss_->ChangeBehavior(Boss::Behavior::kRoot);
 	}
 
@@ -407,6 +416,7 @@ void GameScene::BattleUpdate() {
 
 	groundFlare_->Update();
 	icicle_->Update();
+	plasmaShot_->Update();
 
 	for (auto& burnScars : burnScarses_) {
 		burnScars->Update();
@@ -441,6 +451,16 @@ void GameScene::BattleUpdate() {
 			if (IsCollision(player_->GetCollider(), icicle_->GetCollider(index))) {
 				player_->OnCollision();
 				icicle_->OnCollision(index);
+			}
+		}
+	}
+
+	if (plasmaShot_->IsAttack()) {
+		for (uint32_t index = 0; index < 3; index++) {
+			if (!plasmaShot_->IsLife(index)) { continue; }
+			if (IsCollision(player_->GetCollider(), plasmaShot_->GetCollider(index))) {
+				player_->OnCollision();
+				plasmaShot_->OnCollision(index);
 			}
 		}
 	}

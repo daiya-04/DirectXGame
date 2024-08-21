@@ -9,8 +9,6 @@
 #include "ShapesDraw.h"
 #include "AnimationManager.h"
 
-const WorldTransform* Boss::target_ = nullptr;
-
 void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 
 	animationModels_ = models;
@@ -25,7 +23,7 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	}
 	obj_->SetSkinCluster(&skinClusters_[action_]);
 	
-	rotateMat_ = DirectionToDirection({0.0f,0.0f,1.0f}, { 0.0f,0.0f,-1.0f });
+	rotateMat_ = DirectionToDirection({0.0f,0.0f,1.0f}, direction_);
 
 	behaviorRequest_ = Behavior::kAppear;
 
@@ -136,6 +134,9 @@ void Boss::RootInit() {
 
 	workAttack_.param = 0;
 	action_ = Action::Standing;
+	direction_ = { 0.0f,0.0f,-1.0f };
+
+	rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
 
 }
 
@@ -175,6 +176,18 @@ void Boss::AttackInit() {
 	else if (attackType_ == AttackType::kIcicle) {
 		IcicleManager::GetInstanse()->AttackStart();
 		IcicleManager::GetInstanse()->SetAttackData(GetWorldPos(), Vector3(0.0f, 0.0f, -1.0f));
+		attackType_ = AttackType::kPlasmaShot;
+	}
+	else if (attackType_ == AttackType::kPlasmaShot) {
+		PlasmaShotManager::GetInstance()->AttackStart();
+
+		direction_ = (target_->translation_ - obj_->worldTransform_.translation_).Normalize();
+		rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
+		Vector3 offset = { 0.0f,0.0f,2.0f };
+		offset = Transform(offset, rotateMat_);
+
+		PlasmaShotManager::GetInstance()->SetAttackData(GetWorldPos() + offset);
+
 		attackType_ = AttackType::kElementBall;
 	}
 
