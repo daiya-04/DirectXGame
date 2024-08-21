@@ -5,9 +5,12 @@
 #include "GPUParticle.h"
 #include "Vec3.h"
 #include "CollisionShapes.h"
+
 #include <memory>
 #include <array>
 #include <optional>
+#include <map>
+#include <functional>
 
 
 class GroundFlare {
@@ -21,6 +24,18 @@ public:
 
 	Phase phase_ = Phase::kRoot;
 	std::optional<Phase> phaseRequest_ = Phase::kRoot;
+
+	std::map<Phase, std::function<void()>> phaseInitTable_{
+		{Phase::kRoot,[this]() {RootInit(); }},
+		{Phase::kWarning,[this]() {WarningInit(); }},
+		{Phase::kFire,[this]() {FireInit(); }},
+	};
+
+	std::map<Phase, std::function<void()>> phaseUpdateTable_{
+		{Phase::kRoot,[this]() {RootUpdate(); }},
+		{Phase::kWarning,[this]() {WarningUpdate(); }},
+		{Phase::kFire,[this]() {FireUpdate(); }},
+	};
 
 private:
 

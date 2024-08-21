@@ -9,12 +9,15 @@
 #include "Vec3.h"
 #include "CollisionShapes.h"
 #include "LevelLoader.h"
+#include "Particle.h"
+#include "Sprite.h"
+
 #include <memory>
 #include <vector>
 #include <array>
 #include <optional>
-#include "Particle.h"
-#include "Sprite.h"
+#include <functional>
+#include <map>
 
 class GameScene;
 
@@ -29,6 +32,18 @@ public:
 
 	Behavior behavior_ = Behavior::kRoot;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+	std::map<Behavior, std::function<void()>> behaviorInitTable_{
+		{Behavior::kRoot,[this]() {RootInit(); }},
+		{Behavior::kAttack,[this]() {AttackInit(); }},
+		{Behavior::kAppear,[this]() {AppearInit(); }},
+	};
+
+	std::map<Behavior, std::function<void()>> behaviorUpdateTable_{
+		{Behavior::kRoot,[this]() {RootUpdate(); }},
+		{Behavior::kAttack,[this]() {AttackUpdate(); }},
+		{Behavior::kAppear,[this]() {AppearUpdate(); }},
+	};
 
 private:
 

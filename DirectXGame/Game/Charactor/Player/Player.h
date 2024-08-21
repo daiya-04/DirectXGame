@@ -9,14 +9,17 @@
 #include "Matrix44.h"
 #include "CollisionShapes.h"
 #include "LevelLoader.h"
+#include "FollowCamera.h"
+#include "Particle.h"
+#include "Sprite.h"
+
 #include <memory>
 #include <list>
 #include <vector>
 #include <array>
 #include <optional>
-#include "FollowCamera.h"
-#include "Particle.h"
-#include "Sprite.h"
+#include <map>
+#include <functional>
 
 class GameScene;
 
@@ -31,6 +34,18 @@ private: //ふるまい用メンバ変数
 
 	Behavior behavior_ = Behavior::kRoot;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+	std::map<Behavior, std::function<void()>> behaviorInitTable_{
+		{Behavior::kRoot,[this]() {RootInit(); }},
+		{Behavior::kAttack,[this]() {AttackInit(); }},
+		{Behavior::kDash,[this](){DashInit()}},
+	};
+
+	std::map<Behavior, std::function<void()>> behaviorUpdateTable_{
+		{Behavior::kRoot,[this]() {RootUpdate(); }},
+		{Behavior::kAttack,[this]() {AttackUpdate(); }},
+		{Behavior::kDash,[this]() {DashUpdate()}},
+	};
 	
 
 public: //ふるまい用メンバ関数

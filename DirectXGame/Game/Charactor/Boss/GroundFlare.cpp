@@ -43,32 +43,12 @@ void GroundFlare::Update() {
 
 		phase_ = phaseRequest_.value();
 
-		switch (phase_) {
-		case Phase::kRoot:
-			RootInit();
-			break;
-		case Phase::kWarning:
-			WarningInit();
-			break;
-		case Phase::kFire:
-			FireInit();
-			break;
-		}
+		phaseInitTable_[phase_]();
 
 		phaseRequest_ = std::nullopt;
 	}
 
-	switch (phase_) {
-	case Phase::kRoot:
-		RootUpdate();
-		break;
-	case Phase::kWarning:
-		WarningUpdate();
-		break;
-	case Phase::kFire:
-		FireUpdate();
-		break;
-	}
+	phaseUpdateTable_[phase_]();
 
 	for (auto& particle : particles_) {
 		particle->Update();

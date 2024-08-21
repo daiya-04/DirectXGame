@@ -41,32 +41,12 @@ void Boss::Update() {
 
 		behavior_ = behaviorRequest_.value();
 
-		switch (behavior_) {
-			case Behavior::kRoot:
-				RootInit();
-				break;
-			case Behavior::kAttack:
-				AttackInit();
-				break;
-			case Behavior::kAppear:
-				AppearInit();
-				break;
-		}
+		behaviorInitTable_[behavior_]();
 
 		behaviorRequest_ = std::nullopt;
 	}
 
-	switch (behavior_) {
-		case Behavior::kRoot:
-			RootUpdate();
-			break;
-		case Behavior::kAttack:
-			AttackUpdate();
-			break;
-		case Behavior::kAppear:
-			AppearUpdate();
-			break;
-	}
+	behaviorUpdateTable_[behavior_]();
 
 	obj_->SetSkinCluster(&skinClusters_[action_]);
 	//行列更新
