@@ -35,7 +35,7 @@ void WorldTransform::CreateCBuffer() {
 void WorldTransform::Map() {
 	cBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&cMap_));
 	cMap_->matWorld = matWorld_;
-	cMap_->WorldInverseTranspose = (matWorld_.Inverse()).Transpose();
+	cMap_->WorldInverseTranspose = WorldInverseTransposeMat_;
 }
 
 void WorldTransform::UpdateMatrix() {
@@ -46,5 +46,26 @@ void WorldTransform::UpdateMatrix() {
 		matWorld_ = matWorld_ * parent_->matWorld_;
 	}
 
-	Map();
+	WorldInverseTransposeMat_ = (matWorld_.Inverse()).Transpose();
+
+	cMap_->matWorld = matWorld_;
+	cMap_->WorldInverseTranspose = WorldInverseTransposeMat_;
+}
+
+void WorldTransform::UpdateMatrixRotate(const Matrix4x4& rotateMat) {
+
+	Matrix4x4 S = MakeScaleMatrix(scale_);
+	Matrix4x4 T = MakeTranslateMatrix(translation_);
+
+	matWorld_ = S * rotateMat * T;
+
+	if (parent_) {
+		matWorld_ = matWorld_ * parent_->matWorld_;
+	}
+
+	WorldInverseTransposeMat_ = (matWorld_.Inverse()).Transpose();
+
+	cMap_->matWorld = matWorld_;
+	cMap_->WorldInverseTranspose = WorldInverseTransposeMat_;
+
 }

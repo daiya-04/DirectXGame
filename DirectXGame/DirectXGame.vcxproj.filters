@@ -77,6 +77,12 @@
     <Filter Include="Game\Charactor\Boss">
       <UniqueIdentifier>{e96c1dfa-b868-45f9-a794-eecee36d27a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Charactor\Boss\Icicle">
+      <UniqueIdentifier>{6e09ea25-6bdd-4a7f-8e4e-736d36fa79b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Boss\PlasmaShot">
+      <UniqueIdentifier>{18c28a70-f928-4246-b56e-1f13741f557f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -224,6 +230,18 @@
     </ClCompile>
     <ClCompile Include="Game\Charactor\Boss\GroundFlare.cpp">
       <Filter>Game\Charactor\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\Icicle\Icicle.cpp">
+      <Filter>Game\Charactor\Boss\Icicle</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\Icicle\IcicleManager.cpp">
+      <Filter>Game\Charactor\Boss\Icicle</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\PlasmaShot\PlasmaShot.cpp">
+      <Filter>Game\Charactor\Boss\PlasmaShot</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.cpp">
+      <Filter>Game\Charactor\Boss\PlasmaShot</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -398,6 +416,18 @@
     </ClInclude>
     <ClInclude Include="Game\Charactor\Boss\GroundFlare.h">
       <Filter>Game\Charactor\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\Icicle\Icicle.h">
+      <Filter>Game\Charactor\Boss\Icicle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\Icicle\IcicleManager.h">
+      <Filter>Game\Charactor\Boss\Icicle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\PlasmaShot\PlasmaShot.h">
+      <Filter>Game\Charactor\Boss\PlasmaShot</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.h">
+      <Filter>Game\Charactor\Boss\PlasmaShot</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

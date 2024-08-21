@@ -19,6 +19,7 @@ public:
 	Vector3 translation_ = {};
 
 	Matrix4x4 matWorld_ = MakeIdentity44();
+	Matrix4x4 WorldInverseTransposeMat_ = MakeIdentity44();
 
 	const WorldTransform* parent_ = nullptr;
 
@@ -26,6 +27,7 @@ public:
 
 	void Init();
 	void UpdateMatrix();
+	void UpdateMatrixRotate(const Matrix4x4& rotateMat);
 	void Map();
 
 	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {
