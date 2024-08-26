@@ -4,10 +4,14 @@
 #include "ModelManager.h"
 #include "TextureManager.h"
 #include "Easing.h"
-#include "GameScene.h"
 #include "ModelManager.h"
 #include "ShapesDraw.h"
 #include "AnimationManager.h"
+
+#include "GroundFlare.h"
+#include "IcicleManager.h"
+#include "PlasmaShotManager.h"
+#include "ElementBallManager.h"
 
 void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 
@@ -26,6 +30,7 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	rotateMat_ = DirectionToDirection({0.0f,0.0f,1.0f}, direction_);
 
 	behaviorRequest_ = Behavior::kAppear;
+	attackType_ = AttackType::kElementBall;
 
 	life_ = maxHp_;
 
@@ -41,32 +46,12 @@ void Boss::Update() {
 
 		behavior_ = behaviorRequest_.value();
 
-		switch (behavior_) {
-			case Behavior::kRoot:
-				RootInit();
-				break;
-			case Behavior::kAttack:
-				AttackInit();
-				break;
-			case Behavior::kAppear:
-				AppearInit();
-				break;
-		}
+		behaviorInitTable_[behavior_]();
 
 		behaviorRequest_ = std::nullopt;
 	}
 
-	switch (behavior_) {
-		case Behavior::kRoot:
-			RootUpdate();
-			break;
-		case Behavior::kAttack:
-			AttackUpdate();
-			break;
-		case Behavior::kAppear:
-			AppearUpdate();
-			break;
-	}
+	behaviorUpdateTable_[behavior_]();
 
 	obj_->SetSkinCluster(&skinClusters_[action_]);
 	//行列更新
@@ -153,20 +138,10 @@ void Boss::AttackInit() {
 	
 
 	if (attackType_ == AttackType::kElementBall) {
-		Vector3 offset[4] = {
-		{4.0f,0.0f,2.0f},
-		{-4.0f,0.0f,2.0f},
-		{4.0f,0.0f,-2.0f},
-		{-4.0f,0.0f,-2.0f},
-		};
 
-		for (size_t index = 0; index < 4; index++) {
-			ElementBall* newElementBall = new ElementBall();
-			std::shared_ptr<Model> model = ModelManager::LoadGLTF("ElementBall");
-			newElementBall->Init(model, obj_->worldTransform_.translation_ + offset[index]);
-			newElementBall->SetShotCount((uint32_t)index + 2);
-			gameScene_->AddElementBall(newElementBall);
-		}
+		ElementBallManager::GetInstance()->AttackStart();
+		ElementBallManager::GetInstance()->SetAttackData(obj_->worldTransform_.translation_);
+		
 		attackType_ = AttackType::kGroundFlare;
 		
 	}else if (attackType_ == AttackType::kGroundFlare) {

@@ -11,10 +11,13 @@ PlasmaShotManager* PlasmaShotManager::GetInstance() {
 
 void PlasmaShotManager::Init(const std::shared_ptr<Model>& model) {
 
-	for (size_t index = 0; index < 3; index++) {
-		plasmaShots_[index] = std::make_unique<PlasmaShot>();
-		plasmaShots_[index]->Init(model);
+	for (auto& plasmaShot : plasmaShots_) {
+		plasmaShot = std::make_unique<PlasmaShot>();
+		plasmaShot->Init(model);
 	}
+
+	isAttack_ = false;
+	preIsAttack_ = false;
 
 }
 

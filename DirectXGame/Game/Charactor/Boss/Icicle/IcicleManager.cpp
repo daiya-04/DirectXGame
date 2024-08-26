@@ -15,6 +15,8 @@ void IcicleManager::Init(const std::shared_ptr<Model>& model) {
 		icicles_[index]->Init(model);
 	}
 	
+	isAttack_ = false;
+	preIsAttack_ = false;
 
 }
 

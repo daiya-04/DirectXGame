@@ -5,24 +5,44 @@
 #include "Vec3.h"
 #include "CollisionShapes.h"
 #include "GPUParticle.h"
+
 #include <memory>
 #include <optional>
+#include <functional>
+#include <map>
 
 
 class ElementBall {
 public:
 
 	enum class Phase {
+		kRoot,
 		kSet,
 		kCharge,
 		kShot,
 	};
 
-	Phase phase_ = Phase::kSet;
-	std::optional<Phase> phaseRequest_ = std::nullopt;
+	Phase phase_ = Phase::kRoot;
+	std::optional<Phase> phaseRequest_ = Phase::kRoot;
+
+	std::map<Phase, std::function<void()>> phaseInitTable_{
+		{Phase::kRoot,[this]() {RootInit(); }},
+		{Phase::kSet,[this]() {SetInit(); }},
+		{Phase::kCharge,[this]() {ChargeInit(); }},
+		{Phase::kShot,[this]() {ShotInit(); }},
+	};
+
+	std::map<Phase, std::function<void()>> phaseUpdateTable_{
+		{Phase::kRoot,[this]() {RootUpdate(); }},
+		{Phase::kSet,[this]() {SetUpdate(); }},
+		{Phase::kCharge,[this]() {ChargeUpdate(); }},
+		{Phase::kShot,[this]() {ShotUpdate(); }},
+	};
 
 private:
 
+	void RootInit();
+	void RootUpdate();
 	void SetInit();
 	void SetUpdate();
 	void ChargeInit();
@@ -49,9 +69,13 @@ private:
 		Vector3 move{};
 	};
 
+	WorkSet workSet_;
+	WorkCharge workCharge_;
+	WorkShot workShot_;
+
 private:
 
-	static const WorldTransform* target_;
+	const WorldTransform* target_;
 
 	std::unique_ptr<Object3d> obj_;
 	Animation animation_;
@@ -61,15 +85,11 @@ private:
 
 	bool isLife_ = false;
 
-	WorkSet workSet_;
-	WorkCharge workCharge_;
-	WorkShot workShot_;
-
 	std::unique_ptr<GPUParticle> particle_;
 
 public:
 
-	void Init(std::shared_ptr<Model> model,const Vector3& startPos);
+	void Init(std::shared_ptr<Model> model);
 
 	void Update();
 	void ColliderUpdate() {
@@ -83,9 +103,12 @@ public:
 
 	void OnCollision();
 
-	static void SetTarget(const WorldTransform* target) { target_ = target; }
+	void SetTarget(const WorldTransform* target) { target_ = target; }
 
 	void SetShotCount(uint32_t seconds) { workCharge_.coolTime = 60 * seconds; }
+
+	void AttackStart();
+	void SetAttackData(const Vector3& startPos, uint32_t interval);
 
 	bool IsLife() const { return isLife_; }
 

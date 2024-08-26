@@ -9,14 +9,15 @@
 #include "Vec3.h"
 #include "CollisionShapes.h"
 #include "LevelLoader.h"
+#include "Particle.h"
+#include "Sprite.h"
+
 #include <memory>
 #include <vector>
 #include <array>
 #include <optional>
-#include "Particle.h"
-#include "Sprite.h"
-
-class GameScene;
+#include <functional>
+#include <map>
 
 class Boss{
 public:
@@ -27,8 +28,20 @@ public:
 		kAppear,
 	};
 
-	Behavior behavior_ = Behavior::kRoot;
-	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+	Behavior behavior_ = Behavior::kAppear;
+	std::optional<Behavior> behaviorRequest_ = Behavior::kAppear;
+
+	std::map<Behavior, std::function<void()>> behaviorInitTable_{
+		{Behavior::kRoot,[this]() {RootInit(); }},
+		{Behavior::kAttack,[this]() {AttackInit(); }},
+		{Behavior::kAppear,[this]() {AppearInit(); }},
+	};
+
+	std::map<Behavior, std::function<void()>> behaviorUpdateTable_{
+		{Behavior::kRoot,[this]() {RootUpdate(); }},
+		{Behavior::kAttack,[this]() {AttackUpdate(); }},
+		{Behavior::kAppear,[this]() {AppearUpdate(); }},
+	};
 
 private:
 
@@ -76,7 +89,7 @@ private:
 	std::vector<SkinCluster> skinClusters_;
 
 	Action action_ = Action::Standing;
-	AttackType attackType_ = AttackType::kIcicle;
+	AttackType attackType_ = AttackType::kElementBall;
 
 	uint32_t maxHp_ = 20;
 	uint32_t life_ = maxHp_;
@@ -88,7 +101,6 @@ private:
 	Shapes::AABB collider_{};
 
 	const WorldTransform* target_;
-	GameScene* gameScene_ = nullptr;
 
 	Vector3 direction_ = { 0.0f,0.0f,-1.0f };
 	Matrix4x4 rotateMat_ = MakeIdentity44();
@@ -126,7 +138,7 @@ public:
 	void SetData(const LevelData::ObjectData& data);
 
 	void SetTarget(const WorldTransform* target) { target_ = target; }
-	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
+
 	void ChangeBehavior(Behavior behavior);
 	void ChangeAction(Action action) {
 		action_ = action;

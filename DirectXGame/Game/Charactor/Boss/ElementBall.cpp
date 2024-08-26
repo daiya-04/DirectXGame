@@ -5,28 +5,15 @@
 #include "AnimationManager.h"
 #include "TextureManager.h"
 
-const WorldTransform* ElementBall::target_ = nullptr;
-
-void ElementBall::Init(std::shared_ptr<Model> model, const Vector3& startPos) {
+void ElementBall::Init(std::shared_ptr<Model> model) {
 
 	obj_.reset(Object3d::Create(model));
 	animation_ = AnimationManager::Load(obj_->GetModel()->name_);
-	obj_->worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 
-	phaseRequest_ = Phase::kSet;
+	particle_.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 5000));
 
-	workSet_.start = startPos;
-
-	particle_.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 2000));
-
-	particle_->emitter_.size = Vector3(1.3f, 1.3f, 1.3f);
-	particle_->emitter_.scale = 0.5f;
+	
 	particle_->emitter_.direction = Vector3(1.0f, 0.0f, 0.0f).Normalize();
-	particle_->emitter_.angle = 360.0f;
-	particle_->emitter_.frequency = 0.01f;
-	particle_->emitter_.count = 50;
-	particle_->emitter_.speed = 2.0f;
-	particle_->emitter_.lifeTime = 1.0f;
 	particle_->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 
 }
@@ -37,32 +24,12 @@ void ElementBall::Update() {
 
 		phase_ = phaseRequest_.value();
 
-		switch (phase_) {
-			case Phase::kSet:
-				SetInit();
-				break;
-			case Phase::kCharge:
-				ChargeInit();
-				break;
-			case Phase::kShot:
-				ShotInit();
-				break;
-		}
+		phaseInitTable_[phase_]();
 
 		phaseRequest_ = std::nullopt;
 	}
 
-	switch (phase_) {
-		case Phase::kSet:
-			SetUpdate();
-			break;
-		case Phase::kCharge:
-			ChargeUpdate();
-			break;
-		case Phase::kShot:
-			ShotUpdate();
-			break;
-	}
+	phaseUpdateTable_[phase_]();
 
 	//行列更新
 	obj_->worldTransform_.UpdateMatrix();
@@ -81,7 +48,9 @@ void ElementBall::Update() {
 void ElementBall::Draw(const Camera& camera) {
 
 #ifdef _DEBUG
-	ShapesDraw::DrawSphere(collider_, camera);
+	if (isLife_) {
+		ShapesDraw::DrawSphere(collider_, camera);
+	}
 #endif // _DEBUG
 
 	obj_->Draw(camera);
@@ -93,13 +62,52 @@ void ElementBall::DrawParticle(const Camera& camera) {
 }
 
 void ElementBall::OnCollision() {
+	isLife_ = false;
+	phaseRequest_ = Phase::kRoot;
+}
+
+void ElementBall::AttackStart() {
+
+	phaseRequest_ = Phase::kSet;
+	obj_->worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	isLife_ = true;
+
+}
+
+void ElementBall::SetAttackData(const Vector3& startPos, uint32_t interval) {
+
+	workSet_.start = startPos;
+	workCharge_.coolTime = 60 * interval;
+	particle_->emitter_.translate = startPos;
+
+}
+
+void ElementBall::RootInit() {
+
+	obj_->worldTransform_.scale_ = {};
+	particle_->emitter_.count = 0;
+	animation_.TimeReset();
+
+}
+
+void ElementBall::RootUpdate() {
+
+	particle_->emitter_.frequencyTime = 0.0f;
+
 }
 
 void ElementBall::SetInit() {
 
 	obj_->worldTransform_.translation_ = workSet_.start;
 	animation_.Start();
+
+	particle_->emitter_.count = 50;
+	particle_->emitter_.angle = 360.0f;
+	particle_->emitter_.frequency = 1.0f / 60.0f;
+	particle_->emitter_.lifeTime = 1.0f;
+	particle_->emitter_.scale = 0.3f;
+	particle_->emitter_.size = Vector3(1.3f, 1.3f, 1.3f);
+	particle_->emitter_.speed = 2.0f;
 
 }
 
@@ -118,6 +126,11 @@ void ElementBall::SetUpdate() {
 void ElementBall::ChargeInit() {
 
 	workCharge_.param = 0;
+
+	particle_->emitter_.count = 100;
+	particle_->emitter_.size = Vector3(1.8f, 1.8f, 1.8f);
+	particle_->emitter_.speed = -1.0f;
+	particle_->emitter_.scale = 0.6f;
 	
 
 }
@@ -134,6 +147,11 @@ void ElementBall::ShotInit() {
 
 	workShot_.move = {};
 	workShot_.isTrack = true;
+
+	particle_->emitter_.size = Vector3(1.3f, 1.3f, 1.3f);
+	particle_->emitter_.speed = 0.0f;
+	particle_->emitter_.scale = 0.3f;
+	particle_->emitter_.lifeTime = 0.5f;
 
 }
 
@@ -154,7 +172,7 @@ void ElementBall::ShotUpdate() {
 	obj_->worldTransform_.translation_ += workShot_.move;
 
 	if (obj_->worldTransform_.translation_.y < 0.0f) {
-		isLife_ = true;
+		OnCollision();
 	}
 
 }

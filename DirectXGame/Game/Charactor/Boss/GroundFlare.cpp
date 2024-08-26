@@ -32,6 +32,12 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 	offset_[3] = { -1.5f,0.0f,-1.5f }; //左下
 	offset_[4] = { 1.5f,0.0f,-1.5f }; //右下
 
+	isAttack_ = false;
+	preIsAttack_ = false;
+
+	isHit_ = false;
+	preIsHit_ = false;
+
 }
 
 void GroundFlare::Update() {
@@ -43,32 +49,12 @@ void GroundFlare::Update() {
 
 		phase_ = phaseRequest_.value();
 
-		switch (phase_) {
-		case Phase::kRoot:
-			RootInit();
-			break;
-		case Phase::kWarning:
-			WarningInit();
-			break;
-		case Phase::kFire:
-			FireInit();
-			break;
-		}
+		phaseInitTable_[phase_]();
 
 		phaseRequest_ = std::nullopt;
 	}
 
-	switch (phase_) {
-	case Phase::kRoot:
-		RootUpdate();
-		break;
-	case Phase::kWarning:
-		WarningUpdate();
-		break;
-	case Phase::kFire:
-		FireUpdate();
-		break;
-	}
+	phaseUpdateTable_[phase_]();
 
 	for (auto& particle : particles_) {
 		particle->Update();

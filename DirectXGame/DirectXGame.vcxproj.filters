@@ -83,6 +83,9 @@
     <Filter Include="Game\Charactor\Boss\PlasmaShot">
       <UniqueIdentifier>{18c28a70-f928-4246-b56e-1f13741f557f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Charactor\Boss\ElementBall">
+      <UniqueIdentifier>{bc8f0de4-103d-4155-99fc-fe2ced55c7ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -225,9 +228,6 @@
     <ClCompile Include="Game\Charactor\Player\PlayerAttack.cpp">
       <Filter>Game\Charactor\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Charactor\Boss\ElementBall.cpp">
-      <Filter>Game\Charactor\Boss</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Charactor\Boss\GroundFlare.cpp">
       <Filter>Game\Charactor\Boss</Filter>
     </ClCompile>
@@ -242,6 +242,12 @@
     </ClCompile>
     <ClCompile Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.cpp">
       <Filter>Game\Charactor\Boss\PlasmaShot</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\ElementBall.cpp">
+      <Filter>Game\Charactor\Boss\ElementBall</Filter>
+    </ClCompile>
+    <ClCompile Include="ElementBallManager.cpp">
+      <Filter>Game\Charactor\Boss\ElementBall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -411,9 +417,6 @@
     <ClInclude Include="Game\Charactor\Player\PlayerAttack.h">
       <Filter>Game\Charactor\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Charactor\Boss\ElementBall.h">
-      <Filter>Game\Charactor\Boss</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Charactor\Boss\GroundFlare.h">
       <Filter>Game\Charactor\Boss</Filter>
     </ClInclude>
@@ -428,6 +431,12 @@
     </ClInclude>
     <ClInclude Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.h">
       <Filter>Game\Charactor\Boss\PlasmaShot</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\ElementBall.h">
+      <Filter>Game\Charactor\Boss\ElementBall</Filter>
+    </ClInclude>
+    <ClInclude Include="ElementBallManager.h">
+      <Filter>Game\Charactor\Boss\ElementBall</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

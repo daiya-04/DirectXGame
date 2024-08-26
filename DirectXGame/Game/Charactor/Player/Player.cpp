@@ -51,32 +51,12 @@ void Player::Update(){
 
 		behavior_ = behaviorRequest_.value();
 
-		switch (behavior_) {
-		    case Behavior::kRoot:
-				RootInit();
-			    break;
-			case Behavior::kAttack:
-				AttackInit();
-				break;
-			case Behavior::kDash:
-				DashInit();
-				break;
-		}
+		behaviorInitTable_[behavior_]();
 		
 		behaviorRequest_ = std::nullopt;
 	}
 
-	switch (behavior_) {
-	case Behavior::kRoot:
-		RootUpdate();
-		break;
-	case Behavior::kAttack:
-		AttackUpdate();
-		break;
-	case Behavior::kDash:
-		DashUpdate();
-		break;
-	}
+	behaviorUpdateTable_[behavior_]();
 
 
 	//行列更新
