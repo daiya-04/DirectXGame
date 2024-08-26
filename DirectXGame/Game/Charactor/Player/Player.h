@@ -38,13 +38,13 @@ private: //ふるまい用メンバ変数
 	std::map<Behavior, std::function<void()>> behaviorInitTable_{
 		{Behavior::kRoot,[this]() {RootInit(); }},
 		{Behavior::kAttack,[this]() {AttackInit(); }},
-		{Behavior::kDash,[this](){DashInit()}},
+		{Behavior::kDash,[this]() {DashInit(); }},
 	};
 
 	std::map<Behavior, std::function<void()>> behaviorUpdateTable_{
 		{Behavior::kRoot,[this]() {RootUpdate(); }},
 		{Behavior::kAttack,[this]() {AttackUpdate(); }},
-		{Behavior::kDash,[this]() {DashUpdate()}},
+		{Behavior::kDash,[this]() {DashUpdate(); }},
 	};
 	
 

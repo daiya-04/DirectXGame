@@ -48,12 +48,12 @@ void GameScene::Init(){
 	std::shared_ptr<Model> bossSetModel = ModelManager::LoadGLTF("SetMotion");
 	std::shared_ptr<Model> bossAttackModel = ModelManager::LoadGLTF("BossAttack");
 
-	std::shared_ptr<Model> elementBallModel = ModelManager::LoadGLTF("ElementBall");
 	std::shared_ptr<Model> playerBulletModel = ModelManager::LoadOBJ("PlayerBullet");
 
 	std::shared_ptr<Model> warningZoneModel = ModelManager::LoadOBJ("WarningZone");
 	std::shared_ptr<Model> icicleModel = ModelManager::LoadOBJ("Icicle");
 	std::shared_ptr<Model> plasmaBallModel = ModelManager::LoadOBJ("PlasmaBall");
+	std::shared_ptr<Model> elementBallModel = ModelManager::LoadGLTF("ElementBall");
 
 	///
 
@@ -94,7 +94,6 @@ void GameScene::Init(){
 	//ボス
 	boss_ = std::make_unique<Boss>();
 	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel });
-	boss_->SetGameScene(this);
 	boss_->SetTarget(&player_->GetWorldTransform());
 	player_->SetTerget(&boss_->GetWorldTransform());
 
@@ -115,7 +114,9 @@ void GameScene::Init(){
 	///ボスの攻撃
 
 	//属性球
-	ElementBall::SetTarget(&player_->GetWorldTransform());
+	elementBall_ = ElementBallManager::GetInstance();
+	elementBall_->Init(elementBallModel,burnScarsTex_);
+	elementBall_->SetTartget(&player_->GetWorldTransform());
 
 	//地面から火が出るやつ
 	groundFlare_ = GroundFlare::GetInstance();
@@ -201,22 +202,9 @@ void GameScene::Update() {
 		}
 	}*/
 	
-	elementBalls_.remove_if([](const std::unique_ptr<ElementBall>& elementBall) {
-		if (elementBall->IsLife()) {
-			return true;
-		}
-		return false;
-	});
 
 	playerAttacks_.remove_if([](const std::unique_ptr<PlayerAttack>& playerAttack) {
 		if (!playerAttack->IsLife()) {
-			return true;
-		}
-		return false;
-	});
-
-	burnScarses_.remove_if([](const std::unique_ptr<BurnScars>& burnScars) {
-		if (!burnScars->IsLife()) {
 			return true;
 		}
 		return false;
@@ -328,9 +316,7 @@ void GameScene::DrawPostEffect() {
 	
 	ground_->Draw(camera_);
 	
-	for (const auto& elementBall : elementBalls_) {
-		elementBall->Draw(camera_);
-	}
+	
 	for (const auto& playerAttack : playerAttacks_) {
 		playerAttack->Draw(camera_);
 	}
@@ -339,12 +325,11 @@ void GameScene::DrawPostEffect() {
 	plasmaShot_->Draw(camera_);
 
 	groundFlare_->Draw(camera_);
+	elementBall_->Draw(camera_);
 	
 	BurnScars::preDraw();
 
-	for (auto& burnScars : burnScarses_) {
-		burnScars->Draw(camera_);
-	}
+	elementBall_->DrawBurnScars(camera_);
 
 	skyBox_->Draw(camera_);
 
@@ -352,13 +337,12 @@ void GameScene::DrawPostEffect() {
 	for (auto& playerAttack : playerAttacks_) {
 		playerAttack->DrawParticle(camera_);
 	}
-	for (const auto& elementBall : elementBalls_) {
-		elementBall->DrawParticle(camera_);
-	}
+	
 
 	groundFlare_->DrawParticle(camera_);
 	icicle_->DrawParticle(camera_);
 	plasmaShot_->DrawParticle(camera_);
+	elementBall_->DrawParticle(camera_);
 
 	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
@@ -382,33 +366,22 @@ void GameScene::BattleInit() {
 
 void GameScene::BattleUpdate() {
 
-	if (boss_->IsAttack() && elementBalls_.empty() && !groundFlare_->IsAttack() && !icicle_->IsAttack() && !plasmaShot_->IsAttack()) {
+	/*if (boss_->IsAttack() && elementBalls_.empty() && !groundFlare_->IsAttack() && !icicle_->IsAttack() && !plasmaShot_->IsAttack()) {
+		boss_->ChangeBehavior(Boss::Behavior::kRoot);
+	}*/
+
+	if (groundFlare_->AttackFinish() || icicle_->AttackFinish() || plasmaShot_->AttackFinish() || elementBall_->AttackFinish()) {
 		boss_->ChangeBehavior(Boss::Behavior::kRoot);
 	}
 
-	if (groundFlare_->AttackFinish() || icicle_->AttackFinish() || plasmaShot_->AttackFinish()) {
-		boss_->ChangeBehavior(Boss::Behavior::kRoot);
-	}
-
-	for (std::list<std::unique_ptr<ElementBall>>::iterator itBall = elementBalls_.begin(); itBall != elementBalls_.end(); itBall++) {
-		if (boss_->GetAction()!=Boss::Action::Attack && (*itBall)->GetPhase() == ElementBall::Phase::kShot) {
-			boss_->ChangeAction(Boss::Action::Attack);
-		}
-	}
-
-	if (groundFlare_->FireStartFlag()) {
+	if (groundFlare_->FireStartFlag() || elementBall_->ShotStart()) {
 		boss_->ChangeAction(Boss::Action::Attack);
 	}
 
-	if (!groundFlare_->IsAttack() && Input::GetInstance()->TriggerKey(DIK_K)) {
-		GroundFlare::GetInstance()->AttackStart();
-	}
-
+	
 	player_->Update();
 	boss_->Update();
-	for (const auto& elementBall : elementBalls_) {
-		elementBall->Update();
-	}
+	
 	for (const auto& playerAttack : playerAttacks_) {
 		playerAttack->Update();
 	}
@@ -417,10 +390,7 @@ void GameScene::BattleUpdate() {
 	groundFlare_->Update();
 	icicle_->Update();
 	plasmaShot_->Update();
-
-	for (auto& burnScars : burnScarses_) {
-		burnScars->Update();
-	}
+	elementBall_->Update();
 
 	///衝突判定
 
@@ -430,11 +400,15 @@ void GameScene::BattleUpdate() {
 		boss_->OnCollision();
 	}*/
 
-	//エレメントボールとプレイヤー
-	for (const auto& elementBall : elementBalls_) {
-		if (IsCollision(player_->GetCollider(), elementBall->GetCollider())) {
-			player_->OnCollision();
-			elementBall->OnCollision();
+	if (elementBall_->IsAttack()) {
+		for (uint32_t index = 0; index < 4; index++) {
+			if (!elementBall_->IsLife(index)) { 
+				continue;
+			}
+			if (IsCollision(player_->GetCollider(), elementBall_->GetCollider(index))) {
+				player_->OnCollision();
+				elementBall_->OnCollision(index);
+			}
 		}
 	}
 
@@ -465,11 +439,11 @@ void GameScene::BattleUpdate() {
 		}
 	}
 
-	for (const auto& elementBall : elementBalls_) {
+	/*for (const auto& elementBall : elementBalls_) {
 		if (elementBall->IsLife()) {
 			CreateBurnScars(elementBall->GetWorldPos());
 		}
-	}
+	}*/
 
 	for (const auto& playerAttack : playerAttacks_) {
 		if (IsCollision(boss_->GetCollider(), playerAttack->GetCollider())) {
@@ -493,7 +467,6 @@ void GameScene::BattleUpdate() {
 
 void GameScene::PlayerDeadInit() {
 
-	elementBalls_.clear();
 	playerAttacks_.clear();
 	alpha_ = 0.0f;
 
@@ -516,7 +489,6 @@ void GameScene::PlayerDeadUpdate() {
 }
 
 void GameScene::ClearInit() {
-	elementBalls_.clear();
 	playerAttacks_.clear();
 }
 
@@ -598,20 +570,8 @@ void GameScene::DebugGUI(){
 //	enemyBullets_.push_back(std::unique_ptr<EnemyBullet>(enemyBullet));
 //}
 
-void GameScene::AddElementBall(ElementBall* elementBall) {
-	elementBalls_.push_back(std::unique_ptr<ElementBall>(elementBall));
-}
 
 void GameScene::AddPlayerAttack(PlayerAttack* playerAttack) {
 	playerAttacks_.push_back(std::unique_ptr<PlayerAttack>(playerAttack));
 }
 
-void GameScene::CreateBurnScars(const Vector3& createPos) {
-
-	auto& burnScars = burnScarses_.emplace_back(std::make_unique<BurnScars>());
-	burnScars.reset(BurnScars::Create(burnScarsTex_));
-
-	burnScars->position_ = createPos;
-	burnScars->position_.y = 0.01f;
-
-}

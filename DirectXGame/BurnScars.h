@@ -8,7 +8,11 @@
 #include "Matrix44.h"
 #include "WorldTransform.h"
 #include "Camera.h"
+
 #include <string>
+#include <functional>
+#include <map>
+#include <optional>
 
 class BurnScars {
 private:
@@ -66,7 +70,7 @@ private:
 	uint32_t textureHandle_ = 0;
 	uint32_t maskTex_ = 0;
 
-public:
+private:
 
 	//座標
 	Vector3 position_{};
@@ -77,7 +81,7 @@ public:
 
 	float threshold_ = 0.0f;
 
-	bool isLife_ = true;
+	bool isLife_ = false;
 
 	int32_t lifeTime_ = 60 * 4;
 
@@ -90,7 +94,38 @@ public: //メンバ関数
 	//描画
 	void Draw(const Camera& camera);
 
+	void EffectStart(const Vector3& pos);
+	void HieghtAdjustment(float hieght) { position_.y = hieght; }
+
 	bool IsLife() const { return isLife_; }
+
+private:
+
+	enum class Phase {
+		kHide,
+		kVisible,
+	};
+
+	Phase phase_ = Phase::kHide;
+	std::optional<Phase> phaseRequest_ = Phase::kHide;
+
+	std::map<Phase, std::function<void()>> phaseInitTable_{
+		{Phase::kHide,[this]() {HideInit(); }},
+		{Phase::kVisible,[this]() {VisibleInit(); }},
+	};
+
+	std::map<Phase, std::function<void()>> phaseUpdateTable_{
+		{Phase::kHide,[this]() {HideUpdate(); }},
+		{Phase::kVisible,[this]() {VisibleUpdate(); }},
+	};
+
+private:
+
+	void HideInit();
+	void HideUpdate();
+
+	void VisibleInit();
+	void VisibleUpdate();
 
 private:
 

@@ -109,6 +109,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ElementBallManager.cpp" />
     <ClCompile Include="Engine\3d\AnimationManager.cpp" />
     <ClCompile Include="BurnScars.cpp" />
     <ClCompile Include="Engine\PostEffect\Dissolve.cpp" />
@@ -167,6 +168,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ElementBallManager.h" />
     <ClInclude Include="Engine\3d\AnimationManager.h" />
     <ClInclude Include="BurnScars.h" />
     <ClInclude Include="Engine\PostEffect\Dissolve.h" />

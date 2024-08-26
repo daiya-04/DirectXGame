@@ -301,22 +301,22 @@ void BurnScars::Initialize(uint32_t textureHandle) {
 
 void BurnScars::Update() {
 
-	lifeTime_--;
+	if (phaseRequest_) {
 
-	const int32_t kDissolveStartTime = 60 * 2;
+		phase_ = phaseRequest_.value();
 
-	if (lifeTime_ < kDissolveStartTime) {
-		threshold_ = float(kDissolveStartTime - lifeTime_) / (float)kDissolveStartTime;
-		threshold_ = std::clamp(threshold_, 0.0f, 1.0f);
+		phaseInitTable_[phase_]();
+
+		phaseRequest_ = std::nullopt;
 	}
 
-	if (threshold_ == 1.0f) {
-		isLife_ = false;
-	}
+	phaseUpdateTable_[phase_]();
 	
 }
 
 void BurnScars::Draw(const Camera& camera) {
+
+	if (!isLife_) { return; }
 
 	*thresholdData_ = threshold_;
 
@@ -341,6 +341,50 @@ void BurnScars::Draw(const Camera& camera) {
 
 }
 
+void BurnScars::HideInit() {
+
+	scale_ = {};
+	isLife_ = false;
+
+}
+
+void BurnScars::HideUpdate() {
+
+
+
+}
+
+void BurnScars::VisibleInit() {
+
+	scale_ = { 1.5f,1.5f };
+
+}
+
+void BurnScars::VisibleUpdate() {
+
+	lifeTime_--;
+
+	const int32_t kDissolveStartTime = 60 * 2;
+
+	if (lifeTime_ < kDissolveStartTime) {
+		threshold_ = float(kDissolveStartTime - lifeTime_) / (float)kDissolveStartTime;
+		threshold_ = std::clamp(threshold_, 0.0f, 1.0f);
+	}
+
+	if (threshold_ == 1.0f) {
+		phaseRequest_ = Phase::kHide;
+	}
+
+}
+
+void BurnScars::EffectStart(const Vector3& pos) {
+
+	position_ = pos;
+	phaseRequest_ = Phase::kVisible;
+	isLife_ = true;
+
+}
+
 void BurnScars::TransferVertex() {
 
 	//頂点データを設定する
@@ -355,8 +399,6 @@ void BurnScars::TransferVertex() {
 	vertexData[2].uv_ = { 1.0f,1.0f };
 	vertexData[3].pos_ = { 1.0f,0.0f,1.0f,1.0f };//右上
 	vertexData[3].uv_ = { 1.0f,0.0f };
-
-
 
 }
 

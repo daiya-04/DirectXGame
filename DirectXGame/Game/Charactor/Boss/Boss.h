@@ -19,8 +19,6 @@
 #include <functional>
 #include <map>
 
-class GameScene;
-
 class Boss{
 public:
 
@@ -30,8 +28,8 @@ public:
 		kAppear,
 	};
 
-	Behavior behavior_ = Behavior::kRoot;
-	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+	Behavior behavior_ = Behavior::kAppear;
+	std::optional<Behavior> behaviorRequest_ = Behavior::kAppear;
 
 	std::map<Behavior, std::function<void()>> behaviorInitTable_{
 		{Behavior::kRoot,[this]() {RootInit(); }},
@@ -91,7 +89,7 @@ private:
 	std::vector<SkinCluster> skinClusters_;
 
 	Action action_ = Action::Standing;
-	AttackType attackType_ = AttackType::kIcicle;
+	AttackType attackType_ = AttackType::kElementBall;
 
 	uint32_t maxHp_ = 20;
 	uint32_t life_ = maxHp_;
@@ -103,7 +101,6 @@ private:
 	Shapes::AABB collider_{};
 
 	const WorldTransform* target_;
-	GameScene* gameScene_ = nullptr;
 
 	Vector3 direction_ = { 0.0f,0.0f,-1.0f };
 	Matrix4x4 rotateMat_ = MakeIdentity44();
@@ -141,7 +138,7 @@ public:
 	void SetData(const LevelData::ObjectData& data);
 
 	void SetTarget(const WorldTransform* target) { target_ = target; }
-	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
+
 	void ChangeBehavior(Behavior behavior);
 	void ChangeAction(Action action) {
 		action_ = action;

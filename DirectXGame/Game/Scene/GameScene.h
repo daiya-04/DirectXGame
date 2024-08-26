@@ -26,7 +26,7 @@
 #include "EnemyBullet.h"
 #include "Boss.h"
 #include "FollowCamera.h"
-#include "ElementBall.h"
+#include "ElementBallManager.h"
 #include "PlayerAttack.h"
 #include "BurnScars.h"
 #include "GroundFlare.h"
@@ -65,11 +65,7 @@ public:
 	
 	//void AddEnemyBullet(EnemyBullet* enemyBullet);
 
-	void AddElementBall(ElementBall* elementBall);
-
 	void AddPlayerAttack(PlayerAttack* playerAttack);
-
-	void CreateBurnScars(const Vector3& createPos);
 
 private:
   
@@ -88,7 +84,7 @@ private: //オブジェクト
 	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;*/
 	std::unique_ptr<Boss> boss_;
 
-	std::list<std::unique_ptr<ElementBall>> elementBalls_;
+	
 	std::list<std::unique_ptr<PlayerAttack>> playerAttacks_;
 
 	std::unique_ptr<FollowCamera> followCamera_;
@@ -118,11 +114,11 @@ private: //オブジェクト
 	std::unique_ptr<LevelData> levelData_;
 
 	uint32_t burnScarsTex_ = 0;
-	std::list<std::unique_ptr<BurnScars>> burnScarses_;
 
 	GroundFlare* groundFlare_ = nullptr;
 	IcicleManager* icicle_ = nullptr;
 	PlasmaShotManager* plasmaShot_ = nullptr;
+	ElementBallManager* elementBall_ = nullptr;
 
 
 	bool isGameStop_ = false;
