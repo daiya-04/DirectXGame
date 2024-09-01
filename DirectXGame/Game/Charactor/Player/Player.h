@@ -12,6 +12,7 @@
 #include "FollowCamera.h"
 #include "Particle.h"
 #include "Sprite.h"
+#include "GPUParticle.h"
 
 #include <memory>
 #include <list>
@@ -145,6 +146,8 @@ private:
 
 	uint32_t hpBerTex_ = 0;
 	std::unique_ptr<Sprite> hpBer_;
+
+	//std::unique_ptr<GPUParticle> attackEff_;
 
 public:
 

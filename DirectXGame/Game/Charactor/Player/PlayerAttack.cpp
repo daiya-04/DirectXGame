@@ -15,15 +15,15 @@ void PlayerAttack::Init(std::shared_ptr<Model> model, const Vector3& startPos, c
 	collider_.center = GetWorldPos();
 	collider_.radius = 0.3f;
 
-	particle_.reset(GPUParticle::Create(TextureManager::Load("particle.png"), 1000));
+	particle_.reset(GPUParticle::Create(TextureManager::Load("particle.png"), 10000));
 
 	particle_->emitter_.size = Vector3(0.5f, 0.5f, 0.5f);
-	particle_->emitter_.scale = 0.1f;
-	particle_->emitter_.angle = 30.0f;
-	particle_->emitter_.frequency = 0.01f;
-	particle_->emitter_.count = 50;
-	particle_->emitter_.speed = 1.0f;
-	particle_->emitter_.lifeTime = 0.5f;
+	particle_->emitter_.scale = 0.05f;
+	particle_->emitter_.angle = 360.0f;
+	particle_->emitter_.frequency = 1.0f / 60.0f;
+	particle_->emitter_.count = 100;
+	particle_->emitter_.speed = 0.0f;
+	particle_->emitter_.lifeTime = 0.7f;
 	particle_->emitter_.color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
 
 }

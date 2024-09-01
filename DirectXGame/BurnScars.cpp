@@ -297,6 +297,21 @@ void BurnScars::Initialize(uint32_t textureHandle) {
 
 	thresholdBuff_ = CreateBufferResource(device_, sizeof(float));
 	thresholdBuff_->Map(0, nullptr, reinterpret_cast<void**>(&thresholdData_));
+
+	explosionEff_.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 10000));
+
+	explosionEff_->isLoop_ = false;
+
+	explosionEff_->emitter_.count = 10000;
+	explosionEff_->emitter_.emit = 0;
+	explosionEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f).Normalize();
+	explosionEff_->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	explosionEff_->emitter_.angle = 180.0f;
+	explosionEff_->emitter_.lifeTime = 1.0f;
+	explosionEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
+	explosionEff_->emitter_.speed = 15.0f;
+	explosionEff_->emitter_.scale = 0.05f;
+
 }
 
 void BurnScars::Update() {
@@ -311,6 +326,8 @@ void BurnScars::Update() {
 	}
 
 	phaseUpdateTable_[phase_]();
+
+	explosionEff_->Update();
 	
 }
 
@@ -341,6 +358,10 @@ void BurnScars::Draw(const Camera& camera) {
 
 }
 
+void BurnScars::DrawParticle(const Camera& camera) {
+	explosionEff_->Draw(camera);
+}
+
 void BurnScars::HideInit() {
 
 	scale_ = {};
@@ -357,17 +378,19 @@ void BurnScars::HideUpdate() {
 void BurnScars::VisibleInit() {
 
 	scale_ = { 1.5f,1.5f };
+	lifeTimer_ = lifeTime_;
+	threshold_ = 0.0f;
 
 }
 
 void BurnScars::VisibleUpdate() {
 
-	lifeTime_--;
+	lifeTimer_--;
 
 	const int32_t kDissolveStartTime = 60 * 2;
 
-	if (lifeTime_ < kDissolveStartTime) {
-		threshold_ = float(kDissolveStartTime - lifeTime_) / (float)kDissolveStartTime;
+	if (lifeTimer_ < kDissolveStartTime) {
+		threshold_ = float(kDissolveStartTime - lifeTimer_) / (float)kDissolveStartTime;
 		threshold_ = std::clamp(threshold_, 0.0f, 1.0f);
 	}
 
@@ -382,6 +405,9 @@ void BurnScars::EffectStart(const Vector3& pos) {
 	position_ = pos;
 	phaseRequest_ = Phase::kVisible;
 	isLife_ = true;
+
+	explosionEff_->emitter_.emit = 1;
+	explosionEff_->emitter_.translate = position_;
 
 }
 

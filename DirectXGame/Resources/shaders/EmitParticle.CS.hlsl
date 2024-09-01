@@ -112,6 +112,12 @@ float32_t3 ShotDirection(RandomGenerator generator) {
 
     return mul(float32_t4(gEmitter.direction, 1.0f), rotateMat).xyz;
 
+    //Vector3 a = { std::cosf(lat) * std::cosf(lon),std::sinf(lat),std::cosf(lat) * std::sinf(lon) };
+    //lon = theta;
+    //lat = phi;
+
+    //float32_t theta = 
+
 }
 
 [numthreads(1, 1, 1)]

@@ -84,6 +84,7 @@ private:
 	Shapes::Sphere collider_{};
 
 	bool isLife_ = false;
+	bool preIsLife_ = false;
 
 	std::unique_ptr<GPUParticle> particle_;
 
@@ -111,6 +112,8 @@ public:
 	void SetAttackData(const Vector3& startPos, uint32_t interval);
 
 	bool IsLife() const { return isLife_; }
+
+	bool DeadFlag() const { return (!isLife_ && preIsLife_); }
 
 	Shapes::Sphere GetCollider() const { return collider_; }
 	Phase GetPhase() const { return phase_; }

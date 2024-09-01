@@ -14,6 +14,21 @@ void PlasmaShot::Init(const std::shared_ptr<Model>& model) {
 	particle_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 2000));
 	particle_->emitter_.direction = Vector3(0.0f, 0.0f, 1.0f);
 	particle_->emitter_.color = Vector4(0.43f, 0.2f, 0.67f, 1.0f);
+	particle_->isLoop_ = true;
+
+	hitEff_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 10000));
+	
+	hitEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
+	hitEff_->emitter_.color = Vector4(0.43f, 0.2f, 0.67f, 1.0f);
+	hitEff_->emitter_.angle = 360.0f;
+	hitEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
+	hitEff_->emitter_.lifeTime = 1.0f;
+	hitEff_->emitter_.count = 10000;
+	hitEff_->emitter_.scale = 0.05f;
+	hitEff_->emitter_.emit = 0;
+	hitEff_->emitter_.speed = 10.0f;
+
+	hitEff_->isLoop_ = false;
 
 }
 
@@ -31,11 +46,8 @@ void PlasmaShot::Update() {
 
 	phaseUpdateTable_[phase_]();
 
-	if (obj_->worldTransform_.translation_.y <= 0.0f) {
-		OnCollision();
-	}
-
 	particle_->Update();
+	hitEff_->Update();
 
 	obj_->worldTransform_.UpdateMatrix();
 	particle_->emitter_.translate = obj_->GetWorldPos();
@@ -52,12 +64,16 @@ void PlasmaShot::Draw(const Camera& camera) {
 
 void PlasmaShot::DrawParticle(const Camera& camera) {
 	particle_->Draw(camera);
+	hitEff_->Draw(camera);
 }
 
 
 void PlasmaShot::OnCollision() {
 	phaseRequest_ = Phase::kRoot;
 	isLife_ = false;
+	
+	hitEff_->emitter_.emit = 1;
+	hitEff_->emitter_.translate = obj_->GetWorldPos();
 }
 
 void PlasmaShot::AttackStart() {
@@ -143,5 +159,9 @@ void PlasmaShot::ShotUpdate() {
 	velocity_ = targetDict_.Normalize() * speed_;
 
 	obj_->worldTransform_.translation_ += velocity_;
+
+	if (obj_->worldTransform_.translation_.y <= 0.0f) {
+		OnCollision();
+	}
 
 }

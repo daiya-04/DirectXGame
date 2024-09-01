@@ -63,6 +63,8 @@ void WorldTransform::UpdateMatrixRotate(const Matrix4x4& rotateMat) {
 		matWorld_ = matWorld_ * parent_->matWorld_;
 	}
 
+	Matrix4x4 inverMat = matWorld_.Inverse();
+	Matrix4x4 e = matWorld_ * inverMat;
 	WorldInverseTransposeMat_ = (matWorld_.Inverse()).Transpose();
 
 	cMap_->matWorld = matWorld_;

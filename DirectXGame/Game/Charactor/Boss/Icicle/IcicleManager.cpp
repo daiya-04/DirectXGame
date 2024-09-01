@@ -1,4 +1,5 @@
 #include "IcicleManager.h"
+#include "TextureManager.h"
 
 #include "Hit.h"
 

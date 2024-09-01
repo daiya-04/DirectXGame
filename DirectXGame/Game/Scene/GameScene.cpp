@@ -91,6 +91,20 @@ void GameScene::Init(){
 	player_->Init({ playerStandingModel,playerRunningModel,playerAttackModel });
 	player_->SetGameScene(this);
 
+	attackEndEff_.reset(GPUParticle::Create(TextureManager::Load("particle.png"), 10000));
+
+	attackEndEff_->isLoop_ = false;
+
+	attackEndEff_->emitter_.count = 3000;
+	attackEndEff_->emitter_.emit = 0;
+	attackEndEff_->emitter_.color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+	attackEndEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
+	attackEndEff_->emitter_.angle = 360.0f;
+	attackEndEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
+	attackEndEff_->emitter_.scale = 0.1f;
+	attackEndEff_->emitter_.speed = 7.0f;
+	attackEndEff_->emitter_.lifeTime = 0.5f;
+
 	//ボス
 	boss_ = std::make_unique<Boss>();
 	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel });
@@ -264,13 +278,6 @@ void GameScene::DrawParticleModel(){
 
 void GameScene::DrawParticle(){
 
-	if (sceneEvent_ == SceneEvent::Battle) {
-		player_->DrawParticle(camera_);
-	}
-
-	
-	
-
 }
 
 void GameScene::DrawUI(){
@@ -337,7 +344,11 @@ void GameScene::DrawPostEffect() {
 	for (auto& playerAttack : playerAttacks_) {
 		playerAttack->DrawParticle(camera_);
 	}
-	
+	if (sceneEvent_ == SceneEvent::Battle) {
+		player_->DrawParticle(camera_);
+	}
+
+	attackEndEff_->Draw(camera_);
 
 	groundFlare_->DrawParticle(camera_);
 	icicle_->DrawParticle(camera_);
@@ -384,6 +395,12 @@ void GameScene::BattleUpdate() {
 	
 	for (const auto& playerAttack : playerAttacks_) {
 		playerAttack->Update();
+
+		if (!playerAttack->IsLife()) {
+			attackEndEff_->emitter_.emit = 1;
+			attackEndEff_->emitter_.translate = playerAttack->GetWorldPos();
+		}
+
 	}
 	followCamera_->Update();
 
@@ -391,6 +408,8 @@ void GameScene::BattleUpdate() {
 	icicle_->Update();
 	plasmaShot_->Update();
 	elementBall_->Update();
+
+	attackEndEff_->Update();
 
 	///衝突判定
 
@@ -445,12 +464,18 @@ void GameScene::BattleUpdate() {
 		}
 	}*/
 
-	for (const auto& playerAttack : playerAttacks_) {
-		if (IsCollision(boss_->GetCollider(), playerAttack->GetCollider())) {
-			boss_->OnCollision();
-			playerAttack->OnCollision();
+	if (!playerAttacks_.empty()) {
+		for (const auto& playerAttack : playerAttacks_) {
+			if (IsCollision(boss_->GetCollider(), playerAttack->GetCollider())) {
+				boss_->OnCollision();
+				playerAttack->OnCollision();
+
+				attackEndEff_->emitter_.emit = 1;
+				attackEndEff_->emitter_.translate = playerAttack->GetWorldPos();
+			}
 		}
 	}
+	
 
 	///
 
