@@ -39,6 +39,18 @@ void Player::Init(std::vector<std::shared_ptr<Model>> models){
 	hpBer_->SetAnchorpoint({ 0.0f,0.5f });
 	hpBer_->SetSize({ 400.0f,10.0f });
 
+	/*attackEff_.reset(GPUParticle::Create(TextureManager::Load("particle.png"), 20000));
+
+	attackEff_->isLoop_ = false;
+	attackEff_->emitter_.count = 10000;
+	attackEff_->emitter_.color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+	attackEff_->emitter_.angle = 60.0f;
+	attackEff_->emitter_.emit = 0;
+	attackEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
+	attackEff_->emitter_.scale = 0.05f;
+	attackEff_->emitter_.lifeTime = 5.0f;
+	attackEff_->emitter_.speed = 1.0f;*/
+
 	ColliderUpdate();
 
 	//行列更新
@@ -58,6 +70,9 @@ void Player::Update(){
 
 	behaviorUpdateTable_[behavior_]();
 
+	obj_->worldTransform_.translation_.x = std::clamp(obj_->worldTransform_.translation_.x, -50.0f, 50.0f);
+	obj_->worldTransform_.translation_.z = std::clamp(obj_->worldTransform_.translation_.z, -20.0f, 80.0f);
+
 
 	//行列更新
 	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
@@ -65,6 +80,8 @@ void Player::Update(){
 	animations_[action_].Play(skeletons_[action_]);
 	skeletons_[action_].Update();
 	skinClusters_[action_].Update(skeletons_[action_]);
+
+	//attackEff_->Update();
 
 	UIUpdate();
 	ColliderUpdate();
@@ -90,7 +107,7 @@ void Player::Draw(const Camera& camera){
 }
 
 void Player::DrawParticle(const Camera& camera) {
-
+	//attackEff_->Draw(camera);
 }
 
 void Player::DrawUI() {
@@ -245,6 +262,9 @@ void Player::AttackUpdate() {
 
 		///
 
+		/*attackEff_->emitter_.emit = 1;
+		attackEff_->emitter_.translate = shotPos;
+		attackEff_->emitter_.direction = direction.Normalize();*/
 		
 	}
 

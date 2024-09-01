@@ -11,8 +11,23 @@ void Icicle::Init(const std::shared_ptr<Model>& model) {
 	collider_.radius = 1.0f;
 
 	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),5000));
+
 	particle_->emitter_.direction = Vector3(0.0f, 0.0f, 1.0f);
 	particle_->emitter_.color = Vector4(0.05f, 0.94f, 0.85f, 1.0f);
+	particle_->isLoop_ = true;
+
+	hitEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
+
+	hitEff_->isLoop_ = false;
+	hitEff_->emitter_.count = 10000;
+	hitEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
+	hitEff_->emitter_.angle = 180.0f;
+	hitEff_->emitter_.color = Vector4(0.05f, 0.94f, 0.85f, 1.0f);
+	hitEff_->emitter_.lifeTime = 0.7f;
+	hitEff_->emitter_.speed = 15.0f;
+	hitEff_->emitter_.scale = 0.1f;
+	hitEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
+	hitEff_->emitter_.emit = 0;
 
 }
 
@@ -30,13 +45,10 @@ void Icicle::Update() {
 
 	phaseUpdateTable_[phase_]();
 
-	if (obj_->worldTransform_.translation_.y <= 0.0f) {
-		OnCollision();
-	}
-
 	particle_->Update();
+	hitEff_->Update();
 
-	rotateMat_ = DirectionToDirection({ 1.0f,0.0f,0.0f }, direction_);
+	rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
 	
 	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
 	particle_->emitter_.translate = obj_->GetWorldPos();
@@ -49,11 +61,16 @@ void Icicle::Draw(const Camera& camera) {
 
 void Icicle::DrawParticle(const Camera& camera) {
 	particle_->Draw(camera);
+	hitEff_->Draw(camera);
 }
 
 void Icicle::OnCollision() {
 	phaseRequest_ = Phase::kRoot;
 	isLife_ = false;
+
+	hitEff_->emitter_.emit = 1;
+	hitEff_->emitter_.translate = obj_->GetWorldPos();
+
 }
 
 void Icicle::AttackStart() {
@@ -166,6 +183,10 @@ void Icicle::ShotUpdate() {
 	velocity_ = direction_ * speed_;
 
 	obj_->worldTransform_.translation_ += velocity_;
+
+	if (obj_->worldTransform_.translation_.y <= 0.0f) {
+		OnCollision();
+	}
 
 }
 

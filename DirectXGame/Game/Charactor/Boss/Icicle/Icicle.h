@@ -89,6 +89,7 @@ private:
 	Matrix4x4 rotateMat_ = MakeIdentity44();
 
 	std::unique_ptr<GPUParticle> particle_;
+	std::unique_ptr<GPUParticle> hitEff_;
 
 	Shapes::Sphere collider_;
 

@@ -8,6 +8,7 @@
 #include "Matrix44.h"
 #include "WorldTransform.h"
 #include "Camera.h"
+#include "GPUParticle.h"
 
 #include <string>
 #include <functional>
@@ -84,6 +85,9 @@ private:
 	bool isLife_ = false;
 
 	int32_t lifeTime_ = 60 * 4;
+	int32_t lifeTimer_ = lifeTime_;
+
+	std::unique_ptr<GPUParticle> explosionEff_;
 
 public: //メンバ関数
 
@@ -93,6 +97,7 @@ public: //メンバ関数
 	void Update();
 	//描画
 	void Draw(const Camera& camera);
+	void DrawParticle(const Camera& camera);
 
 	void EffectStart(const Vector3& pos);
 	void HieghtAdjustment(float hieght) { position_.y = hieght; }

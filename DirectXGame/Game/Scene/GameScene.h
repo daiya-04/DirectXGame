@@ -86,6 +86,7 @@ private: //オブジェクト
 
 	
 	std::list<std::unique_ptr<PlayerAttack>> playerAttacks_;
+	std::unique_ptr<GPUParticle> attackEndEff_;
 
 	std::unique_ptr<FollowCamera> followCamera_;
 

@@ -174,6 +174,8 @@ public:
 
 	EmitterSphere emitter_;
 
+	bool isLoop_ = true;
+
 public:
 
 	void Init(uint32_t textureHandle, int32_t particleNum);

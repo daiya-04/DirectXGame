@@ -28,8 +28,12 @@ void ElementBallManager::Update() {
 	preIsAttack_ = isAttack_;
 	preIsShot_ = isShot_;
 
-	for (auto& elementBall : elementBalls_) {
-		elementBall->Update();
+	for (uint32_t index = 0; index < elementBalls_.size();index++) {
+		if (elementBalls_[index]->DeadFlag()) {
+			OnCollision(index);
+		}
+
+		elementBalls_[index]->Update();
 	}
 
 	for (auto& burnScars : burnScareses_) {
@@ -60,6 +64,9 @@ void ElementBallManager::DrawParticle(const Camera& camera) {
 
 	for (auto& elementBall : elementBalls_) {
 		elementBall->DrawParticle(camera);
+	}
+	for (auto& burnScars : burnScareses_) {
+		burnScars->DrawParticle(camera);
 	}
 
 }

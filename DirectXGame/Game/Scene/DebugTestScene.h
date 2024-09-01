@@ -60,8 +60,8 @@ private:
 	uint32_t skyBoxTex_ = 0;
 	std::unique_ptr<SkyBox> skyBox_;
 
-	std::shared_ptr<Model> MultiMaterialModel_;
-	std::unique_ptr<Object3d> MutiMaterial_;
+	std::shared_ptr<Model> model_;
+	std::unique_ptr<Object3d> obj_;
 
 	Dissolve* dissolve_;
 	PostEffect* postEffect_ = nullptr;
@@ -73,6 +73,7 @@ private:
 	std::unique_ptr<BurnScars> burnScars_;
 
 	std::unique_ptr<GPUParticle> particle_;
+	std::unique_ptr<GPUParticle> particle2_;
 
 };
 

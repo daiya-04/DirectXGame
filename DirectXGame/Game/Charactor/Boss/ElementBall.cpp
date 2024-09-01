@@ -11,14 +11,19 @@ void ElementBall::Init(std::shared_ptr<Model> model) {
 	animation_ = AnimationManager::Load(obj_->GetModel()->name_);
 
 	particle_.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 5000));
-
+	
 	
 	particle_->emitter_.direction = Vector3(1.0f, 0.0f, 0.0f).Normalize();
 	particle_->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 
+	isLife_ = false;
+	preIsLife_ = false;
+
 }
 
 void ElementBall::Update() {
+
+	preIsLife_ = isLife_;
 
 	if (phaseRequest_) {
 
@@ -128,7 +133,7 @@ void ElementBall::ChargeInit() {
 	workCharge_.param = 0;
 
 	particle_->emitter_.count = 100;
-	particle_->emitter_.size = Vector3(1.8f, 1.8f, 1.8f);
+	particle_->emitter_.size = Vector3(2.0f, 2.0f, 2.0f);
 	particle_->emitter_.speed = -1.0f;
 	particle_->emitter_.scale = 0.6f;
 	
@@ -172,7 +177,7 @@ void ElementBall::ShotUpdate() {
 	obj_->worldTransform_.translation_ += workShot_.move;
 
 	if (obj_->worldTransform_.translation_.y < 0.0f) {
-		OnCollision();
+		isLife_ = false;
 	}
 
 }

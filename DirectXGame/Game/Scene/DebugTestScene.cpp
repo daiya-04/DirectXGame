@@ -25,7 +25,7 @@ void DebugTestScene::Init() {
 	humanModel_ = ModelManager::LoadGLTF("Skin");
 	standingModel_ = ModelManager::LoadGLTF("Standing");
 	sneakModel_ = ModelManager::LoadGLTF("PlayerAttack");
-	MultiMaterialModel_ = ModelManager::LoadOBJ("MultiMesh");
+	model_ = ModelManager::LoadOBJ("Icicle");
 
 	skyBoxTex_ = TextureManager::Load("skyBox.dds");
 	tex_ = TextureManager::Load("test.png");
@@ -39,8 +39,8 @@ void DebugTestScene::Init() {
 	skinCluster_.Create(skeleton_, standingModel_);
 	human_->SetSkinCluster(&skinCluster_);
 
-	MutiMaterial_.reset(Object3d::Create(MultiMaterialModel_));
-	MutiMaterial_->worldTransform_.rotation_.y = 3.14f;
+	obj_.reset(Object3d::Create(model_));
+	obj_->worldTransform_.rotation_.y = 3.14f;
 
 	sprite_.reset(Sprite::Create(tex_, { 640.0f,360.0f }));
 	
@@ -55,17 +55,35 @@ void DebugTestScene::Init() {
 	human_->worldTransform_.rotation_.y = 3.14f;
 	human_->worldTransform_.translation_.z = 10.0f;
 
+	particle2_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 5000));
+
+	particle2_->isLoop_ = true;
+	particle2_->emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
+	particle2_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
+	particle2_->emitter_.scale = 0.1f;
+	particle2_->emitter_.count = 100;
+	particle2_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
+	particle2_->emitter_.angle = 360.0f;
+	particle2_->emitter_.frequency = 2.0f / 60.0f;
+	particle2_->emitter_.color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+	particle2_->emitter_.lifeTime = 1.5f;
+	particle2_->emitter_.speed = 2.0f;
+
 	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),10000));
 	particle_->emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
 	particle_->emitter_.size = Vector3(0.0f,0.0f,0.0f);
 	particle_->emitter_.scale = 0.05f;
-	particle_->emitter_.count = 100;
+	particle_->emitter_.count = 10000;
 	particle_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
 	particle_->emitter_.angle = 45.0f;
 	particle_->emitter_.frequency = 0.5f;
 	particle_->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-	particle_->emitter_.lifeTime = 1.5f;
-	particle_->emitter_.speed = 5.0f;
+	particle_->emitter_.lifeTime = 1.0f;
+	particle_->emitter_.speed = 4.0f;
+
+	particle_->isLoop_ = false;
+
+	
 
 
 	Update();
@@ -101,7 +119,12 @@ void DebugTestScene::Update() {
 		animation_.SetAnimationSpeed(1.0f / 60.0f);
 	}
 
+	if (Input::GetInstance()->TriggerKey(DIK_H)) {
+		particle_->emitter_.emit = 1;
+	}
+
 	particle_->Update();
+	particle2_->Update();
 
 	human_->worldTransform_.UpdateMatrix();
 	animation_.Play(skeleton_);
@@ -109,7 +132,7 @@ void DebugTestScene::Update() {
 	skeleton_.Update();
 	skinCluster_.Update(skeleton_);
 
-	MutiMaterial_->worldTransform_.UpdateMatrix();
+	obj_->worldTransform_.UpdateMatrix();
 
 	camera_.UpdateViewMatrix();
 	pointLight_.Update();
@@ -130,7 +153,7 @@ void DebugTestScene::DrawModel() {
 
 
 	Object3d::preDraw();
-	//MutiMaterial_->Draw(camera_);
+	//obj_->Draw(camera_);
 
 	//skyBox_->Draw(camera_);
 	//ShapesDraw::DrawSphere(Shapes::Sphere({}, 1.0f), camera_);
@@ -152,6 +175,7 @@ void DebugTestScene::DrawParticle() {
 
 	GPUParticle::preDraw();
 	particle_->Draw(camera_);
+	particle2_->Draw(camera_);
 
 }
 

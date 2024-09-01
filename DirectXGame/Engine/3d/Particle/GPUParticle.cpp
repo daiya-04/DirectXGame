@@ -454,15 +454,20 @@ void GPUParticle::Update() {
 
 	perFrameData->time += (1.0f / 60.0f);
 
-	emitter_.frequencyTime += (1.0f / 60.0f);
+	if (isLoop_) {
+		
 
-	if (emitter_.frequency <= emitter_.frequencyTime) {
-		emitter_.frequencyTime -= emitter_.frequency;
-		emitter_.emit = 1;
+		emitter_.frequencyTime += (1.0f / 60.0f);
+
+		if (emitter_.frequency <= emitter_.frequencyTime) {
+			emitter_.frequencyTime -= emitter_.frequency;
+			emitter_.emit = 1;
+		}
+		else {
+			emitter_.emit = 0;
+		}
 	}
-	else {
-		emitter_.emit = 0;
-	}
+	
 
 	std::memcpy(emitterSphereData_, &emitter_, sizeof(EmitterSphere));
 
@@ -517,7 +522,11 @@ void GPUParticle::Update() {
 	postBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	commandList_->ResourceBarrier(1, &postBarrier);
 
+	
 
+	if (!isLoop_ && emitter_.emit == 1) {
+		emitter_.emit = 0;
+	}
 
 }
 
