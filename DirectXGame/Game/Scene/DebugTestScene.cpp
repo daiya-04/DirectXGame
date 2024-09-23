@@ -59,7 +59,7 @@ void DebugTestScene::Init() {
 
 	particle2_->isLoop_ = true;
 	particle2_->emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
-	particle2_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
+	particle2_->emitter_.size = Vector3(1.0f, 1.0f, 1.0f);
 	particle2_->emitter_.scale = 0.1f;
 	particle2_->emitter_.count = 100;
 	particle2_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
