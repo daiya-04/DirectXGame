@@ -469,7 +469,7 @@ void GPUParticle::Update() {
 	}
 	
 
-	std::memcpy(emitterSphereData_, &emitter_, sizeof(EmitterSphere));
+	std::memcpy(emitterData_, &emitter_, sizeof(Emitter));
 
 	//描画用のDescriptorHeapの設定
 	ID3D12DescriptorHeap* descriptorHeaps[] = { DirectXCommon::GetInstance()->GetSrvHeap() };
@@ -613,9 +613,9 @@ void GPUParticle::CreateBuffer() {
 	perViewData_->viewProjectionMat_ = MakeIdentity44();
 	perViewData_->billboardMat_ = MakeIdentity44();
 
-	emitterBuff_ = CreateBufferResource(device_, sizeof(EmitterSphere));
+	emitterBuff_ = CreateBufferResource(device_, sizeof(Emitter));
 
-	emitterBuff_->Map(0, nullptr, reinterpret_cast<void**>(&emitterSphereData_));
+	emitterBuff_->Map(0, nullptr, reinterpret_cast<void**>(&emitterData_));
 
 	perFrameBuff_ = CreateBufferResource(device_, sizeof(PerFrame));
 	

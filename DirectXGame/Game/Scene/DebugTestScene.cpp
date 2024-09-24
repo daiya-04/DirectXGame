@@ -55,19 +55,20 @@ void DebugTestScene::Init() {
 	human_->worldTransform_.rotation_.y = 3.14f;
 	human_->worldTransform_.translation_.z = 10.0f;
 
-	particle2_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 5000));
+	particle2_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 50000));
 
 	particle2_->isLoop_ = true;
 	particle2_->emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
 	particle2_->emitter_.size = Vector3(1.0f, 1.0f, 1.0f);
 	particle2_->emitter_.scale = 0.1f;
-	particle2_->emitter_.count = 100;
+	particle2_->emitter_.count = 1000;
 	particle2_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
 	particle2_->emitter_.angle = 360.0f;
-	particle2_->emitter_.frequency = 2.0f / 60.0f;
+	particle2_->emitter_.frequency = 1.0f / 60.0f;
 	particle2_->emitter_.color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
 	particle2_->emitter_.lifeTime = 1.5f;
-	particle2_->emitter_.speed = 2.0f;
+	particle2_->emitter_.speed = 0.0f;
+	particle2_->emitter_.emitterType = 4;
 
 	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),10000));
 	particle_->emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);

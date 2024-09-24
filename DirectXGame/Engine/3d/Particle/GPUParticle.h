@@ -78,7 +78,7 @@ public:
 		Matrix4x4 billboardMat_;
 	};
 
-	struct EmitterSphere {
+	struct Emitter {
 		Vector3 translate;
 		float padding1;
 		Vector3 size;
@@ -92,7 +92,8 @@ public:
 		Vector4 color;
 		float lifeTime;
 		float speed;
-		float padding[2];
+		uint32_t emitterType;
+		float padding2;
 	};
 
 	struct PerFrame {
@@ -146,7 +147,7 @@ private:
 	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> srvHandle_;
 
 	ComPtr<ID3D12Resource> emitterBuff_;
-	EmitterSphere* emitterSphereData_ = nullptr;
+	Emitter* emitterData_ = nullptr;
 
 	ComPtr<ID3D12Resource> perFrameBuff_;
 	PerFrame* perFrameData = nullptr;
@@ -173,7 +174,7 @@ private:
 
 public:
 
-	EmitterSphere emitter_;
+	Emitter emitter_;
 
 	bool isLoop_ = true;
 
