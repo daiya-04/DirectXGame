@@ -53,7 +53,15 @@ float32_t3 ShotDirection(RandomGenerator generator) {
 
     float32_t4x4 rotateMat = mul(mul(MakeRotateXMat(radians(angleX)),MakeRotateYMat(radians(angleY))), MakeRotateZMat(radians(angleZ)));
 
-    return mul(float32_t4(gEmitter.direction, 1.0f), rotateMat).xyz;
+    float32_t3 direction = normalize(mul(float32_t4(gEmitter.direction, 1.0f), rotateMat).xyz);
+
+    if(gEmitter.emitterType == 1){
+        if(direction.y < 0.0f){
+            direction.y *= -1;
+        }
+    }
+
+    return direction;
 
 }
 
@@ -70,19 +78,32 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
 
             if((0 <= freeListIndex) && (freeListIndex < gMaxParticles.maxNum)) {
                 uint32_t particleIndex = gFreeList[freeListIndex];
-                if(gEmitter.emitterType == 0) { // BOX
-                    //gParticles[particleIndex].translate = gEmitter.translate + ((generator.Generate3d() * 2.0f - 1.0f) * gEmitter.size);
-                    gParticles[particleIndex].translate = gEmitter.translate + (generator.GeneratedRange3(-1.0f, 1.0f) * gEmitter.size);
-                } else if(gEmitter.emitterType == 1) { //Sphere
-                    gParticles[particleIndex].translate = gEmitter.translate + (normalize(generator.GeneratedRange3(-1.0f, 1.0f)) * (generator.Generate1d() * gEmitter.size.x));
-                } else if(gEmitter.emitterType == 2) { //Hemisphere(半球)
+                if(gEmitter.emitterType == 0) { // Sphere(球)
 
-                } else if(gEmitter.emitterType == 3) { //Square
+                    gParticles[particleIndex].translate = gEmitter.translate + (normalize(generator.GeneratedRange3(-1.0f, 1.0f)) * (generator.Generate1d() * gEmitter.size.x));
+
+                } else if(gEmitter.emitterType == 1) { //Hemisphere(半球)
+
+                    float32_t3 generatedPos = gEmitter.translate + (normalize(generator.GeneratedRange3(-1.0f, 1.0f)) * (generator.Generate1d() * gEmitter.size.x));
+                    if(generatedPos.y < 0.0f){
+                        generatedPos.y *= -1;
+                    }
+                    gParticles[particleIndex].translate = generatedPos;
+
+                } else if(gEmitter.emitterType == 2) { //Box(立方体)
+
+                    gParticles[particleIndex].translate = gEmitter.translate + (generator.GeneratedRange3(-1.0f, 1.0f) * gEmitter.size);
+
+                } else if(gEmitter.emitterType == 3) { //Square(平面)
+
                     float32_t2 pos = generator.GeneratedRange2(-1.0f, 1.0f) * float32_t2(gEmitter.size.x, gEmitter.size.z);
                     gParticles[particleIndex].translate = gEmitter.translate + float32_t3(pos.x, 0.0f, pos.y);
-                } else if(gEmitter.emitterType == 4) { //circle
+
+                } else if(gEmitter.emitterType == 4) { //circle(円形)
+
                     float32_t2 pos = normalize(generator.GeneratedRange2(-1.0f, 1.0f)) * (generator.Generate1d() * gEmitter.size.x);
                     gParticles[particleIndex].translate = gEmitter.translate + float32_t3(pos.x, 0.0f, pos.y);
+
                 }
                 
                 gParticles[particleIndex].scale = float32_t3(gEmitter.scale, gEmitter.scale, gEmitter.scale);
