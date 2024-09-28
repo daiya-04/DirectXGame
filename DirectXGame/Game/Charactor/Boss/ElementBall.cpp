@@ -15,6 +15,9 @@ void ElementBall::Init(std::shared_ptr<Model> model) {
 	
 	particle_->emitter_.direction = Vector3(1.0f, 0.0f, 0.0f).Normalize();
 	particle_->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	particle_->emitter_.size = Vector3(1.3f, 1.3f, 1.3f);
+	particle_->emitter_.angle = 360.0f;
+	particle_->emitter_.emitterType = 0;
 
 	isLife_ = false;
 	preIsLife_ = false;
@@ -74,9 +77,11 @@ void ElementBall::OnCollision() {
 void ElementBall::AttackStart() {
 
 	phaseRequest_ = Phase::kSet;
+	obj_->worldTransform_.translation_ = workSet_.start;
 	obj_->worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	isLife_ = true;
 
+	obj_->worldTransform_.UpdateMatrix();
 }
 
 void ElementBall::SetAttackData(const Vector3& startPos, uint32_t interval) {
@@ -103,7 +108,7 @@ void ElementBall::RootUpdate() {
 
 void ElementBall::SetInit() {
 
-	obj_->worldTransform_.translation_ = workSet_.start;
+	
 	animation_.Start();
 
 	particle_->emitter_.count = 50;
@@ -111,7 +116,6 @@ void ElementBall::SetInit() {
 	particle_->emitter_.frequency = 1.0f / 60.0f;
 	particle_->emitter_.lifeTime = 1.0f;
 	particle_->emitter_.scale = 0.3f;
-	particle_->emitter_.size = Vector3(1.3f, 1.3f, 1.3f);
 	particle_->emitter_.speed = 2.0f;
 
 }

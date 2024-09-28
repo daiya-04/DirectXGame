@@ -100,5 +100,7 @@ public: //メンバ関数
 
 	std::shared_ptr<Model> GetModel() const { return model_; }
 
+	Vector3 GetWorldPos() const;
+
 };
 

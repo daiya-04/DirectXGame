@@ -13,20 +13,23 @@ void PlasmaShot::Init(const std::shared_ptr<Model>& model) {
 
 	particle_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 2000));
 	particle_->emitter_.direction = Vector3(0.0f, 0.0f, 1.0f);
+	particle_->emitter_.angle = 360.0f;
 	particle_->emitter_.color = Vector4(0.43f, 0.2f, 0.67f, 1.0f);
+	particle_->emitter_.emitterType = 0;
 	particle_->isLoop_ = true;
 
 	hitEff_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 10000));
 	
 	hitEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-	hitEff_->emitter_.color = Vector4(0.43f, 0.2f, 0.67f, 1.0f);
 	hitEff_->emitter_.angle = 360.0f;
+	hitEff_->emitter_.color = Vector4(0.43f, 0.2f, 0.67f, 1.0f);
 	hitEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
 	hitEff_->emitter_.lifeTime = 1.0f;
 	hitEff_->emitter_.count = 10000;
 	hitEff_->emitter_.scale = 0.05f;
 	hitEff_->emitter_.emit = 0;
 	hitEff_->emitter_.speed = 10.0f;
+	hitEff_->emitter_.emitterType = 0;
 
 	hitEff_->isLoop_ = false;
 
@@ -105,7 +108,6 @@ void PlasmaShot::RootUpdate() {
 void PlasmaShot::CreateInit() {
 
 	particle_->emitter_.count = 50;
-	particle_->emitter_.angle = 360.0f;
 	particle_->emitter_.frequency = 2.0f / 60.0f;
 	particle_->emitter_.lifeTime = 1.0f;
 	particle_->emitter_.scale = 0.5f;
@@ -144,7 +146,6 @@ void PlasmaShot::ShotInit() {
 	targetDict_ = target_->translation_ - obj_->worldTransform_.translation_;
 
 	particle_->emitter_.count = 50;
-	particle_->emitter_.angle = 30.0f;
 	particle_->emitter_.frequency = 1.0f / 60.0f;
 	particle_->emitter_.lifeTime = 1.0f;
 	particle_->emitter_.scale = 0.3f;

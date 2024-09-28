@@ -104,6 +104,7 @@ void GameScene::Init(){
 	attackEndEff_->emitter_.scale = 0.1f;
 	attackEndEff_->emitter_.speed = 7.0f;
 	attackEndEff_->emitter_.lifeTime = 0.5f;
+	attackEndEff_->emitter_.emitterType = 0;
 
 	//ボス
 	boss_ = std::make_unique<Boss>();
@@ -347,6 +348,8 @@ void GameScene::DrawPostEffect() {
 	if (sceneEvent_ == SceneEvent::Battle) {
 		player_->DrawParticle(camera_);
 	}
+
+	boss_->DrawParticle(camera_);
 
 	attackEndEff_->Draw(camera_);
 
