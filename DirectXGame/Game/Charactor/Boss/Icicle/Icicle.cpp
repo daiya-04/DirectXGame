@@ -13,7 +13,9 @@ void Icicle::Init(const std::shared_ptr<Model>& model) {
 	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),5000));
 
 	particle_->emitter_.direction = Vector3(0.0f, 0.0f, 1.0f);
+	particle_->emitter_.angle = 360.0f;
 	particle_->emitter_.color = Vector4(0.05f, 0.94f, 0.85f, 1.0f);
+	particle_->emitter_.emitterType = 0;
 	particle_->isLoop_ = true;
 
 	hitEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
@@ -21,13 +23,14 @@ void Icicle::Init(const std::shared_ptr<Model>& model) {
 	hitEff_->isLoop_ = false;
 	hitEff_->emitter_.count = 10000;
 	hitEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-	hitEff_->emitter_.angle = 180.0f;
+	hitEff_->emitter_.angle = 360.0f;
 	hitEff_->emitter_.color = Vector4(0.05f, 0.94f, 0.85f, 1.0f);
 	hitEff_->emitter_.lifeTime = 0.7f;
 	hitEff_->emitter_.speed = 15.0f;
 	hitEff_->emitter_.scale = 0.1f;
 	hitEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
 	hitEff_->emitter_.emit = 0;
+	hitEff_->emitter_.emitterType = 0;
 
 }
 
@@ -104,7 +107,6 @@ void Icicle::CreateInit() {
 	createData_.param_ = 0.0f;
 
 	particle_->emitter_.count = 500;
-	particle_->emitter_.angle = 360.0f;
 	particle_->emitter_.frequency = 0.3f;
 	particle_->emitter_.lifeTime = 2.0f;
 	particle_->emitter_.scale = 1.0f;

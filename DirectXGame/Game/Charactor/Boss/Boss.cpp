@@ -26,6 +26,21 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 		skinClusters_[index].Create(skeletons_[index], animationModels_[index]);
 	}
 	obj_->SetSkinCluster(&skinClusters_[action_]);
+
+	appearEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
+	appearEff_->isLoop_ = false;
+
+	appearEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
+	appearEff_->emitter_.angle = 0.0f;
+	appearEff_->emitter_.emitterType = 4;
+	appearEff_->emitter_.count = 100;
+	appearEff_->emitter_.frequency = 1.0f / 60.0f;
+	appearEff_->emitter_.color = Vector4(0.2f, 0.05f, 0.32f, 1.0f);
+	appearEff_->emitter_.lifeTime = 2.0f;
+	appearEff_->emitter_.scale = 0.5f;
+	appearEff_->emitter_.size = Vector3(2.0f, 1.0f, 1.0f);
+	appearEff_->emitter_.speed = 5.0f;
+	
 	
 	rotateMat_ = DirectionToDirection({0.0f,0.0f,1.0f}, direction_);
 
@@ -67,6 +82,11 @@ void Boss::Update() {
 	skeletons_[action_].Update();
 	skinClusters_[action_].Update(skeletons_[action_]);
 
+	appearEff_->emitter_.translate = obj_->GetWorldPos();
+	appearEff_->emitter_.translate.y = 0.01f;
+
+	appearEff_->Update();
+
 	UIUpdate();
 	ColliderUpdate();
 }
@@ -87,6 +107,12 @@ void Boss::Draw(const Camera& camera) {
 
 	obj_->Draw(camera);
 	skeletons_[action_].Draw(obj_->worldTransform_, camera);
+
+}
+
+void Boss::DrawParticle(const Camera& camera) {
+
+	appearEff_->Draw(camera);
 
 }
 
@@ -138,9 +164,9 @@ void Boss::AttackInit() {
 	
 
 	if (attackType_ == AttackType::kElementBall) {
-
-		ElementBallManager::GetInstance()->AttackStart();
 		ElementBallManager::GetInstance()->SetAttackData(obj_->worldTransform_.translation_);
+		ElementBallManager::GetInstance()->AttackStart();
+		
 		
 		attackType_ = AttackType::kGroundFlare;
 		
@@ -149,12 +175,11 @@ void Boss::AttackInit() {
 		attackType_ = AttackType::kIcicle;
 	}
 	else if (attackType_ == AttackType::kIcicle) {
-		IcicleManager::GetInstanse()->AttackStart();
 		IcicleManager::GetInstanse()->SetAttackData(GetWorldPos(), Vector3(0.0f, 0.0f, -1.0f));
+		IcicleManager::GetInstanse()->AttackStart();
 		attackType_ = AttackType::kPlasmaShot;
 	}
 	else if (attackType_ == AttackType::kPlasmaShot) {
-		PlasmaShotManager::GetInstance()->AttackStart();
 
 		direction_ = (target_->translation_ - obj_->worldTransform_.translation_).Normalize();
 		rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
@@ -162,6 +187,8 @@ void Boss::AttackInit() {
 		offset = Transform(offset, rotateMat_);
 
 		PlasmaShotManager::GetInstance()->SetAttackData(GetWorldPos() + offset);
+
+		PlasmaShotManager::GetInstance()->AttackStart();
 
 		attackType_ = AttackType::kElementBall;
 	}
@@ -183,6 +210,7 @@ void Boss::AppearInit() {
 
 	obj_->worldTransform_.translation_ = workAppear_.startPos;
 	workAppear_.param = 0.0f;
+	appearEff_->isLoop_ = true;
 
 }
 
@@ -190,6 +218,7 @@ void Boss::AppearUpdate() {
 
 	if (workAppear_.param >= 1.0f) {
 		behaviorRequest_ = Behavior::kRoot;
+		appearEff_->isLoop_ = false;
 		return;
 	}
 

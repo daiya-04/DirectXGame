@@ -11,6 +11,7 @@
 #include "LevelLoader.h"
 #include "Particle.h"
 #include "Sprite.h"
+#include "GPUParticle.h"
 
 #include <memory>
 #include <vector>
@@ -88,6 +89,8 @@ private:
 	std::vector<Skeleton> skeletons_;
 	std::vector<SkinCluster> skinClusters_;
 
+	std::unique_ptr<GPUParticle> appearEff_;
+
 	Action action_ = Action::Standing;
 	AttackType attackType_ = AttackType::kElementBall;
 
@@ -130,6 +133,8 @@ public:
 	void UIUpdate();
 
 	void Draw(const Camera& camera);
+
+	void DrawParticle(const Camera& camera);
 
 	void DrawUI();
 

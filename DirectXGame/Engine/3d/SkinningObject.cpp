@@ -439,6 +439,16 @@ void SkinningObject::Draw(const Camera& camera) {
 
 }
 
+Vector3 SkinningObject::GetWorldPos() const {
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
+}
+
 ComPtr<ID3D12Resource> SkinningObject::CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes) {
 	//リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapproperties{};
