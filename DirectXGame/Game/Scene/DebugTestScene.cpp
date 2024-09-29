@@ -25,7 +25,7 @@ void DebugTestScene::Init() {
 	humanModel_ = ModelManager::LoadGLTF("Skin");
 	standingModel_ = ModelManager::LoadGLTF("Standing");
 	sneakModel_ = ModelManager::LoadGLTF("PlayerAttack");
-	model_ = ModelManager::LoadOBJ("Icicle");
+	model_ = ModelManager::LoadOBJ("Rock");
 
 	skyBoxTex_ = TextureManager::Load("skyBox.dds");
 	tex_ = TextureManager::Load("test.png");
@@ -155,7 +155,7 @@ void DebugTestScene::DrawModel() {
 
 
 	Object3d::preDraw();
-	//obj_->Draw(camera_);
+	obj_->Draw(camera_);
 
 	//skyBox_->Draw(camera_);
 	//ShapesDraw::DrawSphere(Shapes::Sphere({}, 1.0f), camera_);
@@ -176,8 +176,8 @@ void DebugTestScene::DrawParticleModel() {
 void DebugTestScene::DrawParticle() {
 
 	GPUParticle::preDraw();
-	particle_->Draw(camera_);
-	particle2_->Draw(camera_);
+	//particle_->Draw(camera_);
+	//particle2_->Draw(camera_);
 
 }
 

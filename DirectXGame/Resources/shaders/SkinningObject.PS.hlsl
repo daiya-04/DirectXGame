@@ -65,7 +65,7 @@ PixelShaderOutput main(VertexShaderOutput input){
 		float32_t4 environmentColor = gEnvironmentTex.Sample(gSampler,reflectedVector);
 		
 		//合計
-		output.color.rgb = diffuseDL + specularDL + (environmentColor.rgb * 0.2f);
+		output.color.rgb = diffuseDL + specularDL + (environmentColor.rgb * 0.01f);
         output.color.a = gMaterial.color.a * textureColor.a;
 	} else {
 	    output.color = gMaterial.color * textureColor;

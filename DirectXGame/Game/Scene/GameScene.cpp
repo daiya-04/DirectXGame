@@ -54,6 +54,7 @@ void GameScene::Init(){
 	std::shared_ptr<Model> icicleModel = ModelManager::LoadOBJ("Icicle");
 	std::shared_ptr<Model> plasmaBallModel = ModelManager::LoadOBJ("PlasmaBall");
 	std::shared_ptr<Model> elementBallModel = ModelManager::LoadGLTF("ElementBall");
+	std::shared_ptr<Model> rockModel = ModelManager::LoadOBJ("Rock");
 
 	///
 
@@ -122,6 +123,11 @@ void GameScene::Init(){
 		}
 		if (objectData.objectName == "Boss") {
 			boss_->SetData(objectData);
+		}
+		if (objectData.objectName == "Rock") {
+			auto& rock = rocks_.emplace_back(std::make_unique<Rock>());
+			rock->Init(rockModel);
+			rock->SetData(objectData);
 		}
 	}
 	///
@@ -334,6 +340,10 @@ void GameScene::DrawPostEffect() {
 
 	groundFlare_->Draw(camera_);
 	elementBall_->Draw(camera_);
+
+	for (auto& rock : rocks_) {
+		rock->Draw(camera_);
+	}
 	
 	BurnScars::preDraw();
 
@@ -411,6 +421,10 @@ void GameScene::BattleUpdate() {
 	icicle_->Update();
 	plasmaShot_->Update();
 	elementBall_->Update();
+
+	for (auto& rock : rocks_) {
+		rock->Update();
+	}
 
 	attackEndEff_->Update();
 

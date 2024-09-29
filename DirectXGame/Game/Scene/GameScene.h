@@ -32,6 +32,7 @@
 #include "GroundFlare.h"
 #include "IcicleManager.h"
 #include "PlasmaShotManager.h"
+#include "Rock.h"
 
 
 class GameScene : public IScene {
@@ -84,6 +85,7 @@ private: //オブジェクト
 	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;*/
 	std::unique_ptr<Boss> boss_;
 
+	std::vector<std::unique_ptr<Rock>> rocks_;
 	
 	std::list<std::unique_ptr<PlayerAttack>> playerAttacks_;
 	std::unique_ptr<GPUParticle> attackEndEff_;

@@ -249,6 +249,7 @@
     <ClCompile Include="ElementBallManager.cpp">
       <Filter>Game\Charactor\Boss\ElementBall</Filter>
     </ClCompile>
+    <ClCompile Include="Rock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -438,5 +439,6 @@
     <ClInclude Include="ElementBallManager.h">
       <Filter>Game\Charactor\Boss\ElementBall</Filter>
     </ClInclude>
+    <ClInclude Include="Rock.h" />
   </ItemGroup>
 </Project>
