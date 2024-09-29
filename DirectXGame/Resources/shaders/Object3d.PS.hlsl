@@ -126,7 +126,7 @@ PixelShaderOutput main(VertexShaderOutput input){
 		float32_t3 specularSL = gSpotLight.color.rgb * gSpotLight.intensity * attenuationFactor * falloffFactor * specularPow * float32_t3(1.0f,1.0f,1.0f);
 		
 		//合計
-		output.color.rgb = diffuseDL + specularDL + diffusePL + specularPL + diffuseSL + specularSL + (environmentColor.rgb * 0.1f);
+		output.color.rgb = diffuseDL + specularDL + diffusePL + specularPL + diffuseSL + specularSL + (environmentColor.rgb * 0.01f);
         output.color.a = gMaterial.color.a * textureColor.a;
 	} else {
 	    output.color = gMaterial.color * textureColor;

@@ -164,6 +164,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Charactor\Player\PlayerAttack.cpp" />
     <ClCompile Include="Game\Charactor\Boss\PlasmaShot\PlasmaShot.cpp" />
     <ClCompile Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.cpp" />
+    <ClCompile Include="Rock.cpp" />
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
   </ItemGroup>
@@ -231,6 +232,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Charactor\Boss\Icicle\IcicleManager.h" />
     <ClInclude Include="Game\Charactor\Boss\PlasmaShot\PlasmaShot.h" />
     <ClInclude Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.h" />
+    <ClInclude Include="Rock.h" />
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
   </ItemGroup>
