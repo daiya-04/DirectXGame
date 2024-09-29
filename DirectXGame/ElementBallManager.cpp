@@ -25,10 +25,10 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 		fireField->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 		fireField->emitter_.emitterType = 4;
 		fireField->emitter_.frequency = 1.0f / 60.0f;
-		fireField->emitter_.count = 1000;
+		fireField->emitter_.count = 2000;
 		fireField->emitter_.lifeTime = 10.0f / 60.0f;
 		fireField->emitter_.speed = 0.1f;
-		fireField->emitter_.scale = 0.1f;
+		fireField->emitter_.scale = 0.2f;
 		fireField->emitter_.size = Vector3(2.5f, 1.5f, 1.5f);
 		fireField->isLoop_ = false;
 	}

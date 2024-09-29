@@ -298,19 +298,20 @@ void BurnScars::Initialize(uint32_t textureHandle) {
 	thresholdBuff_ = CreateBufferResource(device_, sizeof(float));
 	thresholdBuff_->Map(0, nullptr, reinterpret_cast<void**>(&thresholdData_));
 
-	explosionEff_.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 10000));
+	explosionEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
 
 	explosionEff_->isLoop_ = false;
 
 	explosionEff_->emitter_.count = 10000;
 	explosionEff_->emitter_.emit = 0;
 	explosionEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f).Normalize();
-	explosionEff_->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-	explosionEff_->emitter_.angle = 180.0f;
+	explosionEff_->emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
+	explosionEff_->emitter_.angle = 360.0f;
 	explosionEff_->emitter_.lifeTime = 1.0f;
 	explosionEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
 	explosionEff_->emitter_.speed = 15.0f;
 	explosionEff_->emitter_.scale = 0.05f;
+	explosionEff_->emitter_.emitterType = 1;
 
 }
 
