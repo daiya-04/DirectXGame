@@ -18,7 +18,7 @@
 
 void DSFramework::Init(){
 	
-	WinApp::GetInstance()->CreateGameWindow(L"LE2A_12_セト_ダイヤ");
+	WinApp::GetInstance()->CreateGameWindow(L"魔法師の戦い");
 
 	
 	DirectXCommon::GetInstance()->Initialize();

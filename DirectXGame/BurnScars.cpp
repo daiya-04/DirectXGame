@@ -310,7 +310,7 @@ void BurnScars::Initialize(uint32_t textureHandle) {
 	explosionEff_->emitter_.lifeTime = 1.0f;
 	explosionEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
 	explosionEff_->emitter_.speed = 15.0f;
-	explosionEff_->emitter_.scale = 0.05f;
+	explosionEff_->emitter_.scale = 0.1f;
 	explosionEff_->emitter_.emitterType = 1;
 
 }

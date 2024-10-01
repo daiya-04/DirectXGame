@@ -65,10 +65,10 @@ void DebugTestScene::Init() {
 	particle2_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
 	particle2_->emitter_.angle = 360.0f;
 	particle2_->emitter_.frequency = 1.0f / 60.0f;
-	particle2_->emitter_.color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+	particle2_->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	particle2_->emitter_.lifeTime = 1.5f;
 	particle2_->emitter_.speed = 0.0f;
-	particle2_->emitter_.emitterType = 1;
+	particle2_->emitter_.emitterType = 3;
 
 	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),10000));
 	particle_->emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
@@ -155,7 +155,7 @@ void DebugTestScene::DrawModel() {
 
 
 	Object3d::preDraw();
-	obj_->Draw(camera_);
+	//obj_->Draw(camera_);
 
 	//skyBox_->Draw(camera_);
 	//ShapesDraw::DrawSphere(Shapes::Sphere({}, 1.0f), camera_);
@@ -176,8 +176,8 @@ void DebugTestScene::DrawParticleModel() {
 void DebugTestScene::DrawParticle() {
 
 	GPUParticle::preDraw();
-	//particle_->Draw(camera_);
-	//particle2_->Draw(camera_);
+	particle_->Draw(camera_);
+	particle2_->Draw(camera_);
 
 }
 
