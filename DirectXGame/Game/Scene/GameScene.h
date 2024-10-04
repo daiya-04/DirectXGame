@@ -24,8 +24,6 @@
 
 #include "Ground.h"
 #include "Player.h"
-#include "Enemy.h"
-#include "EnemyBullet.h"
 #include "Boss.h"
 #include "FollowCamera.h"
 #include "ElementBallManager.h"
@@ -64,10 +62,6 @@ public:
 
 	GameScene();
 
-	//Enemy* EnemyPop(std::vector<std::shared_ptr<Model>> modelHandles, Vector3 pos);
-	
-	//void AddEnemyBullet(EnemyBullet* enemyBullet);
-
 	void AddPlayerAttack(PlayerAttack* playerAttack);
 
 private:
@@ -83,8 +77,6 @@ private: //オブジェクト
 	std::unique_ptr<Ground> ground_;
 
 	std::unique_ptr<Player> player_;
-	/*std::list<std::unique_ptr<Enemy>> enemies_;
-	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;*/
 	std::unique_ptr<Boss> boss_;
 
 	std::vector<std::unique_ptr<Rock>> rocks_;

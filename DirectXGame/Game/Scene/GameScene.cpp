@@ -41,9 +41,7 @@ void GameScene::Init(){
 	std::shared_ptr<Model> playerStandingModel = ModelManager::LoadGLTF("Standing");
 	std::shared_ptr<Model> playerRunningModel = ModelManager::LoadGLTF("Running");
 	std::shared_ptr<Model> playerAttackModel = ModelManager::LoadGLTF("PlayerAttack");
-	//enemyBodyModel_ = ModelManager::Load("EnemyBody");
-	//enemyHeadModel_ = ModelManager::Load("EnemyHead");
-	//bulletModel_ = ModelManager::Load("EnemyBullet");
+
 	std::shared_ptr<Model> bossStandingModel = ModelManager::LoadGLTF("Standing");
 	std::shared_ptr<Model> bossSetModel = ModelManager::LoadGLTF("SetMotion");
 	std::shared_ptr<Model> bossAttackModel = ModelManager::LoadGLTF("BossAttack");
@@ -203,17 +201,6 @@ void GameScene::Update() {
 
 		eventRequest_ = std::nullopt;
 	}
-
-	/*if (gameCount_ >= 20) {
-		if (--spawnCount_ <= 0) {
-			spawnCount_ = spawnCoolTime_;
-			for (size_t index = 0; index < spawnNum_; index++) {
-				std::uniform_int_distribution<int> distPos(-60, 60);
-				Vector3 spawnPos = { (float)distPos(randomEngine),0.0f,(float)distPos(randomEngine) };
-				enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, spawnPos)));
-			}
-		}
-	}*/
 	
 
 	playerAttacks_.remove_if([](const std::unique_ptr<PlayerAttack>& playerAttack) {
@@ -231,13 +218,6 @@ void GameScene::Update() {
 
 	
 	ground_->Update();
-	/*for (const auto& enemy : enemies_) {
-		enemy->Update();
-	}*/
-	
-	/*for (const auto& bullet : enemyBullets_) {
-		bullet->Update();
-	}*/
 
 	
 
@@ -408,12 +388,6 @@ void GameScene::BattleUpdate() {
 
 	///衝突判定
 
-	//プレイヤー攻撃とボス
-	/*if (IsCollision(boss_->GetCollider(), player_->GetAttackCollider())) {
-		player_->OnCollision();
-		boss_->OnCollision();
-	}*/
-
 	if (elementBall_->IsAttack()) {
 		for (uint32_t index = 0; index < 4; index++) {
 			if (!elementBall_->IsLife(index)) { 
@@ -452,12 +426,6 @@ void GameScene::BattleUpdate() {
 			}
 		}
 	}
-
-	/*for (const auto& elementBall : elementBalls_) {
-		if (elementBall->IsLife()) {
-			CreateBurnScars(elementBall->GetWorldPos());
-		}
-	}*/
 
 	if (!playerAttacks_.empty()) {
 		for (const auto& playerAttack : playerAttacks_) {
@@ -631,23 +599,6 @@ void GameScene::DebugGUI(){
 
 #endif // _DEBUG
 }
-
-//Enemy* GameScene::EnemyPop(std::vector<std::shared_ptr<Model>> modelHandles, Vector3 pos) {
-//
-//	Enemy* enemy = new Enemy();
-//	enemy->Init(modelHandles);
-//	enemy->SetPos(pos);
-//	std::uniform_int_distribution<int> distTime(5, 9);
-//	enemy->SetCoolTime(distTime(randomEngine));
-//	enemy->SetGameScene(this);
-//
-//	return enemy;
-//}
-
-//void GameScene::AddEnemyBullet(EnemyBullet* enemyBullet) {
-//	enemyBullets_.push_back(std::unique_ptr<EnemyBullet>(enemyBullet));
-//}
-
 
 void GameScene::AddPlayerAttack(PlayerAttack* playerAttack) {
 	playerAttacks_.push_back(std::unique_ptr<PlayerAttack>(playerAttack));
