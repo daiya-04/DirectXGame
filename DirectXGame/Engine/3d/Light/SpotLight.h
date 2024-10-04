@@ -49,7 +49,7 @@ public:
 private:
 
 	ComPtr<ID3D12Resource> cBuffer_;
-	CBufferDataSpotLight* cMap_;
+	CBufferDataSpotLight* cMap_ = nullptr;
 
 
 };

@@ -42,7 +42,7 @@ public:
 private:
 
 	ComPtr<ID3D12Resource> cBuffer_;
-	CBufferDataPointLight* cMap_;
+	CBufferDataPointLight* cMap_ = nullptr;
 
 };
 

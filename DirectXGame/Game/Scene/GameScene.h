@@ -4,6 +4,8 @@
 #include <list>
 #include <vector>
 #include <optional>
+#include <map>
+#include <functional>
 
 #include "Sprite.h"
 #include "Object3d.h"
@@ -110,8 +112,8 @@ private: //オブジェクト
 	Vector2 pos1 = {};
 	Vector2 pos2 = {};
 
-	PostEffect* postEffect_;
-	OutLine* outLine_;
+	PostEffect* postEffect_ = nullptr;
+	OutLine* outLine_ = nullptr;
 	HSVFilter* hsvFilter_ = nullptr;
 
 	std::unique_ptr<LevelData> levelData_;
@@ -134,27 +136,57 @@ private:
 	enum class SceneEvent {
 		Battle,
 		PlayerDead,
+		BossDead,
 		Clear,
+		GameOver,
 	};
 
 private:
 
 	void BattleInit();
-
 	void BattleUpdate();
 
 	void PlayerDeadInit();
-
 	void PlayerDeadUpdate();
 
-	void ClearInit();
+	void BossDeadInit();
+	void BossDeadUpdate();
 
+	void ClearInit();
 	void ClearUpdate();
+
+	void GameOverInit();
+	void GameOverUpdate();
 
 private:
 
 	SceneEvent sceneEvent_ = SceneEvent::Battle;
 	std::optional<SceneEvent> eventRequest_ = SceneEvent::Battle;
+
+	std::map<SceneEvent, std::function<void()>> scenEventInitTable_{
+		{SceneEvent::Battle,[this]() {BattleInit(); }},
+		{SceneEvent::PlayerDead,[this]() {PlayerDeadInit(); }},
+		{SceneEvent::BossDead,[this]() {BossDeadInit(); }},
+		{SceneEvent::Clear,[this]() { ClearInit(); }},
+		{SceneEvent::GameOver,[this]() {GameOverInit(); }},
+	};
+
+	std::map<SceneEvent, std::function<void()>> sceneEventUpdateTable_{
+		{SceneEvent::Battle,[this]() {BattleUpdate(); }},
+		{SceneEvent::PlayerDead,[this]() {PlayerDeadUpdate(); }},
+		{SceneEvent::BossDead,[this]() {BossDeadUpdate(); }},
+		{SceneEvent::Clear,[this]() {ClearUpdate(); }},
+		{SceneEvent::GameOver,[this]() {GameOverUpdate(); }},
+	};
+
+private:
+
+	struct WorkBossDead {
+		int32_t interval_ = 60 * 1;
+		int32_t count_ = 0;
+	};
+
+	WorkBossDead workBossDead_;
 
 };
 

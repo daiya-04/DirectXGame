@@ -27,6 +27,7 @@ public:
 		kRoot,
 		kAttack,
 		kAppear,
+		kDead,
 	};
 
 	Behavior behavior_ = Behavior::kAppear;
@@ -36,12 +37,14 @@ public:
 		{Behavior::kRoot,[this]() {RootInit(); }},
 		{Behavior::kAttack,[this]() {AttackInit(); }},
 		{Behavior::kAppear,[this]() {AppearInit(); }},
+		{Behavior::kDead,[this]() {DeadInit(); }},
 	};
 
 	std::map<Behavior, std::function<void()>> behaviorUpdateTable_{
 		{Behavior::kRoot,[this]() {RootUpdate(); }},
 		{Behavior::kAttack,[this]() {AttackUpdate(); }},
 		{Behavior::kAppear,[this]() {AppearUpdate(); }},
+		{Behavior::kDead,[this]() {DeadUpdate(); }},
 	};
 
 private:
@@ -52,6 +55,8 @@ private:
 	void AppearUpdate();
 	void AttackInit();
 	void AttackUpdate();
+	void DeadInit();
+	void DeadUpdate();
 
 public:
 	
@@ -59,6 +64,7 @@ public:
 		Standing,
 		AttackSet,
 		Attack,
+		Dead,
 
 		ActionNum,
 	};
@@ -70,6 +76,8 @@ public:
 		kPlasmaShot,
 	};
 
+private:
+
 	struct WorkAppear{
 		Vector3 startPos = { 0.0f,-15.0f,50.0f };
 		Vector3 endPos = { 0.0f, 0.0f,50.0f };
@@ -79,6 +87,11 @@ public:
 	struct WorkAttack {
 		uint32_t coolTime = 60 * 3;
 		uint32_t param = 0;
+	};
+
+	struct WorkDead {
+		int32_t interval_ = 60;
+		int32_t counter_ = 0;
 	};
 
 private:
@@ -94,22 +107,24 @@ private:
 	Action action_ = Action::Standing;
 	AttackType attackType_ = AttackType::kElementBall;
 
-	uint32_t maxHp_ = 20;
+	uint32_t maxHp_ = 1;
 	uint32_t life_ = maxHp_;
 
 	bool isDead_ = false;
+	bool isFinishDeadStaging_ = false;
 
 	Vector3 size_{};
 
 	Shapes::AABB collider_{};
 
-	const WorldTransform* target_;
+	const WorldTransform* target_ = nullptr;
 
 	Vector3 direction_ = { 0.0f,0.0f,-1.0f };
 	Matrix4x4 rotateMat_ = MakeIdentity44();
 
 	WorkAppear workAppear_;
 	WorkAttack workAttack_;
+	WorkDead workDead_;
 
 	uint32_t coolTime_ = 0;
 	uint32_t attackTimer_ = 0;
@@ -151,6 +166,7 @@ public:
 	}
 	bool IsAttack() const { return (behavior_ == Behavior::kAttack) ? true : false; }
 	bool IsDead() const { return isDead_; }
+	bool IsFinishDeadStaging() const { return isFinishDeadStaging_; }
 	Vector3 GetWorldPos() const;
 	Shapes::AABB GetCollider(){ return collider_; }
 	Action GetAction() const { return action_; }

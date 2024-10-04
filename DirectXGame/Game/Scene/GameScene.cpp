@@ -47,6 +47,7 @@ void GameScene::Init(){
 	std::shared_ptr<Model> bossStandingModel = ModelManager::LoadGLTF("Standing");
 	std::shared_ptr<Model> bossSetModel = ModelManager::LoadGLTF("SetMotion");
 	std::shared_ptr<Model> bossAttackModel = ModelManager::LoadGLTF("BossAttack");
+	std::shared_ptr<Model> bossDeadModel = ModelManager::LoadGLTF("BossDead");
 
 	std::shared_ptr<Model> playerBulletModel = ModelManager::LoadOBJ("PlayerBullet");
 
@@ -109,7 +110,7 @@ void GameScene::Init(){
 
 	//ボス
 	boss_ = std::make_unique<Boss>();
-	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel });
+	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel,bossDeadModel });
 	boss_->SetTarget(&player_->GetWorldTransform());
 	player_->SetTerget(&boss_->GetWorldTransform());
 
@@ -198,16 +199,7 @@ void GameScene::Update() {
 
 		sceneEvent_ = eventRequest_.value();
 
-		switch (sceneEvent_) {
-			case SceneEvent::Battle:
-				BattleInit();
-				break;
-			case SceneEvent::PlayerDead:
-				PlayerDeadInit();
-				break;
-			case SceneEvent::Clear:
-				ClearInit();
-		}
+		scenEventInitTable_[sceneEvent_]();
 
 		eventRequest_ = std::nullopt;
 	}
@@ -231,19 +223,11 @@ void GameScene::Update() {
 		return false;
 	});
 
-	switch (sceneEvent_) {
-		case SceneEvent::Battle:
-			BattleUpdate();
-			break;
-		case SceneEvent::PlayerDead:
-			PlayerDeadUpdate();
-			break;
-		case SceneEvent::Clear:
-			ClearUpdate();
-			break;
+	sceneEventUpdateTable_[sceneEvent_]();
+
+	for (auto& rock : rocks_) {
+		rock->Update();
 	}
-
-
 
 	
 	ground_->Update();
@@ -390,10 +374,6 @@ void GameScene::BattleInit() {
 
 void GameScene::BattleUpdate() {
 
-	/*if (boss_->IsAttack() && elementBalls_.empty() && !groundFlare_->IsAttack() && !icicle_->IsAttack() && !plasmaShot_->IsAttack()) {
-		boss_->ChangeBehavior(Boss::Behavior::kRoot);
-	}*/
-
 	if (groundFlare_->AttackFinish() || icicle_->AttackFinish() || plasmaShot_->AttackFinish() || elementBall_->AttackFinish()) {
 		boss_->ChangeBehavior(Boss::Behavior::kRoot);
 	}
@@ -422,9 +402,7 @@ void GameScene::BattleUpdate() {
 	plasmaShot_->Update();
 	elementBall_->Update();
 
-	for (auto& rock : rocks_) {
-		rock->Update();
-	}
+	
 
 	attackEndEff_->Update();
 
@@ -502,7 +480,7 @@ void GameScene::BattleUpdate() {
 	}
 
 	if (boss_->IsDead()) {
-		eventRequest_ = SceneEvent::Clear;
+		eventRequest_ = SceneEvent::BossDead;
 	}
 
 }
@@ -530,8 +508,39 @@ void GameScene::PlayerDeadUpdate() {
 	gameOver_->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
 }
 
+void GameScene::BossDeadInit() {
+
+	workBossDead_.count_ = 0;
+
+}
+
+void GameScene::BossDeadUpdate() {
+
+	boss_->Update();
+
+	for (const auto& playerAttack : playerAttacks_) {
+		playerAttack->Update();
+
+		if (!playerAttack->IsLife()) {
+			attackEndEff_->emitter_.emit = 1;
+			attackEndEff_->emitter_.translate = playerAttack->GetWorldPos();
+		}
+
+	}
+
+	attackEndEff_->Update();
+
+	if (boss_->IsFinishDeadStaging()) {
+		if (++workBossDead_.count_ >= workBossDead_.interval_) {
+			eventRequest_ = SceneEvent::Clear;
+		}
+		
+	}
+
+}
+
 void GameScene::ClearInit() {
-	playerAttacks_.clear();
+	
 }
 
 void GameScene::ClearUpdate() {
@@ -539,6 +548,33 @@ void GameScene::ClearUpdate() {
 	if (--finishCount_ <= 0) {
 		SceneManager::GetInstance()->ChangeScene("Title");
 	}
+
+	player_->Update();
+	followCamera_->Update();
+
+	for (const auto& playerAttack : playerAttacks_) {
+		playerAttack->Update();
+
+		if (!playerAttack->IsLife()) {
+			attackEndEff_->emitter_.emit = 1;
+			attackEndEff_->emitter_.translate = playerAttack->GetWorldPos();
+		}
+
+	}
+
+	attackEndEff_->Update();
+
+}
+
+void GameScene::GameOverInit() {
+
+
+
+}
+
+void GameScene::GameOverUpdate() {
+	
+
 
 }
 
