@@ -86,6 +86,12 @@
     <Filter Include="Game\Charactor\Boss\ElementBall">
       <UniqueIdentifier>{bc8f0de4-103d-4155-99fc-fe2ced55c7ab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\GameObject">
+      <UniqueIdentifier>{257adb4a-7718-4a6e-8a94-f4eb14d52e76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Effects">
+      <UniqueIdentifier>{5b67c19d-7414-4be2-abf2-073291c60a33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -155,17 +161,11 @@
     <ClCompile Include="Engine\Loader\LevelLoader.cpp">
       <Filter>Engine\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="Ground.cpp" />
-    <ClCompile Include="FollowCamera.cpp" />
-    <ClCompile Include="EnemyBullet.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Easing\Easing.cpp">
       <Filter>Engine\Easing</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Charactor\Enemy.cpp">
-      <Filter>Game\Charactor</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scene\DebugTestScene.cpp">
       <Filter>Game\Scene</Filter>
@@ -191,15 +191,11 @@
     <ClCompile Include="Engine\3d\Material.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="BurnScars.cpp" />
     <ClCompile Include="Engine\PostEffect\PostEffect.cpp">
       <Filter>Engine\PostEffect</Filter>
     </ClCompile>
     <ClCompile Include="Engine\PostEffect\Dissolve.cpp">
       <Filter>Engine\PostEffect</Filter>
-    </ClCompile>
-    <ClCompile Include="Skydome.cpp">
-      <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Engine\PostEffect\OutLine.cpp">
       <Filter>Engine\PostEffect</Filter>
@@ -243,13 +239,24 @@
     <ClCompile Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.cpp">
       <Filter>Game\Charactor\Boss\PlasmaShot</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Charactor\Boss\ElementBall.cpp">
+    <ClCompile Include="Game\Charactor\Boss\ElementBall\ElementBall.cpp">
       <Filter>Game\Charactor\Boss\ElementBall</Filter>
     </ClCompile>
-    <ClCompile Include="ElementBallManager.cpp">
+    <ClCompile Include="Game\Charactor\Boss\ElementBall\ElementBallManager.cpp">
       <Filter>Game\Charactor\Boss\ElementBall</Filter>
     </ClCompile>
-    <ClCompile Include="Rock.cpp" />
+    <ClCompile Include="Game\GameObject\Rock.cpp">
+      <Filter>Game\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameObject\Ground.cpp">
+      <Filter>Game\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Player\FollowCamera.cpp">
+      <Filter>Game\Charactor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Effects\BurnScars.cpp">
+      <Filter>Game\Effects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -345,17 +352,11 @@
     <ClInclude Include="Engine\Loader\LevelLoader.h">
       <Filter>Engine\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="Ground.h" />
-    <ClInclude Include="FollowCamera.h" />
-    <ClInclude Include="EnemyBullet.h" />
     <ClInclude Include="Game\Scene\TitleScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Easing\Easing.h">
       <Filter>Engine\Easing</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Charactor\Enemy.h">
-      <Filter>Game\Charactor</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Collision\CollisionShapes.h">
       <Filter>Engine\Collision</Filter>
@@ -384,15 +385,11 @@
     <ClInclude Include="Engine\3d\Material.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="BurnScars.h" />
     <ClInclude Include="Engine\PostEffect\PostEffect.h">
       <Filter>Engine\PostEffect</Filter>
     </ClInclude>
     <ClInclude Include="Engine\PostEffect\Dissolve.h">
       <Filter>Engine\PostEffect</Filter>
-    </ClInclude>
-    <ClInclude Include="Skydome.h">
-      <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Engine\PostEffect\OutLine.h">
       <Filter>Engine\PostEffect</Filter>
@@ -433,12 +430,23 @@
     <ClInclude Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.h">
       <Filter>Game\Charactor\Boss\PlasmaShot</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Charactor\Boss\ElementBall.h">
+    <ClInclude Include="Game\Charactor\Boss\ElementBall\ElementBall.h">
       <Filter>Game\Charactor\Boss\ElementBall</Filter>
     </ClInclude>
-    <ClInclude Include="ElementBallManager.h">
+    <ClInclude Include="Game\Charactor\Boss\ElementBall\ElementBallManager.h">
       <Filter>Game\Charactor\Boss\ElementBall</Filter>
     </ClInclude>
-    <ClInclude Include="Rock.h" />
+    <ClInclude Include="Game\GameObject\Rock.h">
+      <Filter>Game\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameObject\Ground.h">
+      <Filter>Game\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Player\FollowCamera.h">
+      <Filter>Game\Charactor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Effects\BurnScars.h">
+      <Filter>Game\Effects</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

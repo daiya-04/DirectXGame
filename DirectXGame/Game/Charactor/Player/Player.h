@@ -82,9 +82,9 @@ public:
 		//コンボが続くか
 		bool comboNext_ = false;
 		//攻撃の速さ
-		float speed_;
+		float speed_ = 0.0f;
 		//攻撃の速度
-		Vector3 velocity_;
+		Vector3 velocity_{};
 	};
 
 	struct ComboAttack {
@@ -109,7 +109,7 @@ public:
 
 private:
 
-	const WorldTransform* target_;
+	const WorldTransform* target_ = nullptr;
 
 	std::unique_ptr<SkinningObject> obj_;
 	std::vector<std::shared_ptr<Model>> animationModels_;
@@ -183,7 +183,7 @@ public:
 
 	const WorldTransform& GetWorldTransform() { return obj_->worldTransform_; }
 	Vector3 GetWorldPos() const;
-	bool IsAttack() { return isAttack_; }
+	bool IsAttack() const { return isAttack_; }
 	Shapes::AABB GetCollider() const { return collider_; }
 	uint32_t GetLife() const { return life_; }
 

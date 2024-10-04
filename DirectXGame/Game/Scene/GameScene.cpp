@@ -41,12 +41,11 @@ void GameScene::Init(){
 	std::shared_ptr<Model> playerStandingModel = ModelManager::LoadGLTF("Standing");
 	std::shared_ptr<Model> playerRunningModel = ModelManager::LoadGLTF("Running");
 	std::shared_ptr<Model> playerAttackModel = ModelManager::LoadGLTF("PlayerAttack");
-	//enemyBodyModel_ = ModelManager::Load("EnemyBody");
-	//enemyHeadModel_ = ModelManager::Load("EnemyHead");
-	//bulletModel_ = ModelManager::Load("EnemyBullet");
+
 	std::shared_ptr<Model> bossStandingModel = ModelManager::LoadGLTF("Standing");
 	std::shared_ptr<Model> bossSetModel = ModelManager::LoadGLTF("SetMotion");
 	std::shared_ptr<Model> bossAttackModel = ModelManager::LoadGLTF("BossAttack");
+	std::shared_ptr<Model> bossDeadModel = ModelManager::LoadGLTF("BossDead");
 
 	std::shared_ptr<Model> playerBulletModel = ModelManager::LoadOBJ("PlayerBullet");
 
@@ -109,7 +108,7 @@ void GameScene::Init(){
 
 	//ボス
 	boss_ = std::make_unique<Boss>();
-	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel });
+	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel,bossDeadModel });
 	boss_->SetTarget(&player_->GetWorldTransform());
 	player_->SetTerget(&boss_->GetWorldTransform());
 
@@ -198,30 +197,10 @@ void GameScene::Update() {
 
 		sceneEvent_ = eventRequest_.value();
 
-		switch (sceneEvent_) {
-			case SceneEvent::Battle:
-				BattleInit();
-				break;
-			case SceneEvent::PlayerDead:
-				PlayerDeadInit();
-				break;
-			case SceneEvent::Clear:
-				ClearInit();
-		}
+		scenEventInitTable_[sceneEvent_]();
 
 		eventRequest_ = std::nullopt;
 	}
-
-	/*if (gameCount_ >= 20) {
-		if (--spawnCount_ <= 0) {
-			spawnCount_ = spawnCoolTime_;
-			for (size_t index = 0; index < spawnNum_; index++) {
-				std::uniform_int_distribution<int> distPos(-60, 60);
-				Vector3 spawnPos = { (float)distPos(randomEngine),0.0f,(float)distPos(randomEngine) };
-				enemies_.push_back(std::unique_ptr<Enemy>(EnemyPop({ enemyBodyModel_ ,enemyHeadModel_ }, spawnPos)));
-			}
-		}
-	}*/
 	
 
 	playerAttacks_.remove_if([](const std::unique_ptr<PlayerAttack>& playerAttack) {
@@ -231,29 +210,14 @@ void GameScene::Update() {
 		return false;
 	});
 
-	switch (sceneEvent_) {
-		case SceneEvent::Battle:
-			BattleUpdate();
-			break;
-		case SceneEvent::PlayerDead:
-			PlayerDeadUpdate();
-			break;
-		case SceneEvent::Clear:
-			ClearUpdate();
-			break;
+	sceneEventUpdateTable_[sceneEvent_]();
+
+	for (auto& rock : rocks_) {
+		rock->Update();
 	}
-
-
 
 	
 	ground_->Update();
-	/*for (const auto& enemy : enemies_) {
-		enemy->Update();
-	}*/
-	
-	/*for (const auto& bullet : enemyBullets_) {
-		bullet->Update();
-	}*/
 
 	
 
@@ -390,10 +354,6 @@ void GameScene::BattleInit() {
 
 void GameScene::BattleUpdate() {
 
-	/*if (boss_->IsAttack() && elementBalls_.empty() && !groundFlare_->IsAttack() && !icicle_->IsAttack() && !plasmaShot_->IsAttack()) {
-		boss_->ChangeBehavior(Boss::Behavior::kRoot);
-	}*/
-
 	if (groundFlare_->AttackFinish() || icicle_->AttackFinish() || plasmaShot_->AttackFinish() || elementBall_->AttackFinish()) {
 		boss_->ChangeBehavior(Boss::Behavior::kRoot);
 	}
@@ -422,19 +382,11 @@ void GameScene::BattleUpdate() {
 	plasmaShot_->Update();
 	elementBall_->Update();
 
-	for (auto& rock : rocks_) {
-		rock->Update();
-	}
+	
 
 	attackEndEff_->Update();
 
 	///衝突判定
-
-	//プレイヤー攻撃とボス
-	/*if (IsCollision(boss_->GetCollider(), player_->GetAttackCollider())) {
-		player_->OnCollision();
-		boss_->OnCollision();
-	}*/
 
 	if (elementBall_->IsAttack()) {
 		for (uint32_t index = 0; index < 4; index++) {
@@ -475,12 +427,6 @@ void GameScene::BattleUpdate() {
 		}
 	}
 
-	/*for (const auto& elementBall : elementBalls_) {
-		if (elementBall->IsLife()) {
-			CreateBurnScars(elementBall->GetWorldPos());
-		}
-	}*/
-
 	if (!playerAttacks_.empty()) {
 		for (const auto& playerAttack : playerAttacks_) {
 			if (IsCollision(boss_->GetCollider(), playerAttack->GetCollider())) {
@@ -502,7 +448,7 @@ void GameScene::BattleUpdate() {
 	}
 
 	if (boss_->IsDead()) {
-		eventRequest_ = SceneEvent::Clear;
+		eventRequest_ = SceneEvent::BossDead;
 	}
 
 }
@@ -530,8 +476,39 @@ void GameScene::PlayerDeadUpdate() {
 	gameOver_->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
 }
 
+void GameScene::BossDeadInit() {
+
+	workBossDead_.count_ = 0;
+
+}
+
+void GameScene::BossDeadUpdate() {
+
+	boss_->Update();
+
+	for (const auto& playerAttack : playerAttacks_) {
+		playerAttack->Update();
+
+		if (!playerAttack->IsLife()) {
+			attackEndEff_->emitter_.emit = 1;
+			attackEndEff_->emitter_.translate = playerAttack->GetWorldPos();
+		}
+
+	}
+
+	attackEndEff_->Update();
+
+	if (boss_->IsFinishDeadStaging()) {
+		if (++workBossDead_.count_ >= workBossDead_.interval_) {
+			eventRequest_ = SceneEvent::Clear;
+		}
+		
+	}
+
+}
+
 void GameScene::ClearInit() {
-	playerAttacks_.clear();
+	
 }
 
 void GameScene::ClearUpdate() {
@@ -539,6 +516,33 @@ void GameScene::ClearUpdate() {
 	if (--finishCount_ <= 0) {
 		SceneManager::GetInstance()->ChangeScene("Title");
 	}
+
+	player_->Update();
+	followCamera_->Update();
+
+	for (const auto& playerAttack : playerAttacks_) {
+		playerAttack->Update();
+
+		if (!playerAttack->IsLife()) {
+			attackEndEff_->emitter_.emit = 1;
+			attackEndEff_->emitter_.translate = playerAttack->GetWorldPos();
+		}
+
+	}
+
+	attackEndEff_->Update();
+
+}
+
+void GameScene::GameOverInit() {
+
+
+
+}
+
+void GameScene::GameOverUpdate() {
+	
+
 
 }
 
@@ -595,23 +599,6 @@ void GameScene::DebugGUI(){
 
 #endif // _DEBUG
 }
-
-//Enemy* GameScene::EnemyPop(std::vector<std::shared_ptr<Model>> modelHandles, Vector3 pos) {
-//
-//	Enemy* enemy = new Enemy();
-//	enemy->Init(modelHandles);
-//	enemy->SetPos(pos);
-//	std::uniform_int_distribution<int> distTime(5, 9);
-//	enemy->SetCoolTime(distTime(randomEngine));
-//	enemy->SetGameScene(this);
-//
-//	return enemy;
-//}
-
-//void GameScene::AddEnemyBullet(EnemyBullet* enemyBullet) {
-//	enemyBullets_.push_back(std::unique_ptr<EnemyBullet>(enemyBullet));
-//}
-
 
 void GameScene::AddPlayerAttack(PlayerAttack* playerAttack) {
 	playerAttacks_.push_back(std::unique_ptr<PlayerAttack>(playerAttack));

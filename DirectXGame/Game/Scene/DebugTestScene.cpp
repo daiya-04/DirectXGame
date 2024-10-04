@@ -24,7 +24,7 @@ void DebugTestScene::Init() {
 
 	humanModel_ = ModelManager::LoadGLTF("Skin");
 	standingModel_ = ModelManager::LoadGLTF("Standing");
-	sneakModel_ = ModelManager::LoadGLTF("PlayerAttack");
+	sneakModel_ = ModelManager::LoadGLTF("BossDead");
 	model_ = ModelManager::LoadOBJ("Rock");
 
 	skyBoxTex_ = TextureManager::Load("skyBox.dds");
@@ -150,7 +150,7 @@ void DebugTestScene::DrawBackGround() {
 void DebugTestScene::DrawModel() {
 
 	SkinningObject::preDraw();
-	//human_->Draw(camera_);
+	human_->Draw(camera_);
 	//skeleton_.Draw(human_->worldTransform_, camera_);
 
 
@@ -176,8 +176,8 @@ void DebugTestScene::DrawParticleModel() {
 void DebugTestScene::DrawParticle() {
 
 	GPUParticle::preDraw();
-	particle_->Draw(camera_);
-	particle2_->Draw(camera_);
+	//particle_->Draw(camera_);
+	//particle2_->Draw(camera_);
 
 }
 

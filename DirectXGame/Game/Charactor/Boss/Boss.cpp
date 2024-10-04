@@ -122,7 +122,10 @@ void Boss::DrawUI() {
 
 void Boss::OnCollision() {
 	life_--;
-	if (life_ == 0) { isDead_ = true; }
+	if (life_ <= 0) {
+		isDead_ = true;
+		behaviorRequest_ = Behavior::kDead;
+	}
 }
 
 void Boss::SetData(const LevelData::ObjectData& data) {
@@ -229,6 +232,22 @@ void Boss::AppearUpdate() {
 
 }
 
+void Boss::DeadInit() {
+
+	action_ = Action::Dead;
+	animations_[action_].SetAnimationSpeed(1.0f / 60.0f);
+	animations_[action_].Play(skeletons_[action_]);
+
+}
+
+void Boss::DeadUpdate() {
+
+	if (!animations_[action_].IsPlaying()) {
+		isFinishDeadStaging_ = true;
+	}
+
+}
+
 void Boss::ChangeBehavior(Behavior behavior) {
 
 	switch (behavior) {
@@ -240,6 +259,9 @@ void Boss::ChangeBehavior(Behavior behavior) {
 			break;
 		case Behavior::kRoot:
 			behaviorRequest_ = Behavior::kRoot;
+			break;
+		case Behavior::kDead:
+			behaviorRequest_ = Behavior::kDead;
 			break;
 	}
 

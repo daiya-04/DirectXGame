@@ -7,8 +7,6 @@
 #include "AnimationManager.h"
 #include "GameScene.h"
 
-#include "Enemy.h"
-
 const std::array<Player::ComboAttack, Player::comboNum_> Player::kComboAttacks_ = {
 	{
 		{30,20,5},
@@ -295,35 +293,6 @@ void Player::DashUpdate() {
 	}
 
 }
-
-//void Player::Search(const std::list<std::unique_ptr<Enemy>>& enemies) {
-//
-//	if (enemies.empty()) {
-//		target_ = nullptr;
-//		return;
-//	}
-//
-//	//目標
-//	///<playerとの距離、敵のポインタ>
-//	std::list<std::pair<float, Enemy*>> targets;
-//
-//	for (const std::unique_ptr<Enemy>& enemy : enemies) {
-//		
-//		Vector3 distance = enemy->GetWorldTransform().translation_ - worldTransform_.translation_;
-//
-//		if (attackRange_ >= distance.Length()) {
-//
-//			targets.emplace_back(std::make_pair(distance.Length(), enemy.get()));
-//
-//		}
-//
-//		target_ = nullptr;
-//		if (!targets.empty()) {
-//			targets.sort([](auto& pair1, auto& pair2) {return pair1.first < pair2.first; });
-//			target_ = targets.front().second;
-//		}
-//	}
-//}
 
 Vector3 Player::GetWorldPos() const{
 

@@ -3,48 +3,48 @@
 
 namespace Shapes{
 	// 線分
-	typedef struct {
+	struct Segment {
 		Vector3 origin; // 始点
 		Vector3 diff;   // 終点との差分ベクトル
-	} Segment;
+	};
 
 	// 直線
-	typedef struct {
+	struct StraightLine {
 		Vector3 origin; // 始点
 		Vector3 diff;   // 終点との差分ベクトル
-	} StraightLine;
+	};
 
 	// 半直線
-	typedef struct {
+	struct Ray {
 		Vector3 origin; // 始点
 		Vector3 diff;   // 終点との差分ベクトル
-	} Ray;
+	};
 
 	// 球
-	typedef struct {
+	struct Sphere {
 		Vector3 center;  // 中心点
 		float radius; // 半径
-	} Sphere;
+	};
 
 	// 平面
-	typedef struct {
+	struct Plane {
 		Vector3 normal;    // 法線
 		float distance; // 原点からの距離
-	} Plane;
+	};
 
 	// 三角形
-	typedef struct {
+	struct Triangle {
 		Vector3 vertices[3]; // 頂点
-	} Triangle;
+	};
 
-	typedef struct {
+	struct AABB {
 		Vector3 min;
 		Vector3 max;
-	} AABB;
+	};
 
-	typedef struct {
+	struct OBB {
 		Vector3 center;
 		Vector3 orientation[3];
 		Vector3 size;
-	} OBB;
+	};
 }
