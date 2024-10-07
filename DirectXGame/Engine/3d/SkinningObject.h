@@ -27,6 +27,7 @@ private:
 		kTexture,
 		kEnvironmentTex,
 		kDirectionLight,
+		kDeadEffect,
 
 		kParamNum,
 	};
@@ -43,6 +44,10 @@ private:
 
 	struct SkinningInfoData {
 		uint32_t numVertex_;
+	};
+
+	struct DeadEffectData {
+		float  threshold_;
 	};
 
 private: //静的メンバ変数
@@ -74,14 +79,18 @@ private:
 private: //メンバ変数
 
 	std::shared_ptr<Model> model_;
-	SkinCluster* skinCluster_;
+	SkinCluster* skinCluster_ = nullptr;
 
 	ComPtr<ID3D12Resource> skinningInfoBuff_;
-	SkinningInfoData* skinningInfoData_;
+	SkinningInfoData* skinningInfoData_ = nullptr;
+
+	ComPtr<ID3D12Resource> deadEffectBuffer_;
+	DeadEffectData* deadEffectData_ = nullptr;
 
 public:
 
 	WorldTransform worldTransform_;
+	float threshold_ = 0.0f;
 
 public: //メンバ関数
 

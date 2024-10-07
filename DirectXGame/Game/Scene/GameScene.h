@@ -83,6 +83,9 @@ private: //オブジェクト
 	
 	std::list<std::unique_ptr<PlayerAttack>> playerAttacks_;
 	std::unique_ptr<GPUParticle> attackEndEff_;
+	std::unique_ptr<GPUParticle> deadEff_;
+
+	bool isDeadEff_ = false;
 
 	std::unique_ptr<FollowCamera> followCamera_;
 
@@ -174,11 +177,23 @@ private:
 private:
 
 	struct WorkBossDead {
-		int32_t interval_ = 60 * 1;
+		int32_t interval_ = 30;
 		int32_t count_ = 0;
+		Vector3 cameraPos_ = {};
+		Vector3 cameraRotate_ = { 0.2f,0.34f,0.0f };
+		Vector3 offset_ = { -3.0f,2.0f,-8.0f };
+	};
+
+	struct WorkPlayerDead {
+		int32_t interval_ = 30;
+		int32_t count_ = 0;
+		Vector3 cameraPos_ = {};
+		Vector3 cameraRotate_ = { -0.14f,-2.9f,0.0f };
+		Vector3 offset_ = { 1.5f, -0.5f, 6.0f };
 	};
 
 	WorkBossDead workBossDead_;
+	WorkPlayerDead workPlayerDead_;
 
 };
 

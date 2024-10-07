@@ -97,6 +97,10 @@ void SkinningObject::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList*
 	rootParameters[(size_t)RootParameter::kDirectionLight].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
 	rootParameters[(size_t)RootParameter::kDirectionLight].Descriptor.ShaderRegister = 3;  //レジスタ番号1を使う
 
+	rootParameters[(size_t)RootParameter::kDeadEffect].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;  //CBVを使う
+	rootParameters[(size_t)RootParameter::kDeadEffect].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
+	rootParameters[(size_t)RootParameter::kDeadEffect].Descriptor.ShaderRegister = 4;  //レジスタ番号1を使う
+
 
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
@@ -368,8 +372,10 @@ void SkinningObject::Initialize(std::shared_ptr<Model> model) {
 	worldTransform_.Init();
 
 	skinningInfoBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(uint32_t));
-
 	skinningInfoBuff_->Map(0, nullptr, reinterpret_cast<void**>(&skinningInfoData_));
+
+	deadEffectBuffer_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(DeadEffectData));
+	deadEffectBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&deadEffectData_));
 
 }
 
@@ -380,6 +386,7 @@ void SkinningObject::Draw(const Camera& camera) {
 	for (auto& mesh : model_->meshes_) {
 
 		skinningInfoData_->numVertex_ = (uint32_t)mesh.vertices_.size();
+		deadEffectData_->threshold_ = threshold_;
 
 		D3D12_RESOURCE_BARRIER preBarrier = {};
 		preBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -433,6 +440,8 @@ void SkinningObject::Draw(const Camera& camera) {
 		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kEnvironmentTex, TextureManager::Load("skyBox.dds"));
 
 		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDirectionLight, DirectionalLight::GetInstance()->GetGPUVirtualAddress());
+
+		commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kDeadEffect, deadEffectBuffer_->GetGPUVirtualAddress());
 
 		commandList_->DrawIndexedInstanced((UINT)mesh.indices_.size(), 1, 0, 0, 0);
 	}

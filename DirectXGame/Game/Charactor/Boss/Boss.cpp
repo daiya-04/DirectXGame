@@ -26,6 +26,7 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 		skinClusters_[index].Create(skeletons_[index], animationModels_[index]);
 	}
 	obj_->SetSkinCluster(&skinClusters_[action_]);
+	obj_->threshold_ = 0.0f;
 
 	appearEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
 	appearEff_->isLoop_ = false;
@@ -236,15 +237,20 @@ void Boss::DeadInit() {
 
 	action_ = Action::Dead;
 	animations_[action_].SetAnimationSpeed(1.0f / 60.0f);
-	animations_[action_].Play(skeletons_[action_]);
+	animations_[action_].Start();
 
+	obj_->threshold_ = 0.0f;
+	
 }
 
 void Boss::DeadUpdate() {
 
 	if (!animations_[action_].IsPlaying()) {
-		isFinishDeadStaging_ = true;
+		isFinishDeadMotion_ = true;
 	}
+
+	obj_->threshold_ = animations_[Action::Dead].GetAnimationTime() / animations_[Action::Dead].GetDuration();
+	obj_->threshold_ = std::clamp(obj_->threshold_, 0.0f, animations_[Action::Dead].GetDuration());
 
 }
 
