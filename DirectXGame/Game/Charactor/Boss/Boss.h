@@ -89,11 +89,6 @@ private:
 		uint32_t param = 0;
 	};
 
-	struct WorkDead {
-		int32_t interval_ = 60;
-		int32_t counter_ = 0;
-	};
-
 private:
 
 	std::unique_ptr<SkinningObject> obj_;
@@ -111,7 +106,7 @@ private:
 	uint32_t life_ = maxHp_;
 
 	bool isDead_ = false;
-	bool isFinishDeadStaging_ = false;
+	bool isFinishDeadMotion_ = false;
 
 	Vector3 size_{};
 
@@ -124,7 +119,6 @@ private:
 
 	WorkAppear workAppear_;
 	WorkAttack workAttack_;
-	WorkDead workDead_;
 
 	uint32_t coolTime_ = 0;
 	uint32_t attackTimer_ = 0;
@@ -166,7 +160,7 @@ public:
 	}
 	bool IsAttack() const { return (behavior_ == Behavior::kAttack) ? true : false; }
 	bool IsDead() const { return isDead_; }
-	bool IsFinishDeadStaging() const { return isFinishDeadStaging_; }
+	bool IsFinishDeadMotion() const { return isFinishDeadMotion_; }
 	Vector3 GetWorldPos() const;
 	Shapes::AABB GetCollider(){ return collider_; }
 	Action GetAction() const { return action_; }

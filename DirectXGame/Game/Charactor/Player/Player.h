@@ -31,6 +31,7 @@ private: //ふるまい用メンバ変数
 		kRoot,
 		kAttack,
 		kDash,
+		kDead,
 	};
 
 	Behavior behavior_ = Behavior::kRoot;
@@ -40,12 +41,14 @@ private: //ふるまい用メンバ変数
 		{Behavior::kRoot,[this]() {RootInit(); }},
 		{Behavior::kAttack,[this]() {AttackInit(); }},
 		{Behavior::kDash,[this]() {DashInit(); }},
+		{Behavior::kDead,[this]() {DeadInit(); }},
 	};
 
 	std::map<Behavior, std::function<void()>> behaviorUpdateTable_{
 		{Behavior::kRoot,[this]() {RootUpdate(); }},
 		{Behavior::kAttack,[this]() {AttackUpdate(); }},
 		{Behavior::kDash,[this]() {DashUpdate(); }},
+		{Behavior::kDead,[this]() {DeadUpdate(); }},
 	};
 	
 
@@ -63,6 +66,10 @@ public: //ふるまい用メンバ関数
 	void DashInit();
 	//ダッシュ更新
 	void DashUpdate();
+	//死亡初期化
+	void DeadInit();
+	//死亡更新
+	void DeadUpdate();
 
 public:
 
@@ -103,6 +110,7 @@ public:
 		Standing,
 		Walking,
 		Attack,
+		Dead,
 
 		kActionNum,
 	};
@@ -123,7 +131,7 @@ private:
 
 	Shapes::AABB collider_{};
 
-	int32_t maxHp_ = 10;
+	int32_t maxHp_ = 1;
 	int32_t life_ = maxHp_;
 
 	float attackRange_ = 20.0f;
@@ -141,6 +149,8 @@ private:
 	const float kDeltaTime_ = 1.0f / 60.0f;
 
 	bool isAttack_ = false;
+	bool isDead_ = false;
+	bool isFinishDeadMotion_ = false;
 
 	GameScene* gameScene_ = nullptr;
 
@@ -184,6 +194,8 @@ public:
 	const WorldTransform& GetWorldTransform() { return obj_->worldTransform_; }
 	Vector3 GetWorldPos() const;
 	bool IsAttack() const { return isAttack_; }
+	bool IsDead() const { return isDead_; }
+	bool IsFinishDeadMotion() const { return isFinishDeadMotion_; }
 	Shapes::AABB GetCollider() const { return collider_; }
 	uint32_t GetLife() const { return life_; }
 

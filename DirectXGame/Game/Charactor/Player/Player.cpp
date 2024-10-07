@@ -71,11 +71,18 @@ void Player::Update(){
 	obj_->worldTransform_.translation_.x = std::clamp(obj_->worldTransform_.translation_.x, -50.0f, 50.0f);
 	obj_->worldTransform_.translation_.z = std::clamp(obj_->worldTransform_.translation_.z, -20.0f, 80.0f);
 
+	obj_->SetSkinCluster(&skinClusters_[action_]);
 
 	//行列更新
 	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
 
-	animations_[action_].Play(skeletons_[action_]);
+	if (action_ == Action::Dead) {
+		animations_[action_].Play(skeletons_[action_], false);
+	}
+	else {
+		animations_[action_].Play(skeletons_[action_]);
+	}
+	
 	skeletons_[action_].Update();
 	skinClusters_[action_].Update(skeletons_[action_]);
 
@@ -128,6 +135,10 @@ void Player::SetData(const LevelData::ObjectData& data) {
 
 void Player::OnCollision() {
 	life_--;
+	if (life_ <= 0) {
+		isDead_ = true;
+		behaviorRequest_ = Behavior::kDead;
+	}
 }
 
 void Player::RootInit() {
@@ -291,6 +302,29 @@ void Player::DashUpdate() {
 	if (++workDash_.dashParam_ >= workDash_.dashTime_) {
 		behaviorRequest_ = Behavior::kRoot;
 	}
+
+}
+
+void Player::DeadInit() {
+
+	action_ = Action::Dead;
+	animations_[action_].SetAnimationSpeed(1.0f / 60.0f);
+	animations_[action_].Start();
+
+	obj_->threshold_ = 0.0f;
+
+	rotateMat_ = DirectionToDirection(from_, Vector3(0.0f, 0.0f, 1.0f));
+
+}
+
+void Player::DeadUpdate() {
+
+	if (!animations_[action_].IsPlaying()) {
+		isFinishDeadMotion_ = true;
+	}
+
+	obj_->threshold_ = animations_[Action::Dead].GetAnimationTime() / animations_[Action::Dead].GetDuration();
+	obj_->threshold_ = std::clamp(obj_->threshold_, 0.0f, animations_[Action::Dead].GetDuration());
 
 }
 
