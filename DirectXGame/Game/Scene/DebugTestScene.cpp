@@ -28,7 +28,7 @@ void DebugTestScene::Init() {
 	model_ = ModelManager::LoadOBJ("Rock");
 
 	skyBoxTex_ = TextureManager::Load("skyBox.dds");
-	tex_ = TextureManager::Load("test.png");
+	tex_ = TextureManager::Load("fuyu.dds");
 	burnScarsTex_ = TextureManager::Load("BurnScars.png");
 
 	skyBox_.reset(SkyBox::Create(skyBoxTex_));
@@ -43,6 +43,7 @@ void DebugTestScene::Init() {
 	obj_->worldTransform_.rotation_.y = 3.14f;
 
 	sprite_.reset(Sprite::Create(tex_, { 640.0f,360.0f }));
+	sprite_->SetScale(0.5f);
 	
 	dissolve_ = Dissolve::GetInstance();
 	dissolve_->Init();
@@ -150,7 +151,7 @@ void DebugTestScene::DrawBackGround() {
 void DebugTestScene::DrawModel() {
 
 	SkinningObject::preDraw();
-	human_->Draw(camera_);
+	//human_->Draw(camera_);
 	//skeleton_.Draw(human_->worldTransform_, camera_);
 
 
@@ -188,12 +189,12 @@ void DebugTestScene::DrawUI() {
 }
 
 void DebugTestScene::DrawPostEffect() {
-	/*dissolve_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+	dissolve_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
 	Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	sprite_->Draw();
 
-	dissolve_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());*/
+	dissolve_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
 }
 
@@ -201,7 +202,7 @@ void DebugTestScene::DrawRenderTexture() {
 
 	
 	//postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
-	//dissolve_->Draw(DirectXCommon::GetInstance()->GetCommandList());
+	dissolve_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 
 }
 
