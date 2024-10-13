@@ -15,7 +15,7 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 	}
 
 	for (auto& burnScars : burnScareses_) {
-		burnScars.reset(BurnScars::Create(tex));
+		burnScars.reset(BurnScar::Create(tex));
 	}
 
 	for (auto& fireField : fireFields_) {
@@ -153,7 +153,7 @@ void ElementBallManager::OnCollision(uint32_t index) {
 
 	elementBalls_[index]->OnCollision();
 	burnScareses_[index]->EffectStart(elementBalls_[index]->GetWorldPos());
-	burnScareses_[index]->HieghtAdjustment(0.0001f + (0.0001f * (float)index));
+	burnScareses_[index]->HeightAdjustment(0.0001f + (0.0001f * (float)index));
 
 }
 

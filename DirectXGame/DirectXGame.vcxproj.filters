@@ -254,7 +254,13 @@
     <ClCompile Include="Game\Charactor\Player\FollowCamera.cpp">
       <Filter>Game\Charactor\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Effects\BurnScars.cpp">
+    <ClCompile Include="Game\Effects\BurnScar.cpp">
+      <Filter>Game\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseScar.cpp">
+      <Filter>Game\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="IceScar.cpp">
       <Filter>Game\Effects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -445,7 +451,13 @@
     <ClInclude Include="Game\Charactor\Player\FollowCamera.h">
       <Filter>Game\Charactor\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Effects\BurnScars.h">
+    <ClInclude Include="Game\Effects\BurnScar.h">
+      <Filter>Game\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseScar.h">
+      <Filter>Game\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="IceScar.h">
       <Filter>Game\Effects</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,9 +11,13 @@ IcicleManager* IcicleManager::GetInstanse() {
 
 void IcicleManager::Init(const std::shared_ptr<Model>& model) {
 
-	for (size_t index = 0; index < 4; index++) {
-		icicles_[index] = std::make_unique<Icicle>();
-		icicles_[index]->Init(model);
+	for (auto& icicle : icicles_) {
+		icicle = std::make_unique<Icicle>();
+		icicle->Init(model);
+	}
+
+	for (auto& iceScar : iceScars_) {
+		iceScar.reset(IceScar::Create(TextureManager::Load("BurnScars.png")));
 	}
 	
 	isAttack_ = false;
@@ -26,6 +30,9 @@ void IcicleManager::Update() {
 
 	for (auto& icicle : icicles_) {
 		icicle->Update();
+	}
+	for (auto& iceScar : iceScars_) {
+		iceScar->Update();
 	}
 
 	if (!icicles_[0]->IsLife() && !icicles_[1]->IsLife() && !icicles_[2]->IsLife() && !icicles_[3]->IsLife()) {
@@ -44,11 +51,19 @@ void IcicleManager::Draw(const Camera& camera) {
 
 void IcicleManager::OnCollision(uint32_t index) {
 	icicles_[index]->OnCollision();
+	iceScars_[index]->EffectStart(icicles_[index]->GetWorldPos());
+	iceScars_[index]->HeightAdjustment(0.0001f + (0.0001f * static_cast<float>(index)));
 }
 
 void IcicleManager::DrawParticle(const Camera& camera) {
 	for (auto& icicle : icicles_) {
 		icicle->DrawParticle(camera);
+	}
+}
+
+void IcicleManager::DrawScar(const Camera& camera) {
+	for (auto& iceScar : iceScars_) {
+		iceScar->Draw(camera);
 	}
 }
 
@@ -61,14 +76,14 @@ void IcicleManager::AttackStart() {
 
 void IcicleManager::SetAttackData(const Vector3& pos, const Vector3& direction) {
 
-	Vector3 offset[4] = {
+	Vector3 offset[icicleNum_] = {
 		{2.0f,4.0f,0.0f},
 		{-2.0f,4.0f,0.0f},
 		{4.0f,3.0f,0.0f},
 		{-4.0f,3.0f,0.0f}
 	};
 
-	for (size_t index = 0; index < 4; index++) {
+	for (size_t index = 0; index < icicleNum_; index++) {
 		icicles_[index]->SetAttackData(pos + offset[index], direction);
 	}
 

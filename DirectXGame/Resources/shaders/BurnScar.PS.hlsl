@@ -1,10 +1,11 @@
-#include"Sprite.hlsli"
+#include "Sprite.hlsli"
 
-struct CBuffData {
+struct ScarData {
+	float32_t4 color;
 	float32_t threshold;
 };
 
-ConstantBuffer<CBuffData> gData : register(b2);
+ConstantBuffer<ScarData> gScarData : register(b2);
 
 struct PixelShaderOutput {
 	float32_t4 color : SV_TARGET0;
@@ -62,20 +63,27 @@ PixelShaderOutput main(VertexShaderOutput input){
 	PixelShaderOutput output;
 	output.color = gTexture.Sample(gSampler, input.texcoord);
 
-	float32_t n1 = FractalSumNoize(15.0f, input.texcoord + float32_t2(1.5f,1.5f));
-	float32_t n2 = FractalSumNoize(15.0f, input.texcoord + float32_t2(-1.5f,-1.5f));
+	float32_t n1 = FractalSumNoize(14.0f, input.texcoord + float32_t2(1.5f,1.5f));
+	float32_t n2 = FractalSumNoize(14.0f, input.texcoord + float32_t2(-1.5f,-1.5f));
 
-	float n = step(0.955,1-abs(n1-n2));
-
-	output.color += float32_t4(n,n,n,output.color.a) * float32_t4(0.96f,0.13f,0.04f,output.color.a);
-
+	float32_t sub = 1 - abs(n1 - n2);
+	if(sub >= 0.965){
+		float32_t n = step(0.965, sub);
+		output.color += float32_t4(n,n,n,output.color.a) * gScarData.color;
+	}else if(sub >= 0.930){
+		float32_t n = step(0.930, sub);
+		output.color += float32_t4(n,n,n,output.color.a) * float32_t4(0.0f,0.0f,0.0f,1.0f);
+	}else {
+		output.color.a = 0.0f;
+	}
+	
 	float32_t mask = gMaskTex.Sample(gSampler, input.texcoord);
 	
-	if(mask < gData.threshold){
+	if(mask < gScarData.threshold){
 		discard;
 	}
 
-	float32_t edge = 1.0f - smoothstep(gData.threshold, gData.threshold + 0.1f, mask);
+	float32_t edge = 1.0f - smoothstep(gScarData.threshold, gScarData.threshold + 0.1f, mask);
 	
 	output.color.rgb -= edge * float32_t3(1.0f, 1.0f, 1.0f);
 	

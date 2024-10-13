@@ -1,6 +1,6 @@
 #pragma once
 #include "ElementBall.h"
-#include "BurnScars.h"
+#include "BurnScar.h"
 #include "ModelManager.h"
 #include "GPUParticle.h"
 #include <Camera.h>
@@ -42,7 +42,7 @@ public:
 private:
 
 	std::array<std::unique_ptr<ElementBall>, 4> elementBalls_;
-	std::array<std::unique_ptr<BurnScars>, 4> burnScareses_;
+	std::array<std::unique_ptr<BurnScar>, 4> burnScareses_;
 
 	std::array<std::unique_ptr<GPUParticle>, 4> fireFields_;
 	std::array<std::unique_ptr<GPUParticle>, 4> splashes_;
