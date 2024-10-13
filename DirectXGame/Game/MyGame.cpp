@@ -7,13 +7,16 @@
 #include "Object3d.h"
 #include "Particle.h"
 #include "SceneFactory.h"
-#include "BurnScars.h"
+#include "BurnScar.h"
+#include "IceScar.h"
 
 void MyGame::Init(){
 
 	DSFramework::Init();
 
-	BurnScars::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
+	BurnScar::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
+	IceScar::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
+	
 
 	TextureManager::Load("white.png");
 

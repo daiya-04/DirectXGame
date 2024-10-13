@@ -351,9 +351,11 @@ void GameScene::DrawPostEffect() {
 		rock->Draw(camera_);
 	}
 	
-	BurnScars::preDraw();
-
+	BurnScar::preDraw();
 	elementBall_->DrawBurnScars(camera_);
+
+	IceScar::preDraw();
+	icicle_->DrawScar(camera_);
 
 	skyBox_->Draw(camera_);
 

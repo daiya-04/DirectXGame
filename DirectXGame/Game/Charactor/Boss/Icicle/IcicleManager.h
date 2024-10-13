@@ -2,6 +2,7 @@
 #include "Icicle.h"
 #include "ModelManager.h"
 #include "Camera.h"
+#include "IceScar.h"
 
 #include <array>
 
@@ -17,6 +18,7 @@ public:
 
 	void Draw(const Camera& camera);
 	void DrawParticle(const Camera& camera);
+	void DrawScar(const Camera& camera);
 
 	void OnCollision(uint32_t index);
 
@@ -34,11 +36,13 @@ public:
 
 
 private:
+
+	static const size_t icicleNum_ = 4;
 	
-	std::array<std::unique_ptr<Icicle>, 4> icicles_;
+	std::array<std::unique_ptr<Icicle>, icicleNum_> icicles_;
+	std::array<std::unique_ptr<IceScar>, icicleNum_> iceScars_;
 
 	bool isAttack_ = false;
 	bool preIsAttack_ = false;
 
 };
-
