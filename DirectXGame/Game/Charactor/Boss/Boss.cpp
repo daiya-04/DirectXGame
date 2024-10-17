@@ -31,8 +31,7 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	appearEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
 	appearEff_->isLoop_ = false;
 
-	appearEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-	appearEff_->emitter_.angle = 0.0f;
+	
 	appearEff_->emitter_.emitterType = 4;
 	appearEff_->emitter_.count = 100;
 	appearEff_->emitter_.frequency = 1.0f / 60.0f;

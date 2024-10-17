@@ -99,8 +99,6 @@ void GameScene::Init(){
 	attackEndEff_->emitter_.count = 3000;
 	attackEndEff_->emitter_.emit = 0;
 	attackEndEff_->emitter_.color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-	attackEndEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-	attackEndEff_->emitter_.angle = 360.0f;
 	attackEndEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
 	attackEndEff_->emitter_.scale = 0.1f;
 	attackEndEff_->emitter_.speed = 7.0f;
@@ -114,8 +112,6 @@ void GameScene::Init(){
 	deadEff_->emitter_.count = 10000;
 	deadEff_->emitter_.emit = 0;
 	deadEff_->emitter_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	deadEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-	deadEff_->emitter_.angle = 0.0f;
 	deadEff_->emitter_.size = Vector3(0.5f, 0.0f, 0.0f);
 	deadEff_->emitter_.scale = 0.5f;
 	deadEff_->emitter_.speed = 7.0f;

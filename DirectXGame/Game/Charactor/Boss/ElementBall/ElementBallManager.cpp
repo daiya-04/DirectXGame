@@ -20,8 +20,6 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 
 	for (auto& fireField : fireFields_) {
 		fireField.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 15000));
-		fireField->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-		fireField->emitter_.angle = 360.0f;
 		fireField->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 		fireField->emitter_.emitterType = 4;
 		fireField->emitter_.frequency = 1.0f / 60.0f;
@@ -35,8 +33,6 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 
 	for (auto& splash : splashes_) {
 		splash.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 10000));
-		splash->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-		splash->emitter_.angle = 0.0f;
 		splash->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 		splash->emitter_.emitterType = 4;
 		splash->emitter_.scale = 0.1f;

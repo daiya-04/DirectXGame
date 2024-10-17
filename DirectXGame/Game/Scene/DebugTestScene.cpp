@@ -59,28 +59,25 @@ void DebugTestScene::Init() {
 	human_->worldTransform_.rotation_.y = 3.14f;
 	human_->worldTransform_.translation_.z = 10.0f;
 
-	particle2_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 50000));
+	particle2_.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 50000));
 
 	particle2_->isLoop_ = true;
 	particle2_->emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
 	particle2_->emitter_.size = Vector3(1.0f, 1.0f, 1.0f);
+	particle2_->emitter_.radius = 1.0f;
 	particle2_->emitter_.scale = 0.1f;
-	particle2_->emitter_.count = 1000;
-	particle2_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-	particle2_->emitter_.angle = 360.0f;
+	particle2_->emitter_.count = 100;
 	particle2_->emitter_.frequency = 1.0f / 60.0f;
-	particle2_->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	particle2_->emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
 	particle2_->emitter_.lifeTime = 1.5f;
 	particle2_->emitter_.speed = 0.0f;
-	particle2_->emitter_.emitterType = 3;
+	particle2_->emitter_.emitterType = GPUParticle::EmitShape::Squere;
 
 	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),10000));
 	particle_->emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
 	particle_->emitter_.size = Vector3(0.0f,0.0f,0.0f);
 	particle_->emitter_.scale = 0.05f;
 	particle_->emitter_.count = 10000;
-	particle_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-	particle_->emitter_.angle = 360.0f;
 	particle_->emitter_.frequency = 0.5f;
 	particle_->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	particle_->emitter_.lifeTime = 1.0f;
@@ -170,7 +167,7 @@ void DebugTestScene::DrawModel() {
 	//burnScars_->Draw(camera_);
 
 	IceScar::preDraw();
-	iceScar_->Draw(camera_);
+	//iceScar_->Draw(camera_);
 
 }
 
@@ -183,8 +180,8 @@ void DebugTestScene::DrawParticleModel() {
 void DebugTestScene::DrawParticle() {
 
 	GPUParticle::preDraw();
-	//particle_->Draw(camera_);
-	//particle2_->Draw(camera_);
+	particle_->Draw(camera_);
+	particle2_->Draw(camera_);
 
 }
 
@@ -224,6 +221,12 @@ void DebugTestScene::DebugGUI() {
 	ImGui::Begin("object");
 
 	ImGui::DragFloat3("rotate", &human_->worldTransform_.rotation_.x, 0.01f);
+
+	ImGui::End();
+
+	ImGui::Begin("Particle");
+
+	ImGui::InputFloat("speed", &particle2_->emitter_.speed);
 
 	ImGui::End();
 

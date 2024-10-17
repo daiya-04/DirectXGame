@@ -12,8 +12,6 @@ void Icicle::Init(const std::shared_ptr<Model>& model) {
 
 	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),5000));
 
-	particle_->emitter_.direction = Vector3(0.0f, 0.0f, 1.0f);
-	particle_->emitter_.angle = 360.0f;
 	particle_->emitter_.color = Vector4(0.05f, 0.94f, 0.85f, 1.0f);
 	particle_->emitter_.emitterType = 0;
 	particle_->isLoop_ = true;
@@ -22,8 +20,6 @@ void Icicle::Init(const std::shared_ptr<Model>& model) {
 
 	hitEff_->isLoop_ = false;
 	hitEff_->emitter_.count = 10000;
-	hitEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-	hitEff_->emitter_.angle = 360.0f;
 	hitEff_->emitter_.color = Vector4(0.05f, 0.94f, 0.85f, 1.0f);
 	hitEff_->emitter_.lifeTime = 0.7f;
 	hitEff_->emitter_.speed = 15.0f;
@@ -158,7 +154,6 @@ void Icicle::ShotInit() {
 	//targetDict_ = (target_->translation_ - obj_->worldTransform_.translation_);
 
 	particle_->emitter_.count = 100;
-	particle_->emitter_.angle = 30.0f;
 	particle_->emitter_.frequency = 1.0f/60.0f;
 	particle_->emitter_.lifeTime = 1.0f;
 	particle_->emitter_.scale = 0.3f;
@@ -179,8 +174,6 @@ void Icicle::ShotUpdate() {
 	shotData_.param_ += 0.005f;
 
 	direction_ = Lerp(shotData_.param_, direction_.Normalize(), targetDict_.Normalize());
-
-	particle_->emitter_.direction = -direction_.Normalize();
 
 	velocity_ = direction_ * speed_;
 

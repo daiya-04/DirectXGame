@@ -19,7 +19,6 @@ void PlayerAttack::Init(std::shared_ptr<Model> model, const Vector3& startPos, c
 
 	particle_->emitter_.size = Vector3(0.25f, 0.25f, 0.25f);
 	particle_->emitter_.scale = 0.05f;
-	particle_->emitter_.angle = 360.0f;
 	particle_->emitter_.frequency = 1.0f / 60.0f;
 	particle_->emitter_.count = 500;
 	particle_->emitter_.speed = 0.0f;
@@ -44,8 +43,6 @@ void PlayerAttack::Update() {
 	if (obj_->worldTransform_.scale_.x <= 0.0f) {
 		isLife_ = false;
 	}
-
-	particle_->emitter_.direction = -velocity_.Normalize();
 
 	obj_->worldTransform_.UpdateMatrix();
 	particle_->emitter_.translate = GetWorldPos();

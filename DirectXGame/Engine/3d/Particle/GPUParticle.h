@@ -57,13 +57,25 @@ private:
 		kParamNum,
 	};
 
+	
+
 public:
+
+	enum EmitShape : uint32_t {
+		Sphere,
+		Hemisphere,
+		Box,
+		Squere,
+		Circle,
+
+	};
 
 	struct ParticleCS {
 		Vector3 translation;
 		Vector3 scale;
-		float lifeTime;
+		Vector3 rotate;
 		Vector3 velocity;
+		float lifeTime;
 		float currentTime;
 		Vector4 color;
 	};
@@ -82,18 +94,44 @@ public:
 		Vector3 translate;
 		float padding1;
 		Vector3 size;
+
+		float radius;
 		float scale;
+		float rotate;
 		uint32_t count; //射出数
 		float frequency; //射出間隔
 		float frequencyTime; //射出間隔調整用時間
 		uint32_t emit; //射出許可
-		Vector3 direction;
-		float angle;
+		float padding2[2];
 		Vector4 color;
 		float lifeTime;
 		float speed;
 		uint32_t emitterType;
-		float padding2;
+		float padding3;
+	};
+
+	struct OverLifeTime {
+		bool isVelocityOverLifeTime;
+		Vector3 minVelocity;
+		Vector3 maxVelosity;
+
+		bool isScaleOverLifeTime;
+		Vector3 minScale;
+		Vector3 maxScale;
+
+		bool isColorOverLifeTime;
+		Vector3 minColor;
+		Vector3 maxColor;
+
+		bool isAlphaOverLifeTime;
+		float minAlpha;
+		float midAlpha;
+		float maxAlpha;
+
+		bool isRotateOverLifeTime;
+		Vector3 minRotate;
+		Vector3 maxRotate;
+
 	};
 
 	struct PerFrame {
@@ -109,6 +147,14 @@ private:
 
 	static ID3D12Device* device_;
 	static ID3D12GraphicsCommandList* commandList_;
+
+	static ComPtr<ID3DBlob> signatureBlob_;
+	static ComPtr<ID3DBlob> errorBlob_;
+
+	static IDxcUtils* dxcUtils_;
+	static IDxcCompiler3* dxcCompiler_;
+	static IDxcIncludeHandler* includeHandler_;
+
 	static ComPtr<ID3D12RootSignature> rootSignature_;
 	static ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 
@@ -138,6 +184,11 @@ private:
 	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
 	//リソースの生成
 	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
+
+	static void CreateInitCSPipeline();
+	static void CreateEmitCSPipeline();
+	static void CreateUpdateCSPipeline();
+
 
 private:
 
@@ -191,6 +242,12 @@ private:
 	void CreateBuffer();
 
 	void CreateUav();
+
+	void ExecuteInitCS();
+
+	void ExecuteEmitCS();
+
+	void ExecuteUpdateCS();
 
 };
 

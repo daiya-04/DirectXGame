@@ -12,16 +12,13 @@ void PlasmaShot::Init(const std::shared_ptr<Model>& model) {
 	collider_.radius = 0.5f;
 
 	particle_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 2000));
-	particle_->emitter_.direction = Vector3(0.0f, 0.0f, 1.0f);
-	particle_->emitter_.angle = 360.0f;
 	particle_->emitter_.color = Vector4(0.43f, 0.2f, 0.67f, 1.0f);
 	particle_->emitter_.emitterType = 0;
 	particle_->isLoop_ = true;
 
 	hitEff_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 10000));
 	
-	hitEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-	hitEff_->emitter_.angle = 360.0f;
+	
 	hitEff_->emitter_.color = Vector4(0.43f, 0.2f, 0.67f, 1.0f);
 	hitEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
 	hitEff_->emitter_.lifeTime = 1.0f;
@@ -151,7 +148,6 @@ void PlasmaShot::ShotInit() {
 	particle_->emitter_.scale = 0.3f;
 	particle_->emitter_.size = Vector3(0.3f, 0.3f, 0.3f);
 	particle_->emitter_.speed = 0.0f;
-	particle_->emitter_.direction = -targetDict_.Normalize();
 
 }
 

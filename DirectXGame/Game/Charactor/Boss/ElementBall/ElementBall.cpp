@@ -10,13 +10,10 @@ void ElementBall::Init(std::shared_ptr<Model> model) {
 	obj_.reset(Object3d::Create(model));
 	animation_ = AnimationManager::Load(obj_->GetModel()->name_);
 
-	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 50000));
+	particle_.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 50000));
 	
-	
-	particle_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f).Normalize();
 	particle_->emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
 	particle_->emitter_.size = Vector3(0.5f, 1.3f, 1.3f);
-	particle_->emitter_.angle = 360.0f;
 	particle_->emitter_.emitterType = 0;
 
 	isLife_ = false;
@@ -112,7 +109,6 @@ void ElementBall::SetInit() {
 	animation_.Start();
 
 	particle_->emitter_.count = 5000;
-	particle_->emitter_.angle = 360.0f;
 	particle_->emitter_.frequency = 1.0f / 60.0f;
 	particle_->emitter_.lifeTime = 1.0f;
 	particle_->emitter_.scale = 0.3f;

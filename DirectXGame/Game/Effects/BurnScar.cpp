@@ -275,9 +275,7 @@ void BurnScar::Init(uint32_t textureHandle) {
 
 	explosionEff_->emitter_.count = 10000;
 	explosionEff_->emitter_.emit = 0;
-	explosionEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f).Normalize();
 	explosionEff_->emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
-	explosionEff_->emitter_.angle = 360.0f;
 	explosionEff_->emitter_.lifeTime = 1.0f;
 	explosionEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
 	explosionEff_->emitter_.speed = 15.0f;
