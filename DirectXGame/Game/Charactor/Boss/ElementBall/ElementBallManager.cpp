@@ -19,26 +19,38 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 	}
 
 	for (auto& fireField : fireFields_) {
-		fireField.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 15000));
+		fireField.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 15000));
 		fireField->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-		fireField->emitter_.emitterType = 4;
+		fireField->emitter_.emitterType = GPUParticle::EmitShape::Circle;
 		fireField->emitter_.frequency = 1.0f / 60.0f;
 		fireField->emitter_.count = 2000;
 		fireField->emitter_.lifeTime = 10.0f / 60.0f;
 		fireField->emitter_.speed = 0.1f;
 		fireField->emitter_.scale = 0.2f;
-		fireField->emitter_.size = Vector3(2.5f, 1.5f, 1.5f);
+		fireField->emitter_.radius = 2.5f;
 		fireField->isLoop_ = false;
+
+		fireField->overLifeTime_.isAlpha = 1;
+		fireField->overLifeTime_.midAlpha = 1.0f;
 	}
 
 	for (auto& splash : splashes_) {
-		splash.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 10000));
-		splash->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-		splash->emitter_.emitterType = 4;
+		splash.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 10000));
+		splash->emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
+		splash->emitter_.emitterType = GPUParticle::EmitShape::Circle;
 		splash->emitter_.scale = 0.1f;
-		splash->emitter_.size = Vector3(1.0f, 1.0f, 1.0f);
-		splash->emitter_.frequency = 20.0f / 60.0f;
+		splash->emitter_.radius = 1.0f;
+		splash->emitter_.frequency = 10.0f / 60.0f;
 		splash->isLoop_ = false;
+
+		splash->overLifeTime_.isAlpha = 1;
+		splash->overLifeTime_.midAlpha = 1.0f;
+
+		splash->overLifeTime_.isConstantVelocity = 1;
+		splash->overLifeTime_.velocity = Vector3(0.0f, 2.0f, 0.0f);
+
+		splash->overLifeTime_.isScale = 1;
+		splash->overLifeTime_.startScale = 0.2f;
 	}
 
 	isAttack_ = false;
@@ -87,10 +99,9 @@ void ElementBallManager::Update() {
 		if (elementBalls_[0]->GetPhase() == ElementBall::Phase::kSet) {
 			splash->isLoop_ = true;
 			splash->emitter_.lifeTime = 20.0f / 60.0f;
-			splash->emitter_.speed = 5.0f;
-			splash->emitter_.size = Vector3(1.5f, 1.0f, 1.0f);
 			splash->emitter_.count = 1000;
 			splash->emitter_.scale = 0.2f;
+			splash->emitter_.speed = -3.0f;
 		}
 		if (elementBalls_[0]->GetPhase() == ElementBall::Phase::kCharge) {
 			splash->isLoop_ = false;

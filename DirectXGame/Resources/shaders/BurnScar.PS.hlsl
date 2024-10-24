@@ -63,11 +63,11 @@ PixelShaderOutput main(VertexShaderOutput input){
 	PixelShaderOutput output;
 	output.color = gTexture.Sample(gSampler, input.texcoord);
 
-	float32_t n1 = FractalSumNoize(14.0f, input.texcoord + float32_t2(1.5f,1.5f));
-	float32_t n2 = FractalSumNoize(14.0f, input.texcoord + float32_t2(-1.5f,-1.5f));
+	float32_t n1 = FractalSumNoize(15.0f, input.texcoord + float32_t2(1.5f,1.5f));
+	float32_t n2 = FractalSumNoize(15.0f, input.texcoord + float32_t2(-1.5f,-1.5f));
 
 	float32_t sub = 1 - abs(n1 - n2);
-	if(sub >= 0.965){
+	/*if(sub >= 0.965){
 		float32_t n = step(0.965, sub);
 		output.color += float32_t4(n,n,n,output.color.a) * gScarData.color;
 	}else if(sub >= 0.930){
@@ -75,7 +75,10 @@ PixelShaderOutput main(VertexShaderOutput input){
 		output.color += float32_t4(n,n,n,output.color.a) * float32_t4(0.0f,0.0f,0.0f,1.0f);
 	}else {
 		output.color.a = 0.0f;
-	}
+	}*/
+
+	float32_t n = step(0.965, sub);
+	output.color += float32_t4(n,n,n,output.color.a) * gScarData.color;
 	
 	float32_t mask = gMaskTex.Sample(gSampler, input.texcoord);
 	

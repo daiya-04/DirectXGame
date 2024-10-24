@@ -13,8 +13,19 @@ void ElementBall::Init(std::shared_ptr<Model> model) {
 	particle_.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 50000));
 	
 	particle_->emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
-	particle_->emitter_.size = Vector3(0.5f, 1.3f, 1.3f);
-	particle_->emitter_.emitterType = 0;
+	particle_->emitter_.emitterType = GPUParticle::EmitShape::Sphere;
+	particle_->emitter_.frequency = 1.0f / 60.0f;
+	particle_->emitter_.radius = 0.3f;
+
+	particle_->overLifeTime_.isAlpha = 1;
+	particle_->overLifeTime_.midAlpha = 1.0f;
+
+	particle_->overLifeTime_.isScale = 1;
+	particle_->overLifeTime_.startScale = 0.3f;
+
+	particle_->overLifeTime_.isColor = 1;
+	particle_->overLifeTime_.startColor = Vector3(0.89f, 0.27f, 0.03f);
+	particle_->overLifeTime_.endColor = Vector3(1.0f, 0.0f, 0.0f);
 
 	isLife_ = false;
 	preIsLife_ = false;
@@ -78,6 +89,8 @@ void ElementBall::AttackStart() {
 	obj_->worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	isLife_ = true;
 
+	particle_->isLoop_ = true;
+
 	obj_->worldTransform_.UpdateMatrix();
 }
 
@@ -93,6 +106,7 @@ void ElementBall::RootInit() {
 
 	obj_->worldTransform_.scale_ = {};
 	particle_->emitter_.count = 0;
+	particle_->isLoop_ = false;
 	animation_.TimeReset();
 
 }
@@ -108,11 +122,12 @@ void ElementBall::SetInit() {
 	
 	animation_.Start();
 
-	particle_->emitter_.count = 5000;
-	particle_->emitter_.frequency = 1.0f / 60.0f;
+	particle_->emitter_.count = 150;
 	particle_->emitter_.lifeTime = 1.0f;
-	particle_->emitter_.scale = 0.3f;
-	particle_->emitter_.speed = 2.0f;
+	particle_->emitter_.speed = 0.0f;
+	particle_->emitter_.radius = 0.5f;
+
+	particle_->overLifeTime_.startAlpha = 1.0f;
 
 }
 
@@ -132,11 +147,14 @@ void ElementBall::ChargeInit() {
 
 	workCharge_.param = 0;
 
-	particle_->emitter_.count = 1000;
-	particle_->emitter_.size = Vector3(0.1f, 2.0f, 2.0f);
-	particle_->emitter_.speed = 5.0f;
-	particle_->emitter_.scale = 0.6f;
+	particle_->emitter_.count = 150;
+	particle_->emitter_.speed = 1.0f;
+	particle_->emitter_.scale = 0.3f;
+	particle_->emitter_.radius = 0.7f;
 	
+	particle_->overLifeTime_.isTransSpeed = 1;
+	particle_->overLifeTime_.startSpeed = 3.0f;
+	particle_->overLifeTime_.startAlpha = 0.0f;
 
 }
 
@@ -153,11 +171,14 @@ void ElementBall::ShotInit() {
 	workShot_.move = {};
 	workShot_.isTrack = true;
 
-	particle_->emitter_.size = Vector3(0.3f, 1.3f, 1.3f);
-	particle_->emitter_.speed = 3.0f;
+	particle_->emitter_.radius = 0.5f;
+	particle_->emitter_.speed = 0.0f;
 	particle_->emitter_.scale = 0.3f;
 	particle_->emitter_.lifeTime = 0.5f;
-	particle_->emitter_.count = 5000;
+	particle_->emitter_.count = 150;
+	
+
+	particle_->overLifeTime_.isTransSpeed = 0;
 
 }
 

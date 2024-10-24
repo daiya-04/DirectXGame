@@ -10,27 +10,50 @@ void Icicle::Init(const std::shared_ptr<Model>& model) {
 
 	collider_.radius = 1.0f;
 
-	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),5000));
+	particle_.reset(GPUParticle::Create(TextureManager::Load("mist.png"),5000));
 
 	particle_->emitter_.color = Vector4(0.05f, 0.94f, 0.85f, 1.0f);
-	particle_->emitter_.emitterType = 0;
-	particle_->isLoop_ = true;
+	particle_->emitter_.emitterType = GPUParticle::EmitShape::Sphere;
+	particle_->isLoop_ = false;
 
-	hitEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
+	particle_->overLifeTime_.startColor = Vector3(0.05f, 0.94f, 0.85f);
+	particle_->overLifeTime_.endColor = Vector3(1.0f, 1.0f, 1.0f);
+
+	particle_->overLifeTime_.isAlpha = 1;
+	particle_->overLifeTime_.midAlpha = 1.0f;
+
+	particle_->overLifeTime_.endScale = 0.3f;
+
+	hitEff_.reset(GPUParticle::Create(TextureManager::Load("mist.png"), 10000));
 
 	hitEff_->isLoop_ = false;
-	hitEff_->emitter_.count = 10000;
+	hitEff_->emitter_.count = 8000;
 	hitEff_->emitter_.color = Vector4(0.05f, 0.94f, 0.85f, 1.0f);
-	hitEff_->emitter_.lifeTime = 0.7f;
-	hitEff_->emitter_.speed = 15.0f;
+	hitEff_->emitter_.lifeTime = 50.0f / 60.0f;
+	hitEff_->emitter_.speed = 5.0f;
 	hitEff_->emitter_.scale = 0.1f;
-	hitEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
+	hitEff_->emitter_.radius = 0.1f;
 	hitEff_->emitter_.emit = 0;
-	hitEff_->emitter_.emitterType = 0;
+	hitEff_->emitter_.emitterType = GPUParticle::EmitShape::Sphere;
+
+	hitEff_->overLifeTime_.isColor = 1;
+	hitEff_->overLifeTime_.startColor = Vector3(0.05f, 0.94f, 0.85f);
+	hitEff_->overLifeTime_.endColor = Vector3(1.0f, 1.0f, 1.0f);
+
+	hitEff_->overLifeTime_.isAlpha = 1;
+	hitEff_->overLifeTime_.startAlpha = 1.0f;
+
+	hitEff_->overLifeTime_.isScale = 1;
+	hitEff_->overLifeTime_.endScale = 0.2f;
+
+	isLife_ = false;
+	preIsLife_ = false;
 
 }
 
 void Icicle::Update() {
+
+	preIsLife_ = isLife_;
 
 	if (phaseRequest_) {
 
@@ -44,13 +67,14 @@ void Icicle::Update() {
 
 	phaseUpdateTable_[phase_]();
 
-	particle_->Update();
-	hitEff_->Update();
-
 	rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
 	
 	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
 	particle_->emitter_.translate = obj_->GetWorldPos();
+
+	particle_->Update();
+	hitEff_->Update();
+
 	ColliderUpdate();
 }
 
@@ -89,6 +113,8 @@ void Icicle::RootInit() {
 
 	obj_->worldTransform_.scale_ = {};
 	particle_->emitter_.count = 0;
+	particle_->overLifeTime_.isColor = 0;
+	particle_->overLifeTime_.isScale = 0;
 
 }
 
@@ -102,11 +128,12 @@ void Icicle::CreateInit() {
 
 	createData_.param_ = 0.0f;
 
-	particle_->emitter_.count = 500;
-	particle_->emitter_.frequency = 0.3f;
-	particle_->emitter_.lifeTime = 2.0f;
-	particle_->emitter_.scale = 1.0f;
-	particle_->emitter_.size = Vector3(1.0f, 1.0f, 1.0f);
+	particle_->isLoop_ = true;
+	particle_->emitter_.count = 50;
+	particle_->emitter_.frequency = 1.0f / 60.0f;
+	particle_->emitter_.lifeTime = 1.0f;
+	particle_->emitter_.scale = 0.2f;
+	particle_->emitter_.radius = 1.3f;
 	particle_->emitter_.speed = -1.0f;
 	
 
@@ -131,7 +158,10 @@ void Icicle::WaitInit() {
 
 	waitData_.count_ = 0;
 
-	particle_->emitter_.count = 0;
+	particle_->emitter_.count = 5;
+	particle_->emitter_.speed = 0.5f;
+	particle_->emitter_.lifeTime = 1.0f;
+	particle_->emitter_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
 }
 
@@ -154,11 +184,15 @@ void Icicle::ShotInit() {
 	//targetDict_ = (target_->translation_ - obj_->worldTransform_.translation_);
 
 	particle_->emitter_.count = 100;
-	particle_->emitter_.frequency = 1.0f/60.0f;
+	particle_->emitter_.frequency = 1.0f / 60.0f;
 	particle_->emitter_.lifeTime = 1.0f;
 	particle_->emitter_.scale = 0.3f;
-	particle_->emitter_.size = Vector3(0.5f, 0.5f, 0.5f);
-	particle_->emitter_.speed = 0.0f;
+	particle_->emitter_.radius = 0.5f;
+	particle_->emitter_.speed = 0.3f;
+
+	particle_->overLifeTime_.isColor = 1;
+	particle_->overLifeTime_.isScale = 1;
+
 
 }
 

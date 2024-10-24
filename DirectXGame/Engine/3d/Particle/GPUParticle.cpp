@@ -343,6 +343,11 @@ void GPUParticle::CreateEmitCSPipeline() {
 	emitterRootParams[(size_t)EmitterRootParam::kMaxNum].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 	emitterRootParams[(size_t)EmitterRootParam::kMaxNum].Descriptor.ShaderRegister = 2;
 
+	emitterRootParams[(size_t)EmitterRootParam::kOverLifeTime].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	emitterRootParams[(size_t)EmitterRootParam::kOverLifeTime].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	emitterRootParams[(size_t)EmitterRootParam::kOverLifeTime].Descriptor.ShaderRegister = 3;
+
+
 	emitterRootSignatureDesc.pParameters = emitterRootParams;   //ルートパラメータ配列へのポインタ
 	emitterRootSignatureDesc.NumParameters = _countof(emitterRootParams);  //配列の長さ
 
@@ -417,6 +422,12 @@ void GPUParticle::CreateUpdateCSPipeline() {
 	updateRootParams[(size_t)UpdateRootParam::kMaxNum].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 	updateRootParams[(size_t)UpdateRootParam::kMaxNum].Descriptor.ShaderRegister = 1;
 
+	updateRootParams[(size_t)UpdateRootParam::kOverLifeTime].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	updateRootParams[(size_t)UpdateRootParam::kOverLifeTime].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	updateRootParams[(size_t)UpdateRootParam::kOverLifeTime].Descriptor.ShaderRegister = 2;
+
+	
+
 	updateRootSignatureDesc.pParameters = updateRootParams;   //ルートパラメータ配列へのポインタ
 	updateRootSignatureDesc.NumParameters = _countof(updateRootParams);  //配列の長さ
 
@@ -490,15 +501,23 @@ void GPUParticle::Update() {
 	}
 	
 
-	std::memcpy(emitterData_, &emitter_, sizeof(Emitter));
+	
+	std::memcpy(overLifeTimeData_, &overLifeTime_, sizeof(OverLifeTime));
 
-	ExecuteEmitCS();
+	if (emitter_.emit == 1) {
+		std::memcpy(emitterData_, &emitter_, sizeof(Emitter));
 
-	D3D12_RESOURCE_BARRIER connectBarrier{};
-	connectBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
-	connectBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	connectBarrier.UAV.pResource = particleBuff_.Get();
-	commandList_->ResourceBarrier(1, &connectBarrier);
+		ExecuteEmitCS();
+
+		D3D12_RESOURCE_BARRIER connectBarrier{};
+		connectBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
+		connectBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		connectBarrier.UAV.pResource = particleBuff_.Get();
+		commandList_->ResourceBarrier(1, &connectBarrier);
+	}
+	
+
+	
 	
 	ExecuteUpdateCS();
 
@@ -605,6 +624,11 @@ void GPUParticle::CreateBuffer() {
 
 	maxParticleNumBuff_->Map(0, nullptr, reinterpret_cast<void**>(&maxParticleNumData_));
 	maxParticleNumData_->maxNum = maxParticleNum_;
+
+	OverLifeTimeBuff_ = CreateBufferResource(device_, sizeof(OverLifeTime));
+
+	OverLifeTimeBuff_->Map(0, nullptr, reinterpret_cast<void**>(&overLifeTimeData_));
+	ZeroMemory(overLifeTimeData_, sizeof(OverLifeTime));
 
 	CreateUav();
 
@@ -785,12 +809,30 @@ void GPUParticle::ExecuteEmitCS() {
 	commandList_->SetComputeRootDescriptorTable((UINT)EmitterRootParam::kFreeListIndex, freeListIndexUavHandle_.second);
 	commandList_->SetComputeRootDescriptorTable((UINT)EmitterRootParam::kFreeList, freeListUavHandle_.second);
 	commandList_->SetComputeRootConstantBufferView((UINT)EmitterRootParam::kMaxNum, maxParticleNumBuff_->GetGPUVirtualAddress());
+	commandList_->SetComputeRootConstantBufferView((UINT)EmitterRootParam::kOverLifeTime, OverLifeTimeBuff_->GetGPUVirtualAddress());
 
 	commandList_->Dispatch(1, 1, 1);
 
 }
 
 void GPUParticle::ExecuteUpdateCS() {
+
+	if (emitter_.emit == 0) {
+		//描画用のDescriptorHeapの設定
+		ID3D12DescriptorHeap* descriptorHeaps[] = { DirectXCommon::GetInstance()->GetSrvHeap() };
+		commandList_->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+		D3D12_RESOURCE_BARRIER preBarrier = {};
+		preBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		preBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		preBarrier.Transition.pResource = particleBuff_.Get();
+		preBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
+		preBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+		preBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		commandList_->ResourceBarrier(1, &preBarrier);
+	}
+	
+
 
 	commandList_->SetComputeRootSignature(updateRootSignature_.Get());
 	commandList_->SetPipelineState(updateComputePS_.Get());
@@ -800,6 +842,7 @@ void GPUParticle::ExecuteUpdateCS() {
 	commandList_->SetComputeRootDescriptorTable((UINT)UpdateRootParam::kFreeListIndex, freeListIndexUavHandle_.second);
 	commandList_->SetComputeRootDescriptorTable((UINT)UpdateRootParam::kFreeList, freeListUavHandle_.second);
 	commandList_->SetComputeRootConstantBufferView((UINT)UpdateRootParam::kMaxNum, maxParticleNumBuff_->GetGPUVirtualAddress());
+	commandList_->SetComputeRootConstantBufferView((UINT)UpdateRootParam::kOverLifeTime, OverLifeTimeBuff_->GetGPUVirtualAddress());
 
 	commandList_->Dispatch(UINT(maxParticleNum_ + 1023) / 1024, 1, 1);
 

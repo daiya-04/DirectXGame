@@ -57,7 +57,7 @@ protected:
 	//座標
 	Vector3 position_{};
 	//倍率
-	Vector2 scale_ = { 1.5f,1.5f };
+	Vector2 scale_ = { 2.0f,2.0f };
 	//回転
 	float rotate_{};
 
@@ -81,7 +81,7 @@ protected:
 	virtual void Draw(const Camera& camera);
 
 	virtual void EffectStart(const Vector3& pos);
-	virtual void HeightAdjustment(float height) { position_.y = height; }
+	virtual void HeightAdjustment(float height);
 
 	virtual bool IsEffect() const { return isEffect_; }
 

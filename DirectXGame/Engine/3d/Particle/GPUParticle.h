@@ -43,6 +43,7 @@ private:
 		kFreeListIndex,
 		kFreeList,
 		kMaxNum,
+		kOverLifeTime,
 
 		kParamNum,
 	};
@@ -53,6 +54,7 @@ private:
 		kFreeListIndex,
 		kFreeList,
 		kMaxNum,
+		kOverLifeTime,
 
 		kParamNum,
 	};
@@ -111,27 +113,31 @@ public:
 	};
 
 	struct OverLifeTime {
-		bool isVelocityOverLifeTime;
-		Vector3 minVelocity;
-		Vector3 maxVelosity;
+		uint32_t isConstantVelocity;
+		Vector3 velocity;
 
-		bool isScaleOverLifeTime;
-		Vector3 minScale;
-		Vector3 maxScale;
+		uint32_t isTransVelocity;		
+		Vector3 startVelocity;
+		Vector3 endVelocity;
 
-		bool isColorOverLifeTime;
-		Vector3 minColor;
-		Vector3 maxColor;
+		uint32_t isScale;
+		float startScale;
+		float endScale;
 
-		bool isAlphaOverLifeTime;
-		float minAlpha;
+		uint32_t isColor;
+		float padding1;
+		Vector3 startColor;
+		float padding2;
+		Vector3 endColor;
+
+		uint32_t isAlpha;
+		float startAlpha;
 		float midAlpha;
-		float maxAlpha;
-
-		bool isRotateOverLifeTime;
-		Vector3 minRotate;
-		Vector3 maxRotate;
-
+		float endAlpha;
+		
+		uint32_t isTransSpeed;
+		float startSpeed;
+		float endSpeed;
 	};
 
 	struct PerFrame {
@@ -212,6 +218,9 @@ private:
 	ComPtr<ID3D12Resource> freeListBuff_;
 	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> freeListUavHandle_;
 
+	ComPtr<ID3D12Resource> OverLifeTimeBuff_;
+	OverLifeTime* overLifeTimeData_ = nullptr;
+
 	ComPtr<ID3D12Resource> vertexBuff_;
 	D3D12_VERTEX_BUFFER_VIEW vbv_{};
 	ComPtr<ID3D12Resource> indexBuff_;
@@ -226,6 +235,8 @@ private:
 public:
 
 	Emitter emitter_;
+
+	OverLifeTime overLifeTime_;
 
 	bool isLoop_ = true;
 

@@ -13,22 +13,31 @@ void PlasmaShot::Init(const std::shared_ptr<Model>& model) {
 
 	particle_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 2000));
 	particle_->emitter_.color = Vector4(0.43f, 0.2f, 0.67f, 1.0f);
-	particle_->emitter_.emitterType = 0;
-	particle_->isLoop_ = true;
+	particle_->emitter_.emitterType = GPUParticle::EmitShape::Sphere;
+	particle_->isLoop_ = false;
+
+	particle_->overLifeTime_.isAlpha = 1;
+	particle_->overLifeTime_.midAlpha = 1.0f;
 
 	hitEff_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 10000));
 	
 	
 	hitEff_->emitter_.color = Vector4(0.43f, 0.2f, 0.67f, 1.0f);
-	hitEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
+	hitEff_->emitter_.radius = 0.1f;
 	hitEff_->emitter_.lifeTime = 1.0f;
-	hitEff_->emitter_.count = 10000;
-	hitEff_->emitter_.scale = 0.05f;
+	hitEff_->emitter_.count = 8000;
+	hitEff_->emitter_.scale = 0.1f;
 	hitEff_->emitter_.emit = 0;
-	hitEff_->emitter_.speed = 10.0f;
-	hitEff_->emitter_.emitterType = 0;
-
+	hitEff_->emitter_.speed = 1.0f;
+	hitEff_->emitter_.emitterType = GPUParticle::EmitShape::Sphere;
 	hitEff_->isLoop_ = false;
+
+	hitEff_->overLifeTime_.isAlpha = 1;
+	hitEff_->overLifeTime_.midAlpha = 1.0f;
+
+	hitEff_->overLifeTime_.isTransSpeed = 1;
+	hitEff_->overLifeTime_.startSpeed = 5.0f;
+
 
 }
 
@@ -93,6 +102,7 @@ void PlasmaShot::RootInit() {
 
 	obj_->worldTransform_.scale_ = {};
 	particle_->emitter_.count = 0;
+	particle_->isLoop_ = false;
 
 }
 
@@ -104,12 +114,16 @@ void PlasmaShot::RootUpdate() {
 
 void PlasmaShot::CreateInit() {
 
+	particle_->isLoop_ = true;
 	particle_->emitter_.count = 50;
 	particle_->emitter_.frequency = 2.0f / 60.0f;
 	particle_->emitter_.lifeTime = 1.0f;
 	particle_->emitter_.scale = 0.5f;
-	particle_->emitter_.size = Vector3(1.0f, 1.0f, 1.0f);
-	particle_->emitter_.speed = 1.0f;
+	particle_->emitter_.radius = 1.0f;
+	particle_->emitter_.speed = 0.5f;
+
+	particle_->overLifeTime_.startAlpha = 0.0f;
+	particle_->overLifeTime_.midAlpha = 1.0f;
 
 }
 
@@ -145,9 +159,12 @@ void PlasmaShot::ShotInit() {
 	particle_->emitter_.count = 50;
 	particle_->emitter_.frequency = 1.0f / 60.0f;
 	particle_->emitter_.lifeTime = 1.0f;
-	particle_->emitter_.scale = 0.3f;
-	particle_->emitter_.size = Vector3(0.3f, 0.3f, 0.3f);
+	particle_->emitter_.scale = 0.1f;
+	particle_->emitter_.radius = 0.3f;
 	particle_->emitter_.speed = 0.0f;
+
+	particle_->overLifeTime_.startAlpha = 1.0f;
+	particle_->overLifeTime_.midAlpha = 0.0f;
 
 }
 

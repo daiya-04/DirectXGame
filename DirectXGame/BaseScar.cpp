@@ -80,6 +80,10 @@ void BaseScar::EffectStart(const Vector3& pos) {
 
 }
 
+void BaseScar::HeightAdjustment(float height) {
+	position_.y = height;
+}
+
 void BaseScar::TransferVertex() {
 
 	//頂点データを設定する

@@ -17,7 +17,7 @@ void IcicleManager::Init(const std::shared_ptr<Model>& model) {
 	}
 
 	for (auto& iceScar : iceScars_) {
-		iceScar.reset(IceScar::Create(TextureManager::Load("BurnScars.png")));
+		iceScar.reset(IceScar::Create(TextureManager::Load("ScarBase.png")));
 	}
 	
 	isAttack_ = false;
@@ -28,9 +28,14 @@ void IcicleManager::Init(const std::shared_ptr<Model>& model) {
 void IcicleManager::Update() {
 	preIsAttack_ = isAttack_;
 
-	for (auto& icicle : icicles_) {
-		icicle->Update();
+	for (uint32_t index = 0; index < icicles_.size(); index++) {
+		if (icicles_[index]->DeadFlag()) {
+			OnCollision(index);
+		}
+
+		icicles_[index]->Update();
 	}
+
 	for (auto& iceScar : iceScars_) {
 		iceScar->Update();
 	}
@@ -52,7 +57,7 @@ void IcicleManager::Draw(const Camera& camera) {
 void IcicleManager::OnCollision(uint32_t index) {
 	icicles_[index]->OnCollision();
 	iceScars_[index]->EffectStart(icicles_[index]->GetWorldPos());
-	iceScars_[index]->HeightAdjustment(0.0001f + (0.0001f * static_cast<float>(index)));
+	iceScars_[index]->HeightAdjustment(0.0001f + (0.0001f * (float)index));
 }
 
 void IcicleManager::DrawParticle(const Camera& camera) {

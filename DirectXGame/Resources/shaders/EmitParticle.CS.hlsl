@@ -38,6 +38,8 @@ struct MaxParticleNum{
 
 ConstantBuffer<MaxParticleNum> gMaxParticles : register(b2);
 
+ConstantBuffer<OverLifeTime> gOverLifeTime : register(b3);
+
 [numthreads(1, 1, 1)]
 void main(uint32_t3 DTid : SV_DispatchThreadID) {
 
@@ -55,7 +57,7 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
                     float32_t3 generatedPos = gEmitter.translate + (normalize(generator.GeneratedRange3(-1.0f, 1.0f)) * (generator.Generate1d() * gEmitter.radius));
                     gParticles[particleIndex].translate = generatedPos;
                     float32_t3 direction = normalize(generatedPos - gEmitter.translate);
-                    gParticles[particleIndex].velocity = direction * gEmitter.speed;
+                    gParticles[particleIndex].velocity = direction * (generator.Generate1d() * gEmitter.speed);
 
                 } else if(gEmitter.emitterType == 1) { //Hemisphere(半球)
 
@@ -66,7 +68,7 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
                     gParticles[particleIndex].translate = generatedPos;
 
                     float32_t3 direction = normalize(generatedPos - gEmitter.translate);
-                    gParticles[particleIndex].velocity = direction * gEmitter.speed;
+                    gParticles[particleIndex].velocity = direction * (generator.Generate1d() * gEmitter.speed);
 
                 } else if(gEmitter.emitterType == 2) { //Box(立方体)
 
@@ -85,7 +87,12 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
                     gParticles[particleIndex].translate = gEmitter.translate + float32_t3(generatedPos.x, 0.0f, generatedPos.y);
 
                     float32_t3 direction = normalize(float32_t3(generatedPos.x, 0.0f, generatedPos.y) - float32_t3(0.0f,0.0f,0.0f));
-                    gParticles[particleIndex].velocity = direction * gEmitter.speed;
+                    gParticles[particleIndex].velocity = direction * (generator.Generate1d() * gEmitter.speed);
+
+                    if(gOverLifeTime.isConstantVelocity){
+                        float32_t3 startVelo = gOverLifeTime.velocity * generator.Generate3d();
+                        gParticles[particleIndex].velocity += startVelo;
+                    }
 
                 }
                 
