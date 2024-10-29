@@ -59,7 +59,7 @@ void DebugTestScene::Init() {
 	human_->worldTransform_.rotation_.y = 3.14f;
 	human_->worldTransform_.translation_.z = 10.0f;
 
-	particle2_.reset(GPUParticle::Create(TextureManager::Load("star.png"), 50000));
+	particle2_.reset(GPUParticle::Create(TextureManager::Load("star.png"), 10));
 
 	particle2_->isLoop_ = true;
 	particle2_->emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
@@ -235,6 +235,11 @@ void DebugTestScene::DebugGUI() {
 		ImGui::InputFloat("radius", &particle2_->emitter_.radius);
 		ImGui::InputFloat("LifeTime", &particle2_->emitter_.lifeTime);
 		ImGui::InputFloat4("Color", &particle2_->emitter_.color.x);
+		bool isCheck = (particle2_->emitter_.isBillboard != 0);
+		if (ImGui::Checkbox("isBillboard", &isCheck)) {
+			particle2_->emitter_.isBillboard = static_cast<uint32_t>(isCheck);
+		}
+		
 		int currentEmitShape = static_cast<int>(particle2_->emitter_.emitterType);
 
 		if (ImGui::RadioButton("Sphere", currentEmitShape == GPUParticle::EmitShape::Sphere)) {
@@ -258,7 +263,7 @@ void DebugTestScene::DebugGUI() {
 
 
 
-		bool isCheck = (particle2_->overLifeTime_.isConstantVelocity != 0);
+		isCheck = (particle2_->overLifeTime_.isConstantVelocity != 0);
 		if (ImGui::Checkbox("isConstantVelocity", &isCheck)) {
 			particle2_->overLifeTime_.isConstantVelocity = static_cast<uint32_t>(isCheck);
 		}

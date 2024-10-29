@@ -478,6 +478,9 @@ void GPUParticle::Init(uint32_t textureHandle, int32_t particleNum) {
 
 	CreateBuffer();
 
+	isLoop_ = true;
+	emitter_.isBillboard = 1;
+
 	ExecuteInitCS();
 
 }

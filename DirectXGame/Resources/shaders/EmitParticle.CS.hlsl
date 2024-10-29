@@ -29,6 +29,7 @@ struct Emitter {
     float32_t lifeTime;
     float32_t speed;
     uint32_t emitterType;
+    uint32_t isBillboard;
 };
 
 ConstantBuffer<Emitter> gEmitter : register(b0);
@@ -56,7 +57,7 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
 
     if(gEmitter.emit != 0){
         for(uint32_t countIndex = 0; countIndex < gEmitter.count; ++countIndex){
-            int32_t freeListIndex;
+            int32_t freeListIndex = 0;
             InterlockedAdd(gFreeListIndex[0], -1, freeListIndex);
 
             if((0 <= freeListIndex) && (freeListIndex < gMaxParticles.maxNum)) {
@@ -112,6 +113,7 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
                 gParticles[particleIndex].color = gEmitter.color;
                 gParticles[particleIndex].lifeTime = gEmitter.lifeTime;
                 gParticles[particleIndex].currentTime = 0.0f;
+                gParticles[particleIndex].isBillboard = gEmitter.isBillboard;
             }else {
                 InterlockedAdd(gFreeListIndex[0], 1);
                 break;

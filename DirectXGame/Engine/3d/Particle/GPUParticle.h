@@ -81,6 +81,7 @@ public:
 		float lifeTime;
 		float currentTime;
 		Vector4 color;
+		uint32_t isBillboard;
 	};
 
 	struct VertexData {
@@ -110,7 +111,7 @@ public:
 		float lifeTime;
 		float speed;
 		uint32_t emitterType;
-		float padding3;
+		uint32_t isBillboard;
 	};
 
 	struct OverLifeTime {

@@ -7,6 +7,7 @@ struct Particle {
     float32_t lifeTime;
     float32_t currentTime;
     float32_t4 color;
+    uint32_t isBillboard;
 };
 
 struct OverLifeTime {
