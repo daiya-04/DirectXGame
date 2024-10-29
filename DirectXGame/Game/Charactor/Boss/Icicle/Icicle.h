@@ -80,6 +80,7 @@ public:
 	Vector3 GetWorldPos() const { return obj_->GetWorldPos(); }
 	Shapes::Sphere GetCollider() { return collider_; }
 	bool IsLife() const { return isLife_; }
+	bool DeadFlag() const { return (!isLife_ && preIsLife_); }
 
 private:
 
@@ -100,6 +101,7 @@ private:
 	Vector3 targetDict_;
 
 	bool isLife_ = false;
+	bool preIsLife_ = false;
 
 private:
 
@@ -109,7 +111,7 @@ private:
 
 	struct WaitData {
 		int32_t count_ = 0;
-		int32_t waitTime_ = 60 * 1;
+		int32_t waitTime_ = static_cast<int32_t>(60.0f * 1.5f);
 	};
 
 	struct ShotData {

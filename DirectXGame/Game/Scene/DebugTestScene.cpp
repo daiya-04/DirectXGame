@@ -29,7 +29,7 @@ void DebugTestScene::Init() {
 
 	skyBoxTex_ = TextureManager::Load("skyBox.dds");
 	tex_ = TextureManager::Load("test.png");
-	burnScarsTex_ = TextureManager::Load("BurnScars.png");
+	burnScarsTex_ = TextureManager::Load("ScarBase.png");
 
 	skyBox_.reset(SkyBox::Create(skyBoxTex_));
 
@@ -59,33 +59,31 @@ void DebugTestScene::Init() {
 	human_->worldTransform_.rotation_.y = 3.14f;
 	human_->worldTransform_.translation_.z = 10.0f;
 
-	particle2_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 50000));
+	particle2_.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 50000));
 
 	particle2_->isLoop_ = true;
 	particle2_->emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
 	particle2_->emitter_.size = Vector3(1.0f, 1.0f, 1.0f);
+	particle2_->emitter_.radius = 1.0f;
 	particle2_->emitter_.scale = 0.1f;
-	particle2_->emitter_.count = 1000;
-	particle2_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-	particle2_->emitter_.angle = 360.0f;
+	particle2_->emitter_.count = 100;
 	particle2_->emitter_.frequency = 1.0f / 60.0f;
-	particle2_->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	particle2_->emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
 	particle2_->emitter_.lifeTime = 1.5f;
 	particle2_->emitter_.speed = 0.0f;
-	particle2_->emitter_.emitterType = 3;
+	particle2_->emitter_.emitterType = GPUParticle::EmitShape::Sphere;
 
 	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),10000));
 	particle_->emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
 	particle_->emitter_.size = Vector3(0.0f,0.0f,0.0f);
-	particle_->emitter_.scale = 0.05f;
-	particle_->emitter_.count = 10000;
-	particle_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-	particle_->emitter_.angle = 360.0f;
-	particle_->emitter_.frequency = 0.5f;
+	particle_->emitter_.radius = 1.0f;
+	particle_->emitter_.scale = 0.1f;
+	particle_->emitter_.count = 1000;
+	particle_->emitter_.frequency = 1.0f / 60.0f;
 	particle_->emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	particle_->emitter_.lifeTime = 1.0f;
-	particle_->emitter_.speed = 4.0f;
-	particle_->emitter_.emitterType = 1;
+	particle_->emitter_.speed = 1.0f;
+	particle_->emitter_.emitterType = GPUParticle::EmitShape::Circle;
 
 	particle_->isLoop_ = false;
 
@@ -167,10 +165,10 @@ void DebugTestScene::DrawModel() {
 	//ShapesDraw::DrawAABB(Shapes::AABB({ -1.0,-1.0,-1.0f }, { 1.0f,1.0f,1.0f }), camera_);
 
 	BurnScar::preDraw();
-	//burnScars_->Draw(camera_);
+	burnScars_->Draw(camera_);
 
 	IceScar::preDraw();
-	iceScar_->Draw(camera_);
+	//iceScar_->Draw(camera_);
 
 }
 
@@ -226,6 +224,198 @@ void DebugTestScene::DebugGUI() {
 	ImGui::DragFloat3("rotate", &human_->worldTransform_.rotation_.x, 0.01f);
 
 	ImGui::End();
+
+	ImGui::Begin("Particle");
+
+	if(ImGui::TreeNode("Particle1")){
+		ImGui::InputFloat("speed", &particle2_->emitter_.speed);
+		ImGui::InputFloat("Scale", &particle2_->emitter_.scale);
+		ImGui::InputInt("count", reinterpret_cast<int*>(&particle2_->emitter_.count));
+		ImGui::InputFloat("radius", &particle2_->emitter_.radius);
+		ImGui::InputFloat("LifeTime", &particle2_->emitter_.lifeTime);
+		ImGui::InputFloat4("Color", &particle2_->emitter_.color.x);
+		int currentEmitShape = static_cast<int>(particle2_->emitter_.emitterType);
+
+		if (ImGui::RadioButton("Sphere", currentEmitShape == GPUParticle::EmitShape::Sphere)) {
+			currentEmitShape = GPUParticle::EmitShape::Sphere;
+		}
+		if (ImGui::RadioButton("Hemisphere", currentEmitShape == GPUParticle::EmitShape::Hemisphere)) {
+			currentEmitShape = GPUParticle::EmitShape::Hemisphere;
+		}
+		if (ImGui::RadioButton("Box", currentEmitShape == GPUParticle::EmitShape::Box)) {
+			currentEmitShape = GPUParticle::EmitShape::Box;
+		}
+		if (ImGui::RadioButton("Square", currentEmitShape == GPUParticle::EmitShape::Squere)) {
+			currentEmitShape = GPUParticle::EmitShape::Squere;
+		}
+		if (ImGui::RadioButton("Circle", currentEmitShape == GPUParticle::EmitShape::Circle)) {
+			currentEmitShape = GPUParticle::EmitShape::Circle;
+		}
+
+		// 選択された形状を反映
+		particle2_->emitter_.emitterType = static_cast<GPUParticle::EmitShape>(currentEmitShape);
+
+
+
+		bool isCheck = (particle2_->overLifeTime_.isConstantVelocity != 0);
+		if (ImGui::Checkbox("isConstantVelocity", &isCheck)) {
+			particle2_->overLifeTime_.isConstantVelocity = static_cast<uint32_t>(isCheck);
+		}
+		if (particle2_->overLifeTime_.isConstantVelocity) {
+			if (ImGui::TreeNode("ConstantVelocity")) {
+				ImGui::InputFloat3("velocity", &particle2_->overLifeTime_.velocity.x);
+				ImGui::TreePop();
+			}
+		}
+
+		isCheck = (particle2_->overLifeTime_.isTransVelocity != 0);
+		if (ImGui::Checkbox("isTransVelocity", &isCheck)) {
+			particle2_->overLifeTime_.isTransVelocity = static_cast<uint32_t>(isCheck);
+		}
+		if (particle2_->overLifeTime_.isTransVelocity) {
+			if (ImGui::TreeNode("TransVelocity")) {
+				ImGui::InputFloat3("startVelocity", &particle2_->overLifeTime_.startVelocity.x);
+				ImGui::InputFloat3("endVelocity", &particle2_->overLifeTime_.endVelocity.x);
+				ImGui::TreePop();
+			}
+		}
+
+		isCheck = (particle2_->overLifeTime_.isScale != 0);
+		if (ImGui::Checkbox("isScale", &isCheck)) {
+			particle2_->overLifeTime_.isScale = static_cast<uint32_t>(isCheck);
+		}
+		if (particle2_->overLifeTime_.isScale) {
+			if (ImGui::TreeNode("ScaleOverLifeTime")) {
+				ImGui::InputFloat("startScale", &particle2_->overLifeTime_.startScale);
+				ImGui::InputFloat("endScale", &particle2_->overLifeTime_.endScale);
+				ImGui::TreePop();
+			}
+		}
+
+		isCheck = (particle2_->overLifeTime_.isColor != 0);
+		if (ImGui::Checkbox("isColor", &isCheck)) {
+			particle2_->overLifeTime_.isColor = static_cast<uint32_t>(isCheck);
+		}
+		if (particle2_->overLifeTime_.isColor) {
+			if (ImGui::TreeNode("ColorOverLifeTime")) {
+				ImGui::InputFloat3("startColor", &particle2_->overLifeTime_.startColor.x);
+				ImGui::InputFloat3("endColor", &particle2_->overLifeTime_.endColor.x);
+				ImGui::TreePop();
+			}
+		}
+
+		isCheck = (particle2_->overLifeTime_.isAlpha != 0);
+		if (ImGui::Checkbox("isAlpha", &isCheck)) {
+			particle2_->overLifeTime_.isAlpha = static_cast<uint32_t>(isCheck);
+		}
+		if (particle2_->overLifeTime_.isAlpha) {
+			if (ImGui::TreeNode("AlphaOverLifeTime")) {
+				ImGui::SliderFloat("startAlpha", &particle2_->overLifeTime_.startAlpha, 0.0f, 1.0f);
+				ImGui::SliderFloat("midAlpha", &particle2_->overLifeTime_.midAlpha, 0.0f, 1.0f);
+				ImGui::SliderFloat("endAlpha", &particle2_->overLifeTime_.endAlpha, 0.0f, 1.0f);
+				ImGui::TreePop();
+			}
+		}
+
+		isCheck = (particle2_->overLifeTime_.isTransSpeed != 0);
+		if (ImGui::Checkbox("isTransSpeed", &isCheck)) {
+			particle2_->overLifeTime_.isTransSpeed = static_cast<uint32_t>(isCheck);
+		}
+		if (particle2_->overLifeTime_.isTransSpeed) {
+			if (ImGui::TreeNode("SpeedOverLifeTime")) {
+				ImGui::InputFloat("statrSpeed", &particle2_->overLifeTime_.startSpeed);
+				ImGui::InputFloat("endSpeed", &particle2_->overLifeTime_.endSpeed);
+				ImGui::TreePop();
+			}
+		}
+		ImGui::TreePop();
+	}
+
+	/*if (ImGui::TreeNode("Particle2")) {
+
+		ImGui::InputFloat("speed", &particle_->emitter_.speed);
+		ImGui::InputInt("count", reinterpret_cast<int*>(&particle_->emitter_.count));
+
+		bool isCheck = (particle_->overLifeTime_.isConstantVelocity != 0);
+		if (ImGui::Checkbox("isConstantVelocity", &isCheck)) {
+			particle_->overLifeTime_.isConstantVelocity = static_cast<uint32_t>(isCheck);
+		}
+		if (particle_->overLifeTime_.isConstantVelocity) {
+			if (ImGui::TreeNode("ConstantVelocity")) {
+				ImGui::InputFloat3("velocity", &particle_->overLifeTime_.velocity.x);
+				ImGui::TreePop();
+			}
+		}
+
+		isCheck = (particle_->overLifeTime_.isTransVelocity != 0);
+		if (ImGui::Checkbox("isTransVelocity", &isCheck)) {
+			particle_->overLifeTime_.isTransVelocity = static_cast<uint32_t>(isCheck);
+		}
+		if (particle_->overLifeTime_.isTransVelocity) {
+			if (ImGui::TreeNode("TransVelocity")) {
+				ImGui::InputFloat3("startVelocity", &particle_->overLifeTime_.startVelocity.x);
+				ImGui::InputFloat3("endVelocity", &particle_->overLifeTime_.endVelocity.x);
+				ImGui::TreePop();
+			}
+		}
+
+		isCheck = (particle_->overLifeTime_.isScale != 0);
+		if (ImGui::Checkbox("isScale", &isCheck)) {
+			particle_->overLifeTime_.isScale = static_cast<uint32_t>(isCheck);
+		}
+		if (particle_->overLifeTime_.isScale) {
+			if (ImGui::TreeNode("ScaleOverLifeTime")) {
+				ImGui::InputFloat("startScale", &particle_->overLifeTime_.startScale);
+				ImGui::InputFloat("endScale", &particle_->overLifeTime_.endScale);
+				ImGui::TreePop();
+			}
+		}
+
+		isCheck = (particle_->overLifeTime_.isColor != 0);
+		if (ImGui::Checkbox("isColor", &isCheck)) {
+			particle_->overLifeTime_.isColor = static_cast<uint32_t>(isCheck);
+		}
+		if (particle_->overLifeTime_.isColor) {
+			if (ImGui::TreeNode("ColorOverLifeTime")) {
+				ImGui::InputFloat3("startColor", &particle_->overLifeTime_.startColor.x);
+				ImGui::InputFloat3("endColor", &particle_->overLifeTime_.endColor.x);
+				ImGui::TreePop();
+			}
+		}
+
+		isCheck = (particle_->overLifeTime_.isAlpha != 0);
+		if (ImGui::Checkbox("isAlpha", &isCheck)) {
+			particle_->overLifeTime_.isAlpha = static_cast<uint32_t>(isCheck);
+		}
+		if (particle_->overLifeTime_.isAlpha) {
+			if (ImGui::TreeNode("AlphaOverLifeTime")) {
+				ImGui::SliderFloat("startAlpha", &particle_->overLifeTime_.startAlpha, 0.0f, 1.0f);
+				ImGui::SliderFloat("midAlpha", &particle_->overLifeTime_.midAlpha, 0.0f, 1.0f);
+				ImGui::SliderFloat("endAlpha", &particle_->overLifeTime_.endAlpha, 0.0f, 1.0f);
+				ImGui::TreePop();
+			}
+		}
+
+		isCheck = (particle_->overLifeTime_.isTransSpeed != 0);
+		if (ImGui::Checkbox("isTransSpeed", &isCheck)) {
+			particle_->overLifeTime_.isTransSpeed = static_cast<uint32_t>(isCheck);
+		}
+		if (particle_->overLifeTime_.isTransSpeed) {
+			if (ImGui::TreeNode("SpeedOverLifeTime")) {
+				ImGui::InputFloat("statrSpeed", &particle_->overLifeTime_.startSpeed);
+				ImGui::InputFloat("endSpeed", &particle_->overLifeTime_.endSpeed);
+				ImGui::TreePop();
+			}
+		}
+
+		ImGui::TreePop();
+	}*/
+
+	
+
+	ImGui::End();
+
+
 
 #endif // _DEBUG
 }

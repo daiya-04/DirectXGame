@@ -102,7 +102,7 @@ private:
 	Action action_ = Action::Standing;
 	AttackType attackType_ = AttackType::kElementBall;
 
-	uint32_t maxHp_ = 1;
+	uint32_t maxHp_ = 10;
 	uint32_t life_ = maxHp_;
 
 	bool isDead_ = false;

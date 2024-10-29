@@ -268,7 +268,7 @@ void IceScar::Init(uint32_t textureHandle) {
 
 	BaseScar::Init(textureHandle);
 
-	color_ = Vector4(0.47f, 1.0f, 0.95f, 1.0f);
+	color_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
 }
 

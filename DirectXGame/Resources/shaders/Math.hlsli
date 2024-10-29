@@ -1,4 +1,31 @@
 
+float32_t4x4 MakeIdentity44() {
+    return float32_t4x4(
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    );
+}
+
+float32_t4x4 MakeTranslateMat(float32_t3 translate) {
+    return float32_t4x4(
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        translate.x, translate.y, translate.z, 1.0f
+    );
+}
+
+float32_t4x4 MakeScaleMat(float32_t3 scale) {
+    return float32_t4x4(
+        scale.x, 0.0f, 0.0f, 0.0f,
+        0.0f, scale.y, 0.0f, 0.0f,
+        0.0f, 0.0f, scale.z, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    );
+}
+
 float32_t4x4 MakeRotateXMat(float32_t angleRad){
     return float32_t4x4(
         1.0f, 0.0f, 0.0f, 0.0f,
@@ -24,6 +51,18 @@ float32_t4x4 MakeRotateZMat(float32_t angleRad){
         0.0f, 0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 1.0f
     );
+}
+
+float32_t4x4 MakeRotateMat(float32_t3 rotate) {
+    return mul(mul(MakeRotateXMat(rotate.x), MakeRotateYMat(rotate.y)), MakeRotateZMat(rotate.z));
+}
+
+float32_t4x4 MakeAffineMat(float32_t3 scale, float32_t3 rotate, float32_t3 translate) {
+    float32_t4x4 scaleMat = MakeScaleMat(scale);
+    float32_t4x4 rotateMat = MakeRotateMat(rotate);
+    float32_t4x4 translateMat = MakeTranslateMat(translate);
+
+    return mul(mul(scaleMat, rotateMat), translateMat);
 }
 
 //angleはradian

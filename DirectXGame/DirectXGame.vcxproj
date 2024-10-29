@@ -64,6 +64,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)externals\assimp\include;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\BaseScene;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\DebugText;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;$(ProjectDir)Engine\3d\Light;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Loader;$(ProjectDir)Engine\Easing;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\Line;$(ProjectDir)Game\;$(ProjectDir)Game\Effects;$(ProjectDir)Game\Scene;$(ProjectDir)Game\GameObject;$(ProjectDir)Game\Charactor;$(ProjectDir)Game\Charactor\Player;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;$(ProjectDir)Game\Charactor\Boss\ElementBall;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -71,7 +72,7 @@
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
       <AdditionalOptions>/ignore:4049 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mdd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
@@ -91,7 +92,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)externals\assimp\include;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\BaseScene;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\DebugText;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;$(ProjectDir)Engine\3d\Light;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Loader;$(ProjectDir)Engine\Easing;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\Line;$(ProjectDir)Game\;$(ProjectDir)Game\Effects;$(ProjectDir)Game\Scene;$(ProjectDir)Game\GameObject;$(ProjectDir)Game\Charactor;$(ProjectDir)Game\Charactor\Player;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;$(ProjectDir)Game\Charactor\Boss\ElementBall;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -101,7 +102,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
       <AdditionalOptions>/ignore:4049 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"

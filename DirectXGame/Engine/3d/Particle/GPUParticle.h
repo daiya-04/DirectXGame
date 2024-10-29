@@ -43,6 +43,7 @@ private:
 		kFreeListIndex,
 		kFreeList,
 		kMaxNum,
+		kOverLifeTime,
 
 		kParamNum,
 	};
@@ -53,17 +54,30 @@ private:
 		kFreeListIndex,
 		kFreeList,
 		kMaxNum,
+		kOverLifeTime,
 
 		kParamNum,
 	};
 
+	
+
 public:
+
+	enum EmitShape : uint32_t {
+		Sphere,
+		Hemisphere,
+		Box,
+		Squere,
+		Circle,
+
+	};
 
 	struct ParticleCS {
 		Vector3 translation;
 		Vector3 scale;
-		float lifeTime;
+		Vector3 rotate;
 		Vector3 velocity;
+		float lifeTime;
 		float currentTime;
 		Vector4 color;
 	};
@@ -82,18 +96,48 @@ public:
 		Vector3 translate;
 		float padding1;
 		Vector3 size;
+
+		float radius;
 		float scale;
+		float rotate;
 		uint32_t count; //射出数
 		float frequency; //射出間隔
 		float frequencyTime; //射出間隔調整用時間
 		uint32_t emit; //射出許可
-		Vector3 direction;
-		float angle;
+		float padding2[2];
 		Vector4 color;
 		float lifeTime;
 		float speed;
 		uint32_t emitterType;
+		float padding3;
+	};
+
+	struct OverLifeTime {
+		uint32_t isConstantVelocity;
+		Vector3 velocity;
+
+		uint32_t isTransVelocity;		
+		Vector3 startVelocity;
+		Vector3 endVelocity;
+
+		uint32_t isScale;
+		float startScale;
+		float endScale;
+
+		uint32_t isColor;
+		float padding1;
+		Vector3 startColor;
 		float padding2;
+		Vector3 endColor;
+
+		uint32_t isAlpha;
+		float startAlpha;
+		float midAlpha;
+		float endAlpha;
+		
+		uint32_t isTransSpeed;
+		float startSpeed;
+		float endSpeed;
 	};
 
 	struct PerFrame {
@@ -109,6 +153,14 @@ private:
 
 	static ID3D12Device* device_;
 	static ID3D12GraphicsCommandList* commandList_;
+
+	static ComPtr<ID3DBlob> signatureBlob_;
+	static ComPtr<ID3DBlob> errorBlob_;
+
+	static IDxcUtils* dxcUtils_;
+	static IDxcCompiler3* dxcCompiler_;
+	static IDxcIncludeHandler* includeHandler_;
+
 	static ComPtr<ID3D12RootSignature> rootSignature_;
 	static ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 
@@ -139,6 +191,11 @@ private:
 	//リソースの生成
 	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
 
+	static void CreateInitCSPipeline();
+	static void CreateEmitCSPipeline();
+	static void CreateUpdateCSPipeline();
+
+
 private:
 
 	
@@ -161,6 +218,9 @@ private:
 	ComPtr<ID3D12Resource> freeListBuff_;
 	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> freeListUavHandle_;
 
+	ComPtr<ID3D12Resource> OverLifeTimeBuff_;
+	OverLifeTime* overLifeTimeData_ = nullptr;
+
 	ComPtr<ID3D12Resource> vertexBuff_;
 	D3D12_VERTEX_BUFFER_VIEW vbv_{};
 	ComPtr<ID3D12Resource> indexBuff_;
@@ -175,6 +235,8 @@ private:
 public:
 
 	Emitter emitter_;
+
+	OverLifeTime overLifeTime_;
 
 	bool isLoop_ = true;
 
@@ -191,6 +253,12 @@ private:
 	void CreateBuffer();
 
 	void CreateUav();
+
+	void ExecuteInitCS();
+
+	void ExecuteEmitCS();
+
+	void ExecuteUpdateCS();
 
 };
 

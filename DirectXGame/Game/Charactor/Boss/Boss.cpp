@@ -28,19 +28,24 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	obj_->SetSkinCluster(&skinClusters_[action_]);
 	obj_->threshold_ = 0.0f;
 
-	appearEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
+	appearEff_.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 10000));
 	appearEff_->isLoop_ = false;
 
-	appearEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f);
-	appearEff_->emitter_.angle = 0.0f;
-	appearEff_->emitter_.emitterType = 4;
+	
+	appearEff_->emitter_.emitterType = GPUParticle::EmitShape::Circle;
 	appearEff_->emitter_.count = 100;
-	appearEff_->emitter_.frequency = 1.0f / 60.0f;
+	appearEff_->emitter_.frequency = 3.0f / 60.0f;
 	appearEff_->emitter_.color = Vector4(0.2f, 0.05f, 0.32f, 1.0f);
 	appearEff_->emitter_.lifeTime = 2.0f;
-	appearEff_->emitter_.scale = 0.5f;
-	appearEff_->emitter_.size = Vector3(2.0f, 1.0f, 1.0f);
-	appearEff_->emitter_.speed = 5.0f;
+	appearEff_->emitter_.scale = 0.3f;
+	appearEff_->emitter_.radius = 2.0f;
+	appearEff_->emitter_.speed = 0.5f;
+
+	appearEff_->overLifeTime_.isConstantVelocity = 1;
+	appearEff_->overLifeTime_.velocity = Vector3(0.0f, 3.0f, 0.0f);
+
+	appearEff_->overLifeTime_.isAlpha = 1;
+	appearEff_->overLifeTime_.midAlpha = 1.0f;
 	
 	
 	rotateMat_ = DirectionToDirection({0.0f,0.0f,1.0f}, direction_);

@@ -17,11 +17,20 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 	}
 
 	for (auto& particle : particles_) {
-		particle.reset(GPUParticle::Create(TextureManager::Load("FireParticle.png"), 5000));
-		particle->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f).Normalize();
-		particle->emitter_.angle = 0.0f;
+		particle.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 5000));
 		particle->emitter_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		particle->emitter_.emitterType = 4;
+		particle->emitter_.emitterType = GPUParticle::EmitShape::Circle;
+
+		particle->overLifeTime_.isAlpha = 1;
+		particle->overLifeTime_.startAlpha = 1.0f;
+		particle->overLifeTime_.midAlpha = 1.0f;
+
+		particle->overLifeTime_.isConstantVelocity = 1;
+		particle->overLifeTime_.velocity = Vector3(0.0f, 10.0f, 0.0f);
+
+		particle->overLifeTime_.isColor = 1;
+		particle->overLifeTime_.startColor = Vector3(0.89f, 0.27f, 0.03f);
+		particle->overLifeTime_.endColor = Vector3(1.0f, 0.0f, 0.0f);
 	}
 
 
@@ -107,6 +116,7 @@ void GroundFlare::RootInit() {
 
 	for (auto& particle : particles_) {
 		particle->emitter_.count = 0;
+		particle->isLoop_ = false;
 	}
 
 	isHit_ = false;
@@ -161,11 +171,12 @@ void GroundFlare::FireInit() {
 	workFire_.param_ = 0;
 
 	for (auto& particle : particles_) {
+		particle->isLoop_ = true;
 		particle->emitter_.scale = 1.0f;
-		particle->emitter_.size = Vector3(0.7f, 0.7f, 0.7f);
-		particle->emitter_.frequency = 0.05f;
+		particle->emitter_.radius = 0.7f;
+		particle->emitter_.frequency = 1.0f / 60.0f;
 		particle->emitter_.count = 50;
-		particle->emitter_.speed = 10.0f;
+		particle->emitter_.speed = 0.0f;
 		particle->emitter_.lifeTime = 1.0f;
 	}
 

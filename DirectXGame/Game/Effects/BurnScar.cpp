@@ -269,20 +269,25 @@ void BurnScar::Init(uint32_t textureHandle) {
 
 	color_ = Vector4(0.96f, 0.13f, 0.04f,1.0f);
 
-	explosionEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
+	explosionEff_.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 10000));
 
 	explosionEff_->isLoop_ = false;
 
 	explosionEff_->emitter_.count = 10000;
 	explosionEff_->emitter_.emit = 0;
-	explosionEff_->emitter_.direction = Vector3(0.0f, 1.0f, 0.0f).Normalize();
 	explosionEff_->emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
-	explosionEff_->emitter_.angle = 360.0f;
-	explosionEff_->emitter_.lifeTime = 1.0f;
-	explosionEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
-	explosionEff_->emitter_.speed = 15.0f;
+	explosionEff_->emitter_.lifeTime = 30.0f / 60.0f;
+	explosionEff_->emitter_.radius = 0.1f;
+	explosionEff_->emitter_.speed = 5.0f;
 	explosionEff_->emitter_.scale = 0.1f;
-	explosionEff_->emitter_.emitterType = 1;
+	explosionEff_->emitter_.emitterType = GPUParticle::EmitShape::Hemisphere;
+
+	explosionEff_->overLifeTime_.isAlpha = 1;
+	explosionEff_->overLifeTime_.midAlpha = 1.0f;
+
+	explosionEff_->overLifeTime_.isScale = 1;
+	explosionEff_->overLifeTime_.startScale = 0.1f;
+
 
 }
 
@@ -292,6 +297,7 @@ void BurnScar::Update() {
 
 	EffectUpdate();
 
+	explosionEff_->emitter_.translate = position_;
 	explosionEff_->Update();
 	
 }
@@ -328,5 +334,7 @@ void BurnScar::DrawParticle(const Camera& camera) {
 void BurnScar::EffectStart(const Vector3& pos) {
 
 	BaseScar::EffectStart(pos);
+
+	explosionEff_->emitter_.emit = 1;
 
 }
