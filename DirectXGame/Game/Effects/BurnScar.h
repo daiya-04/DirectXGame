@@ -40,7 +40,7 @@ private:
 
 private:
 
-	std::unique_ptr<GPUParticle> explosionEff_;
+	std::unique_ptr<GPUParticle> splashEff_;
 
 public: //メンバ関数
 

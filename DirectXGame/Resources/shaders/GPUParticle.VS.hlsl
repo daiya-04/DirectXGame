@@ -27,7 +27,8 @@ VertexShaderOutput main(VertexShaderInput input,uint32_t instanceId : SV_Instanc
 	worldMat[3].xyz = particle.translate;*/
 
 	float32_t4x4 worldMat = MakeIdentity44();
-	worldMat = mul(mul(MakeScaleMat(particle.scale), gPerView.billboardMat), MakeTranslateMat(particle.translate));
+	float32_t4x4 rotateMat = mul(MakeRotateMat(particle.rotate), gPerView.billboardMat);
+	worldMat = mul(mul(MakeScaleMat(particle.scale), rotateMat), MakeTranslateMat(particle.translate));
 
 	output.position = mul(input.position, mul(worldMat, gPerView.viewProjMat));
 	output.texcoord = input.texcoord;

@@ -33,4 +33,6 @@ struct OverLifeTime {
     uint32_t isTransSpeed;
     float32_t startSpeed;
     float32_t endSpeed;
+
+    float32_t gravity;
 };

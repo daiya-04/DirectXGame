@@ -64,6 +64,7 @@ private:
 public:
 
 	enum EmitShape : uint32_t {
+		NonShape,
 		Sphere,
 		Hemisphere,
 		Box,
@@ -138,6 +139,9 @@ public:
 		uint32_t isTransSpeed;
 		float startSpeed;
 		float endSpeed;
+
+		float gravity;
+
 	};
 
 	struct PerFrame {

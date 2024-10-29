@@ -59,17 +59,17 @@ void DebugTestScene::Init() {
 	human_->worldTransform_.rotation_.y = 3.14f;
 	human_->worldTransform_.translation_.z = 10.0f;
 
-	particle2_.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 50000));
+	particle2_.reset(GPUParticle::Create(TextureManager::Load("star.png"), 50000));
 
 	particle2_->isLoop_ = true;
 	particle2_->emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
 	particle2_->emitter_.size = Vector3(1.0f, 1.0f, 1.0f);
 	particle2_->emitter_.radius = 1.0f;
 	particle2_->emitter_.scale = 0.1f;
-	particle2_->emitter_.count = 100;
+	particle2_->emitter_.count = 1;
 	particle2_->emitter_.frequency = 1.0f / 60.0f;
 	particle2_->emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
-	particle2_->emitter_.lifeTime = 1.5f;
+	particle2_->emitter_.lifeTime = 1.0f;
 	particle2_->emitter_.speed = 0.0f;
 	particle2_->emitter_.emitterType = GPUParticle::EmitShape::Sphere;
 
@@ -165,7 +165,7 @@ void DebugTestScene::DrawModel() {
 	//ShapesDraw::DrawAABB(Shapes::AABB({ -1.0,-1.0,-1.0f }, { 1.0f,1.0f,1.0f }), camera_);
 
 	BurnScar::preDraw();
-	burnScars_->Draw(camera_);
+	//burnScars_->Draw(camera_);
 
 	IceScar::preDraw();
 	//iceScar_->Draw(camera_);
@@ -182,7 +182,7 @@ void DebugTestScene::DrawParticle() {
 
 	GPUParticle::preDraw();
 	//particle_->Draw(camera_);
-	//particle2_->Draw(camera_);
+	particle2_->Draw(camera_);
 
 }
 
@@ -230,6 +230,7 @@ void DebugTestScene::DebugGUI() {
 	if(ImGui::TreeNode("Particle1")){
 		ImGui::InputFloat("speed", &particle2_->emitter_.speed);
 		ImGui::InputFloat("Scale", &particle2_->emitter_.scale);
+		ImGui::InputFloat("rotate", &particle2_->emitter_.rotate);
 		ImGui::InputInt("count", reinterpret_cast<int*>(&particle2_->emitter_.count));
 		ImGui::InputFloat("radius", &particle2_->emitter_.radius);
 		ImGui::InputFloat("LifeTime", &particle2_->emitter_.lifeTime);
@@ -328,6 +329,9 @@ void DebugTestScene::DebugGUI() {
 				ImGui::TreePop();
 			}
 		}
+
+		ImGui::InputFloat("gravity", &particle2_->overLifeTime_.gravity);
+
 		ImGui::TreePop();
 	}
 
