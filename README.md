@@ -54,15 +54,17 @@ https://github.com/daiya-04/DirectXGame.git
 Blender上で作成したステージオブジェクトの配置情報をPythonで作成した自作のアドオン機能を使ってjsonファイルで出力。それをゲーム側で読み込むことで簡単に配置できるようになっています。
 
 ### Blender側
-![Blender](https://github.com/daiya-04/DirectXGame/blob/master/readmeImage/image_01.png)
+![Blender](readmeImage/image_01.png)
 
 ### ゲーム側
-![GameWindow](https://github.com/daiya-04/DirectXGame/blob/master/readmeImage/image_02.png)
+![GameWindow](readmeImage/image_02.png)
 
 
 ## パーティクルシステムと攻撃エフェクト
+
+### パーティクル
 パーティクルは大量に描画するので、Compute Shaderを利用して生成や更新処理を効率化して、パフォーマンスを最適化しています。パーティクルの設定では、生成数や速さ、大きさなどのパラメーターに加え、時間経過で速度や色などの値を変化させるためのパラメーターがあります。
 
-
+![particlesystem](readmeImage/image_03.gif)
 
 ### 作成した攻撃
