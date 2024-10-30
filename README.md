@@ -1,11 +1,10 @@
 # DaiEngine
 DirectX12を利用して作成した、自作ゲームエンジン。3Dゲーム制作における基礎的な機能が実装されています。
 
-Clone
+### Clone
 ```
 https://github.com/daiya-04/DirectXGame.git
 ```
-
 
 ## Engine機能
 ### [[Engine](https://github.com/daiya-04/DirectXGame/tree/master/DirectXGame/Engine)]
@@ -36,11 +35,27 @@ https://github.com/daiya-04/DirectXGame.git
  - [Assimp](https://github.com/assimp/assimp)
  - [nlohmann](https://github.com/nlohmann/json)
 
-# 作成しているゲーム
-###  [[Game](https://github.com/daiya-04/DirectXGame/tree/master/DirectXGame/Game)]
+# 個人制作
 
-ボスと一対一で戦うアクションゲーム
+## タイトル 「魔法師の戦い」
 
 [動画](https://youtu.be/fDO03_xzYW8)
+
+### ゲームの概要
+
+ - ゲームジャンル
+   - 3Dアクションシューティング
+ - 制作人数
+   - 1人
+ - 製作期間
+   - 2024年03月~
+
+## ステージ配置
+Blender上で作成したステージオブジェクトの配置情報をPythonで作成した自作のアドオン機能を使ってjsonファイルで出力。それをゲーム側で読み込むことで簡単に配置できるようになっています。
+
+
+### パーティクルシステムと攻撃エフェクト
+
+
 
 
