@@ -69,7 +69,7 @@ void DebugTestScene::Init() {
 	particle2_->emitter_.count = 100;
 	particle2_->emitter_.frequency = 1.0f / 60.0f;
 	particle2_->emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
-	particle2_->emitter_.lifeTime = 1.5f;
+	particle2_->emitter_.lifeTime = 1.0f;
 	particle2_->emitter_.speed = 0.0f;
 	particle2_->emitter_.emitterType = GPUParticle::EmitShape::Sphere;
 
@@ -165,7 +165,7 @@ void DebugTestScene::DrawModel() {
 	//ShapesDraw::DrawAABB(Shapes::AABB({ -1.0,-1.0,-1.0f }, { 1.0f,1.0f,1.0f }), camera_);
 
 	BurnScar::preDraw();
-	burnScars_->Draw(camera_);
+	//burnScars_->Draw(camera_);
 
 	IceScar::preDraw();
 	//iceScar_->Draw(camera_);
@@ -182,7 +182,7 @@ void DebugTestScene::DrawParticle() {
 
 	GPUParticle::preDraw();
 	//particle_->Draw(camera_);
-	//particle2_->Draw(camera_);
+	particle2_->Draw(camera_);
 
 }
 
