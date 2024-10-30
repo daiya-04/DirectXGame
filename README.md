@@ -53,8 +53,10 @@ https://github.com/daiya-04/DirectXGame.git
 ## ステージ配置
 Blender上で作成したステージオブジェクトの配置情報をPythonで作成した自作のアドオン機能を使ってjsonファイルで出力。それをゲーム側で読み込むことで簡単に配置できるようになっています。
 
+![Blender](https://github.com/daiya-04/DirectXGame/blob/master/readmeImage/image_01.png)
 
-### パーティクルシステムと攻撃エフェクト
+
+## パーティクルシステムと攻撃エフェクト
 
 
 
