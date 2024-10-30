@@ -68,3 +68,7 @@ Blender上で作成したステージオブジェクトの配置情報をPython�
 ![particlesystem](readmeImage/image_03.gif)
 
 ### 作成した攻撃
+![fireball](readmeImage/image_04.gif)
+
+![icicle](readmeImage/image_05.gif)
+
