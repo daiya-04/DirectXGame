@@ -271,25 +271,25 @@ void BurnScar::Init(uint32_t textureHandle) {
 
 	splashEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1000));
 
-	splashEff_->isLoop_ = false;
+	splashEff_->particleData_.isLoop_ = false;
 
-	splashEff_->emitter_.count = 500;
-	splashEff_->emitter_.emit = 0;
-	splashEff_->emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
-	splashEff_->emitter_.lifeTime = 40.0f / 60.0f;
-	splashEff_->emitter_.radius = 0.1f;
-	splashEff_->emitter_.speed = 6.0f;
-	splashEff_->emitter_.scale = 0.1f;
-	splashEff_->emitter_.emitterType = GPUParticle::EmitShape::Circle;
+	splashEff_->particleData_.emitter_.count = 500;
+	splashEff_->particleData_.emitter_.emit = 0;
+	splashEff_->particleData_.emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
+	splashEff_->particleData_.emitter_.lifeTime = 40.0f / 60.0f;
+	splashEff_->particleData_.emitter_.radius = 0.1f;
+	splashEff_->particleData_.emitter_.speed = 6.0f;
+	splashEff_->particleData_.emitter_.scale = 0.1f;
+	splashEff_->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Circle;
 
-	splashEff_->overLifeTime_.isAlpha = 1;
-	splashEff_->overLifeTime_.startAlpha = 1.0f;
-	splashEff_->overLifeTime_.midAlpha = 1.0f;
+	splashEff_->particleData_.overLifeTime_.isAlpha = 1;
+	splashEff_->particleData_.overLifeTime_.startAlpha = 1.0f;
+	splashEff_->particleData_.overLifeTime_.midAlpha = 1.0f;
 
-	splashEff_->overLifeTime_.isScale = 1;
-	splashEff_->overLifeTime_.startScale = 0.1f;
+	splashEff_->particleData_.overLifeTime_.isScale = 1;
+	splashEff_->particleData_.overLifeTime_.startScale = 0.1f;
 
-	splashEff_->overLifeTime_.gravity = 0.3f;
+	splashEff_->particleData_.overLifeTime_.gravity = 0.3f;
 
 
 }
@@ -300,7 +300,7 @@ void BurnScar::Update() {
 
 	EffectUpdate();
 
-	splashEff_->emitter_.translate = position_;
+	splashEff_->particleData_.emitter_.translate = position_;
 	splashEff_->Update();
 	
 }
@@ -338,6 +338,6 @@ void BurnScar::EffectStart(const Vector3& pos) {
 
 	BaseScar::EffectStart(pos);
 
-	splashEff_->emitter_.emit = 1;
+	splashEff_->particleData_.emitter_.emit = 1;
 
 }

@@ -43,14 +43,17 @@ public:
 
 	const D3D12_RESOURCE_DESC GetResourceDesc(uint32_t textureHandle);
 
-	//リソースの生成
-	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
+	std::string GetTextureName(uint32_t textureHandle);
+	
 
 private:
 
 	uint32_t LoadInternal(const std::string& fileName);
 
 	uint32_t LoadUvInternal(const std::string& fileName, const std::string& filePath);
+
+	//リソースの生成
+	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
 
 	[[nodiscard]]
 	ComPtr<ID3D12Resource> UploadTextureData(const DirectX::ScratchImage& mipImage,const Texture& tex);

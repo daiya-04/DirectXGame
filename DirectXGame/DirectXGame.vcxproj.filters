@@ -257,11 +257,17 @@
     <ClCompile Include="Game\Effects\BurnScar.cpp">
       <Filter>Game\Effects</Filter>
     </ClCompile>
-    <ClCompile Include="BaseScar.cpp">
+    <ClCompile Include="Game\Effects\BaseScar.cpp">
       <Filter>Game\Effects</Filter>
     </ClCompile>
-    <ClCompile Include="IceScar.cpp">
+    <ClCompile Include="Game\Effects\IceScar.cpp">
       <Filter>Game\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Particle\ParticleManager.cpp">
+      <Filter>Engine\3d\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Particle\ParticleEditor.cpp">
+      <Filter>Engine\3d\Particle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -454,11 +460,17 @@
     <ClInclude Include="Game\Effects\BurnScar.h">
       <Filter>Game\Effects</Filter>
     </ClInclude>
-    <ClInclude Include="BaseScar.h">
+    <ClInclude Include="Game\Effects\BaseScar.h">
       <Filter>Game\Effects</Filter>
     </ClInclude>
-    <ClInclude Include="IceScar.h">
+    <ClInclude Include="Game\Effects\IceScar.h">
       <Filter>Game\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Particle\ParticleManager.h">
+      <Filter>Engine\3d\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Particle\ParticleEditor.h">
+      <Filter>Engine\3d\Particle</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

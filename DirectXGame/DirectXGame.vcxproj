@@ -110,7 +110,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BaseScar.cpp" />
+    <ClCompile Include="Game\Effects\BaseScar.cpp" />
     <ClCompile Include="Game\Charactor\Boss\ElementBall\ElementBallManager.cpp" />
     <ClCompile Include="Engine\3d\AnimationManager.cpp" />
     <ClCompile Include="Game\Effects\BurnScar.cpp" />
@@ -140,7 +140,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Charactor\Boss\GroundFlare.cpp" />
     <ClCompile Include="Game\Charactor\Boss\Icicle\Icicle.cpp" />
     <ClCompile Include="Game\Charactor\Boss\Icicle\IcicleManager.cpp" />
-    <ClCompile Include="IceScar.cpp" />
+    <ClCompile Include="Game\Effects\IceScar.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\3d\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\3d\Object3d.cpp" />
@@ -167,9 +167,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.cpp" />
     <ClCompile Include="Game\GameObject\Rock.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
+    <ClCompile Include="Engine\3d\Particle\ParticleManager.cpp" />
+    <ClCompile Include="Engine\3d\Particle\ParticleEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseScar.h" />
+    <ClInclude Include="Game\Effects\BaseScar.h" />
     <ClInclude Include="Game\Charactor\Boss\ElementBall\ElementBallManager.h" />
     <ClInclude Include="Engine\3d\AnimationManager.h" />
     <ClInclude Include="Game\Effects\BurnScar.h" />
@@ -233,7 +235,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.h" />
     <ClInclude Include="Game\GameObject\Rock.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
-    <ClInclude Include="IceScar.h" />
+    <ClInclude Include="Game\Effects\IceScar.h" />
+    <ClInclude Include="Engine\3d\Particle\ParticleManager.h" />
+    <ClInclude Include="Engine\3d\Particle\ParticleEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

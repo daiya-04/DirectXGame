@@ -12,7 +12,6 @@
 #include <string>
 #include <memory>
 
-
 class GPUParticle {
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -145,6 +144,13 @@ public:
 
 	};
 
+	struct ParticleData {
+		Emitter emitter_;
+		OverLifeTime overLifeTime_;
+		bool isLoop_ = true;
+		std::string textureName_;
+	};
+
 	struct PerFrame {
 		float time;
 		float deltaTime;
@@ -239,11 +245,7 @@ private:
 
 public:
 
-	Emitter emitter_;
-
-	OverLifeTime overLifeTime_;
-
-	bool isLoop_ = true;
+	ParticleData particleData_;
 
 public:
 
@@ -252,6 +254,10 @@ public:
 	void Update();
 
 	void Draw(const Camera& camera);
+
+	void SetParticleData(const ParticleData& particleData);
+
+	void SetTextureHandle();
 
 private:
 

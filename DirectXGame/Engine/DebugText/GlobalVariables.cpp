@@ -23,7 +23,8 @@ void GlobalVariables::Update() {
 	if (!ImGui::Begin("Global Variables", nullptr, ImGuiWindowFlags_MenuBar)) {
 		ImGui::End();
 		return;
-}
+	}
+
 	if (!ImGui::BeginMenuBar()) { return; }
 
 	for (std::map<std::string, Group>::iterator itGroup = datas_.begin(); itGroup != datas_.end();

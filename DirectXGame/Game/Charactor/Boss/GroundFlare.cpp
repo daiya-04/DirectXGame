@@ -18,19 +18,19 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 
 	for (auto& particle : particles_) {
 		particle.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 5000));
-		particle->emitter_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		particle->emitter_.emitterType = GPUParticle::EmitShape::Circle;
+		particle->particleData_.emitter_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		particle->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Circle;
 
-		particle->overLifeTime_.isAlpha = 1;
-		particle->overLifeTime_.startAlpha = 1.0f;
-		particle->overLifeTime_.midAlpha = 1.0f;
+		particle->particleData_.overLifeTime_.isAlpha = 1;
+		particle->particleData_.overLifeTime_.startAlpha = 1.0f;
+		particle->particleData_.overLifeTime_.midAlpha = 1.0f;
 
-		particle->overLifeTime_.isConstantVelocity = 1;
-		particle->overLifeTime_.velocity = Vector3(0.0f, 10.0f, 0.0f);
+		particle->particleData_.overLifeTime_.isConstantVelocity = 1;
+		particle->particleData_.overLifeTime_.velocity = Vector3(0.0f, 10.0f, 0.0f);
 
-		particle->overLifeTime_.isColor = 1;
-		particle->overLifeTime_.startColor = Vector3(0.89f, 0.27f, 0.03f);
-		particle->overLifeTime_.endColor = Vector3(1.0f, 0.0f, 0.0f);
+		particle->particleData_.overLifeTime_.isColor = 1;
+		particle->particleData_.overLifeTime_.startColor = Vector3(0.89f, 0.27f, 0.03f);
+		particle->particleData_.overLifeTime_.endColor = Vector3(1.0f, 0.0f, 0.0f);
 	}
 
 
@@ -115,8 +115,8 @@ void GroundFlare::AttackStart() {
 void GroundFlare::RootInit() {
 
 	for (auto& particle : particles_) {
-		particle->emitter_.count = 0;
-		particle->isLoop_ = false;
+		particle->particleData_.emitter_.count = 0;
+		particle->particleData_.isLoop_ = false;
 	}
 
 	isHit_ = false;
@@ -127,7 +127,7 @@ void GroundFlare::RootInit() {
 void GroundFlare::RootUpdate() {
 
 	for (auto& particle : particles_) {
-		particle->emitter_.frequencyTime = 0.0f;
+		particle->particleData_.emitter_.frequencyTime = 0.0f;
 	}
 
 }
@@ -142,7 +142,7 @@ void GroundFlare::WarningInit() {
 
 	
 	for (size_t index = 0; index < 5; index++) {
-		particles_[index]->emitter_.translate = centerPos_ + offset_[index];
+		particles_[index]->particleData_.emitter_.translate = centerPos_ + offset_[index];
 		warningZones_[index]->worldTransform_.translation_ = centerPos_ + offset_[index];
 	}
 
@@ -171,13 +171,13 @@ void GroundFlare::FireInit() {
 	workFire_.param_ = 0;
 
 	for (auto& particle : particles_) {
-		particle->isLoop_ = true;
-		particle->emitter_.scale = 1.0f;
-		particle->emitter_.radius = 0.7f;
-		particle->emitter_.frequency = 1.0f / 60.0f;
-		particle->emitter_.count = 50;
-		particle->emitter_.speed = 0.0f;
-		particle->emitter_.lifeTime = 1.0f;
+		particle->particleData_.isLoop_ = true;
+		particle->particleData_.emitter_.scale = 1.0f;
+		particle->particleData_.emitter_.radius = 0.7f;
+		particle->particleData_.emitter_.frequency = 1.0f / 60.0f;
+		particle->particleData_.emitter_.count = 50;
+		particle->particleData_.emitter_.speed = 0.0f;
+		particle->particleData_.emitter_.lifeTime = 1.0f;
 	}
 
 }
@@ -188,7 +188,7 @@ void GroundFlare::FireUpdate() {
 
 	if (workFire_.param_ >= workFire_.shotCount_) {
 		for (auto& particle : particles_) {
-			particle->emitter_.frequencyTime = 0.0f;
+			particle->particleData_.emitter_.frequencyTime = 0.0f;
 		}
 	}
 

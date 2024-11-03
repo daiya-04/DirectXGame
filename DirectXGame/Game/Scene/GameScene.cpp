@@ -94,46 +94,46 @@ void GameScene::Init(){
 
 	attackEndEff_.reset(GPUParticle::Create(TextureManager::Load("particle.png"), 10000));
 
-	attackEndEff_->isLoop_ = false;
+	attackEndEff_->particleData_.isLoop_ = false;
 
-	attackEndEff_->emitter_.count = 3000;
-	attackEndEff_->emitter_.emit = 0;
-	attackEndEff_->emitter_.color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-	attackEndEff_->emitter_.radius = 0.01f;
-	attackEndEff_->emitter_.scale = 0.1f;
-	attackEndEff_->emitter_.speed = 1.0f;
-	attackEndEff_->emitter_.lifeTime = 0.5f;
-	attackEndEff_->emitter_.emitterType = GPUParticle::EmitShape::Sphere;
+	attackEndEff_->particleData_.emitter_.count = 3000;
+	attackEndEff_->particleData_.emitter_.emit = 0;
+	attackEndEff_->particleData_.emitter_.color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+	attackEndEff_->particleData_.emitter_.radius = 0.01f;
+	attackEndEff_->particleData_.emitter_.scale = 0.1f;
+	attackEndEff_->particleData_.emitter_.speed = 1.0f;
+	attackEndEff_->particleData_.emitter_.lifeTime = 0.5f;
+	attackEndEff_->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Sphere;
 
-	attackEndEff_->overLifeTime_.isTransSpeed = 1;
-	attackEndEff_->overLifeTime_.startSpeed = 7.0f;
-	attackEndEff_->overLifeTime_.endSpeed = 0.0f;
+	attackEndEff_->particleData_.overLifeTime_.isTransSpeed = 1;
+	attackEndEff_->particleData_.overLifeTime_.startSpeed = 7.0f;
+	attackEndEff_->particleData_.overLifeTime_.endSpeed = 0.0f;
 
-	attackEndEff_->overLifeTime_.isAlpha = 1;
-	attackEndEff_->overLifeTime_.midAlpha = 1.0f;
+	attackEndEff_->particleData_.overLifeTime_.isAlpha = 1;
+	attackEndEff_->particleData_.overLifeTime_.midAlpha = 1.0f;
 
 	deadEff_.reset(GPUParticle::Create(TextureManager::Load("mist.png"), 10000));
 
-	deadEff_->isLoop_ = false;
+	deadEff_->particleData_.isLoop_ = false;
 
-	deadEff_->emitter_.count = 100;
-	deadEff_->emitter_.emit = 0;
-	deadEff_->emitter_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	deadEff_->emitter_.radius = 0.5f;
-	deadEff_->emitter_.scale = 0.5f;
-	deadEff_->emitter_.speed = 2.0f;
-	deadEff_->emitter_.lifeTime = 30.0f / 60.0f;
-	deadEff_->emitter_.emitterType = GPUParticle::EmitShape::Circle;
+	deadEff_->particleData_.emitter_.count = 100;
+	deadEff_->particleData_.emitter_.emit = 0;
+	deadEff_->particleData_.emitter_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	deadEff_->particleData_.emitter_.radius = 0.5f;
+	deadEff_->particleData_.emitter_.scale = 0.5f;
+	deadEff_->particleData_.emitter_.speed = 2.0f;
+	deadEff_->particleData_.emitter_.lifeTime = 30.0f / 60.0f;
+	deadEff_->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Circle;
 
-	deadEff_->overLifeTime_.isConstantVelocity = 1;
-	deadEff_->overLifeTime_.velocity = Vector3(0.0f, 3.0f, 0.0f);
+	deadEff_->particleData_.overLifeTime_.isConstantVelocity = 1;
+	deadEff_->particleData_.overLifeTime_.velocity = Vector3(0.0f, 3.0f, 0.0f);
 	
-	deadEff_->overLifeTime_.isAlpha = 1;
-	deadEff_->overLifeTime_.startAlpha = 1.0f;
-	deadEff_->overLifeTime_.midAlpha = 1.0f;
+	deadEff_->particleData_.overLifeTime_.isAlpha = 1;
+	deadEff_->particleData_.overLifeTime_.startAlpha = 1.0f;
+	deadEff_->particleData_.overLifeTime_.midAlpha = 1.0f;
 
-	deadEff_->overLifeTime_.isScale = 1;
-	deadEff_->overLifeTime_.endScale = 0.1f;
+	deadEff_->particleData_.overLifeTime_.isScale = 1;
+	deadEff_->particleData_.overLifeTime_.endScale = 0.1f;
 
 	isDeadEff_ = false;
 
@@ -430,8 +430,8 @@ void GameScene::BattleUpdate() {
 		playerAttack->Update();
 
 		if (!playerAttack->IsLife()) {
-			attackEndEff_->emitter_.emit = 1;
-			attackEndEff_->emitter_.translate = playerAttack->GetWorldPos();
+			attackEndEff_->particleData_.emitter_.emit = 1;
+			attackEndEff_->particleData_.emitter_.translate = playerAttack->GetWorldPos();
 		}
 
 	}
@@ -493,8 +493,8 @@ void GameScene::BattleUpdate() {
 				boss_->OnCollision();
 				playerAttack->OnCollision();
 
-				attackEndEff_->emitter_.emit = 1;
-				attackEndEff_->emitter_.translate = playerAttack->GetWorldPos();
+				attackEndEff_->particleData_.emitter_.emit = 1;
+				attackEndEff_->particleData_.emitter_.translate = playerAttack->GetWorldPos();
 			}
 		}
 	}
@@ -529,8 +529,8 @@ void GameScene::PlayerDeadUpdate() {
 		playerAttack->Update();
 
 		if (!playerAttack->IsLife()) {
-			attackEndEff_->emitter_.emit = 1;
-			attackEndEff_->emitter_.translate = playerAttack->GetWorldPos();
+			attackEndEff_->particleData_.emitter_.emit = 1;
+			attackEndEff_->particleData_.emitter_.translate = playerAttack->GetWorldPos();
 		}
 
 	}
@@ -539,10 +539,10 @@ void GameScene::PlayerDeadUpdate() {
 
 	if (player_->IsFinishDeadMotion()) {
 		if (!isDeadEff_) {
-			deadEff_->emitter_.emit = 1;
-			deadEff_->emitter_.translate = player_->GetWorldPos() + Vector3(0.0f, 0.0f, 1.0f);
-			deadEff_->emitter_.translate.y = 0.1f;
-			deadEff_->emitter_.scale = 0.2f;
+			deadEff_->particleData_.emitter_.emit = 1;
+			deadEff_->particleData_.emitter_.translate = player_->GetWorldPos() + Vector3(0.0f, 0.0f, 1.0f);
+			deadEff_->particleData_.emitter_.translate.y = 0.1f;
+			deadEff_->particleData_.emitter_.scale = 0.2f;
 			isDeadEff_ = true;
 		}
 		if (++workPlayerDead_.count_ >= workPlayerDead_.interval_) {
@@ -568,8 +568,8 @@ void GameScene::BossDeadUpdate() {
 		playerAttack->Update();
 
 		if (!playerAttack->IsLife()) {
-			attackEndEff_->emitter_.emit = 1;
-			attackEndEff_->emitter_.translate = playerAttack->GetWorldPos();
+			attackEndEff_->particleData_.emitter_.emit = 1;
+			attackEndEff_->particleData_.emitter_.translate = playerAttack->GetWorldPos();
 		}
 
 	}
@@ -578,10 +578,10 @@ void GameScene::BossDeadUpdate() {
 
 	if (boss_->IsFinishDeadMotion()) {
 		if (!isDeadEff_) {
-			deadEff_->emitter_.emit = 1;
-			deadEff_->emitter_.translate = boss_->GetWorldPos() + Vector3(0.0f, 0.0f, 1.0f);
-			deadEff_->emitter_.translate.y = 0.01f;
-			deadEff_->emitter_.scale = 0.5f;
+			deadEff_->particleData_.emitter_.emit = 1;
+			deadEff_->particleData_.emitter_.translate = boss_->GetWorldPos() + Vector3(0.0f, 0.0f, 1.0f);
+			deadEff_->particleData_.emitter_.translate.y = 0.01f;
+			deadEff_->particleData_.emitter_.scale = 0.5f;
 			isDeadEff_ = true;
 		}
 		if (++workBossDead_.count_ >= workBossDead_.interval_) {
@@ -617,8 +617,8 @@ void GameScene::ClearUpdate() {
 		playerAttack->Update();
 
 		if (!playerAttack->IsLife()) {
-			attackEndEff_->emitter_.emit = 1;
-			attackEndEff_->emitter_.translate = playerAttack->GetWorldPos();
+			attackEndEff_->particleData_.emitter_.emit = 1;
+			attackEndEff_->particleData_.emitter_.translate = playerAttack->GetWorldPos();
 		}
 
 	}

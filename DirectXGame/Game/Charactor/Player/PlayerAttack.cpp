@@ -17,21 +17,21 @@ void PlayerAttack::Init(std::shared_ptr<Model> model, const Vector3& startPos, c
 
 	particle_.reset(GPUParticle::Create(TextureManager::Load("particle.png"), 10000));
 
-	particle_->emitter_.radius = 0.25f;
-	particle_->emitter_.scale = 0.05f;
-	particle_->emitter_.frequency = 1.0f / 60.0f;
-	particle_->emitter_.count = 500;
-	particle_->emitter_.speed = 0.0f;
-	particle_->emitter_.lifeTime = 0.7f;
-	particle_->emitter_.color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-	particle_->emitter_.emitterType = GPUParticle::EmitShape::Sphere;
+	particle_->particleData_.emitter_.radius = 0.25f;
+	particle_->particleData_.emitter_.scale = 0.05f;
+	particle_->particleData_.emitter_.frequency = 1.0f / 60.0f;
+	particle_->particleData_.emitter_.count = 500;
+	particle_->particleData_.emitter_.speed = 0.0f;
+	particle_->particleData_.emitter_.lifeTime = 0.7f;
+	particle_->particleData_.emitter_.color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+	particle_->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Sphere;
 
-	particle_->overLifeTime_.isAlpha = 1;
-	particle_->overLifeTime_.midAlpha = 1.0f;
+	particle_->particleData_.overLifeTime_.isAlpha = 1;
+	particle_->particleData_.overLifeTime_.midAlpha = 1.0f;
 
-	particle_->overLifeTime_.isScale = 1;
-	particle_->overLifeTime_.startScale = 0.1f;
-	particle_->overLifeTime_.endScale = 0.0f;
+	particle_->particleData_.overLifeTime_.isScale = 1;
+	particle_->particleData_.overLifeTime_.startScale = 0.1f;
+	particle_->particleData_.overLifeTime_.endScale = 0.0f;
 
 }
 
@@ -52,7 +52,7 @@ void PlayerAttack::Update() {
 	}
 
 	obj_->worldTransform_.UpdateMatrix();
-	particle_->emitter_.translate = GetWorldPos();
+	particle_->particleData_.emitter_.translate = GetWorldPos();
 	collider_.center = GetWorldPos();
 	
 	particle_->Update();
