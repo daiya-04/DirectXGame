@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include "TextureManager.h"
+#include "ParticleManager.h"
 #include "Log.h"
 
 #pragma comment(lib,"dxcompiler.lib")
@@ -269,27 +270,11 @@ void BurnScar::Init(uint32_t textureHandle) {
 
 	color_ = Vector4(0.96f, 0.13f, 0.04f,1.0f);
 
-	splashEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1000));
+	splashEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
+	splashEff_->SetParticleData(ParticleManager::Load("FireBallImpactSplash"));
 
-	splashEff_->particleData_.isLoop_ = false;
-
-	splashEff_->particleData_.emitter_.count = 500;
-	splashEff_->particleData_.emitter_.emit = 0;
-	splashEff_->particleData_.emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
-	splashEff_->particleData_.emitter_.lifeTime = 40.0f / 60.0f;
-	splashEff_->particleData_.emitter_.radius = 0.1f;
-	splashEff_->particleData_.emitter_.speed = 6.0f;
-	splashEff_->particleData_.emitter_.scale = 0.1f;
-	splashEff_->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Circle;
-
-	splashEff_->particleData_.overLifeTime_.isAlpha = 1;
-	splashEff_->particleData_.overLifeTime_.startAlpha = 1.0f;
-	splashEff_->particleData_.overLifeTime_.midAlpha = 1.0f;
-
-	splashEff_->particleData_.overLifeTime_.isScale = 1;
-	splashEff_->particleData_.overLifeTime_.startScale = 0.1f;
-
-	splashEff_->particleData_.overLifeTime_.gravity = 0.3f;
+	flameEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
+	flameEff_->SetParticleData(ParticleManager::Load("FireBallImpactFlame"));
 
 
 }
@@ -301,7 +286,9 @@ void BurnScar::Update() {
 	EffectUpdate();
 
 	splashEff_->particleData_.emitter_.translate = position_;
+	flameEff_->particleData_.emitter_.translate = position_;
 	splashEff_->Update();
+	flameEff_->Update();
 	
 }
 
@@ -332,6 +319,7 @@ void BurnScar::Draw(const Camera& camera) {
 
 void BurnScar::DrawParticle(const Camera& camera) {
 	splashEff_->Draw(camera);
+	flameEff_->Draw(camera);
 }
 
 void BurnScar::EffectStart(const Vector3& pos) {
@@ -339,5 +327,6 @@ void BurnScar::EffectStart(const Vector3& pos) {
 	BaseScar::EffectStart(pos);
 
 	splashEff_->particleData_.emitter_.emit = 1;
+	flameEff_->particleData_.emitter_.emit = 1;
 
 }

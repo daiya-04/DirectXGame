@@ -1,5 +1,6 @@
 #include "ElementBallManager.h"
 #include "TextureManager.h"
+#include "ParticleManager.h"
 
 ElementBallManager* ElementBallManager::GetInstance() {
 	static ElementBallManager instance;
@@ -36,21 +37,7 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 
 	for (auto& splash : splashes_) {
 		splash.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 10000));
-		splash->particleData_.emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
-		splash->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Circle;
-		splash->particleData_.emitter_.scale = 0.1f;
-		splash->particleData_.emitter_.radius = 1.0f;
-		splash->particleData_.emitter_.frequency = 10.0f / 60.0f;
-		splash->particleData_.isLoop_ = false;
-
-		splash->particleData_.overLifeTime_.isAlpha = 1;
-		splash->particleData_.overLifeTime_.midAlpha = 1.0f;
-
-		splash->particleData_.overLifeTime_.isConstantVelocity = 1;
-		splash->particleData_.overLifeTime_.velocity = Vector3(0.0f, 2.0f, 0.0f);
-
-		splash->particleData_.overLifeTime_.isScale = 1;
-		splash->particleData_.overLifeTime_.startScale = 0.2f;
+		splash->SetParticleData(ParticleManager::Load("FireBallSplash"));
 	}
 
 	isAttack_ = false;
@@ -98,12 +85,8 @@ void ElementBallManager::Update() {
 	for (auto& splash : splashes_) {
 		if (elementBalls_[0]->GetPhase() == ElementBall::Phase::kSet) {
 			splash->particleData_.isLoop_ = true;
-			splash->particleData_.emitter_.lifeTime = 20.0f / 60.0f;
-			splash->particleData_.emitter_.count = 1000;
-			splash->particleData_.emitter_.scale = 0.2f;
-			splash->particleData_.emitter_.speed = -3.0f;
 		}
-		if (elementBalls_[0]->GetPhase() == ElementBall::Phase::kCharge) {
+		else {
 			splash->particleData_.isLoop_ = false;
 			splash->particleData_.emitter_.frequencyTime = 0.0f;
 			splash->particleData_.emitter_.emit = 0;
@@ -202,22 +185,8 @@ void ElementBallManager::AttackStart() {
 		fireFields_[index]->particleData_.emitter_.translate = elementBalls_[index]->GetWorldPos();
 		fireFields_[index]->particleData_.emitter_.translate.y = 0.1f;
 
-		fireFields_[index]->particleData_.emitter_.translate = elementBalls_[index]->GetWorldPos();
-		fireFields_[index]->particleData_.emitter_.translate.y = 0.1f;
+		splashes_[index]->particleData_.emitter_.translate = elementBalls_[index]->GetWorldPos();
+		splashes_[index]->particleData_.emitter_.translate.y = 0.1f;
 	}
-
-	/*for (auto& splash : splashes_) {
-		splash->emitter_.count = 2000;
-		splash->emitter_.size = Vector3(0.7f, 1.0f, 1.0f);
-		splash->emitter_.speed = 50.0f;
-		splash->emitter_.lifeTime = 60.0f / 60.0f;
-		splash->emitter_.emit = 1;
-		splash->emitter_.frequencyTime = 0.0f;
-		splash->emitter_.scale = 0.5f;
-
-		splash->isLoop_ = false;
-
-		splash->Update();
-	}*/
 
 }

@@ -2,6 +2,7 @@
 
 #include "Easing.h"
 #include "TextureManager.h"
+#include "ParticleManager.h"
 
 
 GroundFlare* GroundFlare::GetInstance() {
@@ -18,7 +19,10 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 
 	for (auto& particle : particles_) {
 		particle.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 5000));
-		particle->particleData_.emitter_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+		particle->SetParticleData(ParticleManager::Load("GroundFlare"));
+
+		/*particle->particleData_.emitter_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 		particle->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Circle;
 
 		particle->particleData_.overLifeTime_.isAlpha = 1;
@@ -30,7 +34,7 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 
 		particle->particleData_.overLifeTime_.isColor = 1;
 		particle->particleData_.overLifeTime_.startColor = Vector3(0.89f, 0.27f, 0.03f);
-		particle->particleData_.overLifeTime_.endColor = Vector3(1.0f, 0.0f, 0.0f);
+		particle->particleData_.overLifeTime_.endColor = Vector3(1.0f, 0.0f, 0.0f);*/
 	}
 
 
@@ -114,10 +118,10 @@ void GroundFlare::AttackStart() {
 
 void GroundFlare::RootInit() {
 
-	for (auto& particle : particles_) {
+	/*for (auto& particle : particles_) {
 		particle->particleData_.emitter_.count = 0;
 		particle->particleData_.isLoop_ = false;
-	}
+	}*/
 
 	isHit_ = false;
 	isAttack_ = false;
@@ -126,9 +130,9 @@ void GroundFlare::RootInit() {
 
 void GroundFlare::RootUpdate() {
 
-	for (auto& particle : particles_) {
+	/*for (auto& particle : particles_) {
 		particle->particleData_.emitter_.frequencyTime = 0.0f;
-	}
+	}*/
 
 }
 
@@ -143,6 +147,7 @@ void GroundFlare::WarningInit() {
 	
 	for (size_t index = 0; index < 5; index++) {
 		particles_[index]->particleData_.emitter_.translate = centerPos_ + offset_[index];
+		particles_[index]->particleData_.emitter_.translate.y += particles_[index]->particleData_.emitter_.size.y;
 		warningZones_[index]->worldTransform_.translation_ = centerPos_ + offset_[index];
 	}
 
@@ -171,13 +176,7 @@ void GroundFlare::FireInit() {
 	workFire_.param_ = 0;
 
 	for (auto& particle : particles_) {
-		particle->particleData_.isLoop_ = true;
-		particle->particleData_.emitter_.scale = 1.0f;
-		particle->particleData_.emitter_.radius = 0.7f;
-		particle->particleData_.emitter_.frequency = 1.0f / 60.0f;
-		particle->particleData_.emitter_.count = 50;
-		particle->particleData_.emitter_.speed = 0.0f;
-		particle->particleData_.emitter_.lifeTime = 1.0f;
+		particle->particleData_.emitter_.emit = 1;
 	}
 
 }

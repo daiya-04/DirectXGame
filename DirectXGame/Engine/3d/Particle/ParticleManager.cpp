@@ -20,9 +20,9 @@ GPUParticle::ParticleData ParticleManager::Load(const std::string& fileName) {
 GPUParticle::ParticleData ParticleManager::LoadInternal(const std::string& fileName) {
 
 	//既に読み込んでいたらリターン
-	if (particleDatas_.find(fileName) != particleDatas_.end()) {
+	/*if (particleDatas_.find(fileName) != particleDatas_.end()) {
 		return particleDatas_[fileName];
-	}
+	}*/
 
 
 	//ディレクトリパス

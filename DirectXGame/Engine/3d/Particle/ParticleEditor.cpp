@@ -235,6 +235,12 @@ void ParticleEditor::DebugGUI() {
 		LoadDataFile(saveFileName_);
 	}
 
+	ImGui::SameLine();
+
+	if (ImGui::Button("Save")) {
+		DataSave();
+	}
+
 	isCheck = (particle_->particleData_.isLoop_ != 0);
 	if (ImGui::Checkbox("isLoop", &isCheck)) {
 		particle_->particleData_.isLoop_ = isCheck;
@@ -366,9 +372,7 @@ void ParticleEditor::DebugGUI() {
 
 	ImGui::InputFloat("gravity", &particle_->particleData_.overLifeTime_.gravity);
 
-	if (ImGui::Button("Save")) {
-		DataSave();
-	}
+	
 
 
 	ImGui::End();
