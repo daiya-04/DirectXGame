@@ -40,6 +40,12 @@ const D3D12_RESOURCE_DESC TextureManager::GetResourceDesc(uint32_t textureHandle
 	return textures_[textureHandle].resource->GetDesc();
 }
 
+std::string TextureManager::GetTextureName(uint32_t textureHandle) {
+	assert(textureHandle < kNumTextures);
+
+	return textures_[textureHandle].name;
+}
+
 ComPtr<ID3D12Resource> TextureManager::CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes) {
 	//リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapproperties{};

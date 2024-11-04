@@ -39,10 +39,12 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
                 velocity = lerp(gOverLifeTime.startVelocity, gOverLifeTime.endVelocity, param);
             }
 
-            if(gOverLifeTime.isTransSpeed && all(gParticles[particleIndex].velocity != float32_t3(0.0f, 0.0f, 0.0f))){
+            if(gOverLifeTime.isTransSpeed){
                 gParticles[particleIndex].velocity = normalize(gParticles[particleIndex].velocity) * lerp(gOverLifeTime.startSpeed, gOverLifeTime.endSpeed, param);
             }
             
+            gParticles[particleIndex].velocity.y -= gOverLifeTime.gravity;
+
             gParticles[particleIndex].translate += (gParticles[particleIndex].velocity + velocity) * gPerFrame.deltaTime;
 
             if(gOverLifeTime.isScale){

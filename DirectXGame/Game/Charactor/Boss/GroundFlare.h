@@ -45,7 +45,7 @@ private:
 
 	struct WorkFire {
 		int32_t shotCount_ = 60 * 1;
-		int32_t fireCount_ = 60 * 3;
+		int32_t fireCount_ = 60 * 1;
 		int32_t param_ = 0;
 	};
 

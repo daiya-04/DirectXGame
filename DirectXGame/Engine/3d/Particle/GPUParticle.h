@@ -12,7 +12,6 @@
 #include <string>
 #include <memory>
 
-
 class GPUParticle {
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -64,6 +63,7 @@ private:
 public:
 
 	enum EmitShape : uint32_t {
+		NonShape,
 		Sphere,
 		Hemisphere,
 		Box,
@@ -80,6 +80,7 @@ public:
 		float lifeTime;
 		float currentTime;
 		Vector4 color;
+		uint32_t isBillboard;
 	};
 
 	struct VertexData {
@@ -109,7 +110,7 @@ public:
 		float lifeTime;
 		float speed;
 		uint32_t emitterType;
-		float padding3;
+		uint32_t isBillboard;
 	};
 
 	struct OverLifeTime {
@@ -138,6 +139,16 @@ public:
 		uint32_t isTransSpeed;
 		float startSpeed;
 		float endSpeed;
+
+		float gravity;
+
+	};
+
+	struct ParticleData {
+		Emitter emitter_;
+		OverLifeTime overLifeTime_;
+		bool isLoop_ = true;
+		std::string textureName_;
 	};
 
 	struct PerFrame {
@@ -234,11 +245,7 @@ private:
 
 public:
 
-	Emitter emitter_;
-
-	OverLifeTime overLifeTime_;
-
-	bool isLoop_ = true;
+	ParticleData particleData_;
 
 public:
 
@@ -247,6 +254,10 @@ public:
 	void Update();
 
 	void Draw(const Camera& camera);
+
+	void SetParticleData(const ParticleData& particleData);
+
+	void SetTextureHandle();
 
 private:
 

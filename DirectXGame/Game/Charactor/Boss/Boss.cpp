@@ -7,6 +7,7 @@
 #include "ModelManager.h"
 #include "ShapesDraw.h"
 #include "AnimationManager.h"
+#include "ParticleManager.h"
 
 #include "GroundFlare.h"
 #include "IcicleManager.h"
@@ -29,24 +30,25 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	obj_->threshold_ = 0.0f;
 
 	appearEff_.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 10000));
-	appearEff_->isLoop_ = false;
+	appearEff_->SetParticleData(ParticleManager::Load("BossEnterParticle"));
+	appearEff_->particleData_.isLoop_ = false;
 
 	
-	appearEff_->emitter_.emitterType = GPUParticle::EmitShape::Circle;
-	appearEff_->emitter_.count = 100;
-	appearEff_->emitter_.frequency = 3.0f / 60.0f;
-	appearEff_->emitter_.color = Vector4(0.2f, 0.05f, 0.32f, 1.0f);
-	appearEff_->emitter_.lifeTime = 2.0f;
-	appearEff_->emitter_.scale = 0.3f;
-	appearEff_->emitter_.radius = 2.0f;
-	appearEff_->emitter_.speed = 0.5f;
+	/*appearEff_->particleData_.emitter_.scale = 0.3f;
+	appearEff_->particleData_.emitter_.radius = 2.0f;
+	appearEff_->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Circle;
+	appearEff_->particleData_.emitter_.count = 100;
+	appearEff_->particleData_.emitter_.frequency = 3.0f / 60.0f;
+	appearEff_->particleData_.emitter_.color = Vector4(0.2f, 0.05f, 0.32f, 1.0f);
+	appearEff_->particleData_.emitter_.lifeTime = 2.0f;
+	appearEff_->particleData_.emitter_.speed = 0.5f;
 
-	appearEff_->overLifeTime_.isConstantVelocity = 1;
-	appearEff_->overLifeTime_.velocity = Vector3(0.0f, 3.0f, 0.0f);
+	appearEff_->particleData_.overLifeTime_.isConstantVelocity = 1;
+	appearEff_->particleData_.overLifeTime_.velocity = Vector3(0.0f, 3.0f, 0.0f);
 
-	appearEff_->overLifeTime_.isAlpha = 1;
-	appearEff_->overLifeTime_.midAlpha = 1.0f;
-	
+	appearEff_->particleData_.overLifeTime_.isAlpha = 1;
+	appearEff_->particleData_.overLifeTime_.midAlpha = 1.0f;
+	*/
 	
 	rotateMat_ = DirectionToDirection({0.0f,0.0f,1.0f}, direction_);
 
@@ -88,8 +90,8 @@ void Boss::Update() {
 	skeletons_[action_].Update();
 	skinClusters_[action_].Update(skeletons_[action_]);
 
-	appearEff_->emitter_.translate = obj_->GetWorldPos();
-	appearEff_->emitter_.translate.y = 0.01f;
+	appearEff_->particleData_.emitter_.translate = obj_->GetWorldPos();
+	appearEff_->particleData_.emitter_.translate.y = 0.01f;
 
 	appearEff_->Update();
 
@@ -219,7 +221,7 @@ void Boss::AppearInit() {
 
 	obj_->worldTransform_.translation_ = workAppear_.startPos;
 	workAppear_.param = 0.0f;
-	appearEff_->isLoop_ = true;
+	appearEff_->particleData_.isLoop_ = true;
 
 }
 
@@ -227,7 +229,7 @@ void Boss::AppearUpdate() {
 
 	if (workAppear_.param >= 1.0f) {
 		behaviorRequest_ = Behavior::kRoot;
-		appearEff_->isLoop_ = false;
+		appearEff_->particleData_.isLoop_ = false;
 		return;
 	}
 

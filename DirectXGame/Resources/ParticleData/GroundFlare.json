@@ -1,0 +1,74 @@
+{
+    "GroundFlare": {
+        "Emitter": {
+            "Color": [
+                0.7450979948043823,
+                0.10957325249910355,
+                0.0,
+                0.0
+            ],
+            "Count": 500,
+            "EmitterType": 5,
+            "Frequency": 0.0,
+            "LifeTime": 1.0,
+            "Radius": 0.699999988079071,
+            "Rotate": 0.0,
+            "Scale": 0.5,
+            "Size": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Speed": -0.5,
+            "Translate": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "isBillboard": 1
+        },
+        "OverLifeTime": {
+            "Gravity": 0.009999999776482582,
+            "Velocity": [
+                0.0,
+                5.0,
+                0.0
+            ],
+            "endAlpha": 0.0,
+            "endColor": [
+                0.7352941036224365,
+                0.028835061937570572,
+                0.028835061937570572
+            ],
+            "endScale": 1.2999999523162842,
+            "endSpeed": 0.0,
+            "endVelocity": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "isAlpha": 1,
+            "isColor": 1,
+            "isConstantVelocity": 1,
+            "isScale": 1,
+            "isTransSpeed": 0,
+            "isTransVelocity": 0,
+            "midAlpha": 1.0,
+            "startAlpha": 0.4950000047683716,
+            "startColor": [
+                0.936274528503418,
+                0.2202998697757721,
+                0.0
+            ],
+            "startScale": 0.30000001192092896,
+            "startSpeed": 0.0,
+            "startVelocity": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        "isLoop": false,
+        "textureName": "fire.png"
+    }
+}

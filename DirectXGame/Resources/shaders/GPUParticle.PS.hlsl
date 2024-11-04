@@ -11,7 +11,8 @@ SamplerState gSampler : register(s0);
 PixelShaderOutput main(VertexShaderOutput input){
 	PixelShaderOutput output;
 	float32_t4 textureColor = gTexture.Sample(gSampler, input.texcoord);
-    output.color = textureColor * input.color;
+    output.color.rgb = textureColor.rgb * input.color.rgb;
+	output.color.a = textureColor.a * input.color.a;
 
 	return output;
 }

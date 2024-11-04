@@ -35,6 +35,8 @@ void ImGuiManager::Initialize(){
 
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	
 #endif // _DEBUG
 
 }

@@ -40,7 +40,8 @@ private:
 
 private:
 
-	std::unique_ptr<GPUParticle> explosionEff_;
+	std::unique_ptr<GPUParticle> splashEff_;
+	std::unique_ptr<GPUParticle> flameEff_;
 
 public: //メンバ関数
 

@@ -478,6 +478,10 @@ void GPUParticle::Init(uint32_t textureHandle, int32_t particleNum) {
 
 	CreateBuffer();
 
+	particleData_.isLoop_ = true;
+	particleData_.emitter_.isBillboard = 1;
+	particleData_.textureName_ = TextureManager::GetInstance()->GetTextureName(uvHandle_);
+
 	ExecuteInitCS();
 
 }
@@ -486,26 +490,26 @@ void GPUParticle::Update() {
 
 	perFrameData->time += (1.0f / 60.0f);
 
-	if (isLoop_) {
+	if (particleData_.isLoop_) {
 		
 
-		emitter_.frequencyTime += (1.0f / 60.0f);
+		particleData_.emitter_.frequencyTime += (1.0f / 60.0f);
 
-		if (emitter_.frequency <= emitter_.frequencyTime) {
-			emitter_.frequencyTime -= emitter_.frequency;
-			emitter_.emit = 1;
+		if (particleData_.emitter_.frequency <= particleData_.emitter_.frequencyTime) {
+			particleData_.emitter_.frequencyTime -= particleData_.emitter_.frequency;
+			particleData_.emitter_.emit = 1;
 		}
 		else {
-			emitter_.emit = 0;
+			particleData_.emitter_.emit = 0;
 		}
 	}
 	
 
 	
-	std::memcpy(overLifeTimeData_, &overLifeTime_, sizeof(OverLifeTime));
+	std::memcpy(overLifeTimeData_, &particleData_.overLifeTime_, sizeof(OverLifeTime));
 
-	if (emitter_.emit == 1) {
-		std::memcpy(emitterData_, &emitter_, sizeof(Emitter));
+	if (particleData_.emitter_.emit == 1) {
+		std::memcpy(emitterData_, &particleData_.emitter_, sizeof(Emitter));
 
 		ExecuteEmitCS();
 
@@ -521,8 +525,8 @@ void GPUParticle::Update() {
 	
 	ExecuteUpdateCS();
 
-	if (!isLoop_ && emitter_.emit == 1) {
-		emitter_.emit = 0;
+	if (!particleData_.isLoop_ && particleData_.emitter_.emit == 1) {
+		particleData_.emitter_.emit = 0;
 	}
 
 }
@@ -565,7 +569,18 @@ void GPUParticle::Draw(const Camera& camera) {
 
 }
 
+void GPUParticle::SetParticleData(const ParticleData& particleData) {
+	particleData_ = particleData;
+	SetTextureHandle();
+}
+
+void GPUParticle::SetTextureHandle() {
+	uvHandle_ = TextureManager::Load(particleData_.textureName_);
+}
+
 void GPUParticle::CreateBuffer() {
+
+	if (vertexBuff_ != nullptr) { return; }
 
 	vertexBuff_ = CreateBufferResource(device_, sizeof(VertexData) * 4);
 
@@ -817,7 +832,7 @@ void GPUParticle::ExecuteEmitCS() {
 
 void GPUParticle::ExecuteUpdateCS() {
 
-	if (emitter_.emit == 0) {
+	if (particleData_.emitter_.emit == 0) {
 		//描画用のDescriptorHeapの設定
 		ID3D12DescriptorHeap* descriptorHeaps[] = { DirectXCommon::GetInstance()->GetSrvHeap() };
 		commandList_->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);

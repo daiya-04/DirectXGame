@@ -1,0 +1,74 @@
+{
+    "FireBallImpactFlame": {
+        "Emitter": {
+            "Color": [
+                0.8186274766921997,
+                0.2889273166656494,
+                0.0,
+                1.0
+            ],
+            "Count": 50,
+            "EmitterType": 3,
+            "Frequency": 0.0,
+            "LifeTime": 0.4000000059604645,
+            "Radius": 0.0,
+            "Rotate": 180.0,
+            "Scale": 1.0,
+            "Size": [
+                1.0,
+                2.0,
+                1.0
+            ],
+            "Speed": 0.0,
+            "Translate": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "isBillboard": 1
+        },
+        "OverLifeTime": {
+            "Gravity": 0.0,
+            "Velocity": [
+                0.0,
+                5.0,
+                0.0
+            ],
+            "endAlpha": 0.0,
+            "endColor": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "endScale": 0.4000000059604645,
+            "endSpeed": 0.0,
+            "endVelocity": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "isAlpha": 1,
+            "isColor": 0,
+            "isConstantVelocity": 0,
+            "isScale": 1,
+            "isTransSpeed": 0,
+            "isTransVelocity": 0,
+            "midAlpha": 1.0,
+            "startAlpha": 1.0,
+            "startColor": [
+                0.8578431606292725,
+                0.4541522264480591,
+                0.0
+            ],
+            "startScale": 0.699999988079071,
+            "startSpeed": 3.0,
+            "startVelocity": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        "isLoop": false,
+        "textureName": "mist.png"
+    }
+}
