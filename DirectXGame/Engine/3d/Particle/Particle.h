@@ -1,6 +1,5 @@
 #pragma once
 #include <d3d12.h>
-#include <dxcapi.h>
 #include <wrl.h>
 #include <string>
 #include "Vec2.h"
@@ -21,15 +20,6 @@ class Particle{
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 private:
-
-	enum class RootParameter {
-		kMaterial,
-		kParticleGPU,
-		kCamera,
-		kTexture,
-
-		kParamNum,
-	};
 
 	struct VertexData {
 		Vector4 pos_;
@@ -67,17 +57,8 @@ public:
 		AABB area_; //効果範囲
 	};
 
-private:
-
-	static ID3D12Device* device_;
-	static ID3D12GraphicsCommandList* commandList_;
-	static ComPtr<ID3D12RootSignature> rootSignature_;
-	static ComPtr<ID3D12PipelineState> graphicsPipelineState_;
-
 public:
 
-	//静的初期化
-	static void StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 	//モデルの生成
 	static Particle* Create(uint32_t textureHandle,uint32_t particleNum);
 	//描画前処理
@@ -90,9 +71,7 @@ public:
 	static std::list<ParticleData> Emit(const Particle::Emitter& emitter, std::mt19937& randomEngine);
 
 private:
-
-	//シェーダのコンパイル
-	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
+	
 	//リソースの生成
 	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
 
@@ -127,10 +106,6 @@ public:
 private:
 
 	void CreateMesh();
-
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
-
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
 
 };
 

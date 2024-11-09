@@ -4,7 +4,9 @@ using namespace Microsoft::WRL;
 
 void SkinCluster::Create(const Skeleton& skeleton,const std::shared_ptr<Model>& model) {
 
-	auto device = DirectXCommon::GetInstance()->GetDevice();
+
+	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+	ID3D12Device* device = dxCommon->GetDevice();
 	UINT srvDescSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	//palette用のResource確保
@@ -12,9 +14,9 @@ void SkinCluster::Create(const Skeleton& skeleton,const std::shared_ptr<Model>& 
 	WellForGPU* mappedPalette = nullptr;
 	paletteBuff_->Map(0, nullptr, reinterpret_cast<void**>(&mappedPalette));
 	mappedPalette_ = { mappedPalette,skeleton.joints_.size() }; //spanを使ってアクセスするようにする
-	paletteSrvHandle_.first = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
-	paletteSrvHandle_.second = GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
-	DirectXCommon::GetInstance()->IncrementSrvHeapCount();
+	paletteSrvHandle_.first = dxCommon->GetCPUDescriptorHandle(dxCommon->GetSrvHeap(), srvDescSize, dxCommon->GetSrvHeapCount());
+	paletteSrvHandle_.second = dxCommon->GetGPUDescriptorHandle(dxCommon->GetSrvHeap(), srvDescSize, dxCommon->GetSrvHeapCount());
+	dxCommon->IncrementSrvHeapCount();
 
 	//palette用のsrvを作成。StructuredBufferでアクセスできるようにする。
 	D3D12_SHADER_RESOURCE_VIEW_DESC paletteSrvDesc{};
@@ -39,9 +41,9 @@ void SkinCluster::Create(const Skeleton& skeleton,const std::shared_ptr<Model>& 
 	influenceBufferView_.SizeInBytes = UINT(sizeof(VertexInfluence) * model->meshes_[0].vertices_.size());
 	influenceBufferView_.StrideInBytes = sizeof(VertexInfluence);
 
-	influenceSrvHandle_.first = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
-	influenceSrvHandle_.second = GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
-	DirectXCommon::GetInstance()->IncrementSrvHeapCount();
+	influenceSrvHandle_.first = dxCommon->GetCPUDescriptorHandle(dxCommon->GetSrvHeap(), srvDescSize, dxCommon->GetSrvHeapCount());
+	influenceSrvHandle_.second = dxCommon->GetGPUDescriptorHandle(dxCommon->GetSrvHeap(), srvDescSize, dxCommon->GetSrvHeapCount());
+	dxCommon->IncrementSrvHeapCount();
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC influenceSrvDesc{};
 	influenceSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
@@ -113,14 +115,3 @@ ComPtr<ID3D12Resource> SkinCluster::CreateBufferResource(ComPtr<ID3D12Device> de
 	return Resource;
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE SkinCluster::GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index) {
-	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	handleCPU.ptr += (descriptorSize * index);
-	return handleCPU;
-}
-
-D3D12_GPU_DESCRIPTOR_HANDLE SkinCluster::GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index) {
-	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
-	handleGPU.ptr += (descriptorSize * index);
-	return handleGPU;
-}

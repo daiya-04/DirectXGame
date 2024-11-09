@@ -92,6 +92,15 @@
     <Filter Include="Game\Effects">
       <UniqueIdentifier>{5b67c19d-7414-4be2-abf2-073291c60a33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\GraphicsPipeline">
+      <UniqueIdentifier>{108b8350-d3a9-4003-8307-bd0d8326e8e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\ComputePipeline">
+      <UniqueIdentifier>{3cc8768f-f9c3-49a6-ad2a-faf39e63019f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\3d\Animation">
+      <UniqueIdentifier>{ed94aa1d-7784-4b1e-978a-e3bf889eb516}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -146,9 +155,6 @@
     <ClCompile Include="Engine\3d\WorldTransform.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3d\Animation.cpp">
-      <Filter>Engine\3d</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\3d\Light\DirectionalLight.cpp">
       <Filter>Engine\3d\Light</Filter>
     </ClCompile>
@@ -199,9 +205,6 @@
     </ClCompile>
     <ClCompile Include="Engine\PostEffect\OutLine.cpp">
       <Filter>Engine\PostEffect</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3d\AnimationManager.cpp">
-      <Filter>Engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Audio\Audio.cpp">
       <Filter>Engine\Audio</Filter>
@@ -268,6 +271,57 @@
     </ClCompile>
     <ClCompile Include="Engine\3d\Particle\ParticleEditor.cpp">
       <Filter>Engine\3d\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\GraphicsPipeline\SpriteGraphicsPipeline.cpp">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Base\DXCompiler.cpp">
+      <Filter>Engine\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\GraphicsPipeline\BaseGraphicsPipeline.cpp">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\GraphicsPipeline\PipelineManager.cpp">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\GraphicsPipeline\LineGraphicsPipeline.cpp">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\GraphicsPipeline\Object3dGraphicsPipeline.cpp">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\GraphicsPipeline\SkinningGraphicsPipeline.cpp">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\ComputePipeline\SkinningComputePipeline.cpp">
+      <Filter>Engine\ComputePipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\ComputePipeline\BaseComputePipeline.cpp">
+      <Filter>Engine\ComputePipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\GraphicsPipeline\SkyBoxGraphicsPipeline.cpp">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\GraphicsPipeline\GPUParticleGraphicsPipeline.cpp">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\ComputePipeline\ParticleInitComputePipeline.cpp">
+      <Filter>Engine\ComputePipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\ComputePipeline\ParticleEmitComputePipeline.cpp">
+      <Filter>Engine\ComputePipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\ComputePipeline\ParticleUpdateComputePipeline.cpp">
+      <Filter>Engine\ComputePipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\GraphicsPipeline\ParticleGraphicsPipeline.cpp">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Animation\AnimationManager.cpp">
+      <Filter>Engine\3d\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3d\Animation\Animation.cpp">
+      <Filter>Engine\3d\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -349,9 +403,6 @@
     <ClInclude Include="Engine\Audio\Audio.h">
       <Filter>Engine\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3d\Animation.h">
-      <Filter>Engine\3d</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\3d\Light\DirectionalLight.h">
       <Filter>Engine\3d\Light</Filter>
     </ClInclude>
@@ -405,9 +456,6 @@
     </ClInclude>
     <ClInclude Include="Engine\PostEffect\OutLine.h">
       <Filter>Engine\PostEffect</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\AnimationManager.h">
-      <Filter>Engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\Model\ModelManager.h">
       <Filter>Engine\3d\Model</Filter>
@@ -471,6 +519,60 @@
     </ClInclude>
     <ClInclude Include="Engine\3d\Particle\ParticleEditor.h">
       <Filter>Engine\3d\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\GraphicsPipeline\SpriteGraphicsPipeline.h">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Base\DXCompiler.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\GraphicsPipeline\BaseGraphicsPipeline.h">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\GraphicsPipeline\PipelineManager.h">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\GraphicsPipeline\LineGraphicsPipeline.h">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\GraphicsPipeline\Object3dGraphicsPipeline.h">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Base\RootParameters.h">
+      <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\GraphicsPipeline\SkinningGraphicsPipeline.h">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ComputePipeline\SkinningComputePipeline.h">
+      <Filter>Engine\ComputePipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ComputePipeline\BaseComputePipeline.h">
+      <Filter>Engine\ComputePipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\GraphicsPipeline\SkyBoxGraphicsPipeline.h">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\GraphicsPipeline\GPUParticleGraphicsPipeline.h">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ComputePipeline\ParticleInitComputePipeline.h">
+      <Filter>Engine\ComputePipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ComputePipeline\ParticleEmitComputePipeline.h">
+      <Filter>Engine\ComputePipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ComputePipeline\ParticleUpdateComputePipeline.h">
+      <Filter>Engine\ComputePipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\GraphicsPipeline\ParticleGraphicsPipeline.h">
+      <Filter>Engine\GraphicsPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Animation\AnimationManager.h">
+      <Filter>Engine\3d\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Animation\Animation.h">
+      <Filter>Engine\3d\Animation</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

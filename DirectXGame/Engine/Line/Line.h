@@ -1,6 +1,5 @@
 #pragma once
 #include <d3d12.h>
-#include <dxcapi.h>
 #include <wrl.h>
 #include <string>
 #include "Vec2.h"
@@ -19,21 +18,13 @@ public:
 		Vector4 color_;
 	};
 
-private:
-
-	//共通部分の変数
-	static ID3D12Device* device_;
-	static ID3D12GraphicsCommandList* commandList_;
-	static ComPtr<ID3D12RootSignature> rootSignature_;
-	static ComPtr<ID3D12PipelineState> graphicsPipelineState_;
-
 public:
 
 	//共通部分の関数
 
-	static void Init(ID3D12Device* device);
+	static void Init();
 
-	static void preDraw(ID3D12GraphicsCommandList* commandList);
+	static void preDraw();
 
 	static void postDraw() {}
 
@@ -44,24 +35,9 @@ public:
 	
 
 private:
-	/// <summary>
-	/// シェーダーのコンパイル
-	/// </summary>
-	/// <param name="filePath">CompilerするShaderファイルへのパス</param>
-	/// <param name="profile">Compilerに使用するProfile</param>
-	/// <param name="dxcUtils"></param>
-	/// <param name="dxcCompiler"></param>
-	/// <param name="includeHandleer"></param>
-	/// <returns></returns>
-	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
-
-	static void CreateGPS();
+	
 	//リソースの生成
 	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
-
-	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
-
-	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
 
 private:
 

@@ -1,6 +1,5 @@
 #pragma once
 #include <d3d12.h>
-#include <dxcapi.h>
 #include <wrl.h>
 #include <string>
 #include "Vec2.h"
@@ -20,28 +19,6 @@ private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 private:
 
-	enum class RootParameter {
-		kMaterial,
-		kWorldTransform,
-		kCamera,
-		kTexture,
-		kEnvironmentTex,
-		kDirectionLight,
-		kDeadEffect,
-
-		kParamNum,
-	};
-
-	enum class ComputeRootParam {
-		kPalette,
-		kInputVertex,
-		kInfluence,
-		kOutputVertex,
-		kSkinningInfo,
-
-		kParamNum,
-	};
-
 	struct SkinningInfoData {
 		uint32_t numVertex_;
 	};
@@ -50,19 +27,8 @@ private:
 		float  threshold_;
 	};
 
-private: //静的メンバ変数
-
-	static ID3D12Device* device_;
-	static ID3D12GraphicsCommandList* commandList_;
-	static ComPtr<ID3D12RootSignature> rootSignature_;
-	static ComPtr<ID3D12RootSignature> computeRootSignature_;
-	static ComPtr<ID3D12PipelineState> graphicsPipelineState_;
-	static ComPtr<ID3D12PipelineState> computePipelineState_;
-
 public: //静的メンバ関数
 
-	//静的初期化
-	static void StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
 	//モデルの生成
 	static SkinningObject* Create(std::shared_ptr<Model> model);
 	//描画前処理
@@ -71,10 +37,6 @@ public: //静的メンバ関数
 	static void postDraw();
 
 	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
-
-private:
-	//シェーダのコンパイル
-	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
 
 private: //メンバ変数
 

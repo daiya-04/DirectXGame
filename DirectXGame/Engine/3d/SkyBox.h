@@ -14,33 +14,12 @@ class SkyBox {
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-private:
-
-	enum class RootParameter {
-		kWorldTransform,
-		kCamera,
-		kTexture,
-
-		kParamNum,
-	};
-
-private: //静的メンバ変数
-
-	static ID3D12Device* device_;
-	static ID3D12GraphicsCommandList* commandList_;
-	static ComPtr<ID3D12RootSignature> rootSignature_;
-	static ComPtr<ID3D12PipelineState> graphicsPipelineState_;
-
 public: //静的メンバ関数
 
-	//静的初期化
-	static void StaticInit();
 	//モデルの生成
 	static SkyBox* Create(uint32_t textureHandle);
 
 private:
-	//シェーダのコンパイル
-	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
 	//リソースの生成
 	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
 
