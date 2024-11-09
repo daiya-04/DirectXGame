@@ -5,15 +5,11 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "DirectionalLight.h"
-#include "Sprite.h"
-#include "Object3d.h"
-#include "SkinningObject.h"
-#include "Particle.h"
 #include "Line.h"
 #include "GlobalVariables.h"
 #include "Audio.h"
-#include "SkyBox.h"
-#include "GPUParticle.h"
+#include "DXCompiler.h"
+#include "PipelineManager.h"
 
 
 void DSFramework::Init(){
@@ -23,20 +19,17 @@ void DSFramework::Init(){
 	
 	DirectXCommon::GetInstance()->Initialize();
 	ImGuiManager::GetInstance()->Initialize();
+
+	DXCompiler::GetInstance()->Init();
 	
 	Input::GetInstance()->Initialize();
 	Audio::GetInstance()->Initialize();
 
 	TextureManager::GetInstance()->Initialize();
 
-	Sprite::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), WinApp::kClientWidth, WinApp::kClientHeight);
-	Object3d::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
-	SkinningObject::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
-	Particle::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
-	Line::Init(DirectXCommon::GetInstance()->GetDevice());
-	SkyBox::StaticInit();
-	GPUParticle::StaticInit();
+	PipelineManager::GetInstance()->Init();
 
+	Line::Init();
 
 	GlobalVariables::GetInstance()->LoadFiles();
 

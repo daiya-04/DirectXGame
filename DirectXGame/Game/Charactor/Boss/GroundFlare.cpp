@@ -21,20 +21,6 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 		particle.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 5000));
 
 		particle->SetParticleData(ParticleManager::Load("GroundFlare"));
-
-		/*particle->particleData_.emitter_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		particle->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Circle;
-
-		particle->particleData_.overLifeTime_.isAlpha = 1;
-		particle->particleData_.overLifeTime_.startAlpha = 1.0f;
-		particle->particleData_.overLifeTime_.midAlpha = 1.0f;
-
-		particle->particleData_.overLifeTime_.isConstantVelocity = 1;
-		particle->particleData_.overLifeTime_.velocity = Vector3(0.0f, 10.0f, 0.0f);
-
-		particle->particleData_.overLifeTime_.isColor = 1;
-		particle->particleData_.overLifeTime_.startColor = Vector3(0.89f, 0.27f, 0.03f);
-		particle->particleData_.overLifeTime_.endColor = Vector3(1.0f, 0.0f, 0.0f);*/
 	}
 
 

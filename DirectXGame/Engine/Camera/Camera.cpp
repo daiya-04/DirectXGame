@@ -35,13 +35,7 @@ void Camera::CreateCBuffer() {
 }
 
 void Camera::Map() {
-
 	cBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&cMap_));
-	//cMap_->matView = matView_;
-	//cMap_->matProjection = matProjection_;
-	//Matrix4x4 matWorld = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotation_, translation_);
-	//cMap_->cameraPos = { matWorld.m[3][0],matWorld.m[3][1] ,matWorld.m[3][2] };
-
 }
 
 void Camera::UpdateMatrix() {
@@ -53,9 +47,6 @@ void Camera::UpdateMatrix() {
 void Camera::UpdateViewMatrix() {
 	matView_ = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotation_, translation_).Inverse();
 	cMap_->matView = matView_;
-	/*Matrix4x4 matWorld = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotation_, translation_);
-	cMap_->cameraPos = { matWorld.m[3][0],matWorld.m[3][1] ,matWorld.m[3][2] };*/
-	//Map();
 }
 
 void Camera::UpdateProjectionMatrix() {

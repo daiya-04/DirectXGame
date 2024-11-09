@@ -1,6 +1,5 @@
 #pragma once
 #include <d3d12.h>
-#include <dxcapi.h>
 #include <wrl.h>
 #include "Vec2.h"
 #include "Vec3.h"
@@ -15,50 +14,6 @@
 class GPUParticle {
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-
-private:
-
-	enum class RootParameter {
-		kParticleGPU,
-		kPerView,
-		kTexture,
-
-		kParamNum,
-	};
-
-	enum class InitParticleRootParam {
-		kParticles,
-		kFreeListIndex,
-		kFreeList,
-		kMaxNum,
-
-		kParamNum,
-	};
-
-	enum class EmitterRootParam {
-		kParticles,
-		kEmitter,
-		kPerFrame,
-		kFreeListIndex,
-		kFreeList,
-		kMaxNum,
-		kOverLifeTime,
-
-		kParamNum,
-	};
-
-	enum class UpdateRootParam {
-		kParticles,
-		kPerFrame,
-		kFreeListIndex,
-		kFreeList,
-		kMaxNum,
-		kOverLifeTime,
-
-		kParamNum,
-	};
-
-	
 
 public:
 
@@ -160,34 +115,7 @@ public:
 		int32_t maxNum;
 	};
 
-private:
-
-	static ID3D12Device* device_;
-	static ID3D12GraphicsCommandList* commandList_;
-
-	static ComPtr<ID3DBlob> signatureBlob_;
-	static ComPtr<ID3DBlob> errorBlob_;
-
-	static IDxcUtils* dxcUtils_;
-	static IDxcCompiler3* dxcCompiler_;
-	static IDxcIncludeHandler* includeHandler_;
-
-	static ComPtr<ID3D12RootSignature> rootSignature_;
-	static ComPtr<ID3D12PipelineState> graphicsPipelineState_;
-
-	static ComPtr<ID3D12RootSignature> initRootSignature_;
-	static ComPtr<ID3D12PipelineState> initComputePS_;
-
-	static ComPtr<ID3D12RootSignature> emitRootSignature_;
-	static ComPtr<ID3D12PipelineState> emitComputePS_;
-
-	static ComPtr<ID3D12RootSignature> updateRootSignature_;
-	static ComPtr<ID3D12PipelineState> updateComputePS_;
-
 public:
-
-	//静的初期化
-	static void StaticInit();
 
 	static GPUParticle* Create(uint32_t textureHandle, int32_t particleNum);
 	//描画前処理
@@ -197,18 +125,13 @@ public:
 
 private:
 
-	//シェーダのコンパイル
-	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
 	//リソースの生成
 	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
 
-	static void CreateInitCSPipeline();
-	static void CreateEmitCSPipeline();
-	static void CreateUpdateCSPipeline();
-
-
 private:
 
+	ID3D12GraphicsCommandList* commandList_ = nullptr;
+	ID3D12Device* device_ = nullptr;
 	
 	ComPtr<ID3D12Resource> particleBuff_;
 	std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE> uavHandle_;

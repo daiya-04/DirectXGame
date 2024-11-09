@@ -1,13 +1,12 @@
 #pragma once
 #include <d3d12.h>
-#include <dxcapi.h>
 #include <wrl.h>
+#include "DXCompiler.h"
 #include "Vec2.h"
 #include "Vec4.h"
 #include "Matrix44.h"
 #include <string>
 #include <array>
-
 
 
 class Sprite{
@@ -25,41 +24,15 @@ public:
 		Vector4 color_;
 	};
 
-protected:  //静的メンバ変数
-
-	//共通部分の変数
-	static ID3D12Device* device_ ;
-	static ID3D12GraphicsCommandList* commandList_;
-	static ComPtr<ID3D12RootSignature> rootSignature_;
-	static ComPtr<ID3D12PipelineState> graphicsPipelineState_;
-	static Matrix4x4 projectionMatrix_;
-
 public: //静的メンバ関数
 
 	//共通部分の関数
 
-	static void StaticInitialize(ID3D12Device* device,int windowWidth,int windowHeight);
-
 	static Sprite* Create(uint32_t textureHandle, Vector2 postion, float scale = 1.0f);
 
-	static void preDraw(ID3D12GraphicsCommandList* commandList);
+	static void preDraw();
 
 	static void postDraw();
-
-	static void Finalize();
-
-	//static uint32_t LoadTexture(const std::string& fileName);
-
-	/// <summary>
-	/// シェーダーのコンパイル
-	/// </summary>
-	/// <param name="filePath">CompilerするShaderファイルへのパス</param>
-	/// <param name="profile">Compilerに使用するProfile</param>
-	/// <param name="dxcUtils"></param>
-	/// <param name="dxcCompiler"></param>
-	/// <param name="includeHandleer"></param>
-	/// <returns></returns>
-	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
 
 protected: //メンバ変数
 

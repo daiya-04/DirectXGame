@@ -159,8 +159,8 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName){
 	}*/
 
 	//シェーダーリソースビュー作成
-	texture.textureSrvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescriptorHandleSize_, DirectXCommon::GetInstance()->GetSrvHeapCount());
-	texture.textureSrvHandleGPU_ = GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescriptorHandleSize_, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	texture.textureSrvHandleCPU_ = DirectXCommon::GetInstance()->GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescriptorHandleSize_, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	texture.textureSrvHandleGPU_ = DirectXCommon::GetInstance()->GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescriptorHandleSize_, DirectXCommon::GetInstance()->GetSrvHeapCount());
 
 	DirectXCommon::GetInstance()->IncrementSrvHeapCount();
 
@@ -255,8 +255,8 @@ uint32_t TextureManager::LoadUvInternal(const std::string& fileName, const std::
 	intermediateResource_[useTextureNum_] = UploadTextureData(mipImages, texture);
 
 	//シェーダーリソースビュー作成
-	texture.textureSrvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescriptorHandleSize_, DirectXCommon::GetInstance()->GetSrvHeapCount());
-	texture.textureSrvHandleGPU_ = GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescriptorHandleSize_, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	texture.textureSrvHandleCPU_ = DirectXCommon::GetInstance()->GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescriptorHandleSize_, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	texture.textureSrvHandleGPU_ = DirectXCommon::GetInstance()->GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), srvDescriptorHandleSize_, DirectXCommon::GetInstance()->GetSrvHeapCount());
 
 	DirectXCommon::GetInstance()->IncrementSrvHeapCount();
 
@@ -298,16 +298,4 @@ ComPtr<ID3D12Resource> TextureManager::UploadTextureData(const DirectX::ScratchI
 	DirectXCommon::GetInstance()->GetCommandList()->ResourceBarrier(1, &barrier);
 
 	return intermediateResource;
-}
-
-D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index) {
-	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	handleCPU.ptr += (descriptorSize * index);
-	return handleCPU;
-}
-
-D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index) {
-	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
-	handleGPU.ptr += (descriptorSize * index);
-	return handleGPU;
 }

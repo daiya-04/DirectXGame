@@ -58,10 +58,6 @@ private:
 	[[nodiscard]]
 	ComPtr<ID3D12Resource> UploadTextureData(const DirectX::ScratchImage& mipImage,const Texture& tex);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
-
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
-
 private:
 
 	TextureManager() = default;

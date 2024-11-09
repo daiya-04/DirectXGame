@@ -81,7 +81,7 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 	DirectXCommon::GetInstance()->preDraw();
 
 	///背景スプライト
-	Sprite::preDraw(commandList);
+	Sprite::preDraw();
 
 	scene_->DrawBackGround();
 
@@ -106,14 +106,14 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	Particle::postDraw();
 
-	Line::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	Line::preDraw();
 
 	Line::AllDraw();
 
 	Line::postDraw();
 
 	///UI
-	Sprite::preDraw(commandList);
+	Sprite::preDraw();
 
 	scene_->DrawUI();
 	fade_->Draw();
