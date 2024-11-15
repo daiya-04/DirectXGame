@@ -68,7 +68,7 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
         }
 
         if(gParticles[particleIndex].currentTime >= gParticles[particleIndex].lifeTime){
-            gParticles[particleIndex].scale = float32_t3(0.0f, 0.0f, 0.0f);
+            gParticles[particleIndex] = (Particle)0;
             int32_t freeListIndex;
             InterlockedAdd(gFreeListIndex[0], 1, freeListIndex);
 

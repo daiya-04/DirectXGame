@@ -80,7 +80,9 @@ GPUParticle::ParticleData ParticleManager::LoadInternal(const std::string& fileN
 	emitterData.lifeTime = emitterRoot["LifeTime"].get<float>();
 	emitterData.speed = emitterRoot["Speed"].get<float>();
 	emitterData.emitterType = emitterRoot["EmitterType"].get<uint32_t>();
-	emitterData.isBillboard = emitterRoot["isBillboard"].get<uint32_t>();
+	if (emitterRoot.contains("BillboardType")) {
+		emitterData.billboardType = emitterRoot["BillboardType"].get<uint32_t>();
+	}
 
 	auto& overLifeTimeData = data.overLifeTime_;
 	json& overLifeTimeRoot = root[fileName]["OverLifeTime"];

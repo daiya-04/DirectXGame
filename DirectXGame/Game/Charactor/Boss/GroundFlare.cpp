@@ -32,6 +32,8 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 	offset_[3] = { -1.5f,0.0f,-1.5f }; //左下
 	offset_[4] = { 1.5f,0.0f,-1.5f }; //右下
 
+	phase_ = Phase::kRoot;
+
 	isAttack_ = false;
 	preIsAttack_ = false;
 

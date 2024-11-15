@@ -29,7 +29,7 @@ struct Emitter {
     float32_t lifeTime;
     float32_t speed;
     uint32_t emitterType;
-    uint32_t isBillboard;
+    uint32_t billboardType;
 };
 
 ConstantBuffer<Emitter> gEmitter : register(b0);
@@ -101,19 +101,19 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
                     float32_t3 direction = normalize(float32_t3(generatedPos.x, 0.0f, generatedPos.y) - float32_t3(0.0f,0.0f,0.0f));
                     gParticles[particleIndex].velocity = direction * (generator.Generate1d() * gEmitter.speed);
 
-                    if(gOverLifeTime.isConstantVelocity){
+                }
+
+                if(gOverLifeTime.isConstantVelocity){
                         float32_t3 startVelo = gOverLifeTime.velocity * generator.Generate3d();
                         gParticles[particleIndex].velocity += startVelo;
                     }
-
-                }
                 
                 gParticles[particleIndex].scale = float32_t3(gEmitter.scale, gEmitter.scale, gEmitter.scale);
                 gParticles[particleIndex].rotate = float32_t3(0.0f, 0.0f, radians(gEmitter.rotate * generator.Generate1d()));
                 gParticles[particleIndex].color = gEmitter.color;
                 gParticles[particleIndex].lifeTime = gEmitter.lifeTime;
                 gParticles[particleIndex].currentTime = 0.0f;
-                gParticles[particleIndex].isBillboard = gEmitter.isBillboard;
+                gParticles[particleIndex].billboardType = gEmitter.billboardType;
             }else {
                 InterlockedAdd(gFreeListIndex[0], 1);
                 break;

@@ -17,7 +17,9 @@ ParticleEditor* ParticleEditor::GetInstance() {
 
 void ParticleEditor::Init() {
 
-	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
+	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 100000));
+	saveFileName_ = "testParticle";
+	LoadDataFile(saveFileName_);
 
 }
 
@@ -65,7 +67,7 @@ void ParticleEditor::DataSave() {
 	root[saveFileName_]["Emitter"]["LifeTime"] = particle_->particleData_.emitter_.lifeTime;
 	root[saveFileName_]["Emitter"]["Speed"] = particle_->particleData_.emitter_.speed;
 	root[saveFileName_]["Emitter"]["EmitterType"] = particle_->particleData_.emitter_.emitterType;
-	root[saveFileName_]["Emitter"]["isBillboard"] = particle_->particleData_.emitter_.isBillboard;
+	root[saveFileName_]["Emitter"]["BillboardType"] = particle_->particleData_.emitter_.billboardType;
 
 	root[saveFileName_]["OverLifeTime"]["isConstantVelocity"] = particle_->particleData_.overLifeTime_.isConstantVelocity;
 	Vector3 velocity = particle_->particleData_.overLifeTime_.velocity;
@@ -110,6 +112,10 @@ void ParticleEditor::DataSave() {
 		MessageBoxA(nullptr, message.c_str(), "ParticleEditor", 0);
 		assert(0);
 		return;
+	} else {
+		//成功したら
+		std::string message = "The file was saved successfully";
+		MessageBoxA(nullptr, message.c_str(), "ParticleEditor", 0);
 	}
 
 	//ファイルにjsonの文字列を書き込む(インデント幅4)
@@ -183,7 +189,9 @@ void ParticleEditor::LoadDataFile(const std::string& fileName) {
 	emitterData.lifeTime = emitterRoot["LifeTime"].get<float>();
 	emitterData.speed = emitterRoot["Speed"].get<float>();
 	emitterData.emitterType = emitterRoot["EmitterType"].get<uint32_t>();
-	emitterData.isBillboard = emitterRoot["isBillboard"].get<uint32_t>();
+	if (emitterRoot.contains("BillboardType")) {
+		emitterData.billboardType = emitterRoot["BillboardType"].get<uint32_t>();
+	}
 
 	auto& overLifeTimeData = particle_->particleData_.overLifeTime_;
 	json& overLifeTimeRoot = root[fileName]["OverLifeTime"];
@@ -270,12 +278,22 @@ void ParticleEditor::DebugGUI() {
 		particle_->SetTextureHandle();
 	}
 
-	isCheck = (particle_->particleData_.emitter_.isBillboard != 0);
-	if (ImGui::Checkbox("isBillboard", &isCheck)) {
-		particle_->particleData_.emitter_.isBillboard = static_cast<uint32_t>(isCheck);
+	int32_t currentBillboardType = static_cast<int32_t>(particle_->particleData_.emitter_.billboardType);
+
+	if (ImGui::RadioButton("Billborad", currentBillboardType == GPUParticle::BillboardType::Billboard)) {
+		currentBillboardType = GPUParticle::BillboardType::Billboard;
+	}
+	if (ImGui::RadioButton("HorizontalBillboard", currentBillboardType == GPUParticle::BillboardType::Horizontalillboard)) {
+		currentBillboardType = GPUParticle::BillboardType::Horizontalillboard;
+	}
+	if (ImGui::RadioButton("None", currentBillboardType == GPUParticle::BillboardType::None)) {
+		currentBillboardType = GPUParticle::BillboardType::None;
 	}
 
-	int currentEmitShape = static_cast<int>(particle_->particleData_.emitter_.emitterType);
+	particle_->particleData_.emitter_.billboardType = static_cast<GPUParticle::BillboardType>(currentBillboardType);
+
+
+	int32_t currentEmitShape = static_cast<int32_t>(particle_->particleData_.emitter_.emitterType);
 
 	if (ImGui::RadioButton("Sphere", currentEmitShape == GPUParticle::EmitShape::Sphere)) {
 		currentEmitShape = GPUParticle::EmitShape::Sphere;

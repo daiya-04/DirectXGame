@@ -1,34 +1,34 @@
 {
-    "testParticle": {
+    "kirakiraEffect": {
         "Emitter": {
-            "BillboardType": 0,
             "Color": [
                 1.0,
                 1.0,
                 1.0,
                 1.0
             ],
-            "Count": 50,
-            "EmitterType": 1,
-            "Frequency": 0.01600000075995922,
-            "LifeTime": 1.0,
-            "Radius": 0.5,
-            "Rotate": 0.0,
-            "Scale": 0.10000000149011612,
+            "Count": 5,
+            "EmitterType": 3,
+            "Frequency": 0.10000000149011612,
+            "LifeTime": 2.0,
+            "Radius": 5.0,
+            "Rotate": 360.0,
+            "Scale": 0.20000000298023224,
             "Size": [
-                0.0,
-                0.0,
-                0.0
+                3.0,
+                3.0,
+                3.0
             ],
-            "Speed": 0.5,
+            "Speed": 0.10000000149011612,
             "Translate": [
                 0.0,
                 0.0,
                 0.0
-            ]
+            ],
+            "isBillboard": 1
         },
         "OverLifeTime": {
-            "Gravity": 0.0,
+            "Gravity": 0.004999999888241291,
             "Velocity": [
                 0.0,
                 0.0,
@@ -40,7 +40,7 @@
                 0.0,
                 0.0
             ],
-            "endScale": 0.0,
+            "endScale": 0.5,
             "endSpeed": 0.0,
             "endVelocity": [
                 0.0,
@@ -50,11 +50,11 @@
             "isAlpha": 1,
             "isColor": 0,
             "isConstantVelocity": 0,
-            "isScale": 0,
+            "isScale": 1,
             "isTransSpeed": 0,
             "isTransVelocity": 0,
             "midAlpha": 1.0,
-            "startAlpha": 0.0,
+            "startAlpha": 1.0,
             "startColor": [
                 0.0,
                 0.0,
@@ -69,6 +69,6 @@
             ]
         },
         "isLoop": true,
-        "textureName": "circle.png"
+        "textureName": "flare_02.png"
     }
 }

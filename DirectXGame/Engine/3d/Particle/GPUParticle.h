@@ -27,6 +27,12 @@ public:
 
 	};
 
+	enum BillboardType : uint32_t {
+		Billboard,
+		Horizontalillboard,
+		None,
+	};
+
 	struct ParticleCS {
 		Vector3 translation;
 		Vector3 scale;
@@ -35,7 +41,7 @@ public:
 		float lifeTime;
 		float currentTime;
 		Vector4 color;
-		uint32_t isBillboard;
+		uint32_t billboardType;
 	};
 
 	struct VertexData {
@@ -65,7 +71,7 @@ public:
 		float lifeTime;
 		float speed;
 		uint32_t emitterType;
-		uint32_t isBillboard;
+		uint32_t billboardType;
 	};
 
 	struct OverLifeTime {

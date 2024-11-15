@@ -2,7 +2,7 @@
 
 #include "TextureManager.h"
 #include "Easing.h"
-
+#include "ParticleManager.h"
 
 
 void PlasmaShot::Init(const std::shared_ptr<Model>& model) {
@@ -38,6 +38,9 @@ void PlasmaShot::Init(const std::shared_ptr<Model>& model) {
 	hitEff_->particleData_.overLifeTime_.isTransSpeed = 1;
 	hitEff_->particleData_.overLifeTime_.startSpeed = 5.0f;
 
+	createEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
+	createEff_->SetParticleData(ParticleManager::Load("PlasmaShotCreate"));
+
 
 }
 
@@ -57,6 +60,7 @@ void PlasmaShot::Update() {
 
 	particle_->Update();
 	hitEff_->Update();
+	createEff_->Update();
 
 	obj_->worldTransform_.UpdateMatrix();
 	particle_->particleData_.emitter_.translate = obj_->GetWorldPos();
@@ -74,6 +78,7 @@ void PlasmaShot::Draw(const Camera& camera) {
 void PlasmaShot::DrawParticle(const Camera& camera) {
 	particle_->Draw(camera);
 	hitEff_->Draw(camera);
+	createEff_->Draw(camera);
 }
 
 
@@ -93,7 +98,6 @@ void PlasmaShot::AttackStart() {
 void PlasmaShot::SetAttackData(const Vector3& pos, float interval) {
 
 	obj_->worldTransform_.translation_ = pos;
-	particle_->particleData_.emitter_.translate = pos;
 	waitData_.waitTime_ = int32_t(60.0f * interval);
 
 }
@@ -103,6 +107,7 @@ void PlasmaShot::RootInit() {
 	obj_->worldTransform_.scale_ = {};
 	particle_->particleData_.emitter_.count = 0;
 	particle_->particleData_.isLoop_ = false;
+	createEff_->particleData_.isLoop_ = false;
 
 }
 
@@ -113,17 +118,6 @@ void PlasmaShot::RootUpdate() {
 }
 
 void PlasmaShot::CreateInit() {
-
-	particle_->particleData_.isLoop_ = true;
-	particle_->particleData_.emitter_.count = 50;
-	particle_->particleData_.emitter_.frequency = 2.0f / 60.0f;
-	particle_->particleData_.emitter_.lifeTime = 1.0f;
-	particle_->particleData_.emitter_.scale = 0.5f;
-	particle_->particleData_.emitter_.radius = 1.0f;
-	particle_->particleData_.emitter_.speed = 0.5f;
-
-	particle_->particleData_.overLifeTime_.startAlpha = 0.0f;
-	particle_->particleData_.overLifeTime_.midAlpha = 1.0f;
 
 }
 
@@ -136,6 +130,8 @@ void PlasmaShot::CreateUpdate() {
 void PlasmaShot::WaitInit() {
 
 	waitData_.count_ = 0;
+	createEff_->particleData_.isLoop_ = true;
+	createEff_->particleData_.emitter_.translate = obj_->GetWorldPos();
 
 }
 
@@ -165,6 +161,8 @@ void PlasmaShot::ShotInit() {
 
 	particle_->particleData_.overLifeTime_.startAlpha = 1.0f;
 	particle_->particleData_.overLifeTime_.midAlpha = 0.0f;
+
+	createEff_->particleData_.isLoop_ = false;
 
 }
 
