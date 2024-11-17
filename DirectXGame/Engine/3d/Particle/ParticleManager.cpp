@@ -24,7 +24,6 @@ GPUParticle::ParticleData ParticleManager::LoadInternal(const std::string& fileN
 		return particleDatas_[fileName];
 	}*/
 
-
 	//ディレクトリパス
 	const std::string kDirectoryPath = "Resources/ParticleData/";
 	//ファイルの拡張子
@@ -80,7 +79,9 @@ GPUParticle::ParticleData ParticleManager::LoadInternal(const std::string& fileN
 	emitterData.lifeTime = emitterRoot["LifeTime"].get<float>();
 	emitterData.speed = emitterRoot["Speed"].get<float>();
 	emitterData.emitterType = emitterRoot["EmitterType"].get<uint32_t>();
-	emitterData.isBillboard = emitterRoot["isBillboard"].get<uint32_t>();
+	if (emitterRoot.contains("BillboardType")) {
+		emitterData.billboardType = emitterRoot["BillboardType"].get<uint32_t>();
+	}
 
 	auto& overLifeTimeData = data.overLifeTime_;
 	json& overLifeTimeRoot = root[fileName]["OverLifeTime"];
@@ -109,6 +110,18 @@ GPUParticle::ParticleData ParticleManager::LoadInternal(const std::string& fileN
 	overLifeTimeData.startSpeed = overLifeTimeRoot["startSpeed"].get<float>();
 	overLifeTimeData.endSpeed = overLifeTimeRoot["endSpeed"].get<float>();
 	overLifeTimeData.gravity = overLifeTimeRoot["Gravity"].get<float>();
+	if (overLifeTimeRoot.contains("isRoring")) {
+		overLifeTimeData.isRoring = overLifeTimeRoot["isRoring"].get<uint32_t>();
+		json minRoringSpeed = overLifeTimeRoot["minRoringSpeed"];
+		overLifeTimeData.minRoringSpeed = Vector3(static_cast<float>(minRoringSpeed[0]), static_cast<float>(minRoringSpeed[1]), static_cast<float>(minRoringSpeed[2]));
+		json maxRoringSpeed = overLifeTimeRoot["maxRoringSpeed"];
+		overLifeTimeData.maxRoringSpeed = Vector3(static_cast<float>(maxRoringSpeed[0]), static_cast<float>(maxRoringSpeed[1]), static_cast<float>(maxRoringSpeed[2]));
+	}
+	if (overLifeTimeRoot.contains("isNoise")) {
+		overLifeTimeData.isNoise = overLifeTimeRoot["isNoise"].get<uint32_t>();
+		overLifeTimeData.density = overLifeTimeRoot["density"].get<float>();
+		overLifeTimeData.strength = overLifeTimeRoot["strength"].get<float>();
+	}
 
 	particleDatas_[fileName] = data;
 

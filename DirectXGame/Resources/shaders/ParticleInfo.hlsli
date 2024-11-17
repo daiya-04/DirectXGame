@@ -7,7 +7,9 @@ struct Particle {
     float32_t lifeTime;
     float32_t currentTime;
     float32_t4 color;
-    uint32_t isBillboard;
+    uint32_t billboardType;
+    float32_t3 roringSpeed;
+    float32_t3 noiseOffset;
 };
 
 struct OverLifeTime {
@@ -36,4 +38,12 @@ struct OverLifeTime {
     float32_t endSpeed;
 
     float32_t gravity;
+
+    uint32_t isRoring;
+    float32_t3 minRoringSpeed;
+    float32_t3 maxRoringSpeed;
+
+    uint32_t isNoise;
+    float32_t density;
+    float32_t strength;
 };

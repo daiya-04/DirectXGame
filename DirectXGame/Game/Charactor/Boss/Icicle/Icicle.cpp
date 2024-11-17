@@ -2,6 +2,7 @@
 
 #include "Easing.h"
 #include "TextureManager.h"
+#include "ParticleManager.h"
 
 
 void Icicle::Init(const std::shared_ptr<Model>& model) {
@@ -24,27 +25,12 @@ void Icicle::Init(const std::shared_ptr<Model>& model) {
 
 	particle_->particleData_.overLifeTime_.endScale = 0.3f;
 
-	hitEff_.reset(GPUParticle::Create(TextureManager::Load("mist.png"), 10000));
+	iceSpark_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
+	iceSpark_->SetParticleData(ParticleManager::Load("IceSpark_1"));
 
-	hitEff_->particleData_.isLoop_ = false;
-	hitEff_->particleData_.emitter_.count = 8000;
-	hitEff_->particleData_.emitter_.color = Vector4(0.05f, 0.94f, 0.85f, 1.0f);
-	hitEff_->particleData_.emitter_.lifeTime = 50.0f / 60.0f;
-	hitEff_->particleData_.emitter_.speed = 5.0f;
-	hitEff_->particleData_.emitter_.scale = 0.1f;
-	hitEff_->particleData_.emitter_.radius = 0.1f;
-	hitEff_->particleData_.emitter_.emit = 0;
-	hitEff_->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Sphere;
-
-	hitEff_->particleData_.overLifeTime_.isColor = 1;
-	hitEff_->particleData_.overLifeTime_.startColor = Vector3(0.05f, 0.94f, 0.85f);
-	hitEff_->particleData_.overLifeTime_.endColor = Vector3(1.0f, 1.0f, 1.0f);
-
-	hitEff_->particleData_.overLifeTime_.isAlpha = 1;
-	hitEff_->particleData_.overLifeTime_.startAlpha = 1.0f;
-
-	hitEff_->particleData_.overLifeTime_.isScale = 1;
-	hitEff_->particleData_.overLifeTime_.endScale = 0.2f;
+	coolAir_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
+	coolAir_->SetParticleData(ParticleManager::Load("IceCoolAir"));
+	
 
 	isLife_ = false;
 	preIsLife_ = false;
@@ -73,7 +59,8 @@ void Icicle::Update() {
 	particle_->particleData_.emitter_.translate = obj_->GetWorldPos();
 
 	particle_->Update();
-	hitEff_->Update();
+	iceSpark_->Update();
+	coolAir_->Update();
 
 	ColliderUpdate();
 }
@@ -84,15 +71,18 @@ void Icicle::Draw(const Camera& camera) {
 
 void Icicle::DrawParticle(const Camera& camera) {
 	particle_->Draw(camera);
-	hitEff_->Draw(camera);
+	iceSpark_->Draw(camera);
+	coolAir_->Draw(camera);
 }
 
 void Icicle::OnCollision() {
 	phaseRequest_ = Phase::kRoot;
 	isLife_ = false;
 
-	hitEff_->particleData_.emitter_.emit = 1;
-	hitEff_->particleData_.emitter_.translate = obj_->GetWorldPos();
+	iceSpark_->particleData_.emitter_.emit = 1;
+	coolAir_->particleData_.emitter_.emit = 1;
+	iceSpark_->particleData_.emitter_.translate = obj_->GetWorldPos();
+	coolAir_->particleData_.emitter_.translate = obj_->GetWorldPos();
 
 }
 

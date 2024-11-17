@@ -1,26 +1,26 @@
 {
-    "testParticle": {
+    "waveParticle": {
         "Emitter": {
             "BillboardType": 0,
             "Color": [
-                1.0,
-                1.0,
+                0.0,
+                0.8235292434692383,
                 1.0,
                 1.0
             ],
-            "Count": 50,
-            "EmitterType": 1,
+            "Count": 100,
+            "EmitterType": 4,
             "Frequency": 0.01600000075995922,
-            "LifeTime": 1.0,
+            "LifeTime": 50.0,
             "Radius": 0.5,
             "Rotate": 0.0,
             "Scale": 0.10000000149011612,
             "Size": [
-                0.0,
-                0.0,
-                0.0
+                5.0,
+                5.0,
+                5.0
             ],
-            "Speed": 0.5,
+            "Speed": 0.0,
             "Translate": [
                 0.0,
                 0.0,
@@ -34,7 +34,7 @@
                 0.0,
                 0.0
             ],
-            "density": 0.0,
+            "density": 1.0,
             "endAlpha": 0.0,
             "endColor": [
                 0.0,
@@ -48,10 +48,10 @@
                 0.0,
                 0.0
             ],
-            "isAlpha": 1,
+            "isAlpha": 0,
             "isColor": 0,
             "isConstantVelocity": 0,
-            "isNoise": 0,
+            "isNoise": 1,
             "isRoring": 0,
             "isScale": 0,
             "isTransSpeed": 0,
@@ -80,7 +80,7 @@
                 0.0,
                 0.0
             ],
-            "strength": 0.0
+            "strength": 0.10000000149011612
         },
         "isLoop": true,
         "textureName": "circle.png"

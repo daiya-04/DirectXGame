@@ -270,11 +270,20 @@ void BurnScar::Init(uint32_t textureHandle) {
 
 	color_ = Vector4(0.96f, 0.13f, 0.04f,1.0f);
 
-	splashEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
+	splashEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
 	splashEff_->SetParticleData(ParticleManager::Load("FireBallImpactSplash"));
 
 	flameEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
 	flameEff_->SetParticleData(ParticleManager::Load("FireBallImpactFlame"));
+
+	coreEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
+	coreEff_->SetParticleData(ParticleManager::Load("FireBallImpactCore"));
+
+	fireSparkEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
+	fireSparkEff_->SetParticleData(ParticleManager::Load("FireBallImpactFireSpark"));
+
+	flareCircleEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
+	flareCircleEff_->SetParticleData(ParticleManager::Load("FireBallImpactFlareCircle"));
 
 
 }
@@ -287,9 +296,15 @@ void BurnScar::Update() {
 
 	splashEff_->particleData_.emitter_.translate = position_;
 	flameEff_->particleData_.emitter_.translate = position_;
+	coreEff_->particleData_.emitter_.translate = position_;
+	fireSparkEff_->particleData_.emitter_.translate = position_;
+	flareCircleEff_->particleData_.emitter_.translate = position_ + Vector3(0.0f, 0.001f, 0.0f);
 	splashEff_->Update();
 	flameEff_->Update();
-	
+	coreEff_->Update();
+	fireSparkEff_->Update();
+	flareCircleEff_->Update();
+
 }
 
 void BurnScar::EffectUpdate() {
@@ -320,6 +335,9 @@ void BurnScar::Draw(const Camera& camera) {
 void BurnScar::DrawParticle(const Camera& camera) {
 	splashEff_->Draw(camera);
 	flameEff_->Draw(camera);
+	coreEff_->Draw(camera);
+	fireSparkEff_->Draw(camera);
+	flareCircleEff_->Draw(camera);
 }
 
 void BurnScar::EffectStart(const Vector3& pos) {
@@ -328,5 +346,8 @@ void BurnScar::EffectStart(const Vector3& pos) {
 
 	splashEff_->particleData_.emitter_.emit = 1;
 	flameEff_->particleData_.emitter_.emit = 1;
+	coreEff_->particleData_.emitter_.emit = 1;
+	fireSparkEff_->particleData_.emitter_.emit = 1;
+	flareCircleEff_->particleData_.emitter_.emit = 1;
 
 }

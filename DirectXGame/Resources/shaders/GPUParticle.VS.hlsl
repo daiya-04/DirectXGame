@@ -2,6 +2,10 @@
 #include "Math.hlsli"
 #include "ParticleInfo.hlsli"
 
+#define Billboard 0
+#define HorizontalBillboard 1
+#define NON 2
+
 StructuredBuffer<Particle> gParticles : register(t0);
 
 struct PerView {
@@ -24,10 +28,15 @@ VertexShaderOutput main(VertexShaderInput input,uint32_t instanceId : SV_Instanc
 	float32_t4x4 worldMat = MakeIdentity44();
 	float32_t4x4 rotateMat = MakeRotateMat(particle.rotate);
 
-	if(particle.isBillboard == 1){
+	if(particle.billboardType == Billboard){
 		rotateMat = mul(MakeRotateMat(particle.rotate), gPerView.billboardMat);
+	}else if(particle.billboardType == HorizontalBillboard){
+		rotateMat = mul(MakeRotateMat(particle.rotate), MakeRotateMat(float32_t3( radians(90.0f), 0.0f, 0.0f )));
 	}
-	worldMat = mul(mul(MakeScaleMat(particle.scale), rotateMat), MakeTranslateMat(particle.translate));
+
+
+
+	worldMat = mul(mul(MakeScaleMat(particle.scale), rotateMat), MakeTranslateMat(particle.translate + particle.noiseOffset));
 
 	output.position = mul(input.position, mul(worldMat, gPerView.viewProjMat));
 	output.texcoord = input.texcoord;

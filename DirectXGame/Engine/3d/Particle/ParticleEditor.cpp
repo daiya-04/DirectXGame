@@ -17,7 +17,9 @@ ParticleEditor* ParticleEditor::GetInstance() {
 
 void ParticleEditor::Init() {
 
-	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
+	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 100000));
+	saveFileName_ = "testParticle";
+	LoadDataFile(saveFileName_);
 
 }
 
@@ -65,7 +67,7 @@ void ParticleEditor::DataSave() {
 	root[saveFileName_]["Emitter"]["LifeTime"] = particle_->particleData_.emitter_.lifeTime;
 	root[saveFileName_]["Emitter"]["Speed"] = particle_->particleData_.emitter_.speed;
 	root[saveFileName_]["Emitter"]["EmitterType"] = particle_->particleData_.emitter_.emitterType;
-	root[saveFileName_]["Emitter"]["isBillboard"] = particle_->particleData_.emitter_.isBillboard;
+	root[saveFileName_]["Emitter"]["BillboardType"] = particle_->particleData_.emitter_.billboardType;
 
 	root[saveFileName_]["OverLifeTime"]["isConstantVelocity"] = particle_->particleData_.overLifeTime_.isConstantVelocity;
 	Vector3 velocity = particle_->particleData_.overLifeTime_.velocity;
@@ -91,6 +93,15 @@ void ParticleEditor::DataSave() {
 	root[saveFileName_]["OverLifeTime"]["startSpeed"] = particle_->particleData_.overLifeTime_.startSpeed;
 	root[saveFileName_]["OverLifeTime"]["endSpeed"] = particle_->particleData_.overLifeTime_.endSpeed;
 	root[saveFileName_]["OverLifeTime"]["Gravity"] = particle_->particleData_.overLifeTime_.gravity;
+	root[saveFileName_]["OverLifeTime"]["isRoring"] = particle_->particleData_.overLifeTime_.isRoring;
+	Vector3 minRoringSpeed = particle_->particleData_.overLifeTime_.minRoringSpeed;
+	root[saveFileName_]["OverLifeTime"]["minRoringSpeed"] = json::array({ minRoringSpeed.x,minRoringSpeed.y ,minRoringSpeed.z });
+	Vector3 maxRoringSpeed = particle_->particleData_.overLifeTime_.maxRoringSpeed;
+	root[saveFileName_]["OverLifeTime"]["maxRoringSpeed"] = json::array({ maxRoringSpeed.x,maxRoringSpeed.y ,maxRoringSpeed.z });
+	root[saveFileName_]["OverLifeTime"]["isNoise"] = particle_->particleData_.overLifeTime_.isNoise;
+	root[saveFileName_]["OverLifeTime"]["density"] = particle_->particleData_.overLifeTime_.density;
+	root[saveFileName_]["OverLifeTime"]["strength"] = particle_->particleData_.overLifeTime_.strength;
+
 
 	//ディレクトリがなければ作成する
 	std::filesystem::path dir(kDirectoryPath_);
@@ -110,6 +121,10 @@ void ParticleEditor::DataSave() {
 		MessageBoxA(nullptr, message.c_str(), "ParticleEditor", 0);
 		assert(0);
 		return;
+	} else {
+		//成功したら
+		std::string message = "The file was saved successfully";
+		MessageBoxA(nullptr, message.c_str(), "ParticleEditor", 0);
 	}
 
 	//ファイルにjsonの文字列を書き込む(インデント幅4)
@@ -161,6 +176,8 @@ void ParticleEditor::LoadDataFile(const std::string& fileName) {
 		return;
 	}
 
+	particle_->Init(TextureManager::Load("circle.png"), 100000);
+
 	//ファイルのデータを設定していく
 	particle_->particleData_.isLoop_ = root[fileName]["isLoop"].get<bool>();
 	particle_->particleData_.textureName_ = root[fileName]["textureName"].get<std::string>();
@@ -183,7 +200,9 @@ void ParticleEditor::LoadDataFile(const std::string& fileName) {
 	emitterData.lifeTime = emitterRoot["LifeTime"].get<float>();
 	emitterData.speed = emitterRoot["Speed"].get<float>();
 	emitterData.emitterType = emitterRoot["EmitterType"].get<uint32_t>();
-	emitterData.isBillboard = emitterRoot["isBillboard"].get<uint32_t>();
+	if (emitterRoot.contains("BillboardType")) {
+		emitterData.billboardType = emitterRoot["BillboardType"].get<uint32_t>();
+	}
 
 	auto& overLifeTimeData = particle_->particleData_.overLifeTime_;
 	json& overLifeTimeRoot = root[fileName]["OverLifeTime"];
@@ -212,6 +231,18 @@ void ParticleEditor::LoadDataFile(const std::string& fileName) {
 	overLifeTimeData.startSpeed = overLifeTimeRoot["startSpeed"].get<float>();
 	overLifeTimeData.endSpeed = overLifeTimeRoot["endSpeed"].get<float>();
 	overLifeTimeData.gravity = overLifeTimeRoot["Gravity"].get<float>();
+	if (overLifeTimeRoot.contains("isRoring")) {
+		overLifeTimeData.isRoring = overLifeTimeRoot["isRoring"].get<uint32_t>();
+		json minRoringSpeed = overLifeTimeRoot["minRoringSpeed"];
+		overLifeTimeData.minRoringSpeed = Vector3(static_cast<float>(minRoringSpeed[0]), static_cast<float>(minRoringSpeed[1]), static_cast<float>(minRoringSpeed[2]));
+		json maxRoringSpeed = overLifeTimeRoot["maxRoringSpeed"];
+		overLifeTimeData.maxRoringSpeed = Vector3(static_cast<float>(maxRoringSpeed[0]), static_cast<float>(maxRoringSpeed[1]), static_cast<float>(maxRoringSpeed[2]));
+	}
+	if (overLifeTimeRoot.contains("isNoise")) {
+		overLifeTimeData.isNoise = overLifeTimeRoot["isNoise"].get<uint32_t>();
+		overLifeTimeData.density = overLifeTimeRoot["density"].get<float>();
+		overLifeTimeData.strength = overLifeTimeRoot["strength"].get<float>();
+	}
 
 
 
@@ -222,8 +253,8 @@ void ParticleEditor::DebugGUI() {
 	ImGui::Begin("ParticleEditor");
 
 	bool isCheck = false;
-
 	char strBuff[256];
+
 	strncpy_s(strBuff, saveFileName_.c_str(), sizeof(strBuff));
 	strBuff[sizeof(strBuff) - 1] = '\0';
 
@@ -270,12 +301,22 @@ void ParticleEditor::DebugGUI() {
 		particle_->SetTextureHandle();
 	}
 
-	isCheck = (particle_->particleData_.emitter_.isBillboard != 0);
-	if (ImGui::Checkbox("isBillboard", &isCheck)) {
-		particle_->particleData_.emitter_.isBillboard = static_cast<uint32_t>(isCheck);
+	int32_t currentBillboardType = static_cast<int32_t>(particle_->particleData_.emitter_.billboardType);
+
+	if (ImGui::RadioButton("Billborad", currentBillboardType == GPUParticle::BillboardType::Billboard)) {
+		currentBillboardType = GPUParticle::BillboardType::Billboard;
+	}
+	if (ImGui::RadioButton("HorizontalBillboard", currentBillboardType == GPUParticle::BillboardType::Horizontalillboard)) {
+		currentBillboardType = GPUParticle::BillboardType::Horizontalillboard;
+	}
+	if (ImGui::RadioButton("None", currentBillboardType == GPUParticle::BillboardType::None)) {
+		currentBillboardType = GPUParticle::BillboardType::None;
 	}
 
-	int currentEmitShape = static_cast<int>(particle_->particleData_.emitter_.emitterType);
+	particle_->particleData_.emitter_.billboardType = static_cast<GPUParticle::BillboardType>(currentBillboardType);
+
+
+	int32_t currentEmitShape = static_cast<int32_t>(particle_->particleData_.emitter_.emitterType);
 
 	if (ImGui::RadioButton("Sphere", currentEmitShape == GPUParticle::EmitShape::Sphere)) {
 		currentEmitShape = GPUParticle::EmitShape::Sphere;
@@ -372,6 +413,29 @@ void ParticleEditor::DebugGUI() {
 
 	ImGui::InputFloat("gravity", &particle_->particleData_.overLifeTime_.gravity);
 
+	isCheck = (particle_->particleData_.overLifeTime_.isRoring != 0);
+	if (ImGui::Checkbox("isRoring", &isCheck)) {
+		particle_->particleData_.overLifeTime_.isRoring = static_cast<uint32_t>(isCheck);
+	}
+	if (particle_->particleData_.overLifeTime_.isRoring) {
+		if (ImGui::TreeNode("roringSpeed")) {
+			ImGui::InputFloat3("minRoringSpeed", &particle_->particleData_.overLifeTime_.minRoringSpeed.x);
+			ImGui::InputFloat3("maxRoringSpeed", &particle_->particleData_.overLifeTime_.maxRoringSpeed.x);
+			ImGui::TreePop();
+		}
+	}
+
+	isCheck = (particle_->particleData_.overLifeTime_.isNoise != 0);
+	if (ImGui::Checkbox("isNoise", &isCheck)) {
+		particle_->particleData_.overLifeTime_.isNoise = static_cast<uint32_t>(isCheck);
+	}
+	if (particle_->particleData_.overLifeTime_.isNoise) {
+		if (ImGui::TreeNode("NoiseState")) {
+			ImGui::InputFloat("density", &particle_->particleData_.overLifeTime_.density);
+			ImGui::InputFloat("strength", &particle_->particleData_.overLifeTime_.strength);
+			ImGui::TreePop();
+		}
+	}
 	
 
 

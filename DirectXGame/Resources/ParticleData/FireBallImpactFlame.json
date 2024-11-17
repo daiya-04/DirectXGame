@@ -1,17 +1,18 @@
 {
     "FireBallImpactFlame": {
         "Emitter": {
+            "BillboardType": 0,
             "Color": [
                 0.8186274766921997,
                 0.2889273166656494,
                 0.0,
                 1.0
             ],
-            "Count": 50,
-            "EmitterType": 3,
+            "Count": 10,
+            "EmitterType": 1,
             "Frequency": 0.0,
-            "LifeTime": 0.4000000059604645,
-            "Radius": 0.0,
+            "LifeTime": 1.5,
+            "Radius": 1.5,
             "Rotate": 180.0,
             "Scale": 1.0,
             "Size": [
@@ -24,8 +25,7 @@
                 0.0,
                 0.0,
                 0.0
-            ],
-            "isBillboard": 1
+            ]
         },
         "OverLifeTime": {
             "Gravity": 0.0,
@@ -52,7 +52,7 @@
             "isConstantVelocity": 0,
             "isScale": 1,
             "isTransSpeed": 0,
-            "isTransVelocity": 0,
+            "isTransVelocity": 1,
             "midAlpha": 1.0,
             "startAlpha": 1.0,
             "startColor": [
@@ -64,11 +64,11 @@
             "startSpeed": 3.0,
             "startVelocity": [
                 0.0,
-                0.0,
+                1.0,
                 0.0
             ]
         },
         "isLoop": false,
-        "textureName": "mist.png"
+        "textureName": "Steam.png"
     }
 }
