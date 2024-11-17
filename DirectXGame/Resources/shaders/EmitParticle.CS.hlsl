@@ -106,7 +106,15 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
                 if(gOverLifeTime.isConstantVelocity){
                         float32_t3 startVelo = gOverLifeTime.velocity * generator.Generate3d();
                         gParticles[particleIndex].velocity += startVelo;
+                }
+
+                if(gOverLifeTime.isRoring) {
+                    float32_t3 roringSpeed = lerp(gOverLifeTime.minRoringSpeed, gOverLifeTime.maxRoringSpeed, generator.Generate1d());
+                    if(generator.Generate1d() < 0.5f){
+                        roringSpeed *= -1;
                     }
+                    gParticles[particleIndex].roringSpeed = roringSpeed;
+                }
                 
                 gParticles[particleIndex].scale = float32_t3(gEmitter.scale, gEmitter.scale, gEmitter.scale);
                 gParticles[particleIndex].rotate = float32_t3(0.0f, 0.0f, radians(gEmitter.rotate * generator.Generate1d()));

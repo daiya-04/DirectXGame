@@ -93,6 +93,15 @@ void ParticleEditor::DataSave() {
 	root[saveFileName_]["OverLifeTime"]["startSpeed"] = particle_->particleData_.overLifeTime_.startSpeed;
 	root[saveFileName_]["OverLifeTime"]["endSpeed"] = particle_->particleData_.overLifeTime_.endSpeed;
 	root[saveFileName_]["OverLifeTime"]["Gravity"] = particle_->particleData_.overLifeTime_.gravity;
+	root[saveFileName_]["OverLifeTime"]["isRoring"] = particle_->particleData_.overLifeTime_.isRoring;
+	Vector3 minRoringSpeed = particle_->particleData_.overLifeTime_.minRoringSpeed;
+	root[saveFileName_]["OverLifeTime"]["minRoringSpeed"] = json::array({ minRoringSpeed.x,minRoringSpeed.y ,minRoringSpeed.z });
+	Vector3 maxRoringSpeed = particle_->particleData_.overLifeTime_.maxRoringSpeed;
+	root[saveFileName_]["OverLifeTime"]["maxRoringSpeed"] = json::array({ maxRoringSpeed.x,maxRoringSpeed.y ,maxRoringSpeed.z });
+	root[saveFileName_]["OverLifeTime"]["isNoise"] = particle_->particleData_.overLifeTime_.isNoise;
+	root[saveFileName_]["OverLifeTime"]["density"] = particle_->particleData_.overLifeTime_.density;
+	root[saveFileName_]["OverLifeTime"]["strength"] = particle_->particleData_.overLifeTime_.strength;
+
 
 	//ディレクトリがなければ作成する
 	std::filesystem::path dir(kDirectoryPath_);
@@ -167,6 +176,8 @@ void ParticleEditor::LoadDataFile(const std::string& fileName) {
 		return;
 	}
 
+	particle_->Init(TextureManager::Load("circle.png"), 100000);
+
 	//ファイルのデータを設定していく
 	particle_->particleData_.isLoop_ = root[fileName]["isLoop"].get<bool>();
 	particle_->particleData_.textureName_ = root[fileName]["textureName"].get<std::string>();
@@ -220,6 +231,18 @@ void ParticleEditor::LoadDataFile(const std::string& fileName) {
 	overLifeTimeData.startSpeed = overLifeTimeRoot["startSpeed"].get<float>();
 	overLifeTimeData.endSpeed = overLifeTimeRoot["endSpeed"].get<float>();
 	overLifeTimeData.gravity = overLifeTimeRoot["Gravity"].get<float>();
+	if (overLifeTimeRoot.contains("isRoring")) {
+		overLifeTimeData.isRoring = overLifeTimeRoot["isRoring"].get<uint32_t>();
+		json minRoringSpeed = overLifeTimeRoot["minRoringSpeed"];
+		overLifeTimeData.minRoringSpeed = Vector3(static_cast<float>(minRoringSpeed[0]), static_cast<float>(minRoringSpeed[1]), static_cast<float>(minRoringSpeed[2]));
+		json maxRoringSpeed = overLifeTimeRoot["maxRoringSpeed"];
+		overLifeTimeData.maxRoringSpeed = Vector3(static_cast<float>(maxRoringSpeed[0]), static_cast<float>(maxRoringSpeed[1]), static_cast<float>(maxRoringSpeed[2]));
+	}
+	if (overLifeTimeRoot.contains("isNoise")) {
+		overLifeTimeData.isNoise = overLifeTimeRoot["isNoise"].get<uint32_t>();
+		overLifeTimeData.density = overLifeTimeRoot["density"].get<float>();
+		overLifeTimeData.strength = overLifeTimeRoot["strength"].get<float>();
+	}
 
 
 
@@ -230,8 +253,8 @@ void ParticleEditor::DebugGUI() {
 	ImGui::Begin("ParticleEditor");
 
 	bool isCheck = false;
-
 	char strBuff[256];
+
 	strncpy_s(strBuff, saveFileName_.c_str(), sizeof(strBuff));
 	strBuff[sizeof(strBuff) - 1] = '\0';
 
@@ -390,6 +413,29 @@ void ParticleEditor::DebugGUI() {
 
 	ImGui::InputFloat("gravity", &particle_->particleData_.overLifeTime_.gravity);
 
+	isCheck = (particle_->particleData_.overLifeTime_.isRoring != 0);
+	if (ImGui::Checkbox("isRoring", &isCheck)) {
+		particle_->particleData_.overLifeTime_.isRoring = static_cast<uint32_t>(isCheck);
+	}
+	if (particle_->particleData_.overLifeTime_.isRoring) {
+		if (ImGui::TreeNode("roringSpeed")) {
+			ImGui::InputFloat3("minRoringSpeed", &particle_->particleData_.overLifeTime_.minRoringSpeed.x);
+			ImGui::InputFloat3("maxRoringSpeed", &particle_->particleData_.overLifeTime_.maxRoringSpeed.x);
+			ImGui::TreePop();
+		}
+	}
+
+	isCheck = (particle_->particleData_.overLifeTime_.isNoise != 0);
+	if (ImGui::Checkbox("isNoise", &isCheck)) {
+		particle_->particleData_.overLifeTime_.isNoise = static_cast<uint32_t>(isCheck);
+	}
+	if (particle_->particleData_.overLifeTime_.isNoise) {
+		if (ImGui::TreeNode("NoiseState")) {
+			ImGui::InputFloat("density", &particle_->particleData_.overLifeTime_.density);
+			ImGui::InputFloat("strength", &particle_->particleData_.overLifeTime_.strength);
+			ImGui::TreePop();
+		}
+	}
 	
 
 

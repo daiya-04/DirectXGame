@@ -42,6 +42,7 @@ public:
 		float currentTime;
 		Vector4 color;
 		uint32_t billboardType;
+		Vector3 roringSpeed;
 	};
 
 	struct VertexData {
@@ -102,6 +103,15 @@ public:
 		float endSpeed;
 
 		float gravity;
+
+		uint32_t isRoring;
+		Vector3 minRoringSpeed;
+		float padding3;
+		Vector3 maxRoringSpeed;
+
+		uint32_t isNoise;
+		float density;
+		float strength;
 
 	};
 

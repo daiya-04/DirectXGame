@@ -37,6 +37,8 @@ void GPUParticle::Init(uint32_t textureHandle, int32_t particleNum) {
 
 	CreateBuffer();
 
+	particleData_ = {};
+
 	particleData_.isLoop_ = true;
 	particleData_.emitter_.billboardType = BillboardType::Billboard;
 	particleData_.textureName_ = TextureManager::GetInstance()->GetTextureName(uvHandle_);
