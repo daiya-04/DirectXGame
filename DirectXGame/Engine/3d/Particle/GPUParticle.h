@@ -125,6 +125,7 @@ public:
 	struct PerFrame {
 		float time;
 		float deltaTime;
+		uint32_t seed;
 	};
 
 	struct MaxParticleNum {
@@ -197,6 +198,8 @@ public:
 	void SetParticleData(const ParticleData& particleData);
 
 	void SetTextureHandle();
+
+	void Emit() { particleData_.emitter_.emit = 1; }
 
 private:
 

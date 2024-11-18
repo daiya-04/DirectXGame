@@ -5,6 +5,7 @@
 #include "DirectXCommon.h"
 #include "PipelineManager.h"
 #include "RootParameters.h"
+#include "RandomEngine.h"
 
 using namespace Microsoft::WRL;
 using namespace GPUParticleParam;
@@ -53,7 +54,7 @@ void GPUParticle::Update() {
 
 	if (particleData_.isLoop_) {
 		
-
+		perFrameData->seed = RandomEngine::GetInstance()->GetIntRandom(0, 10);
 		particleData_.emitter_.frequencyTime += (1.0f / 60.0f);
 
 		if (particleData_.emitter_.frequency <= particleData_.emitter_.frequencyTime) {

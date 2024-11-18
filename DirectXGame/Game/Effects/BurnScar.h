@@ -40,11 +40,13 @@ private:
 
 private:
 
-	std::unique_ptr<GPUParticle> splashEff_;
+	/*std::unique_ptr<GPUParticle> splashEff_;
 	std::unique_ptr<GPUParticle> flameEff_;
 	std::unique_ptr<GPUParticle> coreEff_;
 	std::unique_ptr<GPUParticle> fireSparkEff_;
-	std::unique_ptr<GPUParticle> flareCircleEff_;
+	std::unique_ptr<GPUParticle> flareCircleEff_;*/
+
+	std::vector<std::unique_ptr<GPUParticle>> effect_;
 
 public: //メンバ関数
 

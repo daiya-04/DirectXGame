@@ -10,15 +10,19 @@ public:
 
 	static ParticleManager* GetInstance();
 
-	static GPUParticle::ParticleData Load(const std::string& fileName);
+	static std::vector<std::unique_ptr<GPUParticle>> Load(const std::string& fileName);
 
 private:
 
-	GPUParticle::ParticleData LoadInternal(const std::string& fileName);
+	std::vector<std::unique_ptr<GPUParticle>> LoadInternal(const std::string& fileName);
 
 private:
 
-	std::map<std::string,GPUParticle::ParticleData> particleDatas_;
+	struct Data {
+		std::map<std::string, GPUParticle::ParticleData> group;
+	};
+
+	std::map<std::string, Data> datas_;
 
 
 private:

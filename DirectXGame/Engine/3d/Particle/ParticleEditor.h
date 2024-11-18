@@ -3,6 +3,7 @@
 #include "GPUParticle.h"
 
 #include <string>
+#include <map>
 
 class ParticleEditor {
 public:
@@ -25,9 +26,12 @@ private:
 
 private:
 
-	std::unique_ptr<GPUParticle> particle_;
+	std::map<std::string, std::unique_ptr<GPUParticle>> particles_;
+
+	bool isLoop_ = true;
 
 	std::string saveFileName_;
+	std::string addParticelName_;
 	const std::string kDirectoryPath_ = "Resources/ParticleData/";
 
 

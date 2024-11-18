@@ -30,13 +30,13 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	obj_->threshold_ = 0.0f;
 
 	appearEff_.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 10000));
-	appearEff_->SetParticleData(ParticleManager::Load("BossEnterParticle"));
+	//appearEff_->SetParticleData(ParticleManager::Load("BossEnterParticle"));
 	appearEff_->particleData_.isLoop_ = false;
 	
 	rotateMat_ = DirectionToDirection({0.0f,0.0f,1.0f}, direction_);
 
 	behaviorRequest_ = Behavior::kAppear;
-	attackType_ = AttackType::kPlasmaShot;
+	attackType_ = AttackType::kElementBall;
 
 	life_ = maxHp_;
 
