@@ -43,6 +43,7 @@ public:
 		Vector4 color;
 		uint32_t billboardType;
 		Vector3 roringSpeed;
+		Vector3 noiseOffset;
 	};
 
 	struct VertexData {

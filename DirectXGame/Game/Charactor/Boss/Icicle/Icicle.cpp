@@ -30,6 +30,10 @@ void Icicle::Init(const std::shared_ptr<Model>& model) {
 
 	coolAir_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
 	coolAir_->SetParticleData(ParticleManager::Load("IceCoolAir"));
+
+	iceCreate_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
+	iceCreate_->SetParticleData(ParticleManager::Load("IcicleCreate"));
+	iceCreate_->particleData_.isLoop_ = false;
 	
 
 	isLife_ = false;
@@ -61,6 +65,7 @@ void Icicle::Update() {
 	particle_->Update();
 	iceSpark_->Update();
 	coolAir_->Update();
+	iceCreate_->Update();
 
 	ColliderUpdate();
 }
@@ -73,6 +78,7 @@ void Icicle::DrawParticle(const Camera& camera) {
 	particle_->Draw(camera);
 	iceSpark_->Draw(camera);
 	coolAir_->Draw(camera);
+	iceCreate_->Draw(camera);
 }
 
 void Icicle::OnCollision() {
@@ -83,6 +89,8 @@ void Icicle::OnCollision() {
 	coolAir_->particleData_.emitter_.emit = 1;
 	iceSpark_->particleData_.emitter_.translate = obj_->GetWorldPos();
 	coolAir_->particleData_.emitter_.translate = obj_->GetWorldPos();
+
+	particle_->particleData_.isLoop_ = false;
 
 }
 
@@ -97,6 +105,7 @@ void Icicle::SetAttackData(const Vector3& pos, const Vector3& direction) {
 	direction_ = direction;
 	rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
 
+	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
 }
 
 void Icicle::RootInit() {
@@ -118,13 +127,8 @@ void Icicle::CreateInit() {
 
 	createData_.param_ = 0.0f;
 
-	particle_->particleData_.isLoop_ = true;
-	particle_->particleData_.emitter_.count = 50;
-	particle_->particleData_.emitter_.frequency = 1.0f / 60.0f;
-	particle_->particleData_.emitter_.lifeTime = 1.0f;
-	particle_->particleData_.emitter_.scale = 0.2f;
-	particle_->particleData_.emitter_.radius = 1.3f;
-	particle_->particleData_.emitter_.speed = -1.0f;
+	iceCreate_->particleData_.isLoop_ = true;
+	iceCreate_->particleData_.emitter_.translate = obj_->GetWorldPos();
 	
 
 }
@@ -140,6 +144,7 @@ void Icicle::CreateUpdate() {
 
 	if (createData_.param_ >= 1.0f) {
 		phaseRequest_ = Phase::kWait;
+		iceCreate_->particleData_.isLoop_ = false;
 	}
 
 }
@@ -148,16 +153,9 @@ void Icicle::WaitInit() {
 
 	waitData_.count_ = 0;
 
-	particle_->particleData_.emitter_.count = 5;
-	particle_->particleData_.emitter_.speed = 0.5f;
-	particle_->particleData_.emitter_.lifeTime = 1.0f;
-	particle_->particleData_.emitter_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-
 }
 
 void Icicle::WaitUpdate() {
-
-	particle_->particleData_.emitter_.frequencyTime = 0.0f;
 
 	waitData_.count_++;
 	waitData_.count_ = std::clamp(waitData_.count_, 0, waitData_.waitTime_);
@@ -182,6 +180,7 @@ void Icicle::ShotInit() {
 
 	particle_->particleData_.overLifeTime_.isColor = 1;
 	particle_->particleData_.overLifeTime_.isScale = 1;
+	particle_->particleData_.isLoop_ = true;
 
 
 }

@@ -98,6 +98,7 @@ private:
 	std::vector<SkinCluster> skinClusters_;
 
 	std::unique_ptr<GPUParticle> appearEff_;
+	std::unique_ptr<GPUParticle> appearEff2_;
 
 	Action action_ = Action::Standing;
 	AttackType attackType_ = AttackType::kElementBall;

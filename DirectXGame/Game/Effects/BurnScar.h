@@ -40,7 +40,6 @@ private:
 
 private:
 
-	std::unique_ptr<GPUParticle> splashEff_;
 	std::unique_ptr<GPUParticle> flameEff_;
 	std::unique_ptr<GPUParticle> coreEff_;
 	std::unique_ptr<GPUParticle> fireSparkEff_;

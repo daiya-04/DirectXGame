@@ -131,7 +131,7 @@ private:
 
 	Shapes::AABB collider_{};
 
-	int32_t maxHp_ = 10;
+	int32_t maxHp_ = 20;
 	int32_t life_ = maxHp_;
 
 	float attackRange_ = 20.0f;

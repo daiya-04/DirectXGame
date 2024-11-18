@@ -40,6 +40,11 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 		splash->SetParticleData(ParticleManager::Load("FireBallSplash"));
 	}
 
+	for (auto& fireSpark : fireSparks_) {
+		fireSpark.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 2048));
+		fireSpark->SetParticleData(ParticleManager::Load("FireBallFireSpark"));
+	}
+
 	isAttack_ = false;
 	preIsAttack_ = false;
 	isShot_ = false;
@@ -93,6 +98,17 @@ void ElementBallManager::Update() {
 		}
 		splash->Update();
 	}
+
+	for (auto& fireSpark : fireSparks_) {
+		if (elementBalls_[0]->GetPhase() == ElementBall::Phase::kSet) {
+			fireSpark->particleData_.isLoop_ = true;
+		}else {
+			fireSpark->particleData_.isLoop_ = false;
+			fireSpark->particleData_.emitter_.frequencyTime = 0.0f;
+			fireSpark->particleData_.emitter_.emit = 0;
+		}
+		fireSpark->Update();
+	}
 	
 
 	for (auto& fireField : fireFields_) {
@@ -127,6 +143,9 @@ void ElementBallManager::DrawParticle(const Camera& camera) {
 	}
 	for (auto& splash : splashes_) {
 		splash->Draw(camera);
+	}
+	for (auto& fireSpark : fireSparks_) {
+		fireSpark->Draw(camera);
 	}
 
 }
@@ -187,6 +206,9 @@ void ElementBallManager::AttackStart() {
 
 		splashes_[index]->particleData_.emitter_.translate = elementBalls_[index]->GetWorldPos();
 		splashes_[index]->particleData_.emitter_.translate.y = 0.1f;
+
+		fireSparks_[index]->particleData_.emitter_.translate = elementBalls_[index]->GetWorldPos();
+		fireSparks_[index]->particleData_.emitter_.translate.y = 0.1f;
 	}
 
 }

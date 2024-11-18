@@ -1,20 +1,20 @@
 {
-    "FireBallImpactFlareCircle": {
+    "FireBallFireSpark": {
         "Emitter": {
-            "BillboardType": 1,
+            "BillboardType": 0,
             "Color": [
-                0.4019607901573181,
-                0.02364475093781948,
-                0.0,
+                1.0,
+                0.47520190477371216,
+                0.10784316062927246,
                 1.0
             ],
-            "Count": 20,
+            "Count": 3,
             "EmitterType": 5,
-            "Frequency": 0.0,
-            "LifeTime": 0.15000000596046448,
-            "Radius": 0.0010000000474974513,
+            "Frequency": 0.5,
+            "LifeTime": 1.399999976158142,
+            "Radius": 1.0,
             "Rotate": 0.0,
-            "Scale": 0.10000000149011612,
+            "Scale": 0.5,
             "Size": [
                 0.0,
                 0.0,
@@ -31,17 +31,17 @@
             "Gravity": 0.0,
             "Velocity": [
                 0.0,
-                0.0,
+                5.0,
                 0.0
             ],
-            "density": 0.0,
+            "density": 0.4000000059604645,
             "endAlpha": 0.0,
             "endColor": [
                 0.0,
                 0.0,
                 0.0
             ],
-            "endScale": 4.0,
+            "endScale": 0.0,
             "endSpeed": 0.0,
             "endVelocity": [
                 0.0,
@@ -50,10 +50,10 @@
             ],
             "isAlpha": 1,
             "isColor": 0,
-            "isConstantVelocity": 0,
-            "isNoise": 0,
+            "isConstantVelocity": 1,
+            "isNoise": 1,
             "isRoring": 0,
-            "isScale": 1,
+            "isScale": 0,
             "isTransSpeed": 0,
             "isTransVelocity": 0,
             "maxRoringSpeed": [
@@ -61,13 +61,13 @@
                 0.0,
                 0.0
             ],
-            "midAlpha": 0.5,
+            "midAlpha": 1.0,
             "minRoringSpeed": [
                 0.0,
                 0.0,
                 0.0
             ],
-            "startAlpha": 1.0,
+            "startAlpha": 0.0,
             "startColor": [
                 0.0,
                 0.0,
@@ -80,9 +80,9 @@
                 0.0,
                 0.0
             ],
-            "strength": 0.0
+            "strength": 0.6000000238418579
         },
-        "isLoop": false,
-        "textureName": "ring_01.png"
+        "isLoop": true,
+        "textureName": "circle.png"
     }
 }
