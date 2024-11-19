@@ -257,8 +257,8 @@ void DebugTestScene::DebugGUI() {
 	//	if (ImGui::RadioButton("Box", currentEmitShape == GPUParticle::EmitShape::Box)) {
 	//		currentEmitShape = GPUParticle::EmitShape::Box;
 	//	}
-	//	if (ImGui::RadioButton("Square", currentEmitShape == GPUParticle::EmitShape::Squere)) {
-	//		currentEmitShape = GPUParticle::EmitShape::Squere;
+	//	if (ImGui::RadioButton("Square", currentEmitShape == GPUParticle::EmitShape::Square)) {
+	//		currentEmitShape = GPUParticle::EmitShape::Square;
 	//	}
 	//	if (ImGui::RadioButton("Circle", currentEmitShape == GPUParticle::EmitShape::Circle)) {
 	//		currentEmitShape = GPUParticle::EmitShape::Circle;
