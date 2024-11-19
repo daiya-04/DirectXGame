@@ -1,20 +1,20 @@
 {
-    "FireBallImpactFlareCircle": {
+    "BossEnterParticle_2": {
         "Emitter": {
-            "BillboardType": 1,
+            "BillboardType": 0,
             "Color": [
-                0.4019607901573181,
-                0.02364475093781948,
-                0.0,
+                0.7366974353790283,
+                0.14006629586219788,
+                0.9852941036224365,
                 1.0
             ],
-            "Count": 20,
+            "Count": 1,
             "EmitterType": 5,
-            "Frequency": 0.0,
-            "LifeTime": 0.15000000596046448,
-            "Radius": 0.0010000000474974513,
-            "Rotate": 0.0,
-            "Scale": 0.10000000149011612,
+            "Frequency": 0.01600000075995922,
+            "LifeTime": 1.0,
+            "Radius": 4.0,
+            "Rotate": 360.0,
+            "Scale": 3.0,
             "Size": [
                 0.0,
                 0.0,
@@ -31,17 +31,17 @@
             "Gravity": 0.0,
             "Velocity": [
                 0.0,
-                0.0,
+                20.0,
                 0.0
             ],
-            "density": 0.0,
+            "density": 0.20000000298023224,
             "endAlpha": 0.0,
             "endColor": [
                 0.0,
                 0.0,
                 0.0
             ],
-            "endScale": 4.0,
+            "endScale": 0.0,
             "endSpeed": 0.0,
             "endVelocity": [
                 0.0,
@@ -50,39 +50,39 @@
             ],
             "isAlpha": 1,
             "isColor": 0,
-            "isConstantVelocity": 0,
+            "isConstantVelocity": 1,
             "isNoise": 0,
-            "isRoring": 0,
-            "isScale": 1,
+            "isRoring": 1,
+            "isScale": 0,
             "isTransSpeed": 0,
             "isTransVelocity": 0,
             "maxRoringSpeed": [
                 0.0,
                 0.0,
-                0.0
+                3.0
             ],
-            "midAlpha": 0.5,
+            "midAlpha": 1.0,
             "minRoringSpeed": [
                 0.0,
                 0.0,
-                0.0
+                3.0
             ],
-            "startAlpha": 1.0,
+            "startAlpha": 0.5,
             "startColor": [
                 0.0,
                 0.0,
                 0.0
             ],
             "startScale": 0.0,
-            "startSpeed": 0.0,
+            "startSpeed": 1.0,
             "startVelocity": [
                 0.0,
                 0.0,
                 0.0
             ],
-            "strength": 0.0
+            "strength": 2.0
         },
-        "isLoop": false,
-        "textureName": "ring_01.png"
+        "isLoop": true,
+        "textureName": "cross_02.png"
     }
 }

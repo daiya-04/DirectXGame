@@ -34,6 +34,7 @@
                 1.0,
                 0.0
             ],
+            "density": 0.0,
             "endAlpha": 0.0,
             "endColor": [
                 0.0,
@@ -50,23 +51,36 @@
             "isAlpha": 1,
             "isColor": 0,
             "isConstantVelocity": 0,
+            "isNoise": 0,
+            "isRoring": 1,
             "isScale": 1,
             "isTransSpeed": 0,
             "isTransVelocity": 1,
+            "maxRoringSpeed": [
+                0.0,
+                3.0,
+                3.0
+            ],
             "midAlpha": 1.0,
+            "minRoringSpeed": [
+                0.0,
+                3.0,
+                3.0
+            ],
             "startAlpha": 0.0,
             "startColor": [
                 0.0,
                 0.0,
                 0.0
             ],
-            "startScale": 0.20000000298023224,
+            "startScale": 0.4000000059604645,
             "startSpeed": 2.0,
             "startVelocity": [
                 0.0,
                 0.5,
                 0.0
-            ]
+            ],
+            "strength": 0.0
         },
         "isLoop": false,
         "textureName": "flare_02.png"

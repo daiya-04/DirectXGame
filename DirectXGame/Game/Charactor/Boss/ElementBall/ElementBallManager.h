@@ -46,6 +46,7 @@ private:
 
 	std::array<std::unique_ptr<GPUParticle>, 4> fireFields_;
 	std::array<std::unique_ptr<GPUParticle>, 4> splashes_;
+	std::array<std::unique_ptr<GPUParticle>, 4> fireSparks_;
 
 	bool isAttack_ = false;
 	bool preIsAttack_ = false;

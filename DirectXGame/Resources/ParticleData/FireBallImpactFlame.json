@@ -8,11 +8,11 @@
                 0.0,
                 1.0
             ],
-            "Count": 10,
-            "EmitterType": 1,
+            "Count": 20,
+            "EmitterType": 2,
             "Frequency": 0.0,
-            "LifeTime": 1.5,
-            "Radius": 1.5,
+            "LifeTime": 1.0,
+            "Radius": 2.0,
             "Rotate": 180.0,
             "Scale": 1.0,
             "Size": [
@@ -34,6 +34,7 @@
                 5.0,
                 0.0
             ],
+            "density": 0.0,
             "endAlpha": 0.0,
             "endColor": [
                 0.0,
@@ -50,10 +51,22 @@
             "isAlpha": 1,
             "isColor": 0,
             "isConstantVelocity": 0,
+            "isNoise": 0,
+            "isRoring": 0,
             "isScale": 1,
             "isTransSpeed": 0,
             "isTransVelocity": 1,
+            "maxRoringSpeed": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "midAlpha": 1.0,
+            "minRoringSpeed": [
+                0.0,
+                0.0,
+                0.0
+            ],
             "startAlpha": 1.0,
             "startColor": [
                 0.8578431606292725,
@@ -66,7 +79,8 @@
                 0.0,
                 1.0,
                 0.0
-            ]
+            ],
+            "strength": 0.0
         },
         "isLoop": false,
         "textureName": "Steam.png"
