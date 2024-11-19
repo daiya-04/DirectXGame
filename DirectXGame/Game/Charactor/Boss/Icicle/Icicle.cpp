@@ -26,10 +26,10 @@ void Icicle::Init(const std::shared_ptr<Model>& model) {
 	particle_->particleData_.overLifeTime_.endScale = 0.3f;
 
 	iceSpark_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
-	//iceSpark_->SetParticleData(ParticleManager::Load("IceSpark_1"));
+	iceSpark_->SetParticleData(ParticleManager::Load("IceSpark_1"));
 
 	coolAir_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
-	//coolAir_->SetParticleData(ParticleManager::Load("IceCoolAir"));
+	coolAir_->SetParticleData(ParticleManager::Load("IceCoolAir"));
 	
 
 	isLife_ = false;

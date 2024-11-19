@@ -39,7 +39,7 @@ void PlasmaShot::Init(const std::shared_ptr<Model>& model) {
 	hitEff_->particleData_.overLifeTime_.startSpeed = 5.0f;
 
 	createEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
-	//createEff_->SetParticleData(ParticleManager::Load("PlasmaShotCreate"));
+	createEff_->SetParticleData(ParticleManager::Load("PlasmaShotCreate"));
 
 
 }

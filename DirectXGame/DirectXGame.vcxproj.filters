@@ -574,8 +574,5 @@
     <ClInclude Include="Engine\3d\Animation\Animation.h">
       <Filter>Engine\3d\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\RandomEngine.h">
-      <Filter>Engine\Base</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

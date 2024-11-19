@@ -37,7 +37,6 @@ ConstantBuffer<Emitter> gEmitter : register(b0);
 struct PerFrame {
     float32_t time;
     float32_t deltaTime;
-    uint32_t seed;
 };
 
 ConstantBuffer<PerFrame> gPerFrame : register(b1);
@@ -50,19 +49,11 @@ ConstantBuffer<MaxParticleNum> gMaxParticles : register(b2);
 
 ConstantBuffer<OverLifeTime> gOverLifeTime : register(b3);
 
-float32_t3 RandomVec(float32_t3 p) {
-    float32_t3 angle = float32_t3(
-				dot(p, float32_t3(127.1f, 311.7f, 74.7f)),
-                dot(p, float32_t3(269.5f, 183.3f, 246.1f)),
-                dot(p, float32_t3(113.5f, 271.9f, 52.7f)));
-    return frac(sin(angle) * 43758.5453123f);
-}
-
 [numthreads(1, 1, 1)]
 void main(uint32_t3 DTid : SV_DispatchThreadID) {
 
     RandomGenerator generator;
-    generator.seed = (DTid + gPerFrame.time) * gPerFrame.time * gPerFrame.seed;
+    generator.seed = (DTid + gPerFrame.time) * gPerFrame.time;
 
     if(gEmitter.emit != 0){
         for(uint32_t countIndex = 0; countIndex < gEmitter.count; ++countIndex){

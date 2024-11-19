@@ -20,7 +20,7 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 	for (auto& particle : particles_) {
 		particle.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 5000));
 
-		//particle->SetParticleData(ParticleManager::Load("GroundFlare"));
+		particle->SetParticleData(ParticleManager::Load("GroundFlare"));
 	}
 
 

@@ -62,7 +62,7 @@ void DebugTestScene::Init() {
 	human_->worldTransform_.translation_.z = 10.0f;
 
 	particle2_.reset(GPUParticle::Create(TextureManager::Load("star.png"), 10000));
-	//particle2_->SetParticleData(ParticleManager::Load("testParticle"));
+	particle2_->SetParticleData(ParticleManager::Load("testParticle"));
 
 	/*particle2_->particleData_.isLoop_ = true;
 	particle2_->particleData_.emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);

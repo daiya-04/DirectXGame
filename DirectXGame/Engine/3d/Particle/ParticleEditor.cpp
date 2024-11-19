@@ -2,7 +2,6 @@
 
 #include "ImGuiManager.h"
 #include "TextureManager.h"
-#include "ParticleManager.h"
 #include <json.hpp>
 #include <fstream>
 #include <cassert>
@@ -18,25 +17,22 @@ ParticleEditor* ParticleEditor::GetInstance() {
 
 void ParticleEditor::Init() {
 
-	//particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 100000));
+	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 100000));
 	saveFileName_ = "testParticle";
-	//LoadDataFile(saveFileName_);
-	
+	LoadDataFile(saveFileName_);
 
 }
 
 void ParticleEditor::Update() {
 	DebugGUI();
 
-	for (auto& [group, particle] : particles_) {
-		particle->Update();
-	}
+	particle_->Update();
 }
 
 void ParticleEditor::Draw(const Camera& camera) {
-	for (auto& [group, particle] : particles_) {
-		particle->Draw(camera);
-	}
+
+	particle_->Draw(camera);
+
 }
 
 void ParticleEditor::DataSave() {
@@ -53,76 +49,11 @@ void ParticleEditor::DataSave() {
 	//jsonオブジェクト登録
 	root[saveFileName_] = json::object();
 
-	for (auto& [group, particle] : particles_) {
-		json& particleRoot = root[saveFileName_][group];
-		const auto& data = particle->particleData_;
-
-		//rootに保存するパラメータの登録
-		particleRoot["isLoop"] = data.isLoop_;
-		particleRoot["textureName"] = data.textureName_;
-
-		json& emitterRoot = particleRoot["Emitter"];
-		const auto& emitter = data.emitter_;
-
-		Vector3 emitTranslate = emitter.translate;
-		emitterRoot["Translate"] = json::array({ emitTranslate.x, emitTranslate.y, emitTranslate.z });
-		Vector3 emitSize = emitter.size;
-		emitterRoot["Size"] = json::array({ emitSize.x, emitSize.y, emitSize.z });
-		emitterRoot["Radius"] = emitter.radius;
-		emitterRoot["Scale"] = emitter.scale;
-		emitterRoot["Rotate"] = emitter.rotate;
-		emitterRoot["Count"] = emitter.count;
-		emitterRoot["Frequency"] = emitter.frequency;
-		Vector4 emitColor = emitter.color;
-		emitterRoot["Color"] = json::array({ emitColor.x, emitColor.y, emitColor.z, emitColor.w });
-		emitterRoot["LifeTime"] = emitter.lifeTime;
-		emitterRoot["Speed"] = emitter.speed;
-		emitterRoot["EmitterType"] = emitter.emitterType;
-		emitterRoot["BillboardType"] = emitter.billboardType;
-
-		json& overLifeTimeRoot = particleRoot["OverLifeTime"];
-		const auto& overLifeTime = data.overLifeTime_;
-
-		overLifeTimeRoot["isConstantVelocity"] = overLifeTime.isConstantVelocity;
-		Vector3 velocity = overLifeTime.velocity;
-		overLifeTimeRoot["Velocity"] = json::array({ velocity.x, velocity.y, velocity.z });
-		overLifeTimeRoot["isTransVelocity"] = overLifeTime.isTransVelocity;
-		Vector3 startVelocity = overLifeTime.startVelocity;
-		overLifeTimeRoot["startVelocity"] = json::array({ startVelocity.x, startVelocity.y, startVelocity.z });
-		Vector3 endVelocity = overLifeTime.endVelocity;
-		overLifeTimeRoot["endVelocity"] = json::array({ endVelocity.x, endVelocity.y, endVelocity.z });
-		overLifeTimeRoot["isScale"] = overLifeTime.isScale;
-		overLifeTimeRoot["startScale"] = overLifeTime.startScale;
-		overLifeTimeRoot["endScale"] = overLifeTime.endScale;
-		overLifeTimeRoot["isColor"] = overLifeTime.isColor;
-		Vector3 startColor = overLifeTime.startColor;
-		overLifeTimeRoot["startColor"] = json::array({ startColor.x, startColor.y, startColor.z });
-		Vector3 endColor = overLifeTime.endColor;
-		overLifeTimeRoot["endColor"] = json::array({ endColor.x, endColor.y, endColor.z });
-		overLifeTimeRoot["isAlpha"] = overLifeTime.isAlpha;
-		overLifeTimeRoot["startAlpha"] = overLifeTime.startAlpha;
-		overLifeTimeRoot["midAlpha"] = overLifeTime.midAlpha;
-		overLifeTimeRoot["endAlpha"] = overLifeTime.endAlpha;
-		overLifeTimeRoot["isTransSpeed"] = overLifeTime.isTransSpeed;
-		overLifeTimeRoot["startSpeed"] = overLifeTime.startSpeed;
-		overLifeTimeRoot["endSpeed"] = overLifeTime.endSpeed;
-		overLifeTimeRoot["Gravity"] = overLifeTime.gravity;
-		overLifeTimeRoot["isRoring"] = overLifeTime.isRoring;
-		Vector3 minRoringSpeed = overLifeTime.minRoringSpeed;
-		overLifeTimeRoot["minRoringSpeed"] = json::array({ minRoringSpeed.x,minRoringSpeed.y ,minRoringSpeed.z });
-		Vector3 maxRoringSpeed = overLifeTime.maxRoringSpeed;
-		overLifeTimeRoot["maxRoringSpeed"] = json::array({ maxRoringSpeed.x,maxRoringSpeed.y ,maxRoringSpeed.z });
-		overLifeTimeRoot["isNoise"] = overLifeTime.isNoise;
-		overLifeTimeRoot["density"] = overLifeTime.density;
-		overLifeTimeRoot["strength"] = overLifeTime.strength;
-
-	}
-
 	//rootに保存するパラメータの登録
-	/*root[saveFileName_]["isLoop"] = particle_->particleData_.isLoop_;
-	root[saveFileName_]["textureName"] = particle_->particleData_.textureName_;*/
+	root[saveFileName_]["isLoop"] = particle_->particleData_.isLoop_;
+	root[saveFileName_]["textureName"] = particle_->particleData_.textureName_;
 
-	/*Vector3 emitTranslate = particle_->particleData_.emitter_.translate;
+	Vector3 emitTranslate = particle_->particleData_.emitter_.translate;
 	root[saveFileName_]["Emitter"]["Translate"] = json::array({ emitTranslate.x, emitTranslate.y, emitTranslate.z });
 	Vector3 emitSize = particle_->particleData_.emitter_.size;
 	root[saveFileName_]["Emitter"]["Size"] = json::array({ emitSize.x, emitSize.y, emitSize.z });
@@ -136,9 +67,9 @@ void ParticleEditor::DataSave() {
 	root[saveFileName_]["Emitter"]["LifeTime"] = particle_->particleData_.emitter_.lifeTime;
 	root[saveFileName_]["Emitter"]["Speed"] = particle_->particleData_.emitter_.speed;
 	root[saveFileName_]["Emitter"]["EmitterType"] = particle_->particleData_.emitter_.emitterType;
-	root[saveFileName_]["Emitter"]["BillboardType"] = particle_->particleData_.emitter_.billboardType;*/
+	root[saveFileName_]["Emitter"]["BillboardType"] = particle_->particleData_.emitter_.billboardType;
 
-	/*root[saveFileName_]["OverLifeTime"]["isConstantVelocity"] = particle_->particleData_.overLifeTime_.isConstantVelocity;
+	root[saveFileName_]["OverLifeTime"]["isConstantVelocity"] = particle_->particleData_.overLifeTime_.isConstantVelocity;
 	Vector3 velocity = particle_->particleData_.overLifeTime_.velocity;
 	root[saveFileName_]["OverLifeTime"]["Velocity"] = json::array({ velocity.x, velocity.y, velocity.z });
 	root[saveFileName_]["OverLifeTime"]["isTransVelocity"] = particle_->particleData_.overLifeTime_.isTransVelocity;
@@ -169,7 +100,7 @@ void ParticleEditor::DataSave() {
 	root[saveFileName_]["OverLifeTime"]["maxRoringSpeed"] = json::array({ maxRoringSpeed.x,maxRoringSpeed.y ,maxRoringSpeed.z });
 	root[saveFileName_]["OverLifeTime"]["isNoise"] = particle_->particleData_.overLifeTime_.isNoise;
 	root[saveFileName_]["OverLifeTime"]["density"] = particle_->particleData_.overLifeTime_.density;
-	root[saveFileName_]["OverLifeTime"]["strength"] = particle_->particleData_.overLifeTime_.strength;*/
+	root[saveFileName_]["OverLifeTime"]["strength"] = particle_->particleData_.overLifeTime_.strength;
 
 
 	//ディレクトリがなければ作成する
@@ -204,8 +135,6 @@ void ParticleEditor::DataSave() {
 }
 
 void ParticleEditor::LoadDataFile(const std::string& fileName) {
-
-
 	//ファイル名が入力されていなかったら
 	if (saveFileName_.empty()) {
 		std::string message = "FileName is empty.";
@@ -247,147 +176,73 @@ void ParticleEditor::LoadDataFile(const std::string& fileName) {
 		return;
 	}
 
-	const auto& groups = root[fileName];
-	particles_.clear();
+	particle_->Init(TextureManager::Load("circle.png"), 100000);
 
-	for (const auto& [group, particleRoot] : groups.items()) {
-		particles_[group].reset(GPUParticle::Create(TextureManager::Load("circle.png"), 100000));
-		auto& data = particles_[group]->particleData_;
+	//ファイルのデータを設定していく
+	particle_->particleData_.isLoop_ = root[fileName]["isLoop"].get<bool>();
+	particle_->particleData_.textureName_ = root[fileName]["textureName"].get<std::string>();
+	particle_->SetTextureHandle();
 
-		data.isLoop_ = particleRoot["isLoop"].get<bool>();
-		data.textureName_ = particleRoot["textureName"].get<std::string>();
-		particles_[group]->SetTextureHandle();
+	auto& emitterData = particle_->particleData_.emitter_;
+	json& emitterRoot = root[fileName]["Emitter"];
 
-		auto& emitterData = data.emitter_;
-		const json& emitterRoot = particleRoot["Emitter"];
-
-		json emitTranslate = emitterRoot["Translate"];
-		emitterData.translate = Vector3(static_cast<float>(emitTranslate[0]), static_cast<float>(emitTranslate[1]), static_cast<float>(emitTranslate[2]));
-		json emitSize = emitterRoot["Size"];
-		emitterData.size = Vector3(static_cast<float>(emitSize[0]), static_cast<float>(emitSize[1]), static_cast<float>(emitSize[2]));
-		emitterData.radius = emitterRoot["Radius"].get<float>();
-		emitterData.scale = emitterRoot["Scale"].get<float>();
-		emitterData.rotate = emitterRoot["Rotate"].get<float>();
-		emitterData.count = emitterRoot["Count"].get<uint32_t>();
-		emitterData.frequency = emitterRoot["Frequency"].get<float>();
-		json emitColor = emitterRoot["Color"];
-		emitterData.color = Vector4(static_cast<float>(emitColor[0]), static_cast<float>(emitColor[1]), static_cast<float>(emitColor[2]), static_cast<float>(emitColor[3]));
-		emitterData.lifeTime = emitterRoot["LifeTime"].get<float>();
-		emitterData.speed = emitterRoot["Speed"].get<float>();
-		emitterData.emitterType = emitterRoot["EmitterType"].get<uint32_t>();
-		if (emitterRoot.contains("BillboardType")) {
-			emitterData.billboardType = emitterRoot["BillboardType"].get<uint32_t>();
-		}
-
-		auto& overLifeTimeData = data.overLifeTime_;
-		const json& overLifeTimeRoot = particleRoot["OverLifeTime"];
-
-		overLifeTimeData.isConstantVelocity = overLifeTimeRoot["isConstantVelocity"].get<uint32_t>();
-		json velocity = overLifeTimeRoot["Velocity"];
-		overLifeTimeData.velocity = Vector3(static_cast<float>(velocity[0]), static_cast<float>(velocity[1]), static_cast<float>(velocity[2]));
-		overLifeTimeData.isTransVelocity = overLifeTimeRoot["isTransVelocity"].get<uint32_t>();
-		json startVelo = overLifeTimeRoot["startVelocity"];
-		overLifeTimeData.startVelocity = Vector3(static_cast<float>(startVelo[0]), static_cast<float>(startVelo[1]), static_cast<float>(startVelo[2]));
-		json endVelo = overLifeTimeRoot["endVelocity"];
-		overLifeTimeData.endVelocity = Vector3(static_cast<float>(endVelo[0]), static_cast<float>(endVelo[1]), static_cast<float>(endVelo[2]));
-		overLifeTimeData.isScale = overLifeTimeRoot["isScale"].get<uint32_t>();
-		overLifeTimeData.startScale = overLifeTimeRoot["startScale"].get<float>();
-		overLifeTimeData.endScale = overLifeTimeRoot["endScale"].get<float>();
-		overLifeTimeData.isColor = overLifeTimeRoot["isColor"].get<uint32_t>();
-		json startColor = overLifeTimeRoot["startColor"];
-		overLifeTimeData.startColor = Vector3(static_cast<float>(startColor[0]), static_cast<float>(startColor[1]), static_cast<float>(startColor[2]));
-		json endColor = overLifeTimeRoot["endColor"];
-		overLifeTimeData.endColor = Vector3(static_cast<float>(endColor[0]), static_cast<float>(endColor[1]), static_cast<float>(endColor[2]));
-		overLifeTimeData.isAlpha = overLifeTimeRoot["isAlpha"].get<uint32_t>();
-		overLifeTimeData.startAlpha = overLifeTimeRoot["startAlpha"].get<float>();
-		overLifeTimeData.midAlpha = overLifeTimeRoot["midAlpha"].get<float>();
-		overLifeTimeData.endAlpha = overLifeTimeRoot["endAlpha"].get<float>();
-		overLifeTimeData.isTransSpeed = overLifeTimeRoot["isTransSpeed"].get<uint32_t>();
-		overLifeTimeData.startSpeed = overLifeTimeRoot["startSpeed"].get<float>();
-		overLifeTimeData.endSpeed = overLifeTimeRoot["endSpeed"].get<float>();
-		overLifeTimeData.gravity = overLifeTimeRoot["Gravity"].get<float>();
-		if (overLifeTimeRoot.contains("isRoring")) {
-			overLifeTimeData.isRoring = overLifeTimeRoot["isRoring"].get<uint32_t>();
-			json minRoringSpeed = overLifeTimeRoot["minRoringSpeed"];
-			overLifeTimeData.minRoringSpeed = Vector3(static_cast<float>(minRoringSpeed[0]), static_cast<float>(minRoringSpeed[1]), static_cast<float>(minRoringSpeed[2]));
-			json maxRoringSpeed = overLifeTimeRoot["maxRoringSpeed"];
-			overLifeTimeData.maxRoringSpeed = Vector3(static_cast<float>(maxRoringSpeed[0]), static_cast<float>(maxRoringSpeed[1]), static_cast<float>(maxRoringSpeed[2]));
-		}
-		if (overLifeTimeRoot.contains("isNoise")) {
-			overLifeTimeData.isNoise = overLifeTimeRoot["isNoise"].get<uint32_t>();
-			overLifeTimeData.density = overLifeTimeRoot["density"].get<float>();
-			overLifeTimeData.strength = overLifeTimeRoot["strength"].get<float>();
-		}
-
+	json emitTranslate = emitterRoot["Translate"];
+	emitterData.translate = Vector3(static_cast<float>(emitTranslate[0]), static_cast<float>(emitTranslate[1]), static_cast<float>(emitTranslate[2]));
+	json emitSize = emitterRoot["Size"];
+	emitterData.size = Vector3(static_cast<float>(emitSize[0]), static_cast<float>(emitSize[1]), static_cast<float>(emitSize[2]));
+	emitterData.radius = emitterRoot["Radius"].get<float>();
+	emitterData.scale = emitterRoot["Scale"].get<float>();
+	emitterData.rotate = emitterRoot["Rotate"].get<float>();
+	emitterData.count = emitterRoot["Count"].get<uint32_t>();
+	emitterData.frequency = emitterRoot["Frequency"].get<float>();
+	json emitColor = emitterRoot["Color"];
+	emitterData.color = Vector4(static_cast<float>(emitColor[0]), static_cast<float>(emitColor[1]), static_cast<float>(emitColor[2]), static_cast<float>(emitColor[3]));
+	emitterData.lifeTime = emitterRoot["LifeTime"].get<float>();
+	emitterData.speed = emitterRoot["Speed"].get<float>();
+	emitterData.emitterType = emitterRoot["EmitterType"].get<uint32_t>();
+	if (emitterRoot.contains("BillboardType")) {
+		emitterData.billboardType = emitterRoot["BillboardType"].get<uint32_t>();
 	}
 
-	//particle_->Init(TextureManager::Load("circle.png"), 100000);
+	auto& overLifeTimeData = particle_->particleData_.overLifeTime_;
+	json& overLifeTimeRoot = root[fileName]["OverLifeTime"];
 
-	////ファイルのデータを設定していく
-	//particle_->particleData_.isLoop_ = root[fileName]["isLoop"].get<bool>();
-	//particle_->particleData_.textureName_ = root[fileName]["textureName"].get<std::string>();
-	//particle_->SetTextureHandle();
-
-	//auto& emitterData = particle_->particleData_.emitter_;
-	//json& emitterRoot = root[fileName]["Emitter"];
-
-	//json emitTranslate = emitterRoot["Translate"];
-	//emitterData.translate = Vector3(static_cast<float>(emitTranslate[0]), static_cast<float>(emitTranslate[1]), static_cast<float>(emitTranslate[2]));
-	//json emitSize = emitterRoot["Size"];
-	//emitterData.size = Vector3(static_cast<float>(emitSize[0]), static_cast<float>(emitSize[1]), static_cast<float>(emitSize[2]));
-	//emitterData.radius = emitterRoot["Radius"].get<float>();
-	//emitterData.scale = emitterRoot["Scale"].get<float>();
-	//emitterData.rotate = emitterRoot["Rotate"].get<float>();
-	//emitterData.count = emitterRoot["Count"].get<uint32_t>();
-	//emitterData.frequency = emitterRoot["Frequency"].get<float>();
-	//json emitColor = emitterRoot["Color"];
-	//emitterData.color = Vector4(static_cast<float>(emitColor[0]), static_cast<float>(emitColor[1]), static_cast<float>(emitColor[2]), static_cast<float>(emitColor[3]));
-	//emitterData.lifeTime = emitterRoot["LifeTime"].get<float>();
-	//emitterData.speed = emitterRoot["Speed"].get<float>();
-	//emitterData.emitterType = emitterRoot["EmitterType"].get<uint32_t>();
-	//if (emitterRoot.contains("BillboardType")) {
-	//	emitterData.billboardType = emitterRoot["BillboardType"].get<uint32_t>();
-	//}
-
-	//auto& overLifeTimeData = particle_->particleData_.overLifeTime_;
-	//json& overLifeTimeRoot = root[fileName]["OverLifeTime"];
-
-	//overLifeTimeData.isConstantVelocity = overLifeTimeRoot["isConstantVelocity"].get<uint32_t>();
-	//json velocity = overLifeTimeRoot["Velocity"];
-	//overLifeTimeData.velocity = Vector3(static_cast<float>(velocity[0]), static_cast<float>(velocity[1]), static_cast<float>(velocity[2]));
-	//overLifeTimeData.isTransVelocity = overLifeTimeRoot["isTransVelocity"].get<uint32_t>();
-	//json startVelo = overLifeTimeRoot["startVelocity"];
-	//overLifeTimeData.startVelocity = Vector3(static_cast<float>(startVelo[0]), static_cast<float>(startVelo[1]), static_cast<float>(startVelo[2]));
-	//json endVelo = overLifeTimeRoot["endVelocity"];
-	//overLifeTimeData.endVelocity = Vector3(static_cast<float>(endVelo[0]), static_cast<float>(endVelo[1]), static_cast<float>(endVelo[2]));
-	//overLifeTimeData.isScale = overLifeTimeRoot["isScale"].get<uint32_t>();
-	//overLifeTimeData.startScale = overLifeTimeRoot["startScale"].get<float>();
-	//overLifeTimeData.endScale = overLifeTimeRoot["endScale"].get<float>();
-	//overLifeTimeData.isColor = overLifeTimeRoot["isColor"].get<uint32_t>();
-	//json startColor = overLifeTimeRoot["startColor"];
-	//overLifeTimeData.startColor = Vector3(static_cast<float>(startColor[0]), static_cast<float>(startColor[1]), static_cast<float>(startColor[2]));
-	//json endColor = overLifeTimeRoot["endColor"];
-	//overLifeTimeData.endColor = Vector3(static_cast<float>(endColor[0]), static_cast<float>(endColor[1]), static_cast<float>(endColor[2]));
-	//overLifeTimeData.isAlpha = overLifeTimeRoot["isAlpha"].get<uint32_t>();
-	//overLifeTimeData.startAlpha = overLifeTimeRoot["startAlpha"].get<float>();
-	//overLifeTimeData.midAlpha = overLifeTimeRoot["midAlpha"].get<float>();
-	//overLifeTimeData.endAlpha = overLifeTimeRoot["endAlpha"].get<float>();
-	//overLifeTimeData.isTransSpeed = overLifeTimeRoot["isTransSpeed"].get<uint32_t>();
-	//overLifeTimeData.startSpeed = overLifeTimeRoot["startSpeed"].get<float>();
-	//overLifeTimeData.endSpeed = overLifeTimeRoot["endSpeed"].get<float>();
-	//overLifeTimeData.gravity = overLifeTimeRoot["Gravity"].get<float>();
-	//if (overLifeTimeRoot.contains("isRoring")) {
-	//	overLifeTimeData.isRoring = overLifeTimeRoot["isRoring"].get<uint32_t>();
-	//	json minRoringSpeed = overLifeTimeRoot["minRoringSpeed"];
-	//	overLifeTimeData.minRoringSpeed = Vector3(static_cast<float>(minRoringSpeed[0]), static_cast<float>(minRoringSpeed[1]), static_cast<float>(minRoringSpeed[2]));
-	//	json maxRoringSpeed = overLifeTimeRoot["maxRoringSpeed"];
-	//	overLifeTimeData.maxRoringSpeed = Vector3(static_cast<float>(maxRoringSpeed[0]), static_cast<float>(maxRoringSpeed[1]), static_cast<float>(maxRoringSpeed[2]));
-	//}
-	//if (overLifeTimeRoot.contains("isNoise")) {
-	//	overLifeTimeData.isNoise = overLifeTimeRoot["isNoise"].get<uint32_t>();
-	//	overLifeTimeData.density = overLifeTimeRoot["density"].get<float>();
-	//	overLifeTimeData.strength = overLifeTimeRoot["strength"].get<float>();
-	//}
+	overLifeTimeData.isConstantVelocity = overLifeTimeRoot["isConstantVelocity"].get<uint32_t>();
+	json velocity = overLifeTimeRoot["Velocity"];
+	overLifeTimeData.velocity = Vector3(static_cast<float>(velocity[0]), static_cast<float>(velocity[1]), static_cast<float>(velocity[2]));
+	overLifeTimeData.isTransVelocity = overLifeTimeRoot["isTransVelocity"].get<uint32_t>();
+	json startVelo = overLifeTimeRoot["startVelocity"];
+	overLifeTimeData.startVelocity = Vector3(static_cast<float>(startVelo[0]), static_cast<float>(startVelo[1]), static_cast<float>(startVelo[2]));
+	json endVelo = overLifeTimeRoot["endVelocity"];
+	overLifeTimeData.endVelocity = Vector3(static_cast<float>(endVelo[0]), static_cast<float>(endVelo[1]), static_cast<float>(endVelo[2]));
+	overLifeTimeData.isScale = overLifeTimeRoot["isScale"].get<uint32_t>();
+	overLifeTimeData.startScale = overLifeTimeRoot["startScale"].get<float>();
+	overLifeTimeData.endScale = overLifeTimeRoot["endScale"].get<float>();
+	overLifeTimeData.isColor = overLifeTimeRoot["isColor"].get<uint32_t>();
+	json startColor = overLifeTimeRoot["startColor"];
+	overLifeTimeData.startColor = Vector3(static_cast<float>(startColor[0]), static_cast<float>(startColor[1]), static_cast<float>(startColor[2]));
+	json endColor = overLifeTimeRoot["endColor"];
+	overLifeTimeData.endColor = Vector3(static_cast<float>(endColor[0]), static_cast<float>(endColor[1]), static_cast<float>(endColor[2]));
+	overLifeTimeData.isAlpha = overLifeTimeRoot["isAlpha"].get<uint32_t>();
+	overLifeTimeData.startAlpha = overLifeTimeRoot["startAlpha"].get<float>();
+	overLifeTimeData.midAlpha = overLifeTimeRoot["midAlpha"].get<float>();
+	overLifeTimeData.endAlpha = overLifeTimeRoot["endAlpha"].get<float>();
+	overLifeTimeData.isTransSpeed = overLifeTimeRoot["isTransSpeed"].get<uint32_t>();
+	overLifeTimeData.startSpeed = overLifeTimeRoot["startSpeed"].get<float>();
+	overLifeTimeData.endSpeed = overLifeTimeRoot["endSpeed"].get<float>();
+	overLifeTimeData.gravity = overLifeTimeRoot["Gravity"].get<float>();
+	if (overLifeTimeRoot.contains("isRoring")) {
+		overLifeTimeData.isRoring = overLifeTimeRoot["isRoring"].get<uint32_t>();
+		json minRoringSpeed = overLifeTimeRoot["minRoringSpeed"];
+		overLifeTimeData.minRoringSpeed = Vector3(static_cast<float>(minRoringSpeed[0]), static_cast<float>(minRoringSpeed[1]), static_cast<float>(minRoringSpeed[2]));
+		json maxRoringSpeed = overLifeTimeRoot["maxRoringSpeed"];
+		overLifeTimeData.maxRoringSpeed = Vector3(static_cast<float>(maxRoringSpeed[0]), static_cast<float>(maxRoringSpeed[1]), static_cast<float>(maxRoringSpeed[2]));
+	}
+	if (overLifeTimeRoot.contains("isNoise")) {
+		overLifeTimeData.isNoise = overLifeTimeRoot["isNoise"].get<uint32_t>();
+		overLifeTimeData.density = overLifeTimeRoot["density"].get<float>();
+		overLifeTimeData.strength = overLifeTimeRoot["strength"].get<float>();
+	}
 
 
 
@@ -417,212 +272,170 @@ void ParticleEditor::DebugGUI() {
 		DataSave();
 	}
 
-	strncpy_s(strBuff, addParticelName_.c_str(), sizeof(strBuff));
-	strBuff[sizeof(strBuff) - 1] = '\0';
-	if (ImGui::InputText("AddParticleName", strBuff, sizeof(strBuff))) {
-		addParticelName_ = strBuff;
+	isCheck = (particle_->particleData_.isLoop_ != 0);
+	if (ImGui::Checkbox("isLoop", &isCheck)) {
+		particle_->particleData_.isLoop_ = isCheck;
 	}
-	if (ImGui::Button("Add")) {
-		if (addParticelName_.empty() || particles_.find(addParticelName_) != particles_.end()) {
-			std::string message = "The name is already in use.";
-			MessageBoxA(nullptr, message.c_str(), "ParticleEditor", 0);
-		}else {
-			particles_[addParticelName_].reset(GPUParticle::Create(TextureManager::Load("circle.png"), 100000));
-			particles_[addParticelName_]->particleData_.isLoop_ = isLoop_;
-		}
-	}
-
-	if (ImGui::Checkbox("isLoop", &isLoop_)) {
-		for (auto& [group, particle] : particles_) {
-			particle->particleData_.isLoop_ = isLoop_;
-		}
-	}
-	if (!isLoop_) {
+	if (!particle_->particleData_.isLoop_) {
 		if (ImGui::Button("Emit")) {
-			for (auto& [group, particle] : particles_) {
-				particle->Emit();
-			}
+			particle_->particleData_.emitter_.emit = 1;
 		}
 	}
+	
+	ImGui::InputFloat("speed", &particle_->particleData_.emitter_.speed);
+	ImGui::InputFloat("Scale", &particle_->particleData_.emitter_.scale);
+	ImGui::InputFloat("rotate", &particle_->particleData_.emitter_.rotate);
+	ImGui::InputFloat3("size", &particle_->particleData_.emitter_.size.x);
+	ImGui::InputInt("count", reinterpret_cast<int*>(&particle_->particleData_.emitter_.count));
+	ImGui::InputFloat("Frequecy", &particle_->particleData_.emitter_.frequency);
+	ImGui::InputFloat("radius", &particle_->particleData_.emitter_.radius);
+	ImGui::InputFloat("LifeTime", &particle_->particleData_.emitter_.lifeTime);
+	ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&particle_->particleData_.emitter_.color));
 
-	for (auto it = particles_.begin(); it != particles_.end();) {
-		const auto& group = it->first;
-		auto& particle = it->second;
+	strncpy_s(strBuff, particle_->particleData_.textureName_.c_str(), sizeof(strBuff));
+	strBuff[sizeof(strBuff) - 1] = '\0';
+	if (ImGui::InputText("TextureName", strBuff, sizeof(strBuff))) {
+		particle_->particleData_.textureName_ = strBuff;
+	}
+	if (ImGui::Button("Apply")) {
+		particle_->SetTextureHandle();
+	}
 
-		if (ImGui::TreeNode(group.c_str())) {
+	int32_t currentBillboardType = static_cast<int32_t>(particle_->particleData_.emitter_.billboardType);
 
-			auto& data = particle->particleData_;
-			auto& emitter = data.emitter_;
+	if (ImGui::RadioButton("Billborad", currentBillboardType == GPUParticle::BillboardType::Billboard)) {
+		currentBillboardType = GPUParticle::BillboardType::Billboard;
+	}
+	if (ImGui::RadioButton("HorizontalBillboard", currentBillboardType == GPUParticle::BillboardType::Horizontalillboard)) {
+		currentBillboardType = GPUParticle::BillboardType::Horizontalillboard;
+	}
+	if (ImGui::RadioButton("None", currentBillboardType == GPUParticle::BillboardType::None)) {
+		currentBillboardType = GPUParticle::BillboardType::None;
+	}
 
-			ImGui::InputFloat("speed", &emitter.speed);
-			ImGui::InputFloat("Scale", &emitter.scale);
-			ImGui::InputFloat("rotate", &emitter.rotate);
-			ImGui::InputFloat3("size", &emitter.size.x);
-			ImGui::InputInt("count", reinterpret_cast<int*>(&emitter.count));
-			ImGui::InputFloat("Frequecy", &emitter.frequency);
-			ImGui::InputFloat("radius", &emitter.radius);
-			ImGui::InputFloat("LifeTime", &emitter.lifeTime);
-			ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&emitter.color));
-
-			strncpy_s(strBuff, data.textureName_.c_str(), sizeof(strBuff));
-			strBuff[sizeof(strBuff) - 1] = '\0';
-			if (ImGui::InputText("TextureName", strBuff, sizeof(strBuff))) {
-				data.textureName_ = strBuff;
-			}
-			if (ImGui::Button("Apply")) {
-				particle->SetTextureHandle();
-			}
-
-			int32_t currentBillboardType = static_cast<int32_t>(emitter.billboardType);
-
-			if (ImGui::RadioButton("Billborad", currentBillboardType == GPUParticle::BillboardType::Billboard)) {
-				currentBillboardType = GPUParticle::BillboardType::Billboard;
-			}
-			if (ImGui::RadioButton("HorizontalBillboard", currentBillboardType == GPUParticle::BillboardType::Horizontalillboard)) {
-				currentBillboardType = GPUParticle::BillboardType::Horizontalillboard;
-			}
-			if (ImGui::RadioButton("None", currentBillboardType == GPUParticle::BillboardType::None)) {
-				currentBillboardType = GPUParticle::BillboardType::None;
-			}
-
-			emitter.billboardType = static_cast<GPUParticle::BillboardType>(currentBillboardType);
+	particle_->particleData_.emitter_.billboardType = static_cast<GPUParticle::BillboardType>(currentBillboardType);
 
 
-			int32_t currentEmitShape = static_cast<int32_t>(emitter.emitterType);
+	int32_t currentEmitShape = static_cast<int32_t>(particle_->particleData_.emitter_.emitterType);
 
-			if (ImGui::RadioButton("Sphere", currentEmitShape == GPUParticle::EmitShape::Sphere)) {
-				currentEmitShape = GPUParticle::EmitShape::Sphere;
-			}
-			if (ImGui::RadioButton("Hemisphere", currentEmitShape == GPUParticle::EmitShape::Hemisphere)) {
-				currentEmitShape = GPUParticle::EmitShape::Hemisphere;
-			}
-			if (ImGui::RadioButton("Box", currentEmitShape == GPUParticle::EmitShape::Box)) {
-				currentEmitShape = GPUParticle::EmitShape::Box;
-			}
-			if (ImGui::RadioButton("Square", currentEmitShape == GPUParticle::EmitShape::Squere)) {
-				currentEmitShape = GPUParticle::EmitShape::Squere;
-			}
-			if (ImGui::RadioButton("Circle", currentEmitShape == GPUParticle::EmitShape::Circle)) {
-				currentEmitShape = GPUParticle::EmitShape::Circle;
-			}
+	if (ImGui::RadioButton("Sphere", currentEmitShape == GPUParticle::EmitShape::Sphere)) {
+		currentEmitShape = GPUParticle::EmitShape::Sphere;
+	}
+	if (ImGui::RadioButton("Hemisphere", currentEmitShape == GPUParticle::EmitShape::Hemisphere)) {
+		currentEmitShape = GPUParticle::EmitShape::Hemisphere;
+	}
+	if (ImGui::RadioButton("Box", currentEmitShape == GPUParticle::EmitShape::Box)) {
+		currentEmitShape = GPUParticle::EmitShape::Box;
+	}
+	if (ImGui::RadioButton("Square", currentEmitShape == GPUParticle::EmitShape::Squere)) {
+		currentEmitShape = GPUParticle::EmitShape::Squere;
+	}
+	if (ImGui::RadioButton("Circle", currentEmitShape == GPUParticle::EmitShape::Circle)) {
+		currentEmitShape = GPUParticle::EmitShape::Circle;
+	}
 
-			// 選択された形状を反映
-			emitter.emitterType = static_cast<GPUParticle::EmitShape>(currentEmitShape);
-
-			auto& overLifeTime = data.overLifeTime_;
-
-			isCheck = (overLifeTime.isConstantVelocity != 0);
-			if (ImGui::Checkbox("isConstantVelocity", &isCheck)) {
-				overLifeTime.isConstantVelocity = static_cast<uint32_t>(isCheck);
-			}
-			if (overLifeTime.isConstantVelocity) {
-				if (ImGui::TreeNode("ConstantVelocity")) {
-					ImGui::InputFloat3("velocity", &overLifeTime.velocity.x);
-					ImGui::TreePop();
-				}
-			}
-
-			isCheck = (overLifeTime.isTransVelocity != 0);
-			if (ImGui::Checkbox("isTransVelocity", &isCheck)) {
-				overLifeTime.isTransVelocity = static_cast<uint32_t>(isCheck);
-			}
-			if (overLifeTime.isTransVelocity) {
-				if (ImGui::TreeNode("TransVelocity")) {
-					ImGui::InputFloat3("startVelocity", &overLifeTime.startVelocity.x);
-					ImGui::InputFloat3("endVelocity", &overLifeTime.endVelocity.x);
-					ImGui::TreePop();
-				}
-			}
-
-			isCheck = (overLifeTime.isScale != 0);
-			if (ImGui::Checkbox("isScale", &isCheck)) {
-				overLifeTime.isScale = static_cast<uint32_t>(isCheck);
-			}
-			if (overLifeTime.isScale) {
-				if (ImGui::TreeNode("ScaleOverLifeTime")) {
-					ImGui::InputFloat("startScale", &overLifeTime.startScale);
-					ImGui::InputFloat("endScale", &overLifeTime.endScale);
-					ImGui::TreePop();
-				}
-			}
-
-			isCheck = (overLifeTime.isColor != 0);
-			if (ImGui::Checkbox("isColor", &isCheck)) {
-				overLifeTime.isColor = static_cast<uint32_t>(isCheck);
-			}
-			if (overLifeTime.isColor) {
-				if (ImGui::TreeNode("ColorOverLifeTime")) {
-					ImGui::ColorEdit3("startColor", &overLifeTime.startColor.x);
-					ImGui::ColorEdit3("endColor", &overLifeTime.endColor.x);
-					ImGui::TreePop();
-				}
-			}
-
-			isCheck = (overLifeTime.isAlpha != 0);
-			if (ImGui::Checkbox("isAlpha", &isCheck)) {
-				overLifeTime.isAlpha = static_cast<uint32_t>(isCheck);
-			}
-			if (overLifeTime.isAlpha) {
-				if (ImGui::TreeNode("AlphaOverLifeTime")) {
-					ImGui::SliderFloat("startAlpha", &overLifeTime.startAlpha, 0.0f, 1.0f);
-					ImGui::SliderFloat("midAlpha", &overLifeTime.midAlpha, 0.0f, 1.0f);
-					ImGui::SliderFloat("endAlpha", &overLifeTime.endAlpha, 0.0f, 1.0f);
-					ImGui::TreePop();
-				}
-			}
-
-			isCheck = (overLifeTime.isTransSpeed != 0);
-			if (ImGui::Checkbox("isTransSpeed", &isCheck)) {
-				overLifeTime.isTransSpeed = static_cast<uint32_t>(isCheck);
-			}
-			if (overLifeTime.isTransSpeed) {
-				if (ImGui::TreeNode("SpeedOverLifeTime")) {
-					ImGui::InputFloat("startSpeed", &overLifeTime.startSpeed);
-					ImGui::InputFloat("endSpeed", &overLifeTime.endSpeed);
-					ImGui::TreePop();
-				}
-			}
-
-			ImGui::InputFloat("gravity", &overLifeTime.gravity);
-
-			isCheck = (overLifeTime.isRoring != 0);
-			if (ImGui::Checkbox("isRoring", &isCheck)) {
-				overLifeTime.isRoring = static_cast<uint32_t>(isCheck);
-			}
-			if (overLifeTime.isRoring) {
-				if (ImGui::TreeNode("roringSpeed")) {
-					ImGui::InputFloat3("minRoringSpeed", &overLifeTime.minRoringSpeed.x);
-					ImGui::InputFloat3("maxRoringSpeed", &overLifeTime.maxRoringSpeed.x);
-					ImGui::TreePop();
-				}
-			}
-
-			isCheck = (overLifeTime.isNoise != 0);
-			if (ImGui::Checkbox("isNoise", &isCheck)) {
-				overLifeTime.isNoise = static_cast<uint32_t>(isCheck);
-			}
-			if (overLifeTime.isNoise) {
-				if (ImGui::TreeNode("NoiseState")) {
-					ImGui::InputFloat("density", &overLifeTime.density);
-					ImGui::InputFloat("strength", &overLifeTime.strength);
-					ImGui::TreePop();
-				}
-			}
+	// 選択された形状を反映
+	particle_->particleData_.emitter_.emitterType = static_cast<GPUParticle::EmitShape>(currentEmitShape);
 
 
-			if (ImGui::Button("Delete")) {
-				it = particles_.erase(it);
-				ImGui::TreePop();
-				continue;
-			}
 
+	isCheck = (particle_->particleData_.overLifeTime_.isConstantVelocity != 0);
+	if (ImGui::Checkbox("isConstantVelocity", &isCheck)) {
+		particle_->particleData_.overLifeTime_.isConstantVelocity = static_cast<uint32_t>(isCheck);
+	}
+	if (particle_->particleData_.overLifeTime_.isConstantVelocity) {
+		if (ImGui::TreeNode("ConstantVelocity")) {
+			ImGui::InputFloat3("velocity", &particle_->particleData_.overLifeTime_.velocity.x);
 			ImGui::TreePop();
 		}
-
-		++it;
 	}
-	
-	
+
+	isCheck = (particle_->particleData_.overLifeTime_.isTransVelocity != 0);
+	if (ImGui::Checkbox("isTransVelocity", &isCheck)) {
+		particle_->particleData_.overLifeTime_.isTransVelocity = static_cast<uint32_t>(isCheck);
+	}
+	if (particle_->particleData_.overLifeTime_.isTransVelocity) {
+		if (ImGui::TreeNode("TransVelocity")) {
+			ImGui::InputFloat3("startVelocity", &particle_->particleData_.overLifeTime_.startVelocity.x);
+			ImGui::InputFloat3("endVelocity", &particle_->particleData_.overLifeTime_.endVelocity.x);
+			ImGui::TreePop();
+		}
+	}
+
+	isCheck = (particle_->particleData_.overLifeTime_.isScale != 0);
+	if (ImGui::Checkbox("isScale", &isCheck)) {
+		particle_->particleData_.overLifeTime_.isScale = static_cast<uint32_t>(isCheck);
+	}
+	if (particle_->particleData_.overLifeTime_.isScale) {
+		if (ImGui::TreeNode("ScaleOverLifeTime")) {
+			ImGui::InputFloat("startScale", &particle_->particleData_.overLifeTime_.startScale);
+			ImGui::InputFloat("endScale", &particle_->particleData_.overLifeTime_.endScale);
+			ImGui::TreePop();
+		}
+	}
+
+	isCheck = (particle_->particleData_.overLifeTime_.isColor != 0);
+	if (ImGui::Checkbox("isColor", &isCheck)) {
+		particle_->particleData_.overLifeTime_.isColor = static_cast<uint32_t>(isCheck);
+	}
+	if (particle_->particleData_.overLifeTime_.isColor) {
+		if (ImGui::TreeNode("ColorOverLifeTime")) {
+			ImGui::ColorEdit3("startColor", &particle_->particleData_.overLifeTime_.startColor.x);
+			ImGui::ColorEdit3("endColor", &particle_->particleData_.overLifeTime_.endColor.x);
+			ImGui::TreePop();
+		}
+	}
+
+	isCheck = (particle_->particleData_.overLifeTime_.isAlpha != 0);
+	if (ImGui::Checkbox("isAlpha", &isCheck)) {
+		particle_->particleData_.overLifeTime_.isAlpha = static_cast<uint32_t>(isCheck);
+	}
+	if (particle_->particleData_.overLifeTime_.isAlpha) {
+		if (ImGui::TreeNode("AlphaOverLifeTime")) {
+			ImGui::SliderFloat("startAlpha", &particle_->particleData_.overLifeTime_.startAlpha, 0.0f, 1.0f);
+			ImGui::SliderFloat("midAlpha", &particle_->particleData_.overLifeTime_.midAlpha, 0.0f, 1.0f);
+			ImGui::SliderFloat("endAlpha", &particle_->particleData_.overLifeTime_.endAlpha, 0.0f, 1.0f);
+			ImGui::TreePop();
+		}
+	}
+
+	isCheck = (particle_->particleData_.overLifeTime_.isTransSpeed != 0);
+	if (ImGui::Checkbox("isTransSpeed", &isCheck)) {
+		particle_->particleData_.overLifeTime_.isTransSpeed = static_cast<uint32_t>(isCheck);
+	}
+	if (particle_->particleData_.overLifeTime_.isTransSpeed) {
+		if (ImGui::TreeNode("SpeedOverLifeTime")) {
+			ImGui::InputFloat("statrSpeed", &particle_->particleData_.overLifeTime_.startSpeed);
+			ImGui::InputFloat("endSpeed", &particle_->particleData_.overLifeTime_.endSpeed);
+			ImGui::TreePop();
+		}
+	}
+
+	ImGui::InputFloat("gravity", &particle_->particleData_.overLifeTime_.gravity);
+
+	isCheck = (particle_->particleData_.overLifeTime_.isRoring != 0);
+	if (ImGui::Checkbox("isRoring", &isCheck)) {
+		particle_->particleData_.overLifeTime_.isRoring = static_cast<uint32_t>(isCheck);
+	}
+	if (particle_->particleData_.overLifeTime_.isRoring) {
+		if (ImGui::TreeNode("roringSpeed")) {
+			ImGui::InputFloat3("minRoringSpeed", &particle_->particleData_.overLifeTime_.minRoringSpeed.x);
+			ImGui::InputFloat3("maxRoringSpeed", &particle_->particleData_.overLifeTime_.maxRoringSpeed.x);
+			ImGui::TreePop();
+		}
+	}
+
+	isCheck = (particle_->particleData_.overLifeTime_.isNoise != 0);
+	if (ImGui::Checkbox("isNoise", &isCheck)) {
+		particle_->particleData_.overLifeTime_.isNoise = static_cast<uint32_t>(isCheck);
+	}
+	if (particle_->particleData_.overLifeTime_.isNoise) {
+		if (ImGui::TreeNode("NoiseState")) {
+			ImGui::InputFloat("density", &particle_->particleData_.overLifeTime_.density);
+			ImGui::InputFloat("strength", &particle_->particleData_.overLifeTime_.strength);
+			ImGui::TreePop();
+		}
+	}
 	
 
 

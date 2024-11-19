@@ -37,7 +37,7 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 
 	for (auto& splash : splashes_) {
 		splash.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 10000));
-		//splash->SetParticleData(ParticleManager::Load("FireBallSplash"));
+		splash->SetParticleData(ParticleManager::Load("FireBallSplash"));
 	}
 
 	isAttack_ = false;
