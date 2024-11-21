@@ -3,6 +3,7 @@
 #include "DirectXCommon.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
+#include "ParticleManager.h"
 #include "ImGuiManager.h"
 #include "Audio.h"
 #include "Input.h"
@@ -93,49 +94,7 @@ void GameScene::Init(){
 	player_->SetGameScene(this);
 
 	attackEndEff_.reset(GPUParticle::Create(TextureManager::Load("particle.png"), 10000));
-
-	attackEndEff_->particleData_.isLoop_ = false;
-
-	attackEndEff_->particleData_.emitter_.count = 3000;
-	attackEndEff_->particleData_.emitter_.emit = 0;
-	attackEndEff_->particleData_.emitter_.color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-	attackEndEff_->particleData_.emitter_.radius = 0.01f;
-	attackEndEff_->particleData_.emitter_.scale = 0.1f;
-	attackEndEff_->particleData_.emitter_.speed = 1.0f;
-	attackEndEff_->particleData_.emitter_.lifeTime = 0.5f;
-	attackEndEff_->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Sphere;
-
-	attackEndEff_->particleData_.overLifeTime_.isTransSpeed = 1;
-	attackEndEff_->particleData_.overLifeTime_.startSpeed = 7.0f;
-	attackEndEff_->particleData_.overLifeTime_.endSpeed = 0.0f;
-
-	attackEndEff_->particleData_.overLifeTime_.isAlpha = 1;
-	attackEndEff_->particleData_.overLifeTime_.midAlpha = 1.0f;
-
-	deadEff_.reset(GPUParticle::Create(TextureManager::Load("mist.png"), 10000));
-
-	deadEff_->particleData_.isLoop_ = false;
-
-	deadEff_->particleData_.emitter_.count = 100;
-	deadEff_->particleData_.emitter_.emit = 0;
-	deadEff_->particleData_.emitter_.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	deadEff_->particleData_.emitter_.radius = 0.5f;
-	deadEff_->particleData_.emitter_.scale = 0.5f;
-	deadEff_->particleData_.emitter_.speed = 2.0f;
-	deadEff_->particleData_.emitter_.lifeTime = 30.0f / 60.0f;
-	deadEff_->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Circle;
-
-	deadEff_->particleData_.overLifeTime_.isConstantVelocity = 1;
-	deadEff_->particleData_.overLifeTime_.velocity = Vector3(0.0f, 3.0f, 0.0f);
-	
-	deadEff_->particleData_.overLifeTime_.isAlpha = 1;
-	deadEff_->particleData_.overLifeTime_.startAlpha = 1.0f;
-	deadEff_->particleData_.overLifeTime_.midAlpha = 1.0f;
-
-	deadEff_->particleData_.overLifeTime_.isScale = 1;
-	deadEff_->particleData_.overLifeTime_.endScale = 0.1f;
-
-	isDeadEff_ = false;
+	attackEndEff_->SetParticleData(ParticleManager::Load("PlayerAttackEnd"));
 
 
 	//ボス
@@ -166,24 +125,28 @@ void GameScene::Init(){
 	///ボスの攻撃
 
 	//属性球
-	elementBall_ = ElementBallManager::GetInstance();
+	elementBall_ = std::make_unique<ElementBallManager>();
 	elementBall_->Init(elementBallModel,burnScarsTex_);
 	elementBall_->SetTartget(&player_->GetWorldTransform());
+	boss_->SetElementBall(elementBall_.get());
 
 	//地面から火が出るやつ
-	groundFlare_ = GroundFlare::GetInstance();
+	groundFlare_ = std::make_unique<GroundFlare>();
 	groundFlare_->Init(warningZoneModel);
 	groundFlare_->SetTerget(&player_->GetWorldTransform());
+	boss_->SetGroudFlare(groundFlare_.get());
 
 	//つらら飛ばすやつ
-	icicle_ = IcicleManager::GetInstanse();
+	icicle_ = std::make_unique<IcicleManager>();
 	icicle_->Init(icicleModel);
 	icicle_->SetTarget(&player_->GetWorldTransform());
+	boss_->SetIcicle(icicle_.get());
 
 	//電気玉
-	plasmaShot_ = PlasmaShotManager::GetInstance();
+	plasmaShot_ = std::make_unique<PlasmaShotManager>();
 	plasmaShot_->Init(plasmaBallModel);
 	plasmaShot_->SetTarget(&player_->GetWorldTransform());
+	boss_->SetPlasmaShot(plasmaShot_.get());
 
 	///
 
@@ -211,23 +174,6 @@ void GameScene::Init(){
 
 void GameScene::Update() {
 	DebugGUI();
-
-	if (sceneEvent_ == SceneEvent::BossDead) {
-		workBossDead_.cameraPos_ = boss_->GetWorldPos() + workBossDead_.offset_;
-		camera_.translation_ = workBossDead_.cameraPos_;
-		camera_.rotation_ = workBossDead_.cameraRotate_;
-
-		camera_.UpdateViewMatrix();
-	}
-
-	if (sceneEvent_ == SceneEvent::PlayerDead) {
-		workPlayerDead_.cameraPos_ = player_->GetWorldPos() + workPlayerDead_.offset_;
-		camera_.translation_ = workPlayerDead_.cameraPos_;
-		camera_.rotation_ = workPlayerDead_.cameraRotate_;
-
-		camera_.UpdateViewMatrix();
-	}
-	
 
 	if (isGameStop_) { return; }
 
@@ -264,17 +210,8 @@ void GameScene::Update() {
 	for (auto& rock : rocks_) {
 		rock->Update();
 	}
-
 	
 	ground_->Update();
-
-	
-
-	
-	/*if (sceneEvent_ != SceneEvent::BossDead || sceneEvent_ != SceneEvent::PlayerDead) {
-		camera_.SetMatView(followCamera_->GetCamera().GetMatView());
-	}*/
-	
 
 	//camera_.UpdateViewMatrix();
 	camera_.UpdateCameraPos();
@@ -325,6 +262,8 @@ void GameScene::DrawUI(){
 
 void GameScene::DrawPostEffect() {
 
+	///
+
 	outLine_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
 	SkinningObject::preDraw();
@@ -337,11 +276,11 @@ void GameScene::DrawPostEffect() {
 
 	outLine_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
+	///
+
 	postEffect_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
 	outLine_->Draw(DirectXCommon::GetInstance()->GetCommandList());
-
-	
 
 	Object3d::preDraw();
 	
@@ -376,14 +315,11 @@ void GameScene::DrawPostEffect() {
 	for (auto& playerAttack : playerAttacks_) {
 		playerAttack->DrawParticle(camera_);
 	}
-	if (sceneEvent_ == SceneEvent::Battle) {
-		player_->DrawParticle(camera_);
-	}
 
 	boss_->DrawParticle(camera_);
 
 	attackEndEff_->Draw(camera_);
-	deadEff_->Draw(camera_);
+	
 	if (sceneEvent_ == SceneEvent::Battle) {
 		groundFlare_->DrawParticle(camera_);
 		icicle_->DrawParticle(camera_);
@@ -394,11 +330,15 @@ void GameScene::DrawPostEffect() {
 
 	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 
+	///
+
 	hsvFilter_->PreDrawScene();
 
 	postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
 
 	hsvFilter_->PostDrawScene();
+
+	///
 
 }
 
@@ -413,15 +353,6 @@ void GameScene::BattleInit() {
 }
 
 void GameScene::BattleUpdate() {
-
-	if (groundFlare_->AttackFinish() || icicle_->AttackFinish() || plasmaShot_->AttackFinish() || elementBall_->AttackFinish()) {
-		boss_->ChangeBehavior(Boss::Behavior::kRoot);
-	}
-
-	if (groundFlare_->FireStartFlag() || elementBall_->ShotStart()) {
-		boss_->ChangeAction(Boss::Action::Attack);
-	}
-
 	
 	player_->Update();
 	boss_->Update();
@@ -448,8 +379,9 @@ void GameScene::BattleUpdate() {
 
 	///衝突判定
 
+	//プレイヤーと属性球
 	if (elementBall_->IsAttack()) {
-		for (uint32_t index = 0; index < 4; index++) {
+		for (uint32_t index = 0; index < elementBall_->GetElementballCount(); index++) {
 			if (!elementBall_->IsLife(index)) { 
 				continue;
 			}
@@ -460,6 +392,7 @@ void GameScene::BattleUpdate() {
 		}
 	}
 
+	//プレイヤーと火が噴き出すやつ
 	if (groundFlare_->IsHit()) {
 		if (IsCollision(groundFlare_->GetCollider(), player_->GetCollider())) {
 			player_->OnCollision();
@@ -467,8 +400,9 @@ void GameScene::BattleUpdate() {
 		}
 	}
 
+	//プレイヤーとつらら
 	if (icicle_->IsAttack()) {
-		for (uint32_t index = 0; index < 4; index++) {
+		for (uint32_t index = 0; index < icicle_->GetIcicleCount(); index++) {
 			if (!icicle_->IsLife(index)) { continue; }
 			if (IsCollision(player_->GetCollider(), icicle_->GetCollider(index))) {
 				player_->OnCollision();
@@ -477,8 +411,9 @@ void GameScene::BattleUpdate() {
 		}
 	}
 
+	//プレイヤーと電気玉
 	if (plasmaShot_->IsAttack()) {
-		for (uint32_t index = 0; index < 3; index++) {
+		for (uint32_t index = 0; index < plasmaShot_->GetPlasmaShotCount(); index++) {
 			if (!plasmaShot_->IsLife(index)) { continue; }
 			if (IsCollision(player_->GetCollider(), plasmaShot_->GetCollider(index))) {
 				player_->OnCollision();
@@ -487,6 +422,7 @@ void GameScene::BattleUpdate() {
 		}
 	}
 
+	//ボスとプレイヤー攻撃
 	if (!playerAttacks_.empty()) {
 		for (const auto& playerAttack : playerAttacks_) {
 			if (IsCollision(boss_->GetCollider(), playerAttack->GetCollider())) {
@@ -503,7 +439,6 @@ void GameScene::BattleUpdate() {
 	///
 
 	if (player_->IsDead()) {
-		//postEffect_->SetGrayScaleEffect(true);
 		eventRequest_ = SceneEvent::PlayerDead;
 	}
 
@@ -518,6 +453,12 @@ void GameScene::BattleUpdate() {
 void GameScene::PlayerDeadInit() {
 
 	workPlayerDead_.count_ = 0;
+
+	workPlayerDead_.cameraPos_ = player_->GetCenterPos() + workPlayerDead_.offset_;
+	camera_.translation_ = workPlayerDead_.cameraPos_;
+	camera_.rotation_ = workPlayerDead_.cameraRotate_;
+
+	camera_.UpdateViewMatrix();
 
 }
 
@@ -538,25 +479,22 @@ void GameScene::PlayerDeadUpdate() {
 	attackEndEff_->Update();
 
 	if (player_->IsFinishDeadMotion()) {
-		if (!isDeadEff_) {
-			deadEff_->particleData_.emitter_.emit = 1;
-			deadEff_->particleData_.emitter_.translate = player_->GetWorldPos() + Vector3(0.0f, 0.0f, 1.0f);
-			deadEff_->particleData_.emitter_.translate.y = 0.1f;
-			deadEff_->particleData_.emitter_.scale = 0.2f;
-			isDeadEff_ = true;
-		}
 		if (++workPlayerDead_.count_ >= workPlayerDead_.interval_) {
 			eventRequest_ = SceneEvent::GameOver;
 		}
 	}
-
-	deadEff_->Update();
 	
 }
 
 void GameScene::BossDeadInit() {
 
 	workBossDead_.count_ = 0;
+
+	workBossDead_.cameraPos_ = boss_->GetCenterPos() + workBossDead_.offset_;
+	camera_.translation_ = workBossDead_.cameraPos_;
+	camera_.rotation_ = workBossDead_.cameraRotate_;
+
+	camera_.UpdateViewMatrix();
 
 }
 
@@ -577,26 +515,11 @@ void GameScene::BossDeadUpdate() {
 	attackEndEff_->Update();
 
 	if (boss_->IsFinishDeadMotion()) {
-		if (!isDeadEff_) {
-			deadEff_->particleData_.emitter_.emit = 1;
-			deadEff_->particleData_.emitter_.translate = boss_->GetWorldPos() + Vector3(0.0f, 0.0f, 1.0f);
-			deadEff_->particleData_.emitter_.translate.y = 0.01f;
-			deadEff_->particleData_.emitter_.scale = 0.5f;
-			isDeadEff_ = true;
-		}
 		if (++workBossDead_.count_ >= workBossDead_.interval_) {
 			eventRequest_ = SceneEvent::Clear;
 		}
-		
 	}
 
-	deadEff_->Update();
-
-	workBossDead_.cameraPos_ = boss_->GetWorldPos() + workBossDead_.offset_;
-	camera_.translation_ = workBossDead_.cameraPos_;
-	camera_.rotation_ = workBossDead_.cameraRotate_;
-
-	camera_.UpdateViewMatrix();
 }
 
 void GameScene::ClearInit() {
@@ -664,20 +587,10 @@ void GameScene::DebugGUI(){
 
 	int count = finishCount_ / 60;
 	ImGui::InputInt("ScenChangeCount", &count);
-	
-	ImGui::DragFloat2("XButton", &pos1.x, 1.0f);
-	
-	ImGui::DragFloat2("char_Attack", &pos2.x, 1.0f);
 
 	if (ImGui::Button("StageFileLoad")) {
 		SceneManager::GetInstance()->ChangeScene("Game");
 	}
-
-	ImGui::DragFloat3("BossDeadCameraRotate", &workBossDead_.cameraRotate_.x, 0.01f);
-	ImGui::DragFloat3("BossDeadCameraOffset", &workBossDead_.offset_.x, 0.01f);
-
-	ImGui::DragFloat3("PlayerDeadCameraRotate", &workPlayerDead_.cameraRotate_.x, 0.01f);
-	ImGui::DragFloat3("PlayerDeadCameraOffset", &workPlayerDead_.offset_.x, 0.01f);
 
 	ImGui::End();
 

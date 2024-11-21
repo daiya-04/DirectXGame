@@ -15,44 +15,22 @@ const std::array<Player::ComboAttack, Player::comboNum_> Player::kComboAttacks_ 
 	}
 };
 
-void Player::Init(std::vector<std::shared_ptr<Model>> models){
+void Player::Init(const std::vector<std::shared_ptr<Model>>& models){
 
-	animationModels_ = models;
-	hpBerTex_ = TextureManager::Load("Player_HP.png");
+	actionIndex_ = Action::Standing;
 	
-	obj_.reset(SkinningObject::Create(animationModels_[action_]));
-	skinClusters_.resize(animationModels_.size());
-	for (size_t index = 0; index < Action::kActionNum; index++) {
-		animations_.emplace_back(AnimationManager::Load(animationModels_[index]->name_));
-		skeletons_.emplace_back(Skeleton::Create(animationModels_[index]->rootNode_));
-		skinClusters_[index].Create(skeletons_[index], animationModels_[index]);
-	}
-	obj_->SetSkinCluster(&skinClusters_[action_]);
+	BaseCharactor::Init(models);
 
 	behaviorRequest_ = Behavior::kRoot;
 
-	life_ = maxHp_;
+	hp_ = maxHp_;
 
-	hpBer_.reset(Sprite::Create(hpBerTex_, { 440.0f,700.0f }));
-	hpBer_->SetAnchorpoint({ 0.0f,0.5f });
-	hpBer_->SetSize({ 400.0f,10.0f });
-
-	/*attackEff_.reset(GPUParticle::Create(TextureManager::Load("particle.png"), 20000));
-
-	attackEff_->isLoop_ = false;
-	attackEff_->emitter_.count = 10000;
-	attackEff_->emitter_.color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-	attackEff_->emitter_.angle = 60.0f;
-	attackEff_->emitter_.emit = 0;
-	attackEff_->emitter_.size = Vector3(0.0f, 0.0f, 0.0f);
-	attackEff_->emitter_.scale = 0.05f;
-	attackEff_->emitter_.lifeTime = 5.0f;
-	attackEff_->emitter_.speed = 1.0f;*/
-
-	ColliderUpdate();
+	hpBar_.reset(Sprite::Create(TextureManager::Load("Player_HP.png"), {440.0f,700.0f}));
+	hpBar_->SetAnchorpoint({ 0.0f,0.5f });
+	hpBar_->SetSize({ 400.0f,10.0f });
 
 	//行列更新
-	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
+	BaseCharactor::Update();
 }
 
 void Player::Update(){
@@ -71,71 +49,37 @@ void Player::Update(){
 	obj_->worldTransform_.translation_.x = std::clamp(obj_->worldTransform_.translation_.x, -50.0f, 50.0f);
 	obj_->worldTransform_.translation_.z = std::clamp(obj_->worldTransform_.translation_.z, -20.0f, 80.0f);
 
-	obj_->SetSkinCluster(&skinClusters_[action_]);
+	BaseCharactor::Update();
 
-	//行列更新
-	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
-
-	if (action_ == Action::Dead) {
-		animations_[action_].Play(skeletons_[action_], false);
-	}
-	else {
-		animations_[action_].Play(skeletons_[action_]);
-	}
-	
-	skeletons_[action_].Update();
-	skinClusters_[action_].Update(skeletons_[action_]);
-
-	//attackEff_->Update();
-
-	UIUpdate();
-	ColliderUpdate();
+	UpdateUI();
 }
 
-void Player::UIUpdate() {
+void Player::UpdateUI() {
 
-	float percent = (float)life_ / (float)maxHp_;
+	float percent = static_cast<float>(hp_) / static_cast<float>(maxHp_);
 
-	hpBer_->SetSize({ 400.0f * percent,10.0f });
+	hpBar_->SetSize({ 400.0f * percent,10.0f });
 }
 
 void Player::Draw(const Camera& camera){
 
 #ifdef _DEBUG
-	ShapesDraw::DrawAABB(collider_, camera);
+	ShapesDraw::DrawOBB(collider_, camera);
 #endif // _DEBUG
 
 
 	obj_->Draw(camera);
-	skeletons_[action_].Draw(obj_->worldTransform_, camera);
+	skeletons_[actionIndex_].Draw(obj_->worldTransform_, camera);
 
-}
-
-void Player::DrawParticle(const Camera& camera) {
-	//attackEff_->Draw(camera);
 }
 
 void Player::DrawUI() {
-	hpBer_->Draw();
-}
-
-void Player::SetData(const LevelData::ObjectData& data) {
-
-	obj_->worldTransform_.translation_ = data.translation;
-	obj_->worldTransform_.scale_ = data.scaling;
-
-	size_ = data.colliderSize;
-
-
-	
-	rotateMat_ = MakeRotateXMatrix(data.rotation.x) * MakeRotateYMatrix(data.rotation.y) * MakeRotateZMatrix(data.rotation.z);
-	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
-	rotate_ = Transform(rotate_, rotateMat_);
+	hpBar_->Draw();
 }
 
 void Player::OnCollision() {
-	life_--;
-	if (life_ <= 0) {
+	hp_--;
+	if (hp_ <= 0) {
 		isDead_ = true;
 		behaviorRequest_ = Behavior::kDead;
 	}
@@ -144,8 +88,9 @@ void Player::OnCollision() {
 void Player::RootInit() {
 
 	isAttack_ = false;
-	action_ = Action::Standing;
-	obj_->SetSkinCluster(&skinClusters_[action_]);
+	actionIndex_ = Action::Standing;
+	animations_[actionIndex_].Start();
+	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
 
 }
 
@@ -159,7 +104,7 @@ void Player::RootUpdate() {
 	move = move / SHRT_MAX * speed;
 
 	//攻撃
-	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_X)) {
+	if (Input::GetInstance()->TriggerButton(Input::Button::X)) {
 		behaviorRequest_ = Behavior::kAttack;
 	}
 
@@ -174,36 +119,36 @@ void Player::RootUpdate() {
 	obj_->worldTransform_.translation_.y = 0.0f;
 
 	if (move != zeroVector) {
-		rotate_ = move;
-		action_ = Action::Walking;
+		direction_ = move;
+		actionIndex_ = Action::Walking;
+		animations_[actionIndex_].Start();
 	}
 	else {
-		action_ = Action::Standing;
+		actionIndex_ = Action::Standing;
+		animations_[actionIndex_].Start();
 	}
-	obj_->SetSkinCluster(&skinClusters_[action_]);
+	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
 
-	//worldTransform_.rotation_.y = std::atan2(rotate_.x, rotate_.z);
-
-	rotateMat_ = DirectionToDirection(from_, rotate_);
+	rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
 
 }
 
 void Player::AttackInit() {
 
-	action_ = Action::Attack;
-	obj_->SetSkinCluster(&skinClusters_[action_]);
-	animations_[action_].SetAnimationSpeed(1.0f / 30.0f);
-	skeletons_[action_].Update();
+	actionIndex_ = Action::Attack;
+	animations_[actionIndex_].Start(false);
+	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
+	animations_[actionIndex_].SetAnimationSpeed(1.0f / 30.0f);
+	skeletons_[actionIndex_].Update();
 	workAttack_.attackParam_ = 0;
 	workAttack_.speed_ = 1.0f;
-	//Search(enemies);
 
 	if (target_) {
 
 		Vector3 direction = target_->translation_ - obj_->worldTransform_.translation_;
 
 		if (direction.Length() <= attackRange_) {
-			rotateMat_ = DirectionToDirection(from_, direction);
+			rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction);
 		}
 		
 	}
@@ -213,7 +158,7 @@ void Player::AttackInit() {
 void Player::AttackUpdate() {
 
 	if (workAttack_.comboIndex_ < comboNum_ - 1) {
-		if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_X)) {
+		if (Input::GetInstance()->TriggerButton(Input::Button::X)) {
 			workAttack_.comboNext_ = true;
 		}
 	}
@@ -237,16 +182,16 @@ void Player::AttackUpdate() {
 	}
 
 	if (workAttack_.attackParam_ >= totalAttackTime) {
-		animations_[action_].TimeReset();
+		//animations_[actionIndex_].Start();
 		if (workAttack_.comboNext_) {
 			workAttack_.comboNext_ = false;
 			workAttack_.comboIndex_++;
+			workAttack_.comboIndex_ = std::clamp(workAttack_.comboIndex_, 0U, 2U);
 
 			AttackInit();
 		}
 		else {
 			behaviorRequest_ = Behavior::kRoot;
-			//workAttack_.isHit_ = false;
 			workAttack_.comboIndex_ = 0;
 			return;
 		}
@@ -265,15 +210,11 @@ void Player::AttackUpdate() {
 		std::shared_ptr<Model> attackModel = ModelManager::LoadOBJ("PlayerBullet");
 		Vector3 offset = { 0.0f,0.0f,1.0f };
 		offset = TransformNormal(offset, rotateMat_);
-		Vector3 shotPos = Transform(skeletons_[action_].GetSkeletonPos("mixamorig1:RightHand"), obj_->worldTransform_.matWorld_) + offset;
+		Vector3 shotPos = Transform(skeletons_[actionIndex_].GetSkeletonPos("mixamorig1:RightHand"), obj_->worldTransform_.matWorld_) + offset;
 		playerAttack->Init(attackModel, shotPos, direction);
 		gameScene_->AddPlayerAttack(playerAttack);
 
 		///
-
-		/*attackEff_->emitter_.emit = 1;
-		attackEff_->emitter_.translate = shotPos;
-		attackEff_->emitter_.direction = direction.Normalize();*/
 		
 	}
 
@@ -283,7 +224,7 @@ void Player::AttackUpdate() {
 void Player::DashInit() {
 
 	workDash_.dashParam_ = 0;
-	workDash_.dashDirection_ = rotate_;
+	workDash_.dashDirection_ = direction_;
 	followCamera_->Reset();
 
 }
@@ -293,7 +234,7 @@ void Player::DashUpdate() {
 	float dashSpeed = 1.5f;
 	Vector3 zeroVector{};
 
-	if (rotate_ == zeroVector) {
+	if (direction_ == zeroVector) {
 		workDash_.dashDirection_ = { 0.0f,0.0f,1.0f };
 	}
 
@@ -307,34 +248,23 @@ void Player::DashUpdate() {
 
 void Player::DeadInit() {
 
-	action_ = Action::Dead;
-	animations_[action_].SetAnimationSpeed(1.0f / 60.0f);
-	animations_[action_].Start();
+	actionIndex_ = Action::Dead;
+	animations_[actionIndex_].SetAnimationSpeed(1.0f / 60.0f);
+	animations_[actionIndex_].Start();
 
 	obj_->threshold_ = 0.0f;
 
-	rotateMat_ = DirectionToDirection(from_, Vector3(0.0f, 0.0f, 1.0f));
+	rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, Vector3(0.0f, 0.0f, 1.0f));
 
 }
 
 void Player::DeadUpdate() {
 
-	if (!animations_[action_].IsPlaying()) {
+	if (!animations_[actionIndex_].IsPlaying()) {
 		isFinishDeadMotion_ = true;
 	}
 
-	obj_->threshold_ = animations_[Action::Dead].GetAnimationTime() / animations_[Action::Dead].GetDuration();
-	obj_->threshold_ = std::clamp(obj_->threshold_, 0.0f, animations_[Action::Dead].GetDuration());
+	obj_->threshold_ = animations_[actionIndex_].GetAnimationTime() / animations_[actionIndex_].GetDuration();
+	obj_->threshold_ = std::clamp(obj_->threshold_, 0.0f, animations_[actionIndex_].GetDuration());
 
-}
-
-Vector3 Player::GetWorldPos() const{
-
-	Vector3 worldPos;
-
-	worldPos.x = obj_->worldTransform_.matWorld_.m[3][0];
-	worldPos.y = obj_->worldTransform_.matWorld_.m[3][1] + size_.y;
-	worldPos.z = obj_->worldTransform_.matWorld_.m[3][2];
-
-	return worldPos;
 }

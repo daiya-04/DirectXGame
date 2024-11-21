@@ -8,8 +8,6 @@
 class PlasmaShotManager {
 public:
 
-	static PlasmaShotManager* GetInstance();
-
 	void Init(const std::shared_ptr<Model>& model);
 
 	void Update();
@@ -31,9 +29,13 @@ public:
 
 	Shapes::Sphere GetCollider(uint32_t index) { return plasmaShots_[index]->GetCollider(); }
 
+	uint32_t GetPlasmaShotCount() const { return plasmaShotNum_; }
+
 private:
 
-	std::array<std::unique_ptr<PlasmaShot>,3> plasmaShots_;
+	static const uint32_t plasmaShotNum_ = 3;
+
+	std::array<std::unique_ptr<PlasmaShot>, plasmaShotNum_> plasmaShots_;
 
 	bool isAttack_ = false;
 	bool preIsAttack_ = false;

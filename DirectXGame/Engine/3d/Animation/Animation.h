@@ -36,10 +36,15 @@ private:
 public:
 
 	//再生
-	void Play(const Model::Node& rootNode, bool isLoop = true);
-	void Play(Skeleton& skeleton,bool isLoop = true);
+	void Play(const Model::Node& rootNode);
+	void Play(Skeleton& skeleton);
 
-	void Start() { isPlaying_ = true; }
+	void Start(bool isLoop = true) { 
+		if (isPlaying_) { return; }
+		isPlaying_ = true;
+		isLoop_ = isLoop;
+		TimeReset();
+	}
 	void End() { isPlaying_ = false; }
 
 	void SetAnimationSpeed(float speed) { animationSpeed_ = speed; }

@@ -10,24 +10,12 @@
 #include "ParticleManager.h"
 
 #include "GroundFlare.h"
-#include "IcicleManager.h"
-#include "PlasmaShotManager.h"
-#include "ElementBallManager.h"
 
 void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 
-	animationModels_ = models;
-	hpBerTex_ = TextureManager::Load("Boss_HP.png");
-
-	obj_.reset(SkinningObject::Create(animationModels_[action_]));
-	skinClusters_.resize(animationModels_.size());
-	for (size_t index = 0; index < Action::ActionNum; index++) {
-		animations_.emplace_back(AnimationManager::Load(animationModels_[index]->name_));
-		skeletons_.emplace_back(Skeleton::Create(animationModels_[index]->rootNode_));
-		skinClusters_[index].Create(skeletons_[index], animationModels_[index]);
-	}
-	obj_->SetSkinCluster(&skinClusters_[action_]);
-	obj_->threshold_ = 0.0f;
+	actionIndex_ = Action::Standing;
+	
+	BaseCharactor::Init(models);
 
 	appearEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
 	appearEff2_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
@@ -42,11 +30,11 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	behaviorRequest_ = Behavior::kAppear;
 	attackType_ = AttackType::kElementBall;
 
-	life_ = maxHp_;
+	hp_ = maxHp_;
 
-	hpBer_.reset(Sprite::Create(hpBerTex_, { 390.0f,40.0f }));
-	hpBer_->SetAnchorpoint({ 0.0f,0.5f });
-	hpBer_->SetSize({ 500.0f,10.0f });
+	hpBar_.reset(Sprite::Create(TextureManager::Load("Boss_HP.png"), { 390.0f,40.0f }));
+	hpBar_->SetAnchorpoint({ 0.0f,0.5f });
+	hpBar_->SetSize({ 500.0f,10.0f });
 
 }
 
@@ -63,19 +51,7 @@ void Boss::Update() {
 
 	behaviorUpdateTable_[behavior_]();
 
-	obj_->SetSkinCluster(&skinClusters_[action_]);
-	//行列更新
-	
-	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
-
-	if (action_ == Action::Standing) {
-		animations_[action_].Play(skeletons_[action_]);
-	}else {
-		animations_[action_].Play(skeletons_[action_], false);
-	}
-	
-	skeletons_[action_].Update();
-	skinClusters_[action_].Update(skeletons_[action_]);
+	BaseCharactor::Update();
 
 	appearEff_->particleData_.emitter_.translate = appearEff2_->particleData_.emitter_.translate =obj_->GetWorldPos();
 	appearEff_->particleData_.emitter_.translate.y = appearEff2_->particleData_.emitter_.translate.y = 0.01f;
@@ -83,26 +59,24 @@ void Boss::Update() {
 	appearEff_->Update();
 	appearEff2_->Update();
 
-	UIUpdate();
-	ColliderUpdate();
 }
 
-void Boss::UIUpdate() {
+void Boss::UpdateUI() {
 
-	float percent = float(life_) / (float)maxHp_;
+	float percent = static_cast<float>(hp_) / static_cast<float>(maxHp_);
 
-	hpBer_->SetSize({ 500.0f * percent,10.0f });
+	hpBar_->SetSize({ 500.0f * percent,10.0f });
 }
 
 void Boss::Draw(const Camera& camera) {
 
 #ifdef _DEBUG
-	ShapesDraw::DrawAABB(collider_, camera);
+	ShapesDraw::DrawOBB(collider_, camera);
 #endif // _DEBUG
 
 
 	obj_->Draw(camera);
-	skeletons_[action_].Draw(obj_->worldTransform_, camera);
+	skeletons_[actionIndex_].Draw(obj_->worldTransform_, camera);
 
 }
 
@@ -114,37 +88,22 @@ void Boss::DrawParticle(const Camera& camera) {
 }
 
 void Boss::DrawUI() {
-	hpBer_->Draw();
+	hpBar_->Draw();
 }
 
 void Boss::OnCollision() {
-	life_--;
-	if (life_ <= 0) {
+	hp_--;
+	if (hp_ <= 0) {
 		isDead_ = true;
 		behaviorRequest_ = Behavior::kDead;
 	}
 }
 
-void Boss::SetData(const LevelData::ObjectData& data) {
-
-	obj_->worldTransform_.translation_ = data.translation;
-	obj_->worldTransform_.scale_ = data.scaling;
-
-	workAppear_.startPos = data.translation;
-	workAppear_.endPos = data.translation;
-	workAppear_.endPos.y = 0.0f;
-
-	size_ = data.colliderSize;
-
-	
-	rotateMat_ = MakeRotateXMatrix(data.rotation.x) * MakeRotateYMatrix(data.rotation.y) * MakeRotateZMatrix(data.rotation.z);
-	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
-}
-
 void Boss::RootInit() {
 
 	workAttack_.param = 0;
-	action_ = Action::Standing;
+	actionIndex_ = Action::Standing;
+	animations_[actionIndex_].Start();
 	direction_ = { 0.0f,0.0f,-1.0f };
 
 	rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
@@ -161,22 +120,19 @@ void Boss::RootUpdate() {
 
 void Boss::AttackInit() {
 
-	
-
 	if (attackType_ == AttackType::kElementBall) {
-		ElementBallManager::GetInstance()->SetAttackData(obj_->worldTransform_.translation_);
-		ElementBallManager::GetInstance()->AttackStart();
-		
+		elementBall_->SetAttackData(obj_->worldTransform_.translation_);
+		elementBall_->AttackStart();
 		
 		attackType_ = AttackType::kGroundFlare;
 		
 	}else if (attackType_ == AttackType::kGroundFlare) {
-		GroundFlare::GetInstance()->AttackStart();
+		groundFlare_->AttackStart();
 		attackType_ = AttackType::kIcicle;
 	}
 	else if (attackType_ == AttackType::kIcicle) {
-		IcicleManager::GetInstanse()->SetAttackData(GetWorldPos(), Vector3(0.0f, 0.0f, -1.0f));
-		IcicleManager::GetInstanse()->AttackStart();
+		icicle_->SetAttackData(GetCenterPos(), Vector3(0.0f, 0.0f, -1.0f));
+		icicle_->AttackStart();
 		attackType_ = AttackType::kPlasmaShot;
 	}
 	else if (attackType_ == AttackType::kPlasmaShot) {
@@ -186,28 +142,39 @@ void Boss::AttackInit() {
 		Vector3 offset = { 0.0f,0.0f,2.0f };
 		offset = Transform(offset, rotateMat_);
 
-		PlasmaShotManager::GetInstance()->SetAttackData(GetWorldPos() + offset);
-
-		PlasmaShotManager::GetInstance()->AttackStart();
+		plasmaShot_->SetAttackData(GetCenterPos() + offset);
+		plasmaShot_->AttackStart();
 
 		attackType_ = AttackType::kElementBall;
 	}
 
-	action_ = Action::AttackSet;
-	animations_[action_].Play(skeletons_[action_]);
+	actionIndex_ = Action::AttackSet;
+	animations_[actionIndex_].Start(false);
 
 }
 
 void Boss::AttackUpdate() {
 
-	if ((action_ == Action::Attack || action_ == Action::AttackSet) && !animations_[action_].IsPlaying()) {
-		action_ = Action::Standing;
+	if ((actionIndex_ == Action::Attack || actionIndex_ == Action::AttackSet) && !animations_[actionIndex_].IsPlaying()) {
+		actionIndex_ = Action::Standing;
+		animations_[actionIndex_].Start();
+	}
+
+	if (groundFlare_->FireStartFlag() || elementBall_->ShotStart()) {
+		actionIndex_ = Action::Attack;
+	}
+
+	if (groundFlare_->AttackFinish() || icicle_->AttackFinish() || plasmaShot_->AttackFinish() || elementBall_->AttackFinish()) {
+		behaviorRequest_ = Behavior::kRoot;
 	}
 	
 }
 
 void Boss::AppearInit() {
 
+	workAppear_.startPos = obj_->GetWorldPos();
+	workAppear_.endPos = obj_->GetWorldPos();
+	workAppear_.endPos.y = 0.0f;
 	obj_->worldTransform_.translation_ = workAppear_.startPos;
 	workAppear_.param = 0.0f;
 	appearEff_->particleData_.isLoop_ = true;
@@ -233,9 +200,9 @@ void Boss::AppearUpdate() {
 
 void Boss::DeadInit() {
 
-	action_ = Action::Dead;
-	animations_[action_].SetAnimationSpeed(1.0f / 60.0f);
-	animations_[action_].Start();
+	actionIndex_ = Action::Dead;
+	animations_[actionIndex_].SetAnimationSpeed(1.0f / 60.0f);
+	animations_[actionIndex_].Start(false);
 
 	obj_->threshold_ = 0.0f;
 	
@@ -243,40 +210,11 @@ void Boss::DeadInit() {
 
 void Boss::DeadUpdate() {
 
-	if (!animations_[action_].IsPlaying()) {
+	if (!animations_[actionIndex_].IsPlaying()) {
 		isFinishDeadMotion_ = true;
 	}
 
-	obj_->threshold_ = animations_[Action::Dead].GetAnimationTime() / animations_[Action::Dead].GetDuration();
-	obj_->threshold_ = std::clamp(obj_->threshold_, 0.0f, animations_[Action::Dead].GetDuration());
+	obj_->threshold_ = animations_[actionIndex_].GetAnimationTime() / animations_[actionIndex_].GetDuration();
+	obj_->threshold_ = std::clamp(obj_->threshold_, 0.0f, animations_[actionIndex_].GetDuration());
 
-}
-
-void Boss::ChangeBehavior(Behavior behavior) {
-
-	switch (behavior) {
-		case Behavior::kAppear:
-			behaviorRequest_ = Behavior::kAppear;
-			break;
-		case Behavior::kAttack:
-			behaviorRequest_ = Behavior::kAttack;
-			break;
-		case Behavior::kRoot:
-			behaviorRequest_ = Behavior::kRoot;
-			break;
-		case Behavior::kDead:
-			behaviorRequest_ = Behavior::kDead;
-			break;
-	}
-
-}
-
-Vector3 Boss::GetWorldPos() const {
-	Vector3 worldPos;
-
-	worldPos.x = obj_->worldTransform_.matWorld_.m[3][0];
-	worldPos.y = obj_->worldTransform_.matWorld_.m[3][1] + size_.y;
-	worldPos.z = obj_->worldTransform_.matWorld_.m[3][2];
-
-	return worldPos;
 }

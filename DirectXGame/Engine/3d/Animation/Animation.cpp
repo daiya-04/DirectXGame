@@ -4,10 +4,10 @@
 #include <assimp/postprocess.h>
 #include <cassert>
 
-void Animation::Play(const Model::Node& rootNode, bool isLoop) {
+void Animation::Play(const Model::Node& rootNode) {
 
-	isLoop_ = isLoop;
-	isPlaying_ = true;
+	//isLoop_ = isLoop;
+	//isPlaying_ = true;
 	CountingAnimationTime();
 	
 	NodeAnimation& rootNodeAnimation = nodeAnimations_[rootNode.name_];
@@ -18,10 +18,10 @@ void Animation::Play(const Model::Node& rootNode, bool isLoop) {
 	localMatrix_ = MakeTranslateMatrix(translate) * rotate.MakeRotateMatrix() * MakeScaleMatrix(scale);
 }
 
-void Animation::Play(Skeleton& skeleton,bool isLoop) {
+void Animation::Play(Skeleton& skeleton) {
 
-	isLoop_ = isLoop;
-	isPlaying_ = true;
+	/*isLoop_ = isLoop;
+	isPlaying_ = true;*/
 	CountingAnimationTime();
 
 	for (Skeleton::Joint& joint : skeleton.joints_) {

@@ -12,6 +12,11 @@
 #include "Particle.h"
 #include "Sprite.h"
 #include "GPUParticle.h"
+#include "IcicleManager.h"
+#include "PlasmaShotManager.h"
+#include "ElementBallManager.h"
+#include "GroundFlare.h"
+#include "BaseCharactor.h"
 
 #include <memory>
 #include <vector>
@@ -20,7 +25,7 @@
 #include <functional>
 #include <map>
 
-class Boss{
+class Boss : public BaseCharactor {
 public:
 
 	enum Behavior {
@@ -91,32 +96,16 @@ private:
 
 private:
 
-	std::unique_ptr<SkinningObject> obj_;
-	std::vector<std::shared_ptr<Model>> animationModels_;
-	std::vector<Animation> animations_;
-	std::vector<Skeleton> skeletons_;
-	std::vector<SkinCluster> skinClusters_;
-
 	std::unique_ptr<GPUParticle> appearEff_;
 	std::unique_ptr<GPUParticle> appearEff2_;
 
-	Action action_ = Action::Standing;
 	AttackType attackType_ = AttackType::kElementBall;
 
 	uint32_t maxHp_ = 10;
-	uint32_t life_ = maxHp_;
 
-	bool isDead_ = false;
 	bool isFinishDeadMotion_ = false;
 
-	Vector3 size_{};
-
-	Shapes::AABB collider_{};
-
 	const WorldTransform* target_ = nullptr;
-
-	Vector3 direction_ = { 0.0f,0.0f,-1.0f };
-	Matrix4x4 rotateMat_ = MakeIdentity44();
 
 	WorkAppear workAppear_;
 	WorkAttack workAttack_;
@@ -124,48 +113,38 @@ private:
 	uint32_t coolTime_ = 0;
 	uint32_t attackTimer_ = 0;
 
-	uint32_t hpBerTex_ = 0;
-	std::unique_ptr<Sprite> hpBer_;
+	ElementBallManager* elementBall_ = nullptr;
+	IcicleManager* icicle_ = nullptr;
+	PlasmaShotManager* plasmaShot_ = nullptr;
+	GroundFlare* groundFlare_ = nullptr;
 
 public:
 
 	Boss() {};
 
-	void Init(const std::vector<std::shared_ptr<Model>>& models);
+	void Init(const std::vector<std::shared_ptr<Model>>& models) override;
 
-	void Update();
-	
-	void ColliderUpdate() {
-		collider_.max = GetWorldPos() + size_;
-		collider_.min = GetWorldPos() - size_;
-	}
+	void Update() override;
 
-	void UIUpdate();
+	void UpdateUI() override;
 
-	void Draw(const Camera& camera);
+	void Draw(const Camera& camera) override;
 
 	void DrawParticle(const Camera& camera);
 
-	void DrawUI();
+	void DrawUI() override;
 
 	void OnCollision();
 
-	void SetData(const LevelData::ObjectData& data);
-
 	void SetTarget(const WorldTransform* target) { target_ = target; }
 
-	void ChangeBehavior(Behavior behavior);
-	void ChangeAction(Action action) {
-		action_ = action;
-		animations_[action_].Play(skeletons_[action_]);
-	}
+	void SetElementBall(ElementBallManager* elementBall) { elementBall_ = elementBall; }
+	void SetIcicle(IcicleManager* icicle) { icicle_ = icicle; }
+	void SetPlasmaShot(PlasmaShotManager* plasmaShot) { plasmaShot_ = plasmaShot; }
+	void SetGroudFlare(GroundFlare* groundFlare) { groundFlare_ = groundFlare; }
+
 	bool IsAttack() const { return (behavior_ == Behavior::kAttack) ? true : false; }
-	bool IsDead() const { return isDead_; }
 	bool IsFinishDeadMotion() const { return isFinishDeadMotion_; }
-	Vector3 GetWorldPos() const;
-	Shapes::AABB GetCollider(){ return collider_; }
-	Action GetAction() const { return action_; }
-	const WorldTransform& GetWorldTransform() { return obj_->worldTransform_; }
 
 };
 

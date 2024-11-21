@@ -46,7 +46,7 @@ void Input::Update() {
 
 }
 
-bool Input::PushKey(BYTE keyNumber) const{
+bool Input::PushKey(BYTE keyNumber) const {
 
 	if (key[keyNumber]) {
 		return true;
@@ -55,7 +55,7 @@ bool Input::PushKey(BYTE keyNumber) const{
 	return false;
 }
 
-bool Input::TriggerKey(BYTE keyNumber) const{
+bool Input::TriggerKey(BYTE keyNumber) const {
 
 	if (key[keyNumber] && !preKey[keyNumber]) {
 		return true;
@@ -81,19 +81,212 @@ bool Input::GetJoystickState() {
 	dwResult = XInputGetState(0, &joyState);
 
 	if (dwResult == ERROR_SUCCESS) {
-		if (fabs(joyState.Gamepad.sThumbLX) < 10000) {
+		if (fabs(joyState.Gamepad.sThumbLX) < deadZone_ and fabs(joyState.Gamepad.sThumbLY) < deadZone_) {
 			joyState.Gamepad.sThumbLX = 0;
-		}
-		if (fabs(joyState.Gamepad.sThumbLY) < 10000) {
 			joyState.Gamepad.sThumbLY = 0;
+
 		}
-		if (fabs(joyState.Gamepad.sThumbRX) < 10000) {
+		if (fabs(joyState.Gamepad.sThumbRX) < deadZone_ and fabs(joyState.Gamepad.sThumbRY) < deadZone_) {
 			joyState.Gamepad.sThumbRX = 0;
-		}
-		if (fabs(joyState.Gamepad.sThumbRY) < 10000) {
 			joyState.Gamepad.sThumbRY = 0;
+
 		}
+
 		return true;
+	}
+
+	return false;
+}
+
+bool Input::GetJoystickLState() {
+	DWORD dwResult;
+
+	dwResult = XInputGetState(0, &joyState);
+
+	if (dwResult == ERROR_SUCCESS) {
+		if (fabs(joyState.Gamepad.sThumbLX) < 10000 and fabs(joyState.Gamepad.sThumbLY) < 10000) {
+
+			return false;
+		}
+
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Input::TriggerLStick(Stick direction) const {
+
+	if (direction == Stick::Right) {
+		return IsLStickRight();
+	}
+	if (direction == Stick::Left) {
+		return IsLStickLeft();
+	}
+	if (direction == Stick::Up) {
+		return IsLStickUp();
+	}
+	if (direction == Stick::Down) {
+		return IsLStickDown();
+	}
+	if (direction == Stick::All) {
+		return (IsLStickRight() || IsLStickLeft() || IsLStickUp() || IsLStickDown());
+	}
+	return false;
+}
+
+bool Input::TriggerRStick(Stick direction) const {
+
+	if (direction == Stick::Right) {
+		return IsRStickRight();
+	}
+	if (direction == Stick::Left) {
+		return IsRStickLeft();
+	}
+	if (direction == Stick::Up) {
+		return IsRStickUp();
+	}
+	if (direction == Stick::Down) {
+		return IsRStickDown();
+	}
+	if (direction == Stick::All) {
+		return (IsRStickRight() || IsRStickLeft() || IsRStickUp() || IsRStickDown());
+	}
+
+	return false;
+}
+
+bool Input::ReleaseLStick(Stick direction) const {
+
+	if (direction == Stick::Right) {
+		return (float)(joyState.Gamepad.sThumbLX) <= deadZone_ && (float)(preJoyState.Gamepad.sThumbLX) > deadZone_;
+	}
+	if (direction == Stick::Left) {
+		return (float)(joyState.Gamepad.sThumbLX) >= -deadZone_ && (float)(preJoyState.Gamepad.sThumbLX) < -deadZone_;
+	}
+	if (direction == Stick::Up) {
+		return (float)(joyState.Gamepad.sThumbLY) <= deadZone_ && (float)(preJoyState.Gamepad.sThumbLY) > deadZone_;
+	}
+	if (direction == Stick::Down) {
+		return (float)(joyState.Gamepad.sThumbLY) >= -deadZone_ && (float)(preJoyState.Gamepad.sThumbLY) < -deadZone_;
+	}
+	if (direction == Stick::All) {
+		return (
+			((float)(joyState.Gamepad.sThumbLX) <= deadZone_ && (float)(preJoyState.Gamepad.sThumbLX) > deadZone_) ||
+			((float)(joyState.Gamepad.sThumbLX) >= -deadZone_ && (float)(preJoyState.Gamepad.sThumbLX) < -deadZone_) ||
+			((float)(joyState.Gamepad.sThumbLY) <= deadZone_ && (float)(preJoyState.Gamepad.sThumbLY) > deadZone_) ||
+			((float)(joyState.Gamepad.sThumbLY) >= -deadZone_ && (float)(preJoyState.Gamepad.sThumbLY) < -deadZone_)
+			);
+	}
+
+	return false;
+
+}
+
+bool Input::ReleaseRStick(Stick direction) const {
+
+	if (direction == Stick::Right) {
+		return IsRStickRight();
+	}
+	if (direction == Stick::Left) {
+		return IsRStickLeft();
+	}
+	if (direction == Stick::Up) {
+		return IsRStickUp();
+	}
+	if (direction == Stick::Down) {
+		return IsRStickDown();
+	}
+
+	return false;
+
+}
+
+bool Input::TiltLStick(Stick direction) const {
+	if (direction == Stick::Right) {
+		return IsLTiltRight();
+	}
+	if (direction == Stick::Left) {
+		return IsLTiltLeft();
+	}
+	if (direction == Stick::Up) {
+		return IsLTiltUp();
+	}
+	if (direction == Stick::Down) {
+		return IsLTiltDown();
+	}
+	return false;
+}
+
+bool Input::TiltRStick(Stick direction) const {
+	if (direction == Stick::Right) {
+		return IsRTiltRight();
+	}
+	if (direction == Stick::Left) {
+		return IsRTiltLeft();
+	}
+	if (direction == Stick::Up) {
+		return IsRTiltUp();
+	}
+	if (direction == Stick::Down) {
+		return IsRTiltDown();
+	}
+	return false;
+}
+
+bool Input::TriggerButton(Button button) const {
+	if ((joyState.Gamepad.wButtons & (WORD)button) && !(preJoyState.Gamepad.wButtons & (WORD)button)) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::PushButton(Button button) const {
+	if ((joyState.Gamepad.wButtons & (WORD)button)) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::ReleaseButton(Button button) const {
+	if (!(joyState.Gamepad.wButtons & (WORD)button) && (preJoyState.Gamepad.wButtons & (WORD)button)) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::PushTrigger(Trigger trigger) const {
+
+	switch (trigger) {
+	case Trigger::Left:
+		if (joyState.Gamepad.bLeftTrigger) {
+			return true;
+		}
+		break;
+	case Trigger::Right:
+		if (joyState.Gamepad.bRightTrigger) {
+			return true;
+		}
+		break;
+	}
+
+	return false;
+}
+
+bool Input::ReleaseTrigger(Trigger trigger) const {
+
+	switch (trigger) {
+	case Trigger::Left:
+		if (!joyState.Gamepad.bLeftTrigger && preJoyState.Gamepad.bLeftTrigger) {
+			return true;
+		}
+		break;
+	case Trigger::Right:
+		if (!joyState.Gamepad.bRightTrigger && preJoyState.Gamepad.bRightTrigger) {
+			return true;
+		}
+		break;
 	}
 
 	return false;
@@ -108,6 +301,133 @@ bool Input::LeftTrigger() const {
 
 bool Input::RightTrigger() const {
 	if (joyState.Gamepad.bRightTrigger && !preJoyState.Gamepad.bRightTrigger) {
+		return true;
+	}
+	return false;
+}
+
+void Input::Vibration(float value) {
+
+	value = std::clamp(value, 0.0f, 1.0f);
+
+	XINPUT_VIBRATION vib{};
+
+	//低周波
+	vib.wLeftMotorSpeed = WORD(USHRT_MAX * value);
+	//高周波
+	vib.wRightMotorSpeed = WORD(USHRT_MAX * value);
+
+	XInputSetState(0, &vib);
+}
+
+bool Input::IsLStickRight() const {
+
+	if ((float)(joyState.Gamepad.sThumbLX) > deadZone_ && (float)(preJoyState.Gamepad.sThumbLX) <= deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsLStickLeft() const {
+	if ((float)(joyState.Gamepad.sThumbLX) < -deadZone_ && (float)(preJoyState.Gamepad.sThumbLX) >= -deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsLStickUp() const {
+	if ((float)(joyState.Gamepad.sThumbLY) > deadZone_ && (float)(preJoyState.Gamepad.sThumbLY) <= deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsLStickDown() const {
+	if ((float)(joyState.Gamepad.sThumbLY) < -deadZone_ && (float)(preJoyState.Gamepad.sThumbLY) >= -deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRStickRight() const {
+	if (float(joyState.Gamepad.sThumbRX) > deadZone_ && float(preJoyState.Gamepad.sThumbRX) <= deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRStickLeft() const {
+	if (float(joyState.Gamepad.sThumbRX) < -deadZone_ && float(preJoyState.Gamepad.sThumbRX) >= -deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRStickUp() const {
+	if (float(joyState.Gamepad.sThumbRY) > deadZone_ && float(preJoyState.Gamepad.sThumbRY) <= deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRStickDown() const {
+	if (float(joyState.Gamepad.sThumbRY) < -deadZone_ && float(preJoyState.Gamepad.sThumbRY) >= -deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsLTiltRight() const {
+	if ((float)(joyState.Gamepad.sThumbLX) > deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsLTiltLeft() const {
+	if ((float)(joyState.Gamepad.sThumbLX) < -deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsLTiltUp() const {
+	if ((float)(joyState.Gamepad.sThumbLY) > deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsLTiltDown() const {
+	if ((float)(joyState.Gamepad.sThumbLY) < -deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRTiltRight() const {
+	if (float(joyState.Gamepad.sThumbRX) > deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRTiltLeft() const {
+	if (float(joyState.Gamepad.sThumbRX) < -deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRTiltUp() const {
+	if (float(joyState.Gamepad.sThumbRY) > deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRTiltDown() const {
+	if (float(joyState.Gamepad.sThumbRY) < deadZone_) {
 		return true;
 	}
 	return false;

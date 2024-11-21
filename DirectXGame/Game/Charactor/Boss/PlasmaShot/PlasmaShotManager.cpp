@@ -3,12 +3,6 @@
 #include "Hit.h"
 
 
-PlasmaShotManager* PlasmaShotManager::GetInstance() {
-	static PlasmaShotManager instance;
-
-	return &instance;
-}
-
 void PlasmaShotManager::Init(const std::shared_ptr<Model>& model) {
 
 	for (auto& plasmaShot : plasmaShots_) {
@@ -65,9 +59,9 @@ void PlasmaShotManager::AttackStart() {
 
 void PlasmaShotManager::SetAttackData(const Vector3& pos) {
 
-	float intervalTime[3] = { 1.5f,1.8f,2.1f };
+	float intervalTime[plasmaShotNum_] = { 1.5f,1.8f,2.1f };
 
-	for (size_t index = 0; index < 3;index++) {
+	for (size_t index = 0; index < plasmaShotNum_;index++) {
 		plasmaShots_[index]->SetAttackData(pos, intervalTime[index]);
 	}
 

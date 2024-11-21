@@ -51,7 +51,7 @@ void ElementBall::Update() {
 	obj_->worldTransform_.UpdateMatrix();
 
 	if (animation_.IsPlaying()) {
-		animation_.Play(obj_->GetModel()->rootNode_, false);
+		animation_.Play(obj_->GetModel()->rootNode_);
 		obj_->worldTransform_.matWorld_ = animation_.GetLocalMatrix() * obj_->worldTransform_.matWorld_;
 	}
 
@@ -120,7 +120,7 @@ void ElementBall::RootUpdate() {
 void ElementBall::SetInit() {
 
 	
-	animation_.Start();
+	animation_.Start(false);
 
 	particle_->particleData_.emitter_.count = 150;
 	particle_->particleData_.emitter_.lifeTime = 1.0f;

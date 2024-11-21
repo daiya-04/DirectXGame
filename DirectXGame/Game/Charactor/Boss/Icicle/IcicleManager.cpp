@@ -3,11 +3,6 @@
 
 #include "Hit.h"
 
-IcicleManager* IcicleManager::GetInstanse() {
-	static IcicleManager instance;
-
-	return &instance;
-}
 
 void IcicleManager::Init(const std::shared_ptr<Model>& model) {
 
@@ -28,7 +23,7 @@ void IcicleManager::Init(const std::shared_ptr<Model>& model) {
 void IcicleManager::Update() {
 	preIsAttack_ = isAttack_;
 
-	for (uint32_t index = 0; index < icicles_.size(); index++) {
+	for (uint32_t index = 0; index < icicleNum_; index++) {
 		if (icicles_[index]->DeadFlag()) {
 			OnCollision(index);
 		}

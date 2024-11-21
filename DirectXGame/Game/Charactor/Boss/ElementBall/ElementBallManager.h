@@ -10,8 +10,6 @@
 class ElementBallManager {
 public:
 
-	static ElementBallManager* GetInstance();
-
 	void Init(const std::shared_ptr<Model>& model, uint32_t tex);
 
 	void Update();
@@ -36,17 +34,19 @@ public:
 
 	Shapes::Sphere GetCollider(uint32_t index) { return elementBalls_[index]->GetCollider(); }
 
-	
+	uint32_t GetElementballCount() const { return elementBallNum_; }
 	
 
 private:
 
-	std::array<std::unique_ptr<ElementBall>, 4> elementBalls_;
-	std::array<std::unique_ptr<BurnScar>, 4> burnScareses_;
+	static const uint32_t elementBallNum_ = 4;
 
-	std::array<std::unique_ptr<GPUParticle>, 4> fireFields_;
-	std::array<std::unique_ptr<GPUParticle>, 4> splashes_;
-	std::array<std::unique_ptr<GPUParticle>, 4> fireSparks_;
+	std::array<std::unique_ptr<ElementBall>, elementBallNum_> elementBalls_;
+	std::array<std::unique_ptr<BurnScar>, elementBallNum_> burnScareses_;
+
+	std::array<std::unique_ptr<GPUParticle>, elementBallNum_> fireFields_;
+	std::array<std::unique_ptr<GPUParticle>, elementBallNum_> splashes_;
+	std::array<std::unique_ptr<GPUParticle>, elementBallNum_> fireSparks_;
 
 	bool isAttack_ = false;
 	bool preIsAttack_ = false;

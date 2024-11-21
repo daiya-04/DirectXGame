@@ -4,13 +4,6 @@
 #include "TextureManager.h"
 #include "ParticleManager.h"
 
-
-GroundFlare* GroundFlare::GetInstance() {
-	static GroundFlare instance;
-
-	return &instance;
-}
-
 void GroundFlare::Init(std::shared_ptr<Model> model) {
 
 	for (auto& warningZone : warningZones_) {
@@ -24,7 +17,7 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 	}
 
 
-	colliderHSize_ = {2.0f,3.0f,2.0f};
+	collider_.size = {2.0f,3.0f,2.0f};
 
 	offset_[0] = {}; //中心
 	offset_[1] = { -1.5f,0.0f,1.5f }; //左上
@@ -71,9 +64,11 @@ void GroundFlare::Update() {
 
 void GroundFlare::ColliderUpdate() {
 
-	collider_.max = colliderCenter_ + colliderHSize_;
-	collider_.min = colliderCenter_ - colliderHSize_;
+	collider_.orientation[0] = { 1.0f,0.0f,0.0f };
+	collider_.orientation[1] = { 0.0f,1.0f,0.0f };
+	collider_.orientation[2] = { 0.0f,0.0f,1.0f };
 
+	collider_.center = centerPos_ + Vector3(0.0f, collider_.size.y, 0.0f);
 }
 
 void GroundFlare::Draw(const Camera& camera) {
@@ -106,11 +101,6 @@ void GroundFlare::AttackStart() {
 
 void GroundFlare::RootInit() {
 
-	/*for (auto& particle : particles_) {
-		particle->particleData_.emitter_.count = 0;
-		particle->particleData_.isLoop_ = false;
-	}*/
-
 	isHit_ = false;
 	isAttack_ = false;
 
@@ -118,22 +108,17 @@ void GroundFlare::RootInit() {
 
 void GroundFlare::RootUpdate() {
 
-	/*for (auto& particle : particles_) {
-		particle->particleData_.emitter_.frequencyTime = 0.0f;
-	}*/
-
 }
 
 void GroundFlare::WarningInit() {
 
 	centerPos_ = target_->translation_;
 	centerPos_.y = 0.01f;
-	colliderCenter_ = centerPos_ + Vector3(0.0f, colliderHSize_.y, 0.0f);
 
 	workWarning_.param_ = 0.0f;
 
 	
-	for (size_t index = 0; index < 5; index++) {
+	for (size_t index = 0; index < flareNum_; index++) {
 		particles_[index]->particleData_.emitter_.translate = centerPos_ + offset_[index];
 		particles_[index]->particleData_.emitter_.translate.y += particles_[index]->particleData_.emitter_.size.y;
 		warningZones_[index]->worldTransform_.translation_ = centerPos_ + offset_[index];
@@ -173,15 +158,8 @@ void GroundFlare::FireUpdate() {
 
 	workFire_.param_++;
 
-	if (workFire_.param_ >= workFire_.shotCount_) {
-		for (auto& particle : particles_) {
-			particle->particleData_.emitter_.frequencyTime = 0.0f;
-		}
-	}
-
 	if (workFire_.param_ >= workFire_.fireCount_) {
 		phaseRequest_ = Phase::kRoot;
-
 	}
 
 }

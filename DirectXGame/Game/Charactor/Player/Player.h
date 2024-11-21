@@ -1,18 +1,6 @@
 #pragma once
-#include "WorldTransform.h"
-#include "Camera.h"
-#include "Object3d.h"
-#include "SkinningObject.h"
-#include "Animation.h"
-#include "SkinCluster.h"
-#include "Vec3.h"
-#include "Matrix44.h"
-#include "CollisionShapes.h"
-#include "LevelLoader.h"
 #include "FollowCamera.h"
-#include "Particle.h"
-#include "Sprite.h"
-#include "GPUParticle.h"
+#include "BaseCharactor.h"
 
 #include <memory>
 #include <list>
@@ -24,7 +12,7 @@
 
 class GameScene;
 
-class Player{
+class Player : public BaseCharactor {
 private: //ふるまい用メンバ変数
 
 	enum class Behavior {
@@ -119,27 +107,9 @@ private:
 
 	const WorldTransform* target_ = nullptr;
 
-	std::unique_ptr<SkinningObject> obj_;
-	std::vector<std::shared_ptr<Model>> animationModels_;
-	std::vector<Animation> animations_;
-	std::vector<Skeleton> skeletons_;
-	std::vector<SkinCluster> skinClusters_;
-
-	Action action_ = Action::Standing;
-
-	Vector3 size_{};
-
-	Shapes::AABB collider_{};
-
 	int32_t maxHp_ = 20;
-	int32_t life_ = maxHp_;
 
 	float attackRange_ = 20.0f;
-
-	Matrix4x4 rotateMat_ = MakeIdentity44();
-	Vector3 rotate_ = { 0.0f,0.0f,1.0f };
-	Vector3 from_ = { 0.0f,0.0f,1.0f };
-	//Vector3 velocity_ = {};
 
 	WorkDash workDash_;
 	WorkAttack workAttack_;
@@ -149,38 +119,24 @@ private:
 	const float kDeltaTime_ = 1.0f / 60.0f;
 
 	bool isAttack_ = false;
-	bool isDead_ = false;
 	bool isFinishDeadMotion_ = false;
 
 	GameScene* gameScene_ = nullptr;
-
-	uint32_t hpBerTex_ = 0;
-	std::unique_ptr<Sprite> hpBer_;
-
-	//std::unique_ptr<GPUParticle> attackEff_;
 
 public:
 
 	Player(){}
 
 	//初期化
-	void Init(std::vector<std::shared_ptr<Model>> models);
+	void Init(const std::vector<std::shared_ptr<Model>>& models) override;
 	//更新
-	void Update();
-	//Collider更新
-	void ColliderUpdate() {
-		collider_.max = GetWorldPos() + size_;
-		collider_.min = GetWorldPos() - size_;
-	}
-	void UIUpdate();
+	void Update() override;
+	//UI更新
+	void UpdateUI() override;
 	//描画
-	void Draw(const Camera& camera);
-	//パーティクル描画
-	void DrawParticle(const Camera& camera);
-
-	void DrawUI();
-
-	void SetData(const LevelData::ObjectData& data);
+	void Draw(const Camera& camera) override;
+	//UI描画
+	void DrawUI() override;
 
 	void OnCollision();
 
@@ -191,13 +147,11 @@ public:
 
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
-	const WorldTransform& GetWorldTransform() { return obj_->worldTransform_; }
-	Vector3 GetWorldPos() const;
 	bool IsAttack() const { return isAttack_; }
-	bool IsDead() const { return isDead_; }
 	bool IsFinishDeadMotion() const { return isFinishDeadMotion_; }
-	Shapes::AABB GetCollider() const { return collider_; }
-	uint32_t GetLife() const { return life_; }
+	uint32_t GetHP() const { return hp_; }
+
+	bool IsDeadAction() override { return (actionIndex_ == Action::Dead); }
 
 };
 

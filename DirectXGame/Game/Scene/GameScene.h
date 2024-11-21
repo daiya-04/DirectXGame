@@ -84,9 +84,6 @@ private: //オブジェクト
 	
 	std::list<std::unique_ptr<PlayerAttack>> playerAttacks_;
 	std::unique_ptr<GPUParticle> attackEndEff_;
-	std::unique_ptr<GPUParticle> deadEff_;
-
-	bool isDeadEff_ = false;
 
 	std::unique_ptr<FollowCamera> followCamera_;
 
@@ -105,9 +102,6 @@ private: //オブジェクト
 
 	float alpha_ = 0.0f;
 
-	Vector2 pos1 = {};
-	Vector2 pos2 = {};
-
 	PostEffect* postEffect_ = nullptr;
 	OutLine* outLine_ = nullptr;
 	HSVFilter* hsvFilter_ = nullptr;
@@ -116,10 +110,10 @@ private: //オブジェクト
 
 	uint32_t burnScarsTex_ = 0;
 
-	GroundFlare* groundFlare_ = nullptr;
-	IcicleManager* icicle_ = nullptr;
-	PlasmaShotManager* plasmaShot_ = nullptr;
-	ElementBallManager* elementBall_ = nullptr;
+	std::unique_ptr<GroundFlare> groundFlare_;
+	std::unique_ptr<IcicleManager> icicle_;
+	std::unique_ptr<PlasmaShotManager> plasmaShot_;
+	std::unique_ptr<ElementBallManager> elementBall_;
 
 
 	bool isGameStop_ = false;

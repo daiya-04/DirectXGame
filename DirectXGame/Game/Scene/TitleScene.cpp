@@ -33,7 +33,7 @@ void TitleScene::Update(){
 
 #endif // _DEBUG
 
-	if (Input::GetInstance()->TriggerButton(XINPUT_GAMEPAD_A)) {
+	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
 		SceneManager::GetInstance()->ChangeScene("Game");
 	}
 

@@ -10,8 +10,6 @@
 class IcicleManager {
 public:
 
-	static IcicleManager* GetInstanse();
-
 	void Init(const std::shared_ptr<Model>& model);
 
 	void Update();
@@ -34,10 +32,11 @@ public:
 
 	Shapes::Sphere GetCollider(uint32_t index) { return icicles_[index]->GetCollider(); }
 
+	uint32_t GetIcicleCount() const { return icicleNum_; }
 
 private:
 
-	static const size_t icicleNum_ = 4;
+	static const uint32_t icicleNum_ = 4;
 	
 	std::array<std::unique_ptr<Icicle>, icicleNum_> icicles_;
 	std::array<std::unique_ptr<IceScar>, icicleNum_> iceScars_;

@@ -39,6 +39,8 @@ void SkinningObject::Initialize(std::shared_ptr<Model> model) {
 	deadEffectBuffer_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(DeadEffectData));
 	deadEffectBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&deadEffectData_));
 
+	threshold_ = 0.0f;
+
 }
 
 void SkinningObject::Draw(const Camera& camera) {

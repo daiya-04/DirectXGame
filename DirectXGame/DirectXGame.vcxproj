@@ -110,6 +110,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Charactor\BaseCharactor.cpp" />
     <ClCompile Include="Engine\ComputePipeline\BaseComputePipeline.cpp" />
     <ClCompile Include="Engine\GraphicsPipeline\BaseGraphicsPipeline.cpp" />
     <ClCompile Include="Game\Effects\BaseScar.cpp" />
@@ -186,6 +187,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\GraphicsPipeline\ParticleGraphicsPipeline.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Charactor\BaseCharactor.h" />
     <ClInclude Include="Engine\ComputePipeline\BaseComputePipeline.h" />
     <ClInclude Include="Engine\GraphicsPipeline\BaseGraphicsPipeline.h" />
     <ClInclude Include="Game\Effects\BaseScar.h" />

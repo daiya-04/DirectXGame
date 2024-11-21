@@ -176,7 +176,7 @@ void DirectXCommon::InitializeRenderTargetView() {
 	//RTV用のヒープでディスクリプタの数は2。RTVはShader内で触るものではないので、ShaderVisibleはfalse
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
 	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	descriptorHeapDesc.NumDescriptors = 32;
+	descriptorHeapDesc.NumDescriptors = kRtvHeapDescriptorNum;
 	hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap_));
 	//ディスクリプタヒープが作れなかったので起動できない
 	assert(SUCCEEDED(hr));
@@ -236,7 +236,7 @@ void DirectXCommon::InitializeDepthBuffer() {
 	////DSV用のヒープでディスクリプタの数は1。
 	D3D12_DESCRIPTOR_HEAP_DESC dsvDescriptorHeapDesc{};
 	dsvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-	dsvDescriptorHeapDesc.NumDescriptors = 2;
+	dsvDescriptorHeapDesc.NumDescriptors = kDsvHeapDescriptorNum;
 	hr = device_->CreateDescriptorHeap(&dsvDescriptorHeapDesc, IID_PPV_ARGS(&dsvDescriptorHeap_));
 	//ディスクリプタヒープが作れなかったので起動できない
 	assert(SUCCEEDED(hr));

@@ -15,7 +15,9 @@ private:
 
 private:
 
-	uint32_t kSrvHeapDescriptorNum = 100000;
+	const uint32_t kSrvHeapDescriptorNum = 100000;
+	const uint32_t kRtvHeapDescriptorNum = 1024;
+	const uint32_t kDsvHeapDescriptorNum = 1024;
 
 	ComPtr<ID3D12Device> device_;
 	ComPtr<IDXGIFactory7> dxgiFactory_;

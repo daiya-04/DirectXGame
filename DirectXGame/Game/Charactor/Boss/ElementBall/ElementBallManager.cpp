@@ -2,11 +2,6 @@
 #include "TextureManager.h"
 #include "ParticleManager.h"
 
-ElementBallManager* ElementBallManager::GetInstance() {
-	static ElementBallManager instance;
-
-	return &instance;
-}
 
 void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex) {
 
@@ -80,21 +75,12 @@ void ElementBallManager::Update() {
 		isAttack_ = false;
 	}
 
-	/*if (elementBalls_[0]->GetPhase() == ElementBall::Phase::kSet) {
-		for (size_t index = 0; index < 4; index++) {
-			fireFields_[index]->emitter_.translate = elementBalls_[index]->GetWorldPos();
-			fireFields_[index]->emitter_.translate.y = 0.1f;
-		}
-	}*/
-
 	for (auto& splash : splashes_) {
 		if (elementBalls_[0]->GetPhase() == ElementBall::Phase::kSet) {
 			splash->particleData_.isLoop_ = true;
 		}
 		else {
 			splash->particleData_.isLoop_ = false;
-			splash->particleData_.emitter_.frequencyTime = 0.0f;
-			splash->particleData_.emitter_.emit = 0;
 		}
 		splash->Update();
 	}
@@ -104,8 +90,6 @@ void ElementBallManager::Update() {
 			fireSpark->particleData_.isLoop_ = true;
 		}else {
 			fireSpark->particleData_.isLoop_ = false;
-			fireSpark->particleData_.emitter_.frequencyTime = 0.0f;
-			fireSpark->particleData_.emitter_.emit = 0;
 		}
 		fireSpark->Update();
 	}
@@ -114,8 +98,6 @@ void ElementBallManager::Update() {
 	for (auto& fireField : fireFields_) {
 		if (elementBalls_[0]->GetPhase() == ElementBall::Phase::kCharge) {
 			fireField->particleData_.isLoop_ = false;
-			fireField->particleData_.emitter_.emit = 0;
-			fireField->particleData_.emitter_.frequencyTime = 0.0f;
 		}
 		fireField->Update();
 	}

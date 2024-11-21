@@ -323,6 +323,9 @@
     <ClCompile Include="Engine\3d\Animation\Animation.cpp">
       <Filter>Engine\3d\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Charactor\BaseCharactor.cpp">
+      <Filter>Game\Charactor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -573,6 +576,9 @@
     </ClInclude>
     <ClInclude Include="Engine\3d\Animation\Animation.h">
       <Filter>Engine\3d\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\BaseCharactor.h">
+      <Filter>Game\Charactor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
