@@ -3,6 +3,7 @@
 #include "GPUParticle.h"
 
 #include <string>
+#include <vector>
 
 class ParticleEditor {
 public:
@@ -30,6 +31,11 @@ private:
 	std::string saveFileName_;
 	const std::string kDirectoryPath_ = "Resources/ParticleData/";
 
+	std::vector<std::string> billboardComboList_;
+	std::string currentBillboardMode_;
+
+	std::vector<std::string> emitterShapesComboList_;
+	std::string currentEmitterShape_;
 
 };
 

@@ -22,7 +22,7 @@ public:
 		Sphere,
 		Hemisphere,
 		Box,
-		Squere,
+		Square,
 		Circle,
 
 	};

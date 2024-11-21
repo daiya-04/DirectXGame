@@ -17,9 +17,27 @@ ParticleEditor* ParticleEditor::GetInstance() {
 
 void ParticleEditor::Init() {
 
+	billboardComboList_ = {
+		"BillBoard",
+		"HorizonBillboard",
+		"None",
+	};
+
+	emitterShapesComboList_ = {
+		"NonShape",
+		"Sphere",
+		"Hemisphere",
+		"Box",
+		"Square",
+		"Circle",
+	};
+
 	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 100000));
 	saveFileName_ = "testParticle";
 	LoadDataFile(saveFileName_);
+
+	currentBillboardMode_ = billboardComboList_[particle_->particleData_.emitter_.billboardType];
+	currentEmitterShape_ = emitterShapesComboList_[particle_->particleData_.emitter_.emitterType];
 
 }
 
@@ -301,41 +319,37 @@ void ParticleEditor::DebugGUI() {
 		particle_->SetTextureHandle();
 	}
 
-	int32_t currentBillboardType = static_cast<int32_t>(particle_->particleData_.emitter_.billboardType);
+	int32_t billboardType = static_cast<int32_t>(particle_->particleData_.emitter_.billboardType);
 
-	if (ImGui::RadioButton("Billborad", currentBillboardType == GPUParticle::BillboardType::Billboard)) {
-		currentBillboardType = GPUParticle::BillboardType::Billboard;
-	}
-	if (ImGui::RadioButton("HorizontalBillboard", currentBillboardType == GPUParticle::BillboardType::Horizontalillboard)) {
-		currentBillboardType = GPUParticle::BillboardType::Horizontalillboard;
-	}
-	if (ImGui::RadioButton("None", currentBillboardType == GPUParticle::BillboardType::None)) {
-		currentBillboardType = GPUParticle::BillboardType::None;
+	if (ImGui::BeginCombo("BillboardType", currentBillboardMode_.c_str())) {
+		for (int32_t index = 0; index < billboardComboList_.size(); index++) {
+			const bool isSelected = (currentBillboardMode_ == billboardComboList_[index].c_str());
+			if (ImGui::Selectable(billboardComboList_[index].c_str(), isSelected)) {
+				currentBillboardMode_ = billboardComboList_[index];
+				billboardType = index;
+			}
+		}
+		ImGui::EndCombo();
 	}
 
-	particle_->particleData_.emitter_.billboardType = static_cast<GPUParticle::BillboardType>(currentBillboardType);
+	particle_->particleData_.emitter_.billboardType = static_cast<GPUParticle::BillboardType>(billboardType);
 
 
-	int32_t currentEmitShape = static_cast<int32_t>(particle_->particleData_.emitter_.emitterType);
+	int32_t emitterType = static_cast<int32_t>(particle_->particleData_.emitter_.emitterType);
 
-	if (ImGui::RadioButton("Sphere", currentEmitShape == GPUParticle::EmitShape::Sphere)) {
-		currentEmitShape = GPUParticle::EmitShape::Sphere;
-	}
-	if (ImGui::RadioButton("Hemisphere", currentEmitShape == GPUParticle::EmitShape::Hemisphere)) {
-		currentEmitShape = GPUParticle::EmitShape::Hemisphere;
-	}
-	if (ImGui::RadioButton("Box", currentEmitShape == GPUParticle::EmitShape::Box)) {
-		currentEmitShape = GPUParticle::EmitShape::Box;
-	}
-	if (ImGui::RadioButton("Square", currentEmitShape == GPUParticle::EmitShape::Squere)) {
-		currentEmitShape = GPUParticle::EmitShape::Squere;
-	}
-	if (ImGui::RadioButton("Circle", currentEmitShape == GPUParticle::EmitShape::Circle)) {
-		currentEmitShape = GPUParticle::EmitShape::Circle;
+	if (ImGui::BeginCombo("EmitterType", currentEmitterShape_.c_str())) {
+		for (int32_t index = 0; index < emitterShapesComboList_.size(); index++) {
+			const bool isSelected = (currentEmitterShape_ == emitterShapesComboList_[index].c_str());
+			if (ImGui::Selectable(emitterShapesComboList_[index].c_str(), isSelected)) {
+				currentEmitterShape_ = emitterShapesComboList_[index];
+				emitterType = index;
+			}
+		}
+		ImGui::EndCombo();
 	}
 
 	// 選択された形状を反映
-	particle_->particleData_.emitter_.emitterType = static_cast<GPUParticle::EmitShape>(currentEmitShape);
+	particle_->particleData_.emitter_.emitterType = static_cast<GPUParticle::EmitShape>(emitterType);
 
 
 
