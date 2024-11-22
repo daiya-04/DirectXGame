@@ -24,9 +24,7 @@ void GameScene::Init(){
   
 	camera_.Init();
 	pointLight_.Init();
-	pointLight_.intensity_ = 0.0f;
 	spotLight_.Init();
-	spotLight_.intensity_ = 0.0f;
 
 	Object3d::SetPointLight(&pointLight_);
 	Object3d::SetSpotLight(&spotLight_);
@@ -155,6 +153,8 @@ void GameScene::Init(){
 	followCamera_->Init();
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	player_->SetFollowCamera(followCamera_.get());
+	camera_.SetMatView(followCamera_->GetCamera().GetMatView());
+	camera_.UpdateCameraPos();
 
 	//UI
 	
@@ -168,14 +168,10 @@ void GameScene::Init(){
 
 	///
 
-	Update();
-
 }
 
 void GameScene::Update() {
 	DebugGUI();
-
-	if (isGameStop_) { return; }
 
 #ifdef _DEBUG
 
@@ -187,6 +183,8 @@ void GameScene::Update() {
 	}
 
 #endif // _DEBUG
+
+	if (isGameStop_) { return; }
 
 	if (eventRequest_) {
 
@@ -207,16 +205,18 @@ void GameScene::Update() {
 
 	sceneEventUpdateTable_[sceneEvent_]();
 
+	
+
 	for (auto& rock : rocks_) {
 		rock->Update();
 	}
 	
 	ground_->Update();
 
-	//camera_.UpdateViewMatrix();
 	camera_.UpdateCameraPos();
 	pointLight_.Update();
 	spotLight_.Update();
+
 }
 
 void GameScene::DrawBackGround(){

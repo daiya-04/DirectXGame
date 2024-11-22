@@ -8,7 +8,7 @@ void SpotLight::Init() {
 
 	CreateCBuffer();
 	Map();
-
+	Update();
 }
 
 void SpotLight::Update() {

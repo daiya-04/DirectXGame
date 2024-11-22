@@ -30,10 +30,6 @@ public: //静的メンバ関数
 	//描画前処理
 	static void preDraw();
 
-private:
-	//シェーダのコンパイル
-	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
-
 public:
 
 	void Init(uint32_t textureHandle) override;

@@ -14,9 +14,5 @@ public:
 
 	void Finalize()override;
 
-private:
-
-	//std::unique_ptr<PostEffect> postEffect_;
-
 };
 

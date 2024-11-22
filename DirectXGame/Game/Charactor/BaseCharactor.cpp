@@ -60,9 +60,9 @@ void BaseCharactor::SetData(const LevelData::ObjectData& data) {
 	collider_.size = data.colliderSize;
 
 	rotateMat_ = MakeRotateXMatrix(data.rotation.x) * MakeRotateYMatrix(data.rotation.y) * MakeRotateZMatrix(data.rotation.z);
-	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
 	direction_ = Transform(direction_, rotateMat_);
 
+	BaseCharactor::Update();
 }
 
 Vector3 BaseCharactor::GetCenterPos() const {

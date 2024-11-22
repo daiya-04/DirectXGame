@@ -25,7 +25,7 @@ public:
 
 	Vector3 OffsetCalc() const;
 
-	void SetTarget(const WorldTransform* target) { target_ = target; }
+	void SetTarget(const WorldTransform* target);
 
 	Camera& GetCamera() { return camera_; }
 

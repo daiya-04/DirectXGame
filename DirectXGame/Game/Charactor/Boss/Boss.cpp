@@ -24,8 +24,6 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	appearEff_->particleData_.isLoop_ = false;
 	appearEff2_->SetParticleData(ParticleManager::Load("BossEnterParticle_2"));
 	appearEff2_->particleData_.isLoop_ = false;
-	
-	rotateMat_ = DirectionToDirection({0.0f,0.0f,1.0f}, direction_);
 
 	behaviorRequest_ = Behavior::kAppear;
 	attackType_ = AttackType::kElementBall;

@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include "TextureManager.h"
+#include "DXCompiler.h"
 #include "Log.h"
 
 #pragma comment(lib,"dxcompiler.lib")
@@ -21,18 +22,6 @@ void IceScar::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList* comman
 	assert(commandList);
 	device_ = device;
 	commandList_ = commandList;
-
-	IDxcUtils* dxcUtils = nullptr;
-	IDxcCompiler3* dxcCompiler = nullptr;
-	HRESULT hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils));
-	assert(SUCCEEDED(hr));
-	hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler));
-	assert(SUCCEEDED(hr));
-
-	//現時点でincludeはしないが、includeに対応するための設定を行っておく
-	IDxcIncludeHandler* includeHandler = nullptr;
-	hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
-	assert(SUCCEEDED(hr));
 
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
@@ -94,7 +83,7 @@ void IceScar::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList* comman
 	//シリアライズしてバイナリにする
 	ComPtr<ID3DBlob> signatureBlob;
 	ComPtr<ID3DBlob> errorBlob;
-	hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
+	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
 		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
@@ -144,11 +133,13 @@ void IceScar::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList* comman
 	//三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
+	DXCompiler* dxCompiler = DXCompiler::GetInstance();
+
 	//Shaderをコンパイルする
-	ComPtr<IDxcBlob> verterShaderBlob = CompileShader(L"Resources/shaders/Scar.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+	ComPtr<IDxcBlob> verterShaderBlob = dxCompiler->ShaderCompile(L"Scar.VS.hlsl", L"vs_6_0");
 	assert(verterShaderBlob != nullptr);
 
-	ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Resources/shaders/IceScar.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+	ComPtr<IDxcBlob> pixelShaderBlob = dxCompiler->ShaderCompile(L"IceScar.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	//DepthStencilStateの設定
@@ -203,64 +194,6 @@ void IceScar::preDraw() {
 	commandList_->SetPipelineState(graphicsPipelineState_.Get());  //PSOを設定
 	//形状を設定。PSOに設定しているものとはまた別。設置物を設定すると考えておけばいい
 	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-}
-
-ComPtr<IDxcBlob> IceScar::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer) {
-
-	//これからシェーダーをコンパイルする旨をログに出す
-	Log(ConvertString(std::format(L"Begin CompileShader, Path:{},profile:{}\n", filePath, profile)));
-	//hlslファイルを読む
-	IDxcBlobEncoding* shaderSource = nullptr;
-	HRESULT hr = dxcUtils->LoadFile(filePath.c_str(), nullptr, &shaderSource);
-	//読めなかったら止める
-	assert(SUCCEEDED(hr));
-	//読み込んだファイルの内容を設定する
-	DxcBuffer shaserSourceBuffer{};
-	shaserSourceBuffer.Ptr = shaderSource->GetBufferPointer();
-	shaserSourceBuffer.Size = shaderSource->GetBufferSize();
-	shaserSourceBuffer.Encoding = DXC_CP_UTF8;   //UTF8の文字コードであることを通知
-
-	LPCWSTR arguments[] = {
-		filePath.c_str(),  //コンパイル対象のhlslファイル名
-		L"-E",L"main",  //エントリーポイントの指定。基本的にmain以外にはしない
-		L"-T",profile,  //shaderProfileの設定
-		L"-Zi",L"-Qembed_debug",  //デバッグ用の情報を埋め込む
-		L"-Od", //最適化を外しておく
-		L"-Zpr",  //メモリレイアウトは行優先
-	};
-	//実際にshaderをコンパイルする
-	IDxcResult* shaderResult = nullptr;
-	hr = dxcCompiler->Compile(
-		&shaserSourceBuffer,   //読み込んだファイル
-		arguments,             //コンパイルオプション
-		_countof(arguments),   //コンパイルオプションの数
-		includeHandleer,       //includeが含まれた諸々
-		IID_PPV_ARGS(&shaderResult)  //コンパイルの結果
-	);
-	//コンパイルエラーではなくdxcが起動できないなど致命的な状況
-	assert(SUCCEEDED(hr));
-
-	//警告・エラーが出てたらログに出して止める
-	IDxcBlobUtf8* shaderError = nullptr;
-	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
-	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
-		Log(shaderError->GetStringPointer());
-		//警告・エラーダメ絶対
-		assert(false);
-	}
-
-	//コンパイル結果から実行用のバイナリ部分を取得
-	ComPtr<IDxcBlob> shaderBlob;
-	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
-	assert(SUCCEEDED(hr));
-	//成功したログを出す
-	Log(ConvertString(std::format(L"Compile Succeeded, Path:{}, profile:{}\n", filePath, profile)));
-	//もう使わないリソースを解放
-	shaderSource->Release();
-	shaderResult->Release();
-	//実行用のバイナリを返却
-	return shaderBlob;
 
 }
 

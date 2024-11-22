@@ -39,7 +39,7 @@ public:
 
 	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 	Vector3 position_ = {};
-	float intensity_ = 1.0f;
+	float intensity_ = 0.0f;
 	Vector3 direction_ = {1.0f,0.0f,0.0f};
 	float distance_ = 7.0f;
 	float decay_ = 1.0f;

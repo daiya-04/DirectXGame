@@ -46,7 +46,6 @@ void FollowCamera::Reset() {
 
 	if (target_) {
 		interTarget_ = target_->translation_;
-		//viewProjection_.rotation_.y = target_->rotation_.y;
 	}
 
 	Vector3 offset = OffsetCalc();
@@ -67,4 +66,12 @@ Vector3 FollowCamera::OffsetCalc() const {
 	offset = TransformNormal(offset, rotateMatrix);
 
 	return offset;
+}
+
+void FollowCamera::SetTarget(const WorldTransform* target) {
+	target_ = target;
+
+	Vector3 offset = OffsetCalc();
+	camera_.translation_ = target_->translation_ + offset;
+	camera_.UpdateViewMatrix();
 }

@@ -16,9 +16,6 @@ void MyGame::Init(){
 
 	BurnScar::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 	IceScar::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
-	
-
-	TextureManager::Load("white.png");
 
 #ifdef NDEBUG
 	SceneManager::GetInstance()->ChangeScene("Title");
@@ -30,10 +27,6 @@ void MyGame::Init(){
 	SceneManager::GetInstance()->ChangeScene("Debug");
 
 #endif // _DEBUG
-
-
-	/*postEffect_ = std::make_unique<PostEffect>();
-	postEffect_->Init();*/
 
 }
 
@@ -52,29 +45,11 @@ void MyGame::Update(){
 
 void MyGame::Draw(){
 
-	//レンダーテクスチャへの描画
-	//postEffect_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 	SceneManager::GetInstance()->Draw(DirectXCommon::GetInstance()->GetCommandList());
-	//postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
-
-	//DirectXCommon::GetInstance()->preDraw();
-
-	///ゲーム固有処理
-
-	//SceneManager::GetInstance()->Draw(DirectXCommon::GetInstance()->GetCommandList());
-	//postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
-
-	///
-
-	//ImGuiManager::GetInstance()->Draw();
-
-	//DirectXCommon::GetInstance()->postDraw();
 
 }
 
 void MyGame::Finalize(){
-
-
 
 	DSFramework::Finalize();
 }

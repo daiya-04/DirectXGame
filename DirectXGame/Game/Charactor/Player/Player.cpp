@@ -29,8 +29,6 @@ void Player::Init(const std::vector<std::shared_ptr<Model>>& models){
 	hpBar_->SetAnchorpoint({ 0.0f,0.5f });
 	hpBar_->SetSize({ 400.0f,10.0f });
 
-	//行列更新
-	BaseCharactor::Update();
 }
 
 void Player::Update(){

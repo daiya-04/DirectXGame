@@ -35,10 +35,6 @@ public: //静的メンバ関数
 	static void preDraw();
 
 private:
-	//シェーダのコンパイル
-	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
-
-private:
 
 	std::unique_ptr<GPUParticle> flameEff_;
 	std::unique_ptr<GPUParticle> coreEff_;
