@@ -81,12 +81,12 @@ bool Input::GetJoystickState() {
 	dwResult = XInputGetState(0, &joyState);
 
 	if (dwResult == ERROR_SUCCESS) {
-		if (fabs(joyState.Gamepad.sThumbLX) < deadZone_ and fabs(joyState.Gamepad.sThumbLY) < deadZone_) {
+		if (fabs(joyState.Gamepad.sThumbLX) < deadZone_ && fabs(joyState.Gamepad.sThumbLY) < deadZone_) {
 			joyState.Gamepad.sThumbLX = 0;
 			joyState.Gamepad.sThumbLY = 0;
 
 		}
-		if (fabs(joyState.Gamepad.sThumbRX) < deadZone_ and fabs(joyState.Gamepad.sThumbRY) < deadZone_) {
+		if (fabs(joyState.Gamepad.sThumbRX) < deadZone_ && fabs(joyState.Gamepad.sThumbRY) < deadZone_) {
 			joyState.Gamepad.sThumbRX = 0;
 			joyState.Gamepad.sThumbRY = 0;
 
@@ -104,7 +104,7 @@ bool Input::GetJoystickLState() {
 	dwResult = XInputGetState(0, &joyState);
 
 	if (dwResult == ERROR_SUCCESS) {
-		if (fabs(joyState.Gamepad.sThumbLX) < 10000 and fabs(joyState.Gamepad.sThumbLY) < 10000) {
+		if (fabs(joyState.Gamepad.sThumbLX) < 10000 && fabs(joyState.Gamepad.sThumbLY) < 10000) {
 
 			return false;
 		}
@@ -131,7 +131,9 @@ bool Input::TriggerLStick(Stick direction) const {
 		return IsLStickDown();
 	}
 	if (direction == Stick::All) {
-		return (IsLStickRight() || IsLStickLeft() || IsLStickUp() || IsLStickDown());
+		float len = Vector2(static_cast<float>(joyState.Gamepad.sThumbLX), static_cast<float>(joyState.Gamepad.sThumbLY)).Length();
+		float preLen = Vector2(static_cast<float>(preJoyState.Gamepad.sThumbLX), static_cast<float>(preJoyState.Gamepad.sThumbLY)).Length();
+		return (len >= deadZone_ && preLen < deadZone_);
 	}
 	return false;
 }
@@ -151,7 +153,9 @@ bool Input::TriggerRStick(Stick direction) const {
 		return IsRStickDown();
 	}
 	if (direction == Stick::All) {
-		return (IsRStickRight() || IsRStickLeft() || IsRStickUp() || IsRStickDown());
+		float len = Vector2(static_cast<float>(joyState.Gamepad.sThumbRX), static_cast<float>(joyState.Gamepad.sThumbRY)).Length();
+		float preLen = Vector2(static_cast<float>(preJoyState.Gamepad.sThumbRX), static_cast<float>(preJoyState.Gamepad.sThumbRY)).Length();
+		return (len >= deadZone_ && preLen < deadZone_);
 	}
 
 	return false;
@@ -172,12 +176,9 @@ bool Input::ReleaseLStick(Stick direction) const {
 		return (float)(joyState.Gamepad.sThumbLY) >= -deadZone_ && (float)(preJoyState.Gamepad.sThumbLY) < -deadZone_;
 	}
 	if (direction == Stick::All) {
-		return (
-			((float)(joyState.Gamepad.sThumbLX) <= deadZone_ && (float)(preJoyState.Gamepad.sThumbLX) > deadZone_) ||
-			((float)(joyState.Gamepad.sThumbLX) >= -deadZone_ && (float)(preJoyState.Gamepad.sThumbLX) < -deadZone_) ||
-			((float)(joyState.Gamepad.sThumbLY) <= deadZone_ && (float)(preJoyState.Gamepad.sThumbLY) > deadZone_) ||
-			((float)(joyState.Gamepad.sThumbLY) >= -deadZone_ && (float)(preJoyState.Gamepad.sThumbLY) < -deadZone_)
-			);
+		float len = Vector2(static_cast<float>(joyState.Gamepad.sThumbLX), static_cast<float>(joyState.Gamepad.sThumbLY)).Length();
+		float preLen = Vector2(static_cast<float>(preJoyState.Gamepad.sThumbLX), static_cast<float>(preJoyState.Gamepad.sThumbLY)).Length();
+		return (len < deadZone_ && deadZone_ <= preLen);
 	}
 
 	return false;
@@ -187,16 +188,21 @@ bool Input::ReleaseLStick(Stick direction) const {
 bool Input::ReleaseRStick(Stick direction) const {
 
 	if (direction == Stick::Right) {
-		return IsRStickRight();
+		return (float)(joyState.Gamepad.sThumbRX) <= deadZone_ && (float)(preJoyState.Gamepad.sThumbRX) > deadZone_;
 	}
 	if (direction == Stick::Left) {
-		return IsRStickLeft();
+		return (float)(joyState.Gamepad.sThumbRX) >= -deadZone_ && (float)(preJoyState.Gamepad.sThumbRX) < -deadZone_;
 	}
 	if (direction == Stick::Up) {
-		return IsRStickUp();
+		return (float)(joyState.Gamepad.sThumbRY) <= deadZone_ && (float)(preJoyState.Gamepad.sThumbRY) > deadZone_;
 	}
 	if (direction == Stick::Down) {
-		return IsRStickDown();
+		return (float)(joyState.Gamepad.sThumbRY) >= -deadZone_ && (float)(preJoyState.Gamepad.sThumbRY) < -deadZone_;
+	}
+	if (direction == Stick::All) {
+		float len = Vector2(static_cast<float>(joyState.Gamepad.sThumbRX), static_cast<float>(joyState.Gamepad.sThumbRY)).Length();
+		float preLen = Vector2(static_cast<float>(preJoyState.Gamepad.sThumbRX), static_cast<float>(preJoyState.Gamepad.sThumbRY)).Length();
+		return (len < deadZone_ && deadZone_ <= preLen);
 	}
 
 	return false;

@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <wrl.h>
+#include "Vec2.h"
 #include "Vec3.h"
 
 #include <XInput.h>
@@ -79,6 +80,8 @@ public:
 	bool GetJoystickLState();
 
 	Vector3 GetMoveXZ() {
+		float len = Vector2(static_cast<float>(joyState.Gamepad.sThumbLX), static_cast<float>(joyState.Gamepad.sThumbLY)).Length();
+		if (len < deadZone_) { return Vector3(); }
 		return { (float)joyState.Gamepad.sThumbLX, 0.0f, (float)joyState.Gamepad.sThumbLY };
 	}
 

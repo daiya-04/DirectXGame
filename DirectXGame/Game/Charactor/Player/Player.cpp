@@ -100,6 +100,15 @@ void Player::RootUpdate() {
 	Vector3 zeroVector{};
 	const float speed = 0.3f;
 
+	if (Input::GetInstance()->TriggerLStick(Input::Stick::All)) {
+		actionIndex_ = Action::Walking;
+		animations_[actionIndex_].Start();
+	}
+	if (Input::GetInstance()->ReleaseLStick(Input::Stick::All)) {
+		actionIndex_ = Action::Standing;
+		animations_[actionIndex_].Start();
+	}
+
 	move = Input::GetInstance()->GetMoveXZ();
 	move = move / SHRT_MAX * speed;
 
@@ -120,13 +129,8 @@ void Player::RootUpdate() {
 
 	if (move != zeroVector) {
 		direction_ = move;
-		actionIndex_ = Action::Walking;
-		animations_[actionIndex_].Start();
 	}
-	else {
-		actionIndex_ = Action::Standing;
-		animations_[actionIndex_].Start();
-	}
+
 	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
 
 	rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
