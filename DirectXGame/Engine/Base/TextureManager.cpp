@@ -218,13 +218,24 @@ uint32_t TextureManager::LoadUvInternal(const std::string& fileName, const std::
 	ScratchImage image{};
 
 	//WICテクスチャのロード
-	hr = LoadFromWICFile(wFilePath, WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	if (fullPath.ends_with(".dds")) {
+		hr = LoadFromDDSFile(ConvertString(fullPath).c_str(), DDS_FLAGS_NONE, nullptr, image);
+	}
+	else {
+		hr = LoadFromWICFile(ConvertString(fullPath).c_str(), WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	}
 	assert(SUCCEEDED(hr));
 
 	ScratchImage mipImages{};
 	//みっぷマップ生成
-	hr = GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), TEX_FILTER_SRGB, 0, mipImages);
-	assert(SUCCEEDED(hr));
+	if (IsCompressed(image.GetMetadata().format)) { //圧縮フォーマットか調べる
+		mipImages = std::move(image);
+	}
+	else {
+		hr = GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), TEX_FILTER_SRGB, 0, mipImages);
+		assert(SUCCEEDED(hr));
+	}
+
 	const TexMetadata& metadata = mipImages.GetMetadata();
 
 	//metadataを基にResourceの設定
