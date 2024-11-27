@@ -51,4 +51,10 @@ class RandomGenerator {
 		float32_t2 dict = Generate2d() * range + mini;
 		return dict;
 	}
+
+    float32_t GeneratedRange(float32_t mini, float32_t maxi) {
+        float32_t range = maxi - mini;
+        float32_t dict = Generate1d() * range + mini;
+        return dict;
+    }
 };

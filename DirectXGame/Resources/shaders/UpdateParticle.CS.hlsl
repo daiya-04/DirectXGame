@@ -70,6 +70,16 @@ float32_t PerlinNoise(float32_t density, float32_t3 position) {
     return lerp(nxy0, nxy1, u.z);
 }
 
+float32_t FractalSumNoize(float32_t density, float32_t3 position){
+
+	float32_t fn;
+	fn = PerlinNoise(density, position) / 2;
+	fn += PerlinNoise(density * 2, position) / 4;
+	fn += PerlinNoise(density * 4, position) / 8;
+	fn += PerlinNoise(density * 8, position) / 16;
+	return fn;
+}
+
 [numthreads(1024, 1, 1)]
 void main(uint32_t3 DTid : SV_DispatchThreadID) {
 
@@ -120,9 +130,9 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
 
             if(gOverLifeTime.isNoise){
                 float32_t time = gPerFrame.time;
-                float32_t noise0 = PerlinNoise(gOverLifeTime.density, gParticles[particleIndex].translate + float32_t3(time, time, time));
-                float32_t noise1 = PerlinNoise(gOverLifeTime.density, gParticles[particleIndex].translate + float32_t3(time, time, time));
-                float32_t noise2 = PerlinNoise(gOverLifeTime.density, gParticles[particleIndex].translate + float32_t3(time, time, time));
+                float32_t noise0 = FractalSumNoize(gOverLifeTime.density, gParticles[particleIndex].translate + float32_t3(time, time, time));
+                float32_t noise1 = FractalSumNoize(gOverLifeTime.density, gParticles[particleIndex].translate + float32_t3(time, time, time));
+                float32_t noise2 = FractalSumNoize(gOverLifeTime.density, gParticles[particleIndex].translate + float32_t3(time, time, time));
                 gParticles[particleIndex].noiseOffset = float32_t3(noise0, noise1, noise2) * gOverLifeTime.strength;
             }
 
