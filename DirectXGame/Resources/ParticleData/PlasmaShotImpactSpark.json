@@ -1,26 +1,26 @@
 {
-    "FireBallImpactFlame": {
+    "PlasmaShotImpactSpark": {
         "Emitter": {
             "BillboardType": 0,
             "Color": [
-                0.5686274766921997,
-                0.22954972088336945,
-                0.044598229229450226,
+                0.6360674500465393,
+                0.4229142367839813,
+                0.9803921580314636,
                 1.0
             ],
-            "Count": 25,
-            "EmitterType": 2,
-            "Frequency": 0.0,
-            "LifeTime": 1.0,
+            "Count": 60,
+            "EmitterType": 1,
+            "Frequency": 0.01600000075995922,
+            "LifeTime": 0.6000000238418579,
             "Radius": 1.0,
-            "Rotate": 180.0,
-            "Scale": 1.0,
+            "Rotate": 360.0,
+            "Scale": 0.10000000149011612,
             "Size": [
                 1.0,
-                2.0,
+                1.0,
                 1.0
             ],
-            "Speed": 1.0,
+            "Speed": 1.5,
             "Translate": [
                 0.0,
                 0.0,
@@ -31,17 +31,17 @@
             "Gravity": 0.0,
             "Velocity": [
                 0.0,
-                5.0,
+                0.0,
                 0.0
             ],
             "density": 0.0,
-            "endAlpha": 0.0,
+            "endAlpha": 1.0,
             "endColor": [
                 0.0,
                 0.0,
                 0.0
             ],
-            "endScale": 0.4000000059604645,
+            "endScale": 0.0,
             "endSpeed": 0.0,
             "endVelocity": [
                 0.0,
@@ -52,37 +52,37 @@
             "isColor": 0,
             "isConstantVelocity": 0,
             "isNoise": 0,
-            "isRoring": 0,
+            "isRoring": 1,
             "isScale": 1,
-            "isTransSpeed": 1,
+            "isTransSpeed": 0,
             "isTransVelocity": 0,
             "maxRoringSpeed": [
                 0.0,
                 0.0,
-                0.0
+                10.0
             ],
-            "midAlpha": 0.5429999828338623,
+            "midAlpha": 1.0,
             "minRoringSpeed": [
                 0.0,
                 0.0,
-                0.0
+                10.0
             ],
-            "startAlpha": 0.5339999794960022,
+            "startAlpha": 0.0,
             "startColor": [
-                0.8578431606292725,
-                0.4541522264480591,
+                0.0,
+                0.0,
                 0.0
             ],
             "startScale": 0.699999988079071,
-            "startSpeed": 2.0,
+            "startSpeed": 0.0,
             "startVelocity": [
                 0.0,
-                1.0,
+                0.0,
                 0.0
             ],
             "strength": 0.0
         },
         "isLoop": false,
-        "textureName": "smoke_02.png"
+        "textureName": "flare_02.png"
     }
 }

@@ -88,6 +88,7 @@ private:
 	std::unique_ptr<Object3d> obj_;
 	std::unique_ptr<GPUParticle> particle_;
 	std::unique_ptr<GPUParticle> hitEff_;
+	std::unique_ptr<GPUParticle> hitSpark_;
 	std::unique_ptr<GPUParticle> createEff_;
 
 	Shapes::Sphere collider_;

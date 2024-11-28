@@ -140,6 +140,7 @@ void Player::AttackInit() {
 	actionIndex_ = Action::Attack;
 	animations_[actionIndex_].Start(false);
 	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
+	animations_[actionIndex_].TimeReset();
 	animations_[actionIndex_].SetAnimationSpeed(1.0f / 30.0f);
 	skeletons_[actionIndex_].Update();
 	workAttack_.attackParam_ = 0;
@@ -252,7 +253,7 @@ void Player::DeadInit() {
 
 	actionIndex_ = Action::Dead;
 	animations_[actionIndex_].SetAnimationSpeed(1.0f / 60.0f);
-	animations_[actionIndex_].Start();
+	animations_[actionIndex_].Start(false);
 
 	obj_->threshold_ = 0.0f;
 

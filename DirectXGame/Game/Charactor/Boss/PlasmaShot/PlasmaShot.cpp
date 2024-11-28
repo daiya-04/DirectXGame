@@ -12,31 +12,14 @@ void PlasmaShot::Init(const std::shared_ptr<Model>& model) {
 	collider_.radius = 0.5f;
 
 	particle_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 2000));
-	particle_->particleData_.emitter_.color = Vector4(0.43f, 0.2f, 0.67f, 1.0f);
-	particle_->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Sphere;
+	particle_->SetParticleData(ParticleManager::Load("PlasmaShotTrail"));
 	particle_->particleData_.isLoop_ = false;
 
-	particle_->particleData_.overLifeTime_.isAlpha = 1;
-	particle_->particleData_.overLifeTime_.midAlpha = 1.0f;
+	hitEff_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 1024));
+	hitEff_->SetParticleData(ParticleManager::Load("PlasmaShotImpact"));
 
-	hitEff_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 10000));
-	
-	
-	hitEff_->particleData_.emitter_.color = Vector4(0.43f, 0.2f, 0.67f, 1.0f);
-	hitEff_->particleData_.emitter_.radius = 0.1f;
-	hitEff_->particleData_.emitter_.lifeTime = 1.0f;
-	hitEff_->particleData_.emitter_.count = 8000;
-	hitEff_->particleData_.emitter_.scale = 0.1f;
-	hitEff_->particleData_.emitter_.emit = 0;
-	hitEff_->particleData_.emitter_.speed = 1.0f;
-	hitEff_->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Sphere;
-	hitEff_->particleData_.isLoop_ = false;
-
-	hitEff_->particleData_.overLifeTime_.isAlpha = 1;
-	hitEff_->particleData_.overLifeTime_.midAlpha = 1.0f;
-
-	hitEff_->particleData_.overLifeTime_.isTransSpeed = 1;
-	hitEff_->particleData_.overLifeTime_.startSpeed = 5.0f;
+	hitSpark_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
+	hitSpark_->SetParticleData(ParticleManager::Load("PlasmaShotImpactSpark"));
 
 	createEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
 	createEff_->SetParticleData(ParticleManager::Load("PlasmaShotCreate"));
@@ -58,12 +41,15 @@ void PlasmaShot::Update() {
 
 	phaseUpdateTable_[phase_]();
 
-	particle_->Update();
-	hitEff_->Update();
-	createEff_->Update();
 
 	obj_->worldTransform_.UpdateMatrix();
 	particle_->particleData_.emitter_.translate = obj_->GetWorldPos();
+
+	particle_->Update();
+	hitEff_->Update();
+	hitSpark_->Update();
+	createEff_->Update();
+	
 	ColliderUpdate();
 }
 
@@ -78,6 +64,7 @@ void PlasmaShot::Draw(const Camera& camera) {
 void PlasmaShot::DrawParticle(const Camera& camera) {
 	particle_->Draw(camera);
 	hitEff_->Draw(camera);
+	hitSpark_->Draw(camera);
 	createEff_->Draw(camera);
 }
 
@@ -85,9 +72,13 @@ void PlasmaShot::DrawParticle(const Camera& camera) {
 void PlasmaShot::OnCollision() {
 	phaseRequest_ = Phase::kRoot;
 	isLife_ = false;
+
+	particle_->particleData_.isLoop_ = false;
 	
 	hitEff_->particleData_.emitter_.emit = 1;
+	hitSpark_->particleData_.emitter_.emit = 1;
 	hitEff_->particleData_.emitter_.translate = obj_->GetWorldPos();
+	hitSpark_->particleData_.emitter_.translate = obj_->GetWorldPos();
 }
 
 void PlasmaShot::AttackStart() {
@@ -105,7 +96,6 @@ void PlasmaShot::SetAttackData(const Vector3& pos, float interval) {
 void PlasmaShot::RootInit() {
 
 	obj_->worldTransform_.scale_ = {};
-	particle_->particleData_.emitter_.count = 0;
 	particle_->particleData_.isLoop_ = false;
 	createEff_->particleData_.isLoop_ = false;
 
@@ -113,7 +103,7 @@ void PlasmaShot::RootInit() {
 
 void PlasmaShot::RootUpdate() {
 
-	particle_->particleData_.emitter_.frequencyTime = 0.0f;
+
 
 }
 
@@ -152,15 +142,7 @@ void PlasmaShot::ShotInit() {
 
 	targetDict_ = target_->translation_ - obj_->worldTransform_.translation_;
 
-	particle_->particleData_.emitter_.count = 50;
-	particle_->particleData_.emitter_.frequency = 1.0f / 60.0f;
-	particle_->particleData_.emitter_.lifeTime = 1.0f;
-	particle_->particleData_.emitter_.scale = 0.1f;
-	particle_->particleData_.emitter_.radius = 0.3f;
-	particle_->particleData_.emitter_.speed = 0.0f;
-
-	particle_->particleData_.overLifeTime_.startAlpha = 1.0f;
-	particle_->particleData_.overLifeTime_.midAlpha = 0.0f;
+	particle_->particleData_.isLoop_ = true;
 
 	createEff_->particleData_.isLoop_ = false;
 

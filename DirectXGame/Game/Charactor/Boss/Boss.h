@@ -101,7 +101,7 @@ private:
 
 	AttackType attackType_ = AttackType::kElementBall;
 
-	uint32_t maxHp_ = 10;
+	uint32_t maxHp_ = 15;
 
 	bool isFinishDeadMotion_ = false;
 

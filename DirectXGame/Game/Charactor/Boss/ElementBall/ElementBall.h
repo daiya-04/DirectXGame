@@ -86,7 +86,8 @@ private:
 	bool isLife_ = false;
 	bool preIsLife_ = false;
 
-	std::unique_ptr<GPUParticle> particle_;
+	std::unique_ptr<GPUParticle> core_;
+	std::unique_ptr<GPUParticle> smoke_;
 
 public:
 
