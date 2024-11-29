@@ -86,10 +86,15 @@ void Player::OnCollision() {
 void Player::RootInit() {
 
 	isAttack_ = false;
-	actionIndex_ = Action::Standing;
+	if (Input::GetInstance()->TiltLStick(Input::Stick::All)) {
+		actionIndex_ = Action::Walking;
+	}
+	else {
+		actionIndex_ = Action::Standing;
+	}
 	animations_[actionIndex_].Start();
 	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
-
+	
 }
 
 void Player::RootUpdate() {

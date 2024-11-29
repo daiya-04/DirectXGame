@@ -222,6 +222,10 @@ bool Input::TiltLStick(Stick direction) const {
 	if (direction == Stick::Down) {
 		return IsLTiltDown();
 	}
+	if (direction == Stick::All) {
+		float len = Vector2(static_cast<float>(joyState.Gamepad.sThumbLX), static_cast<float>(joyState.Gamepad.sThumbLY)).Length();
+		return (len > deadZone_);
+	}
 	return false;
 }
 
@@ -237,6 +241,10 @@ bool Input::TiltRStick(Stick direction) const {
 	}
 	if (direction == Stick::Down) {
 		return IsRTiltDown();
+	}
+	if (direction == Stick::All) {
+		float len = Vector2(static_cast<float>(joyState.Gamepad.sThumbRX), static_cast<float>(joyState.Gamepad.sThumbRY)).Length();
+		return (len > deadZone_);
 	}
 	return false;
 }
