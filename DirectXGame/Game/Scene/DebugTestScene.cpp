@@ -61,35 +61,6 @@ void DebugTestScene::Init() {
 	human_->worldTransform_.rotation_.y = 3.14f;
 	human_->worldTransform_.translation_.z = 10.0f;
 
-	particle2_.reset(GPUParticle::Create(TextureManager::Load("star.png"), 10000));
-	particle2_->SetParticleData(ParticleManager::Load("testParticle"));
-
-	/*particle2_->particleData_.isLoop_ = true;
-	particle2_->particleData_.emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
-	particle2_->particleData_.emitter_.size = Vector3(1.0f, 1.0f, 1.0f);
-	particle2_->particleData_.emitter_.radius = 1.0f;
-	particle2_->particleData_.emitter_.scale = 0.1f;
-	particle2_->particleData_.emitter_.count = 1;
-	particle2_->particleData_.emitter_.frequency = 1.0f / 60.0f;
-	particle2_->particleData_.emitter_.color = Vector4(0.89f, 0.27f, 0.03f, 1.0f);
-	particle2_->particleData_.emitter_.lifeTime = 1.0f;
-	particle2_->particleData_.emitter_.speed = 0.0f;
-	particle2_->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Sphere;*/
-
-	particle_.reset(GPUParticle::Create(TextureManager::Load("circle.png"),10000));
-	particle_->particleData_.emitter_.translate = Vector3(0.0f, 0.0f, 0.0f);
-	particle_->particleData_.emitter_.size = Vector3(0.0f,0.0f,0.0f);
-	particle_->particleData_.emitter_.radius = 1.0f;
-	particle_->particleData_.emitter_.scale = 0.1f;
-	particle_->particleData_.emitter_.count = 1000;
-	particle_->particleData_.emitter_.frequency = 1.0f / 60.0f;
-	particle_->particleData_.emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-	particle_->particleData_.emitter_.lifeTime = 1.0f;
-	particle_->particleData_.emitter_.speed = 1.0f;
-	particle_->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Circle;
-
-	particle_->particleData_.isLoop_ = false;
-
 	ParticleEditor::GetInstance()->Init();
 
 
@@ -125,13 +96,6 @@ void DebugTestScene::Update() {
 		skinCluster_.Create(skeleton_, standingModel_);
 		animation_.SetAnimationSpeed(1.0f / 60.0f);
 	}
-
-	if (Input::GetInstance()->TriggerKey(DIK_H)) {
-		particle_->particleData_.emitter_.emit = 1;
-	}
-
-	particle_->Update();
-	particle2_->Update();
 
 	ParticleEditor::GetInstance()->Update();
 
@@ -186,8 +150,7 @@ void DebugTestScene::DrawParticleModel() {
 void DebugTestScene::DrawParticle() {
 
 	GPUParticle::preDraw();
-	//core_->Draw(camera_);
-	//particle2_->Draw(camera_);
+	
 	ParticleEditor::GetInstance()->Draw(camera_);
 
 }

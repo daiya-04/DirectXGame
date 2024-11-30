@@ -22,24 +22,25 @@
 
 class DebugTestScene : public IScene {
 public:
+	//初期化
 	void Init()override;
-
+	//更新
 	void Update()override;
-
+	//背景描画
 	void DrawBackGround()override;
-
+	//モデル描画
 	void DrawModel()override;
-
+	//パーティクル3dモデル描画
 	void DrawParticleModel()override;
-
+	//パーティクル描画
 	void DrawParticle()override;
-	
+	//UI描画
 	void DrawUI()override;
-
+	//ポストエフェクトを掛けるモデルなどの描画
 	void DrawPostEffect()override;
-
+	//レンダーテクスチャの描画
 	void DrawRenderTexture()override;
-
+	//デバッグ用
 	void DebugGUI()override;
 
 	~DebugTestScene()override {}
@@ -73,9 +74,6 @@ private:
 	uint32_t burnScarsTex_ = 0;
 	std::unique_ptr<BurnScar> burnScars_;
 	std::unique_ptr<IceScar> iceScar_;
-
-	std::unique_ptr<GPUParticle> particle_;
-	std::unique_ptr<GPUParticle> particle2_;
 
 };
 

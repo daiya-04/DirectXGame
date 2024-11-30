@@ -14,7 +14,7 @@
 
 class ElementBall {
 public:
-
+	//フェーズ
 	enum class Phase {
 		kRoot,
 		kSet,
@@ -24,14 +24,14 @@ public:
 
 	Phase phase_ = Phase::kRoot;
 	std::optional<Phase> phaseRequest_ = Phase::kRoot;
-
+	//フェーズ初期化テーブル
 	std::map<Phase, std::function<void()>> phaseInitTable_{
 		{Phase::kRoot,[this]() {RootInit(); }},
 		{Phase::kSet,[this]() {SetInit(); }},
 		{Phase::kCharge,[this]() {ChargeInit(); }},
 		{Phase::kShot,[this]() {ShotInit(); }},
 	};
-
+	//フェーズ更新テーブル
 	std::map<Phase, std::function<void()>> phaseUpdateTable_{
 		{Phase::kRoot,[this]() {RootUpdate(); }},
 		{Phase::kSet,[this]() {SetUpdate(); }},
@@ -40,32 +40,35 @@ public:
 	};
 
 private:
-
+	//通常
 	void RootInit();
 	void RootUpdate();
+	//攻撃セット
 	void SetInit();
 	void SetUpdate();
+	//溜め
 	void ChargeInit();
 	void ChargeUpdate();
+	//発射
 	void ShotInit();
 	void ShotUpdate();
 
 private:
-
+	//セット時に必要なパラメータ
 	struct WorkSet {
 		Vector3 start{};
 		Vector3 end{};
 		float param = 0.0f;
 	};
-
+	//溜めに必要なパラメータ
 	struct WorkCharge {
 		uint32_t coolTime = 60;
 		uint32_t param = 0;
 	};
-
+	//発射に必要なパラメータ
 	struct WorkShot {
 		bool isTrack = true;
-		const float trackingDist = 25;
+		const float trackingDist = 25.0f;
 		Vector3 move{};
 	};
 
@@ -85,24 +88,23 @@ private:
 
 	bool isLife_ = false;
 	bool preIsLife_ = false;
-
+	//エフェクト
 	std::unique_ptr<GPUParticle> core_;
 	std::unique_ptr<GPUParticle> smoke_;
 
 public:
-
+	//初期化
 	void Init(std::shared_ptr<Model> model);
-
+	//更新
 	void Update();
 	void ColliderUpdate() {
 		collider_.center = obj_->GetWorldPos();
 		collider_.radius = size_.x;
 	}
-
+	//描画
 	void Draw(const Camera& camera);
-
 	void DrawParticle(const Camera& camera);
-
+	//衝突時
 	void OnCollision();
 
 	void SetTarget(const WorldTransform* target) { target_ = target; }

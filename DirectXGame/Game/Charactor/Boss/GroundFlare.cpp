@@ -19,6 +19,7 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 
 	collider_.size = {2.0f,3.0f,2.0f};
 
+	//中心を基準にした発射位置のオフセット
 	offset_[0] = {}; //中心
 	offset_[1] = { -1.5f,0.0f,1.5f }; //左上
 	offset_[2] = { 1.5f,0.0f,1.5f }; //右上
@@ -39,7 +40,7 @@ void GroundFlare::Update() {
 
 	preIsAttack_ = isAttack_;
 	preIsHit_ = isHit_;
-
+	//フェーズ切り替えの初期化
 	if (phaseRequest_) {
 
 		phase_ = phaseRequest_.value();
@@ -48,7 +49,7 @@ void GroundFlare::Update() {
 
 		phaseRequest_ = std::nullopt;
 	}
-
+	//フェーズ更新
 	phaseUpdateTable_[phase_]();
 
 	for (auto& particle : particles_) {
@@ -117,7 +118,7 @@ void GroundFlare::WarningInit() {
 
 	workWarning_.param_ = 0.0f;
 
-	
+	//発射位置の計算
 	for (size_t index = 0; index < flareNum_; index++) {
 		particles_[index]->particleData_.emitter_.translate = centerPos_ + offset_[index];
 		particles_[index]->particleData_.emitter_.translate.y += particles_[index]->particleData_.emitter_.size.y;
@@ -132,7 +133,7 @@ void GroundFlare::WarningUpdate() {
 
 	workWarning_.param_ += 0.01f;
 	float T = Easing::easeInSine(workWarning_.param_);
-
+	//少しずつ大きくする
 	for (auto& warningZone : warningZones_) {
 		warningZone->worldTransform_.scale_ = Lerp(T, Vector3(0.0f, 1.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f));
 	}

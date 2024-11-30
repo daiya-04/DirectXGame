@@ -11,6 +11,7 @@ void PlasmaShot::Init(const std::shared_ptr<Model>& model) {
 
 	collider_.radius = 0.5f;
 
+	///エフェクト設定
 	particle_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 2000));
 	particle_->SetParticleData(ParticleManager::Load("PlasmaShotTrail"));
 	particle_->particleData_.isLoop_ = false;
@@ -23,22 +24,20 @@ void PlasmaShot::Init(const std::shared_ptr<Model>& model) {
 
 	createEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
 	createEff_->SetParticleData(ParticleManager::Load("PlasmaShotCreate"));
-
+	///
 
 }
 
 void PlasmaShot::Update() {
-
+	//フェーズ切り替えの初期化
 	if (phaseRequest_) {
-
 		phase_ = phaseRequest_.value();
 
 		phaseInitTable_[phase_]();
 
 		phaseRequest_ = std::nullopt;
-
 	}
-
+	//フェーズ更新
 	phaseUpdateTable_[phase_]();
 
 
@@ -74,7 +73,7 @@ void PlasmaShot::OnCollision() {
 	isLife_ = false;
 
 	particle_->particleData_.isLoop_ = false;
-	
+	//ヒットエフェクト開始
 	hitEff_->particleData_.emitter_.emit = 1;
 	hitSpark_->particleData_.emitter_.emit = 1;
 	hitEff_->particleData_.emitter_.translate = obj_->GetWorldPos();
@@ -139,7 +138,7 @@ void PlasmaShot::WaitUpdate() {
 void PlasmaShot::ShotInit() {
 
 	obj_->worldTransform_.scale_ = { 0.5f,0.5f,0.5f };
-
+	//ターゲットの方向
 	targetDict_ = target_->translation_ - obj_->worldTransform_.translation_;
 
 	particle_->particleData_.isLoop_ = true;
@@ -153,7 +152,7 @@ void PlasmaShot::ShotUpdate() {
 	velocity_ = targetDict_.Normalize() * speed_;
 
 	obj_->worldTransform_.translation_ += velocity_;
-
+	//地面より下にはいかない
 	if (obj_->worldTransform_.translation_.y <= 0.0f) {
 		OnCollision();
 	}

@@ -11,24 +11,25 @@
 
 class TitleScene : public IScene {
 public:
+	//初期化
 	void Init()override;
-
+	//更新
 	void Update()override;
-
+	//背景描画
 	void DrawBackGround()override;
-
+	//モデル描画
 	void DrawModel()override;
-
+	//パーティクル3dモデル描画
 	void DrawParticleModel()override;
-
+	//パーティクル描画
 	void DrawParticle()override;
-
+	//UI描画
 	void DrawUI()override;
-
+	//ポストエフェクトを掛けるモデルなどの描画
 	void DrawPostEffect()override;
-
+	//レンダーテクスチャの描画
 	void DrawRenderTexture()override;
-
+	//デバッグ用
 	void DebugGUI()override;
 
 	~TitleScene()override;

@@ -11,6 +11,8 @@ void Icicle::Init(const std::shared_ptr<Model>& model) {
 
 	collider_.radius = 1.0f;
 
+
+	///エフェクト設定
 	particle_.reset(GPUParticle::Create(TextureManager::Load("mist.png"),5000));
 
 	particle_->particleData_.emitter_.color = Vector4(0.05f, 0.94f, 0.85f, 1.0f);
@@ -35,6 +37,7 @@ void Icicle::Init(const std::shared_ptr<Model>& model) {
 	iceCreate_->SetParticleData(ParticleManager::Load("IcicleCreate"));
 	iceCreate_->particleData_.isLoop_ = false;
 	
+	///
 
 	isLife_ = false;
 	preIsLife_ = false;
@@ -44,7 +47,7 @@ void Icicle::Init(const std::shared_ptr<Model>& model) {
 void Icicle::Update() {
 
 	preIsLife_ = isLife_;
-
+	//フェーズ切り替えの初期化
 	if (phaseRequest_) {
 
 		phase_ = phaseRequest_.value();
@@ -54,7 +57,7 @@ void Icicle::Update() {
 		phaseRequest_ = std::nullopt;
 
 	}
-
+	//フェーズ更新
 	phaseUpdateTable_[phase_]();
 
 	rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
@@ -85,6 +88,7 @@ void Icicle::OnCollision() {
 	phaseRequest_ = Phase::kRoot;
 	isLife_ = false;
 
+	//ヒットエフェクト開始
 	iceSpark_->particleData_.emitter_.emit = 1;
 	coolAir_->particleData_.emitter_.emit = 1;
 	iceSpark_->particleData_.emitter_.translate = obj_->GetWorldPos();
@@ -139,7 +143,7 @@ void Icicle::CreateUpdate() {
 	createData_.param_ = std::clamp(createData_.param_, 0.0f, 1.0f);
 
 	float T = Easing::easeInSine(createData_.param_);
-
+	//少しずつ大きくする
 	obj_->worldTransform_.scale_ = Lerp(T, Vector3(), Vector3(0.5f, 0.5f, 0.5f));
 
 	if (createData_.param_ >= 1.0f) {
@@ -169,7 +173,6 @@ void Icicle::WaitUpdate() {
 void Icicle::ShotInit() {
 
 	shotData_.param_ = 0.0f;
-	//targetDict_ = (target_->translation_ - obj_->worldTransform_.translation_);
 
 	particle_->particleData_.emitter_.count = 100;
 	particle_->particleData_.emitter_.frequency = 1.0f / 60.0f;
@@ -186,22 +189,24 @@ void Icicle::ShotInit() {
 }
 
 void Icicle::ShotUpdate() {
-
+	//つららとターゲットの向き計算
 	Vector3 diff = target_->translation_ - obj_->worldTransform_.translation_;
+	//距離計算
 	float distance = diff.Length();
-
+	//一定距離まで追尾
 	if (distance >= shotData_.trackingDist_) {
 		targetDict_ = (target_->translation_ - obj_->worldTransform_.translation_);
 	}
 	
 	shotData_.param_ += 0.005f;
 
+	//少しずつプレイヤーの方向に向かせる
 	direction_ = Lerp(shotData_.param_, direction_.Normalize(), targetDict_.Normalize());
 
 	velocity_ = direction_ * speed_;
 
 	obj_->worldTransform_.translation_ += velocity_;
-
+	//地面より下にはいかない
 	if (obj_->worldTransform_.translation_.y <= 0.0f) {
 		OnCollision();
 	}

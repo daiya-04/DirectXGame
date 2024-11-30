@@ -22,7 +22,7 @@ void IcicleManager::Init(const std::shared_ptr<Model>& model) {
 
 void IcicleManager::Update() {
 	preIsAttack_ = isAttack_;
-
+	//攻撃が当たるか地面に着いたら
 	for (uint32_t index = 0; index < icicleNum_; index++) {
 		if (icicles_[index]->DeadFlag()) {
 			OnCollision(index);
@@ -34,7 +34,7 @@ void IcicleManager::Update() {
 	for (auto& iceScar : iceScars_) {
 		iceScar->Update();
 	}
-
+	//弾全部消えたら攻撃終了
 	if (!icicles_[0]->IsLife() && !icicles_[1]->IsLife() && !icicles_[2]->IsLife() && !icicles_[3]->IsLife()) {
 		isAttack_ = false;
 	}
@@ -75,7 +75,7 @@ void IcicleManager::AttackStart() {
 }
 
 void IcicleManager::SetAttackData(const Vector3& pos, const Vector3& direction) {
-
+	//生成場所のオフセット
 	Vector3 offset[icicleNum_] = {
 		{2.0f,4.0f,0.0f},
 		{-2.0f,4.0f,0.0f},

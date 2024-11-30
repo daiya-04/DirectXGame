@@ -6,6 +6,7 @@ void BaseCharactor::Init(const std::vector<std::shared_ptr<Model>>& models) {
 
 	animationModels_ = models;
 
+	//モデルやアニメーションの設定
 	obj_.reset(SkinningObject::Create(animationModels_[actionIndex_]));
 	skinClusters_.resize(animationModels_.size());
 	for (size_t index = 0; index < animationModels_.size(); index++) {
@@ -23,13 +24,14 @@ void BaseCharactor::Update() {
 
 	//行列更新
 	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
-
+	//アニメーション再生
 	animations_[actionIndex_].Play(skeletons_[actionIndex_]);
 
 	skeletons_[actionIndex_].Update();
 	skinClusters_[actionIndex_].Update(skeletons_[actionIndex_]);
-
+	//UI更新
 	UpdateUI();
+	//コライダー更新
 	UpdateCollider();
 }
 

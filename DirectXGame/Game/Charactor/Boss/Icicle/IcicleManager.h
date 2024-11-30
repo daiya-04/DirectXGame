@@ -9,15 +9,15 @@
 
 class IcicleManager {
 public:
-
+	//初期化
 	void Init(const std::shared_ptr<Model>& model);
-
+	//更新
 	void Update();
-
+	//描画
 	void Draw(const Camera& camera);
 	void DrawParticle(const Camera& camera);
 	void DrawScar(const Camera& camera);
-
+	//衝突時
 	void OnCollision(uint32_t index);
 
 	void SetTarget(const WorldTransform* target);
@@ -35,7 +35,7 @@ public:
 	uint32_t GetIcicleCount() const { return icicleNum_; }
 
 private:
-
+	//つららの数
 	static const uint32_t icicleNum_ = 4;
 	
 	std::array<std::unique_ptr<Icicle>, icicleNum_> icicles_;

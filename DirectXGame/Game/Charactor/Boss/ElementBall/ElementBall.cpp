@@ -11,6 +11,7 @@ void ElementBall::Init(std::shared_ptr<Model> model) {
 	obj_.reset(Object3d::Create(model));
 	animation_ = AnimationManager::Load(obj_->GetModel()->name_);
 
+	//エフェクト設定
 	core_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 20000));
 	core_->SetParticleData(ParticleManager::Load("FireBallCore"));
 	core_->particleData_.isLoop_ = false;
@@ -28,7 +29,7 @@ void ElementBall::Init(std::shared_ptr<Model> model) {
 void ElementBall::Update() {
 
 	preIsLife_ = isLife_;
-
+	//フェーズ切り替えの初期化
 	if (phaseRequest_) {
 
 		phase_ = phaseRequest_.value();
@@ -37,7 +38,7 @@ void ElementBall::Update() {
 
 		phaseRequest_ = std::nullopt;
 	}
-
+	//フェーズ更新
 	phaseUpdateTable_[phase_]();
 
 	//行列更新
@@ -123,7 +124,7 @@ void ElementBall::SetInit() {
 }
 
 void ElementBall::SetUpdate() {
-
+	//セットアニメーションが終わったら溜めに
 	if (!animation_.IsPlaying()) {
 		phaseRequest_ = Phase::kCharge;
 		animation_.End();
@@ -156,11 +157,11 @@ void ElementBall::ShotInit() {
 }
 
 void ElementBall::ShotUpdate() {
-
+	//進む方向を計算
 	Vector3 diff = target_->translation_ - obj_->worldTransform_.translation_;
 	float distance = diff.Length();
 	const float kSpeed = 0.5f;
-
+	//一定距離まで追尾
 	if (distance < workShot_.trackingDist) {
 		workShot_.isTrack = false;
 	}

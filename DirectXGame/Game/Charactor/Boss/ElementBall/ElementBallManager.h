@@ -9,19 +9,19 @@
 
 class ElementBallManager {
 public:
-
+	//初期化
 	void Init(const std::shared_ptr<Model>& model, uint32_t tex);
-
+	//更新
 	void Update();
-
+	//描画
 	void Draw(const Camera& camera);
 	void DrawParticle(const Camera& camera);
 	void DrawBurnScars(const Camera& camera);
-
+	//衝突時
 	void OnCollision(uint32_t index);
 
 	void SetTartget(const WorldTransform* target);
-
+	//データセット
 	void SetAttackData(const Vector3& pos);
 
 	void AttackStart();
@@ -38,7 +38,7 @@ public:
 	
 
 private:
-
+	//玉の数
 	static const uint32_t elementBallNum_ = 4;
 
 	std::array<std::unique_ptr<ElementBall>, elementBallNum_> elementBalls_;

@@ -7,14 +7,14 @@
 
 class PlasmaShotManager {
 public:
-
+	//初期化
 	void Init(const std::shared_ptr<Model>& model);
-
+	//更新
 	void Update();
-
+	//描画
 	void Draw(const Camera& camera);
 	void DrawParticle(const Camera& camera);
-
+	//衝突時
 	void OnCollision(uint32_t index);
 
 	void SetTarget(const WorldTransform* target);
@@ -32,7 +32,7 @@ public:
 	uint32_t GetPlasmaShotCount() const { return plasmaShotNum_; }
 
 private:
-
+	//電気玉の数
 	static const uint32_t plasmaShotNum_ = 3;
 
 	std::array<std::unique_ptr<PlasmaShot>, plasmaShotNum_> plasmaShots_;

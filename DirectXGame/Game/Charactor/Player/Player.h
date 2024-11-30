@@ -14,7 +14,7 @@ class GameScene;
 
 class Player : public BaseCharactor {
 private: //ふるまい用メンバ変数
-
+	//行動
 	enum class Behavior {
 		kRoot,
 		kAttack,
@@ -25,13 +25,14 @@ private: //ふるまい用メンバ変数
 	Behavior behavior_ = Behavior::kRoot;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
+	//行動初期化テーブル
 	std::map<Behavior, std::function<void()>> behaviorInitTable_{
 		{Behavior::kRoot,[this]() {RootInit(); }},
 		{Behavior::kAttack,[this]() {AttackInit(); }},
 		{Behavior::kDash,[this]() {DashInit(); }},
 		{Behavior::kDead,[this]() {DeadInit(); }},
 	};
-
+	//行動更新テーブル
 	std::map<Behavior, std::function<void()>> behaviorUpdateTable_{
 		{Behavior::kRoot,[this]() {RootUpdate(); }},
 		{Behavior::kAttack,[this]() {AttackUpdate(); }},
@@ -66,7 +67,7 @@ public:
 		Vector3 dashDirection_{};
 		uint32_t dashTime_ = 10;
 	};
-
+	//攻撃に必要なパラメータ
 	struct WorkAttack {
 		//攻撃中の現在の時間
 		uint32_t attackParam_ = 0;
@@ -81,7 +82,7 @@ public:
 		//攻撃の速度
 		Vector3 velocity_{};
 	};
-
+	//コンボに必要なパラメータ
 	struct ComboAttack {
 		//チャージの時間
 		uint32_t chargeTime_;
@@ -94,6 +95,7 @@ public:
 	static const int comboNum_ = 3;
 	static const std::array<ComboAttack, comboNum_> kComboAttacks_;
 
+	//アクション(アニメーション)
 	enum Action {
 		Standing,
 		Walking,
@@ -104,21 +106,21 @@ public:
 	};
 
 private:
-
+	//ターゲット(ボス)
 	const WorldTransform* target_ = nullptr;
-
+	//最大HP
 	int32_t maxHp_ = 20;
-
+	//攻撃の射程
 	float attackRange_ = 20.0f;
 
 	WorkDash workDash_;
 	WorkAttack workAttack_;
-
+	//追従カメラ
 	FollowCamera* followCamera_ = nullptr;
 
 	const float kDeltaTime_ = 1.0f / 60.0f;
 
-	bool isAttack_ = false;
+	//死亡演出(アニメーション)が終わったか
 	bool isFinishDeadMotion_ = false;
 
 	GameScene* gameScene_ = nullptr;
@@ -137,21 +139,18 @@ public:
 	void Draw(const Camera& camera) override;
 	//UI描画
 	void DrawUI() override;
-
+	//衝突時
 	void OnCollision();
 
 	//カメラの設定
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
-
+	//ターゲット設定
 	void SetTerget(const WorldTransform* target) { target_ = target; }
-
+	//ゲームシーン設定
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
-
-	bool IsAttack() const { return isAttack_; }
+	//死亡アニメーションが終わったか
 	bool IsFinishDeadMotion() const { return isFinishDeadMotion_; }
 	uint32_t GetHP() const { return hp_; }
-
-	bool IsDeadAction() override { return (actionIndex_ == Action::Dead); }
 
 };
 

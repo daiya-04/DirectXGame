@@ -14,6 +14,8 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 		burnScars.reset(BurnScar::Create(tex));
 	}
 
+
+	///エフェクト設定
 	for (auto& fireField : fireFields_) {
 		fireField.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 15000));
 		fireField->particleData_.emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -39,6 +41,7 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 		fireSpark.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 2048));
 		fireSpark->SetParticleData(ParticleManager::Load("FireBallFireSpark"));
 	}
+	///
 
 	isAttack_ = false;
 	preIsAttack_ = false;
@@ -50,7 +53,7 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 void ElementBallManager::Update() {
 	preIsAttack_ = isAttack_;
 	preIsShot_ = isShot_;
-
+	//攻撃が当たるか地面に着いたら
 	for (uint32_t index = 0; index < elementBalls_.size();index++) {
 		if (elementBalls_[index]->DeadFlag()) {
 			OnCollision(index);
@@ -62,7 +65,7 @@ void ElementBallManager::Update() {
 	for (auto& burnScars : burnScareses_) {
 		burnScars->Update();
 	}
-
+	//発射中か否か
 	if (elementBalls_[0]->GetPhase() == ElementBall::Phase::kShot) {
 		isShot_ = true;
 	}else {
@@ -70,7 +73,7 @@ void ElementBallManager::Update() {
 	}
 
 	
-
+	//弾全部消えたら攻撃終了
 	if (!elementBalls_[0]->IsLife() && !elementBalls_[1]->IsLife() && !elementBalls_[2]->IsLife() && !elementBalls_[3]->IsLife()) {
 		isAttack_ = false;
 	}
@@ -164,7 +167,7 @@ void ElementBallManager::SetAttackData(const Vector3& pos) {
 		{4.0f,0.0f,-2.0f},
 		{-4.0f,0.0f,-2.0f},
 	};
-
+	//生成位置の設定
 	for (uint32_t index = 0; index < 4; index++) {
 		elementBalls_[index]->SetAttackData(pos + offset[index], 2 + index);
 	}

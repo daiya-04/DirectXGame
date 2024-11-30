@@ -15,6 +15,8 @@ void PlayerAttack::Init(std::shared_ptr<Model> model, const Vector3& startPos, c
 	collider_.center = GetWorldPos();
 	collider_.radius = 0.3f;
 
+	///エフェクト設定
+
 	particle_.reset(GPUParticle::Create(TextureManager::Load("particle.png"), 10000));
 
 	particle_->particleData_.emitter_.radius = 0.25f;
@@ -33,23 +35,13 @@ void PlayerAttack::Init(std::shared_ptr<Model> model, const Vector3& startPos, c
 	particle_->particleData_.overLifeTime_.startScale = 0.1f;
 	particle_->particleData_.overLifeTime_.endScale = 0.0f;
 
+	///
+
 }
 
 void PlayerAttack::Update() {
-
+	//移動
 	obj_->worldTransform_.translation_ += velocity_;
-
-	
-
-	if (--lifeCount_ <= 0) {
-		obj_->worldTransform_.scale_ -= Vector3(0.1f, 0.1f, 0.1f);
-	}
-
-	lifeCount_ = max(lifeCount_, 0);
-
-	if (obj_->worldTransform_.scale_.x <= 0.0f) {
-		isLife_ = false;
-	}
 
 	obj_->worldTransform_.UpdateMatrix();
 	particle_->particleData_.emitter_.translate = GetWorldPos();
@@ -57,6 +49,7 @@ void PlayerAttack::Update() {
 	
 	particle_->Update();
 
+	//射程外で消える
 	if ((GetWorldPos() - startPos_).Length() >= firingRange_) {
 		isLife_ = false;
 	}
@@ -64,9 +57,7 @@ void PlayerAttack::Update() {
 }
 
 void PlayerAttack::Draw(const Camera& camera) {
-
 	obj_->Draw(camera);
-
 }
 
 void PlayerAttack::DrawParticle(const Camera& camera) {

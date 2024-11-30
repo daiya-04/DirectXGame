@@ -585,9 +585,6 @@ void GameScene::DebugGUI(){
 
 	ImGui::Checkbox("GameStop", &isGameStop_);
 
-	int count = finishCount_ / 60;
-	ImGui::InputInt("ScenChangeCount", &count);
-
 	if (ImGui::Button("StageFileLoad")) {
 		SceneManager::GetInstance()->ChangeScene("Game");
 	}

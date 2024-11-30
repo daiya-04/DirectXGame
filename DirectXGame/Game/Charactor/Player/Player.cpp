@@ -17,14 +17,18 @@ const std::array<Player::ComboAttack, Player::comboNum_> Player::kComboAttacks_ 
 
 void Player::Init(const std::vector<std::shared_ptr<Model>>& models){
 
+	//アクション設定
 	actionIndex_ = Action::Standing;
 	
+	//モデル関連の初期化
 	BaseCharactor::Init(models);
 
+	//状態の設定
 	behaviorRequest_ = Behavior::kRoot;
-
+	//HPの設定
 	hp_ = maxHp_;
 
+	//UIの設定
 	hpBar_.reset(Sprite::Create(TextureManager::Load("Player_HP.png"), {440.0f,700.0f}));
 	hpBar_->SetAnchorpoint({ 0.0f,0.5f });
 	hpBar_->SetSize({ 400.0f,10.0f });
@@ -33,6 +37,7 @@ void Player::Init(const std::vector<std::shared_ptr<Model>>& models){
 
 void Player::Update(){
 
+	//状態が切り替わった時の初期化処理
 	if (behaviorRequest_) {
 
 		behavior_ = behaviorRequest_.value();
@@ -42,26 +47,28 @@ void Player::Update(){
 		behaviorRequest_ = std::nullopt;
 	}
 
+	//状態の更新
 	behaviorUpdateTable_[behavior_]();
 
+	///プレイヤーの移動制限
 	obj_->worldTransform_.translation_.x = std::clamp(obj_->worldTransform_.translation_.x, -50.0f, 50.0f);
 	obj_->worldTransform_.translation_.z = std::clamp(obj_->worldTransform_.translation_.z, -20.0f, 80.0f);
+	///
 
 	BaseCharactor::Update();
-
-	UpdateUI();
 }
 
 void Player::UpdateUI() {
-
+	//現在のHPのパーセント計算
 	float percent = static_cast<float>(hp_) / static_cast<float>(maxHp_);
-
+	//HPのUIを割合に合わせる
 	hpBar_->SetSize({ 400.0f * percent,10.0f });
 }
 
 void Player::Draw(const Camera& camera){
 
 #ifdef _DEBUG
+	//衝突範囲の可視化
 	ShapesDraw::DrawOBB(collider_, camera);
 #endif // _DEBUG
 
@@ -77,6 +84,7 @@ void Player::DrawUI() {
 
 void Player::OnCollision() {
 	hp_--;
+	//HPが0になったら...
 	if (hp_ <= 0) {
 		isDead_ = true;
 		behaviorRequest_ = Behavior::kDead;
@@ -85,11 +93,10 @@ void Player::OnCollision() {
 
 void Player::RootInit() {
 
-	isAttack_ = false;
+	//スティック入力されたままだったら移動アニメーションに
 	if (Input::GetInstance()->TiltLStick(Input::Stick::All)) {
 		actionIndex_ = Action::Walking;
-	}
-	else {
+	}else {
 		actionIndex_ = Action::Standing;
 	}
 	animations_[actionIndex_].Start();
@@ -99,7 +106,11 @@ void Player::RootInit() {
 
 void Player::RootUpdate() {
 
+	///移動計算
+
+	//移動ベクトル
 	Vector3 move{};
+
 	Vector3 zeroVector{};
 	const float speed = 0.3f;
 
@@ -125,17 +136,22 @@ void Player::RootUpdate() {
 	//	behaviorRequest_ = Behavior::kDash;
 	//}
 
+	//カメラの向きを基準に上下左右に移動するようにする
 	move = TransformNormal(move, MakeRotateYMatrix(followCamera_->GetCamera().rotation_.y));
 
 	obj_->worldTransform_.translation_ += move;
 	obj_->worldTransform_.translation_.y = 0.0f;
 
+	///
+
+	//移動するなら進む方向を設定する
 	if (move != zeroVector) {
 		direction_ = move;
 	}
 
 	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
 
+	//回転行列作成
 	rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
 
 }
@@ -148,33 +164,36 @@ void Player::AttackInit() {
 	animations_[actionIndex_].TimeReset();
 	animations_[actionIndex_].SetAnimationSpeed(1.0f / 30.0f);
 	skeletons_[actionIndex_].Update();
+
+	//攻撃用パラメータの初期化
 	workAttack_.attackParam_ = 0;
 	workAttack_.speed_ = 1.0f;
 
+	//ターゲットがいたら
 	if (target_) {
-
+		//攻撃の発射方向計算
 		Vector3 direction = target_->translation_ - obj_->worldTransform_.translation_;
-
+		//射程内ならターゲット方向に向く
 		if (direction.Length() <= attackRange_) {
 			rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction);
 		}
-		
 	}
 	
 }
 
 void Player::AttackUpdate() {
-
+	//1コンボ目、2コンボ目だったら入力を受け付ける
 	if (workAttack_.comboIndex_ < comboNum_ - 1) {
 		if (Input::GetInstance()->TriggerButton(Input::Button::X)) {
 			workAttack_.comboNext_ = true;
 		}
 	}
-
+	//攻撃の総時間計算
 	uint32_t totalAttackTime = kComboAttacks_[workAttack_.comboIndex_].attackTime_;
 	totalAttackTime += kComboAttacks_[workAttack_.comboIndex_].chargeTime_;
 	totalAttackTime += kComboAttacks_[workAttack_.comboIndex_].recoveryTime_;
 
+	//今コンボのどのフェーズか
 	if (workAttack_.attackParam_ >= kComboAttacks_[workAttack_.comboIndex_].chargeTime_ + kComboAttacks_[workAttack_.comboIndex_].attackTime_) {
 		workAttack_.InComboPhase_ = 2;
 	}else if (workAttack_.attackParam_ >= kComboAttacks_[workAttack_.comboIndex_].chargeTime_) {
@@ -183,14 +202,9 @@ void Player::AttackUpdate() {
 		workAttack_.InComboPhase_ = 0;
 	}
 
-	if (workAttack_.InComboPhase_ == 1) {
-		isAttack_ = true;
-	}else {
-		isAttack_ = false;
-	}
-
+	//攻撃が終了したら
 	if (workAttack_.attackParam_ >= totalAttackTime) {
-		//animations_[actionIndex_].Start();
+		//攻撃が続くか
 		if (workAttack_.comboNext_) {
 			workAttack_.comboNext_ = false;
 			workAttack_.comboIndex_++;
@@ -199,6 +213,7 @@ void Player::AttackUpdate() {
 			AttackInit();
 		}
 		else {
+			//続かないなら通常行動に戻る
 			behaviorRequest_ = Behavior::kRoot;
 			workAttack_.comboIndex_ = 0;
 			return;
@@ -207,12 +222,12 @@ void Player::AttackUpdate() {
 
 	
 	if (workAttack_.attackParam_ == kComboAttacks_[workAttack_.comboIndex_].chargeTime_) {
-
+		//攻撃を発射する方向の計算
 		Vector3 direction = { 0.0f,0.0f,1.0f };
 		direction = TransformNormal(direction, rotateMat_);
 		workAttack_.velocity_ = direction.Normalize() * workAttack_.speed_;
 
-		///
+		///攻撃の玉の生成
 		
 		PlayerAttack* playerAttack = new PlayerAttack();
 		std::shared_ptr<Model> attackModel = ModelManager::LoadOBJ("PlayerBullet");
@@ -267,7 +282,7 @@ void Player::DeadInit() {
 }
 
 void Player::DeadUpdate() {
-
+	//アニメーション終了
 	if (!animations_[actionIndex_].IsPlaying()) {
 		isFinishDeadMotion_ = true;
 	}
