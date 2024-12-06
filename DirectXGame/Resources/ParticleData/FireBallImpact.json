@@ -1,0 +1,364 @@
+{
+    "FireBallImpact": {
+        "Core": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    1.0,
+                    0.029411792755126953,
+                    0.029411792755126953,
+                    0.0
+                ],
+                "Count": 20,
+                "EmitterType": 1,
+                "Frequency": 0.01600000075995922,
+                "LifeTime": 0.30000001192092896,
+                "Radius": 0.0010000000474974513,
+                "Rotate": 360.0,
+                "Scale": 1.0,
+                "Size": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Speed": 0.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.6176470518112183,
+                    0.04238756000995636,
+                    0.04238756000995636
+                ],
+                "endScale": 4.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 1,
+                "isConstantVelocity": 0,
+                "isNoise": 0,
+                "isRoring": 0,
+                "isScale": 1,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 0.5,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.9803921580314636,
+                    0.5376890897750854,
+                    0.14417533576488495
+                ],
+                "startScale": 0.0,
+                "startSpeed": 0.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": false,
+            "textureName": "circle_02.png"
+        },
+        "Smoke": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    1.0,
+                    0.45761245489120483,
+                    0.029411792755126953,
+                    0.0
+                ],
+                "Count": 25,
+                "EmitterType": 2,
+                "Frequency": 0.1599999964237213,
+                "LifeTime": 1.0,
+                "Radius": 1.0,
+                "Rotate": 360.0,
+                "Scale": 1.0,
+                "Size": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Speed": 1.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.6029411554336548,
+                    0.03251153975725174,
+                    0.03251153975725174
+                ],
+                "endScale": 0.4000000059604645,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 1,
+                "isConstantVelocity": 0,
+                "isNoise": 0,
+                "isRoring": 0,
+                "isScale": 1,
+                "isTransSpeed": 1,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 0.5,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.9901960492134094,
+                    0.4619773030281067,
+                    0.09222415089607239
+                ],
+                "startScale": 0.699999988079071,
+                "startSpeed": 2.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": false,
+            "textureName": "smoke_02.png"
+        },
+        "fireSpark": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    0.9656862616539001,
+                    0.4644649922847748,
+                    0.2840253412723541,
+                    0.0
+                ],
+                "Count": 300,
+                "EmitterType": 2,
+                "Frequency": 0.0,
+                "LifeTime": 1.5,
+                "Radius": 2.0,
+                "Rotate": 0.0,
+                "Scale": 0.05000000074505806,
+                "Size": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Speed": 0.20000000298023224,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    0.30000001192092896,
+                    0.0
+                ],
+                "density": [
+                    0.05,
+                    0.05,
+                    0.05
+                ],
+                "endAlpha": 1.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 0.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 0,
+                "isColor": 0,
+                "isConstantVelocity": 1,
+                "isNoise": 1,
+                "isRoring": 0,
+                "isScale": 1,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 1.0,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 1.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 0.05000000074505806,
+                "startSpeed": 0.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 1.0
+            },
+            "isLoop": false,
+            "textureName": "circle.png"
+        },
+        "ring": {
+            "Emitter": {
+                "BillboardType": 1,
+                "Color": [
+                    0.9215686321258545,
+                    0.5176515579223633,
+                    0.1987696886062622,
+                    0.0
+                ],
+                "Count": 20,
+                "EmitterType": 5,
+                "Frequency": 0.0,
+                "LifeTime": 0.15000000596046448,
+                "Radius": 0.0010000000474974513,
+                "Rotate": 0.0,
+                "Scale": 1.0,
+                "Size": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Speed": 0.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 4.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 0,
+                "isConstantVelocity": 0,
+                "isNoise": 0,
+                "isRoring": 0,
+                "isScale": 1,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 0.5,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 1.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 0.0,
+                "startSpeed": 0.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": false,
+            "textureName": "ring_01.png"
+        }
+    }
+}

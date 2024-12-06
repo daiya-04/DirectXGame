@@ -77,7 +77,7 @@ public:
 	void AttackStart();
 
 	void SetTarget(const WorldTransform* target) { target_ = target; }
-	void SetAttackData(const Vector3& pos, const Vector3& direction);
+	void SetAttackData(const Vector3& pos, const Vector3& direction, float interval);
 
 	Vector3 GetWorldPos() const { return obj_->GetWorldPos(); }
 	Shapes::Sphere GetCollider() { return collider_; }
@@ -92,10 +92,13 @@ private:
 	Matrix4x4 rotateMat_ = MakeIdentity44();
 
 	//エフェクト
-	std::unique_ptr<GPUParticle> particle_;
-	std::unique_ptr<GPUParticle> iceCreate_;
-	std::unique_ptr<GPUParticle> iceSpark_;
-	std::unique_ptr<GPUParticle> coolAir_;
+	//std::unique_ptr<GPUParticle> particle_;
+	//std::unique_ptr<GPUParticle> iceCreate_;
+	//std::unique_ptr<GPUParticle> iceSpark_;
+	//std::unique_ptr<GPUParticle> coolAir_;
+	std::map<std::string, std::unique_ptr<GPUParticle>> createEffect_;
+	std::map<std::string, std::unique_ptr<GPUParticle>> hitEffect_;
+	std::map<std::string, std::unique_ptr<GPUParticle>> trailEff_;
 
 	Shapes::Sphere collider_;
 

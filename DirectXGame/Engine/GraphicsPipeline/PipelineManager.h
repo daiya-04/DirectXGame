@@ -17,6 +17,8 @@ public:
 
 	void preDispatch(const std::string& pipelineType);
 
+	void preDrawScreen();
+
 private:
 
 	std::map<std::string, std::unique_ptr<BaseGraphicsPipeline>> graphicsPipelines_;

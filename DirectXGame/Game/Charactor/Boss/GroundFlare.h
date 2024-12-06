@@ -96,7 +96,8 @@ private:
 	//噴射する数
 	static const uint32_t flareNum_ = 5;
 
-	std::array<std::unique_ptr<GPUParticle>, flareNum_> particles_;
+	//std::array<std::unique_ptr<GPUParticle>, flareNum_> particles_;
+	std::array<std::map<std::string, std::unique_ptr<GPUParticle>>, flareNum_> effects_;
 
 	//予測
 	std::array<std::unique_ptr<Object3d>, flareNum_> warningZones_;

@@ -111,7 +111,7 @@ public:
 		Vector3 maxRoringSpeed;
 
 		uint32_t isNoise;
-		float density;
+		Vector3 density;
 		float strength;
 
 	};
@@ -193,11 +193,13 @@ public:
 
 	void Update();
 
-	void Draw(const Camera& camera);
+	void Draw(const Camera& camera, bool isScreen = false);
 
 	void SetParticleData(const ParticleData& particleData);
 
 	void SetTextureHandle();
+
+	void Emit() { particleData_.emitter_.emit = 1; }
 
 private:
 

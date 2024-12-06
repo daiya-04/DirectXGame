@@ -63,6 +63,8 @@ void DebugTestScene::Init() {
 
 	ParticleEditor::GetInstance()->Init();
 
+	effect_ = ParticleManager::Load("FireBallImpact");
+
 
 	Update();
 }
@@ -97,6 +99,12 @@ void DebugTestScene::Update() {
 		animation_.SetAnimationSpeed(1.0f / 60.0f);
 	}
 
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_H)) {
+		for (auto& [group, particle] : effect_) {
+			particle->Emit();
+		}
+	}
+
 	ParticleEditor::GetInstance()->Update();
 
 	human_->worldTransform_.UpdateMatrix();
@@ -106,6 +114,10 @@ void DebugTestScene::Update() {
 	skinCluster_.Update(skeleton_);
 
 	obj_->worldTransform_.UpdateMatrix();
+
+	for (auto& [group, particle] : effect_) {
+		particle->Update();
+	}
 
 	camera_.UpdateViewMatrix();
 	pointLight_.Update();
@@ -150,6 +162,10 @@ void DebugTestScene::DrawParticleModel() {
 void DebugTestScene::DrawParticle() {
 
 	GPUParticle::preDraw();
+
+	for (auto& [group, particle] : effect_) {
+		particle->Draw(camera_);
+	}
 	
 	ParticleEditor::GetInstance()->Draw(camera_);
 

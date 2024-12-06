@@ -87,7 +87,14 @@ void GPUParticle::Update() {
 
 }
 
-void GPUParticle::Draw(const Camera& camera) {
+void GPUParticle::Draw(const Camera& camera, bool isScreen) {
+
+	if (isScreen) {
+		PipelineManager::GetInstance()->preDrawScreen();
+	}
+	else {
+		PipelineManager::GetInstance()->preDraw("GPUParticle");
+	}
 
 	perViewData_->viewProjectionMat_ = camera.GetMatView() * camera.GetMatProj();
 	perViewData_->billboardMat_ = camera.GetBillBoadMatrix();

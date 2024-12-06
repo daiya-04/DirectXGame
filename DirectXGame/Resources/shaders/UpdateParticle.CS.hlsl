@@ -130,9 +130,9 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
 
             if(gOverLifeTime.isNoise){
                 float32_t time = gPerFrame.time;
-                float32_t noise0 = FractalSumNoize(gOverLifeTime.density, gParticles[particleIndex].translate + float32_t3(time, time, time));
-                float32_t noise1 = FractalSumNoize(gOverLifeTime.density, gParticles[particleIndex].translate + float32_t3(time, time, time));
-                float32_t noise2 = FractalSumNoize(gOverLifeTime.density, gParticles[particleIndex].translate + float32_t3(time, time, time));
+                float32_t noise0 = PerlinNoise(gOverLifeTime.density.x, gParticles[particleIndex].translate + float32_t3(time, time, time));
+                float32_t noise1 = PerlinNoise(gOverLifeTime.density.y, gParticles[particleIndex].translate + float32_t3(time, time, time));
+                float32_t noise2 = PerlinNoise(gOverLifeTime.density.z, gParticles[particleIndex].translate + float32_t3(time, time, time));
                 gParticles[particleIndex].noiseOffset = float32_t3(noise0, noise1, noise2) * gOverLifeTime.strength;
             }
 

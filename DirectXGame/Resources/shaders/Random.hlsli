@@ -6,6 +6,7 @@ float32_t rand3dTo1d(float32_t3 value, float32_t3 dotDir = float32_t3(12.9898, 7
     float32_t random = dot(smallValue, dotDir);
     
     random = frac(sin(random) * 43758.5453123);
+    random = random * (1.0f - 0.01f) + 0.01f;
     return random;
 }
 

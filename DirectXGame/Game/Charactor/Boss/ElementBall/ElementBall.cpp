@@ -12,13 +12,19 @@ void ElementBall::Init(std::shared_ptr<Model> model) {
 	animation_ = AnimationManager::Load(obj_->GetModel()->name_);
 
 	//エフェクト設定
-	core_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 20000));
+	/*core_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 20000));
 	core_->SetParticleData(ParticleManager::Load("FireBallCore"));
 	core_->particleData_.isLoop_ = false;
 
 	smoke_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
 	smoke_->SetParticleData(ParticleManager::Load("FireBallSmoke"));
-	smoke_->particleData_.isLoop_ = false;
+	smoke_->particleData_.isLoop_ = false;*/
+
+	effect_ = ParticleManager::Load("FireBall");
+
+	for (auto& [name, particle] : effect_) {
+		particle->particleData_.isLoop_ = false;
+	}
 	
 
 	isLife_ = false;
@@ -49,10 +55,17 @@ void ElementBall::Update() {
 		obj_->worldTransform_.matWorld_ = animation_.GetLocalMatrix() * obj_->worldTransform_.matWorld_;
 	}
 
-	core_->particleData_.emitter_.translate = GetWorldPos();
-	smoke_->particleData_.emitter_.translate = GetWorldPos();
-	core_->Update();
-	smoke_->Update();
+	//core_->particleData_.emitter_.translate = GetWorldPos();
+	//smoke_->particleData_.emitter_.translate = GetWorldPos();
+	for (auto& [name, particle] : effect_) {
+		particle->particleData_.emitter_.translate = GetWorldPos();
+	}
+	//core_->Update();
+	//smoke_->Update();
+
+	for (auto& [name, particle] : effect_) {
+		particle->Update();
+	}
 
 	ColliderUpdate();
 }
@@ -70,8 +83,11 @@ void ElementBall::Draw(const Camera& camera) {
 }
 
 void ElementBall::DrawParticle(const Camera& camera) {
-	core_->Draw(camera);
-	smoke_->Draw(camera);
+	//core_->Draw(camera);
+	//smoke_->Draw(camera);
+	for (auto& [name, particle] : effect_) {
+		particle->Draw(camera);
+	}
 }
 
 void ElementBall::OnCollision() {
@@ -86,8 +102,12 @@ void ElementBall::AttackStart() {
 	obj_->worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	isLife_ = true;
 
-	core_->particleData_.isLoop_ = true;
-	smoke_->particleData_.isLoop_ = true;
+	//core_->particleData_.isLoop_ = true;
+	//smoke_->particleData_.isLoop_ = true;
+
+	for (auto& [name, particle] : effect_) {
+		particle->particleData_.isLoop_ = true;
+	}
 
 	obj_->worldTransform_.UpdateMatrix();
 }
@@ -96,16 +116,22 @@ void ElementBall::SetAttackData(const Vector3& startPos, uint32_t interval) {
 
 	workSet_.start = startPos;
 	workCharge_.coolTime = 60 * interval;
-	core_->particleData_.emitter_.translate = startPos;
-	smoke_->particleData_.emitter_.translate = startPos;
+	//core_->particleData_.emitter_.translate = startPos;
+	//smoke_->particleData_.emitter_.translate = startPos;
+	for (auto& [name, particle] : effect_) {
+		particle->particleData_.emitter_.translate = startPos;
+	}
 
 }
 
 void ElementBall::RootInit() {
 
 	obj_->worldTransform_.scale_ = {};
-	core_->particleData_.isLoop_ = false;
-	smoke_->particleData_.isLoop_ = false;
+	//core_->particleData_.isLoop_ = false;
+	//smoke_->particleData_.isLoop_ = false;
+	for (auto& [name, particle] : effect_) {
+		particle->particleData_.isLoop_ = false;
+	}
 	animation_.TimeReset();
 
 }

@@ -111,8 +111,9 @@ private:
 
 private:
 	//登場演出
-	std::unique_ptr<GPUParticle> appearEff_;
-	std::unique_ptr<GPUParticle> appearEff2_;
+	/*std::unique_ptr<GPUParticle> appearEff_;
+	std::unique_ptr<GPUParticle> appearEff2_;*/
+	std::map<std::string, std::unique_ptr<GPUParticle>> effect_;
 	//攻撃種類
 	AttackType attackType_ = AttackType::kElementBall;
 	//最大HP

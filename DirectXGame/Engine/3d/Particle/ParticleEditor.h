@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 class ParticleEditor {
 public:
@@ -26,16 +27,22 @@ private:
 
 private:
 
-	std::unique_ptr<GPUParticle> particle_;
+	std::map<std::string, std::unique_ptr<GPUParticle>> particles_;
+
+	bool isLoop_ = true;
 
 	std::string saveFileName_;
+	std::string addParticelName_;
 	const std::string kDirectoryPath_ = "Resources/ParticleData/";
 
-	std::vector<std::string> billboardComboList_;
-	std::string currentBillboardMode_;
+	std::vector<std::string> billboardList_;
+	std::vector<std::string> emitterShapeList_;
 
-	std::vector<std::string> emitterShapesComboList_;
-	std::string currentEmitterShape_;
+	std::map<std::string,std::vector<std::string>> billboardComboList_;
+	std::map<std::string, std::string> currentBillboardMode_;
+
+	std::map<std::string,std::vector<std::string>> emitterShapeComboList_;
+	std::map<std::string, std::string> currentEmitterShape_;
 
 };
 

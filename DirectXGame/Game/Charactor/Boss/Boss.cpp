@@ -20,13 +20,17 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	BaseCharactor::Init(models);
 
 	///エフェクト初期化
-	appearEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
+	/*appearEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
 	appearEff2_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
 
 	appearEff_->SetParticleData(ParticleManager::Load("BossEnterParticle"));
 	appearEff_->particleData_.isLoop_ = false;
 	appearEff2_->SetParticleData(ParticleManager::Load("BossEnterParticle_2"));
-	appearEff2_->particleData_.isLoop_ = false;
+	appearEff2_->particleData_.isLoop_ = false;*/
+	effect_ = ParticleManager::Load("BossEnter");
+	for (auto& [group, particle] : effect_) {
+		particle->particleData_.isLoop_ = false;
+	}
 	///
 
 	//状態設定
@@ -62,12 +66,18 @@ void Boss::Update() {
 	BaseCharactor::Update();
 
 	//エフェクト発生位置更新
-	appearEff_->particleData_.emitter_.translate = appearEff2_->particleData_.emitter_.translate = obj_->GetWorldPos();
-	appearEff_->particleData_.emitter_.translate.y = appearEff2_->particleData_.emitter_.translate.y = 0.01f;
+	/*appearEff_->particleData_.emitter_.translate = appearEff2_->particleData_.emitter_.translate = obj_->GetWorldPos();
+	appearEff_->particleData_.emitter_.translate.y = appearEff2_->particleData_.emitter_.translate.y = 0.01f;*/
 
 	//エフェクト更新
-	appearEff_->Update();
-	appearEff2_->Update();
+	/*appearEff_->Update();
+	appearEff2_->Update();*/
+
+	for (auto& [group, particle] : effect_) {
+		particle->particleData_.emitter_.translate = obj_->GetWorldPos();
+		particle->particleData_.emitter_.translate.y = 0.01f;
+		particle->Update();
+	}
 
 }
 
@@ -91,8 +101,11 @@ void Boss::Draw(const Camera& camera) {
 }
 
 void Boss::DrawParticle(const Camera& camera) {
-	appearEff_->Draw(camera);
-	appearEff2_->Draw(camera);
+	/*appearEff_->Draw(camera);
+	appearEff2_->Draw(camera);*/
+	for (auto& [group, particle] : effect_) {
+		particle->Draw(camera);
+	}
 }
 
 void Boss::DrawUI() {
@@ -195,8 +208,11 @@ void Boss::AppearInit() {
 	workAppear_.param = 0.0f;
 
 	//登場演出開始
-	appearEff_->particleData_.isLoop_ = true;
-	appearEff2_->particleData_.isLoop_ = true;
+	/*appearEff_->particleData_.isLoop_ = true;
+	appearEff2_->particleData_.isLoop_ = true;*/
+	for (auto& [group, particle] : effect_) {
+		particle->particleData_.isLoop_ = true;
+	}
 
 }
 
@@ -204,8 +220,11 @@ void Boss::AppearUpdate() {
 	//移動が終わったら通常行動に
 	if (workAppear_.param >= 1.0f) {
 		behaviorRequest_ = Behavior::kRoot;
-		appearEff_->particleData_.isLoop_ = false;
-		appearEff2_->particleData_.isLoop_ = false;
+		/*appearEff_->particleData_.isLoop_ = false;
+		appearEff2_->particleData_.isLoop_ = false;*/
+		for (auto& [group, particle] : effect_) {
+			particle->particleData_.isLoop_ = false;
+		}
 		return;
 	}
 

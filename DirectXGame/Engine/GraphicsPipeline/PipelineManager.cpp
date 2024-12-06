@@ -65,3 +65,7 @@ void PipelineManager::preDraw(const std::string& pipelineType) {
 void PipelineManager::preDispatch(const std::string& pipelineType) {
 	computePipelines_[pipelineType]->preDispatch();
 }
+
+void PipelineManager::preDrawScreen() {
+	graphicsPipelines_["GPUParticle"]->preDrawScreen();
+}

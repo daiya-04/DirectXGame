@@ -1,117 +1,117 @@
 {
-    "IcicleCreate": {
-        "gloss": {
+    "GroundFire": {
+        "Fire": {
             "Emitter": {
                 "BillboardType": 0,
                 "Color": [
-                    0.5074971318244934,
-                    0.9411764740943909,
-                    0.9156659245491028,
+                    1.0,
+                    0.4701557159423828,
+                    0.14215683937072754,
+                    0.0
+                ],
+                "Count": 4,
+                "EmitterType": 5,
+                "Frequency": 0.01600000075995922,
+                "LifeTime": 0.5,
+                "Radius": 0.10000000149011612,
+                "Rotate": 360.0,
+                "Scale": 1.0,
+                "Size": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Speed": 0.20000000298023224,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    4.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.7892156839370728,
+                    0.09432809799909592,
+                    0.027080940082669258
+                ],
+                "endScale": 0.6000000238418579,
+                "endSpeed": 2.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 1,
+                "isConstantVelocity": 1,
+                "isNoise": 0,
+                "isRoring": 0,
+                "isScale": 1,
+                "isTransSpeed": 0,
+                "isTransVelocity": 1,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 0.5,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 1.0,
+                "startColor": [
+                    0.45588237047195435,
+                    0.22794118523597717,
+                    0.0
+                ],
+                "startScale": 0.20000000298023224,
+                "startSpeed": 0.0,
+                "startVelocity": [
+                    0.0,
+                    10.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": true,
+            "textureName": "smoke_02.png"
+        },
+        "Sparks": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    1.0,
+                    0.7851787805557251,
+                    0.2696078419685364,
                     0.0
                 ],
                 "Count": 3,
-                "EmitterType": 1,
-                "Frequency": 0.20000000298023224,
-                "LifeTime": 1.0,
-                "Radius": 3.0,
-                "Rotate": 0.0,
-                "Scale": 2.0,
-                "Size": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "Speed": 0.0,
-                "Translate": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
-            "OverLifeTime": {
-                "Gravity": 0.0,
-                "Velocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "density": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "endAlpha": 1.0,
-                "endColor": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "endScale": 0.0,
-                "endSpeed": 0.0,
-                "endVelocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isAlpha": 1,
-                "isColor": 0,
-                "isConstantVelocity": 0,
-                "isNoise": 0,
-                "isRoring": 1,
-                "isScale": 1,
-                "isTransSpeed": 0,
-                "isTransVelocity": 0,
-                "maxRoringSpeed": [
-                    0.0,
-                    2.0,
-                    0.0
-                ],
-                "midAlpha": 1.0,
-                "minRoringSpeed": [
-                    0.0,
-                    2.0,
-                    0.0
-                ],
-                "startAlpha": 0.0,
-                "startColor": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "startScale": 4.0,
-                "startSpeed": 0.0,
-                "startVelocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "strength": 0.0
-            },
-            "isLoop": true,
-            "textureName": "cross_02.png"
-        },
-        "kirakira": {
-            "Emitter": {
-                "BillboardType": 0,
-                "Color": [
-                    0.08737026154994965,
-                    0.9901960492134094,
-                    0.8574274182319641,
-                    0.0
-                ],
-                "Count": 5,
-                "EmitterType": 1,
-                "Frequency": 0.05000000074505806,
-                "LifeTime": 1.0,
-                "Radius": 3.0,
+                "EmitterType": 5,
+                "Frequency": 0.03200000151991844,
+                "LifeTime": 1.5,
+                "Radius": 0.10000000149011612,
                 "Rotate": 360.0,
-                "Scale": 0.20000000298023224,
+                "Scale": 0.0,
                 "Size": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "Speed": -2.0,
+                "Speed": 0.699999988079071,
                 "Translate": [
                     0.0,
                     0.0,
@@ -119,16 +119,16 @@
                 ]
             },
             "OverLifeTime": {
-                "Gravity": 0.0,
+                "Gravity": 0.05000000074505806,
                 "Velocity": [
                     0.0,
-                    0.0,
+                    5.0,
                     0.0
                 ],
                 "density": [
-                    0.0,
-                    0.0,
-                    0.0
+                    0.2,
+                    0.2,
+                    0.2
                 ],
                 "endAlpha": 1.0,
                 "endColor": [
@@ -145,22 +145,22 @@
                 ],
                 "isAlpha": 1,
                 "isColor": 0,
-                "isConstantVelocity": 0,
+                "isConstantVelocity": 1,
                 "isNoise": 0,
-                "isRoring": 1,
+                "isRoring": 0,
                 "isScale": 1,
                 "isTransSpeed": 0,
                 "isTransVelocity": 0,
                 "maxRoringSpeed": [
                     0.0,
                     0.0,
-                    4.0
+                    0.0
                 ],
                 "midAlpha": 1.0,
                 "minRoringSpeed": [
                     0.0,
                     0.0,
-                    4.0
+                    0.0
                 ],
                 "startAlpha": 0.0,
                 "startColor": [
@@ -168,17 +168,17 @@
                     0.0,
                     0.0
                 ],
-                "startScale": 2.0,
+                "startScale": 0.10000000149011612,
                 "startSpeed": 0.0,
                 "startVelocity": [
                     0.0,
-                    0.0,
+                    0.20000000298023224,
                     0.0
                 ],
-                "strength": 0.0
+                "strength": 0.800000011920929
             },
             "isLoop": true,
-            "textureName": "flare_02.png"
+            "textureName": "corona.png"
         }
     }
 }

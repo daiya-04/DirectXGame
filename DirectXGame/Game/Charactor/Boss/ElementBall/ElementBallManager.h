@@ -44,9 +44,11 @@ private:
 	std::array<std::unique_ptr<ElementBall>, elementBallNum_> elementBalls_;
 	std::array<std::unique_ptr<BurnScar>, elementBallNum_> burnScareses_;
 
-	std::array<std::unique_ptr<GPUParticle>, elementBallNum_> fireFields_;
-	std::array<std::unique_ptr<GPUParticle>, elementBallNum_> splashes_;
-	std::array<std::unique_ptr<GPUParticle>, elementBallNum_> fireSparks_;
+	std::array<std::map<std::string, std::unique_ptr<GPUParticle>>, elementBallNum_> fireSetEffs_;
+
+	//std::array<std::unique_ptr<GPUParticle>, elementBallNum_> fireFields_;
+	//std::array<std::unique_ptr<GPUParticle>, elementBallNum_> splashes_;
+	//std::array<std::unique_ptr<GPUParticle>, elementBallNum_> fireSparks_;
 
 	bool isAttack_ = false;
 	bool preIsAttack_ = false;

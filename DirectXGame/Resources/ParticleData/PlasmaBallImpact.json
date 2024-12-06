@@ -1,21 +1,21 @@
 {
-    "IcicleCreate": {
-        "gloss": {
+    "PlasmaBallImpact": {
+        "Core": {
             "Emitter": {
                 "BillboardType": 0,
                 "Color": [
-                    0.5074971318244934,
-                    0.9411764740943909,
-                    0.9156659245491028,
+                    0.39791247248649597,
+                    0.14801998436450958,
+                    0.7549019455909729,
                     0.0
                 ],
-                "Count": 3,
+                "Count": 10,
                 "EmitterType": 1,
-                "Frequency": 0.20000000298023224,
-                "LifeTime": 1.0,
-                "Radius": 3.0,
-                "Rotate": 0.0,
-                "Scale": 2.0,
+                "Frequency": 0.01600000075995922,
+                "LifeTime": 0.20000000298023224,
+                "Radius": 0.0010000000474974513,
+                "Rotate": 360.0,
+                "Scale": 0.10000000149011612,
                 "Size": [
                     0.0,
                     0.0,
@@ -40,13 +40,13 @@
                     0.0,
                     0.0
                 ],
-                "endAlpha": 1.0,
+                "endAlpha": 0.0,
                 "endColor": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "endScale": 0.0,
+                "endScale": 3.0,
                 "endSpeed": 0.0,
                 "endVelocity": [
                     0.0,
@@ -63,22 +63,22 @@
                 "isTransVelocity": 0,
                 "maxRoringSpeed": [
                     0.0,
-                    2.0,
-                    0.0
+                    0.0,
+                    3.0
                 ],
                 "midAlpha": 1.0,
                 "minRoringSpeed": [
                     0.0,
-                    2.0,
-                    0.0
+                    0.0,
+                    1.0
                 ],
-                "startAlpha": 0.0,
+                "startAlpha": 1.0,
                 "startColor": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "startScale": 4.0,
+                "startScale": 0.0,
                 "startSpeed": 0.0,
                 "startVelocity": [
                     0.0,
@@ -87,31 +87,31 @@
                 ],
                 "strength": 0.0
             },
-            "isLoop": true,
-            "textureName": "cross_02.png"
+            "isLoop": false,
+            "textureName": "spark_02.png"
         },
-        "kirakira": {
+        "Spark": {
             "Emitter": {
                 "BillboardType": 0,
                 "Color": [
-                    0.08737026154994965,
-                    0.9901960492134094,
-                    0.8574274182319641,
+                    0.5364289283752441,
+                    0.31706559658050537,
+                    0.9950980544090271,
                     0.0
                 ],
-                "Count": 5,
+                "Count": 60,
                 "EmitterType": 1,
-                "Frequency": 0.05000000074505806,
-                "LifeTime": 1.0,
-                "Radius": 3.0,
+                "Frequency": 0.01600000075995922,
+                "LifeTime": 0.6000000238418579,
+                "Radius": 1.0,
                 "Rotate": 360.0,
-                "Scale": 0.20000000298023224,
+                "Scale": 0.10000000149011612,
                 "Size": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "Speed": -2.0,
+                "Speed": 1.5,
                 "Translate": [
                     0.0,
                     0.0,
@@ -154,13 +154,13 @@
                 "maxRoringSpeed": [
                     0.0,
                     0.0,
-                    4.0
+                    10.0
                 ],
                 "midAlpha": 1.0,
                 "minRoringSpeed": [
                     0.0,
                     0.0,
-                    4.0
+                    10.0
                 ],
                 "startAlpha": 0.0,
                 "startColor": [
@@ -168,7 +168,7 @@
                     0.0,
                     0.0
                 ],
-                "startScale": 2.0,
+                "startScale": 0.699999988079071,
                 "startSpeed": 0.0,
                 "startVelocity": [
                     0.0,
@@ -177,7 +177,7 @@
                 ],
                 "strength": 0.0
             },
-            "isLoop": true,
+            "isLoop": false,
             "textureName": "flare_02.png"
         }
     }

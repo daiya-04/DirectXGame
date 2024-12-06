@@ -89,8 +89,10 @@ private:
 	bool isLife_ = false;
 	bool preIsLife_ = false;
 	//エフェクト
-	std::unique_ptr<GPUParticle> core_;
-	std::unique_ptr<GPUParticle> smoke_;
+	//std::unique_ptr<GPUParticle> core_;
+	//std::unique_ptr<GPUParticle> smoke_;
+
+	std::map <std::string, std::unique_ptr<GPUParticle>> effect_;
 
 public:
 	//初期化

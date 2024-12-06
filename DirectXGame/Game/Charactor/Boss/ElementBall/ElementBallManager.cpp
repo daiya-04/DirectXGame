@@ -16,7 +16,7 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 
 
 	///エフェクト設定
-	for (auto& fireField : fireFields_) {
+	/*for (auto& fireField : fireFields_) {
 		fireField.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 15000));
 		fireField->particleData_.emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 		fireField->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Circle;
@@ -40,6 +40,12 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 	for (auto& fireSpark : fireSparks_) {
 		fireSpark.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 2048));
 		fireSpark->SetParticleData(ParticleManager::Load("FireBallFireSpark"));
+	}*/
+	for (auto& effect : fireSetEffs_) {
+		effect = ParticleManager::Load("FireBallSet");
+		for (auto& [group, particle] : effect) {
+			particle->particleData_.isLoop_ = false;
+		}
 	}
 	///
 
@@ -78,7 +84,16 @@ void ElementBallManager::Update() {
 		isAttack_ = false;
 	}
 
-	for (auto& splash : splashes_) {
+	for (auto& effect : fireSetEffs_) {
+		for (auto& [group, particle] : effect) {
+			if (elementBalls_[0]->GetPhase() != ElementBall::Phase::kSet) {
+				particle->particleData_.isLoop_ = false;
+			}
+			particle->Update();
+		}
+	}
+
+	/*for (auto& splash : splashes_) {
 		if (elementBalls_[0]->GetPhase() == ElementBall::Phase::kSet) {
 			splash->particleData_.isLoop_ = true;
 		}
@@ -103,7 +118,7 @@ void ElementBallManager::Update() {
 			fireField->particleData_.isLoop_ = false;
 		}
 		fireField->Update();
-	}
+	}*/
 
 }
 
@@ -123,7 +138,12 @@ void ElementBallManager::DrawParticle(const Camera& camera) {
 	for (auto& burnScars : burnScareses_) {
 		burnScars->DrawParticle(camera);
 	}
-	for (auto& fireField : fireFields_) {
+	for (auto& effect : fireSetEffs_) {
+		for (auto& [group, particle] : effect) {
+			particle->Draw(camera);
+		}
+	}
+	/*for (auto& fireField : fireFields_) {
 		fireField->Draw(camera);
 	}
 	for (auto& splash : splashes_) {
@@ -131,7 +151,7 @@ void ElementBallManager::DrawParticle(const Camera& camera) {
 	}
 	for (auto& fireSpark : fireSparks_) {
 		fireSpark->Draw(camera);
-	}
+	}*/
 
 }
 
@@ -176,16 +196,24 @@ void ElementBallManager::SetAttackData(const Vector3& pos) {
 
 void ElementBallManager::AttackStart() {
 
-	for (auto& fireField : fireFields_) {
+	/*for (auto& fireField : fireFields_) {
 		fireField->particleData_.isLoop_ = true;
-	}
+	}*/
 
 	for (auto& elementBall : elementBalls_) {
 		elementBall->AttackStart();
 	}
 	isAttack_ = true;
 
-	for (size_t index = 0; index < 4; index++) {
+	for (size_t index = 0; index < elementBallNum_; index++) {
+		for (auto& [group, particle] : fireSetEffs_[index]) {
+			particle->particleData_.isLoop_ = true;
+			particle->particleData_.emitter_.translate = elementBalls_[index]->GetWorldPos();
+			particle->particleData_.emitter_.translate.y = 0.01f;
+		}
+	}
+
+	/*for (size_t index = 0; index < 4; index++) {
 		fireFields_[index]->particleData_.emitter_.translate = elementBalls_[index]->GetWorldPos();
 		fireFields_[index]->particleData_.emitter_.translate.y = 0.1f;
 
@@ -194,6 +222,6 @@ void ElementBallManager::AttackStart() {
 
 		fireSparks_[index]->particleData_.emitter_.translate = elementBalls_[index]->GetWorldPos();
 		fireSparks_[index]->particleData_.emitter_.translate.y = 0.1f;
-	}
+	}*/
 
 }

@@ -44,6 +44,6 @@ struct OverLifeTime {
     float32_t3 maxRoringSpeed;
 
     uint32_t isNoise;
-    float32_t density;
+    float32_t3 density;
     float32_t strength;
 };

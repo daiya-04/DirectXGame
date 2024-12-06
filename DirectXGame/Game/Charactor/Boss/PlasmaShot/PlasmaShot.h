@@ -88,10 +88,14 @@ private:
 
 	std::unique_ptr<Object3d> obj_;
 	//エフェクト
-	std::unique_ptr<GPUParticle> particle_;
-	std::unique_ptr<GPUParticle> hitEff_;
-	std::unique_ptr<GPUParticle> hitSpark_;
-	std::unique_ptr<GPUParticle> createEff_;
+	//std::unique_ptr<GPUParticle> particle_;
+	//std::unique_ptr<GPUParticle> hitEff_;
+	//std::unique_ptr<GPUParticle> hitSpark_;
+	//std::unique_ptr<GPUParticle> createEff_;
+
+	std::map<std::string, std::unique_ptr<GPUParticle>> createEff_;
+	std::map<std::string, std::unique_ptr<GPUParticle>> hitEff_;
+	std::map<std::string, std::unique_ptr<GPUParticle>> trailEff_;
 
 	Shapes::Sphere collider_;
 
