@@ -13,6 +13,8 @@ public:
 
 	virtual void preDraw();
 
+	void preDrawScreen();
+
 protected:
 
 	ID3D12Device* device_ = nullptr;
@@ -20,6 +22,9 @@ protected:
 	ComPtr<ID3D12RootSignature> rootSignature_;
 	ComPtr<ID3D12PipelineState> pipelineState_;
 	D3D12_PRIMITIVE_TOPOLOGY primitiveTopology_ = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	ComPtr<ID3D12RootSignature> screenRSig_;
+	ComPtr<ID3D12PipelineState> screenPS_;
 
 };
 

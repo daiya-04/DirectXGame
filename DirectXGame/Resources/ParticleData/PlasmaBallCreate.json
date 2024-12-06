@@ -1,25 +1,25 @@
 {
-    "testParticle": {
-        "particle1": {
+    "PlasmaBallCreate": {
+        "togetoge": {
             "Emitter": {
                 "BillboardType": 0,
                 "Color": [
-                    1.0,
-                    1.0,
-                    1.0,
+                    0.44957664608955383,
+                    0.20977506041526794,
+                    0.9509803652763367,
                     0.0
                 ],
-                "Count": 10,
+                "Count": 2,
                 "EmitterType": 1,
-                "Frequency": 0.01600000075995922,
-                "LifeTime": 1.0,
-                "Radius": 1.0,
-                "Rotate": 0.0,
-                "Scale": 0.10000000149011612,
+                "Frequency": 0.10000000149011612,
+                "LifeTime": 0.30000001192092896,
+                "Radius": 0.0010000000474974513,
+                "Rotate": 360.0,
+                "Scale": 1.0,
                 "Size": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.0,
+                    0.0,
+                    0.0
                 ],
                 "Speed": 0.0,
                 "Translate": [
@@ -42,11 +42,11 @@
                 ],
                 "endAlpha": 0.0,
                 "endColor": [
+                    0.2755189538002014,
                     0.0,
-                    0.0,
-                    0.0
+                    0.720588207244873
                 ],
-                "endScale": 0.0,
+                "endScale": 2.0,
                 "endSpeed": 0.0,
                 "endVelocity": [
                     0.0,
@@ -54,11 +54,11 @@
                     0.0
                 ],
                 "isAlpha": 1,
-                "isColor": 0,
+                "isColor": 1,
                 "isConstantVelocity": 0,
                 "isNoise": 0,
                 "isRoring": 0,
-                "isScale": 0,
+                "isScale": 1,
                 "isTransSpeed": 0,
                 "isTransVelocity": 0,
                 "maxRoringSpeed": [
@@ -74,11 +74,11 @@
                 ],
                 "startAlpha": 0.0,
                 "startColor": [
-                    0.0,
-                    0.0,
-                    0.0
+                    0.5771927833557129,
+                    0.41123607754707336,
+                    0.9754902124404907
                 ],
-                "startScale": 0.0,
+                "startScale": 0.5,
                 "startSpeed": 0.0,
                 "startVelocity": [
                     0.0,
@@ -88,7 +88,7 @@
                 "strength": 0.0
             },
             "isLoop": true,
-            "textureName": "circle.png"
+            "textureName": "spark_01.png"
         }
     }
 }

@@ -17,3 +17,10 @@ void BaseGraphicsPipeline::preDraw() {
 	commandList->IASetPrimitiveTopology(primitiveTopology_);
 }
 
+void BaseGraphicsPipeline::preDrawScreen() {
+	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
+
+	commandList->SetGraphicsRootSignature(rootSignature_.Get());
+	commandList->SetPipelineState(screenPS_.Get());
+	commandList->IASetPrimitiveTopology(primitiveTopology_);
+}

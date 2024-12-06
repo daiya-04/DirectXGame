@@ -8,5 +8,7 @@ public:
 
 	void preDraw() override;
 
+	void screenPSCreate();
+
 };
 

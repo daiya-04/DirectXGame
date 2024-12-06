@@ -1,5 +1,5 @@
 {
-    "testParticle": {
+    "kirakira": {
         "particle1": {
             "Emitter": {
                 "BillboardType": 0,
@@ -9,13 +9,13 @@
                     1.0,
                     0.0
                 ],
-                "Count": 10,
+                "Count": 2,
                 "EmitterType": 1,
                 "Frequency": 0.01600000075995922,
                 "LifeTime": 1.0,
                 "Radius": 1.0,
                 "Rotate": 0.0,
-                "Scale": 0.10000000149011612,
+                "Scale": 0.30000001192092896,
                 "Size": [
                     1.0,
                     1.0,
@@ -35,11 +35,7 @@
                     0.0,
                     0.0
                 ],
-                "density": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
+                "density": 0.0,
                 "endAlpha": 0.0,
                 "endColor": [
                     0.0,
@@ -88,7 +84,7 @@
                 "strength": 0.0
             },
             "isLoop": true,
-            "textureName": "circle.png"
+            "textureName": "flare_02.png"
         }
     }
 }

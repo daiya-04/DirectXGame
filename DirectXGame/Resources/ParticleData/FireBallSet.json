@@ -1,21 +1,21 @@
 {
-    "IcicleCreate": {
-        "gloss": {
+    "FireBallSet": {
+        "FireSpark": {
             "Emitter": {
                 "BillboardType": 0,
                 "Color": [
-                    0.5074971318244934,
-                    0.9411764740943909,
-                    0.9156659245491028,
+                    1.0,
+                    0.35640138387680054,
+                    0.08823531866073608,
                     0.0
                 ],
-                "Count": 3,
-                "EmitterType": 1,
-                "Frequency": 0.20000000298023224,
-                "LifeTime": 1.0,
-                "Radius": 3.0,
+                "Count": 5,
+                "EmitterType": 5,
+                "Frequency": 0.5,
+                "LifeTime": 1.399999976158142,
+                "Radius": 0.5,
                 "Rotate": 0.0,
-                "Scale": 2.0,
+                "Scale": 0.30000001192092896,
                 "Size": [
                     0.0,
                     0.0,
@@ -32,15 +32,15 @@
                 "Gravity": 0.0,
                 "Velocity": [
                     0.0,
-                    0.0,
+                    8.0,
                     0.0
                 ],
                 "density": [
+                    0.20000000298023224,
                     0.0,
-                    0.0,
-                    0.0
+                    0.20000000298023224
                 ],
-                "endAlpha": 1.0,
+                "endAlpha": 0.0,
                 "endColor": [
                     0.0,
                     0.0,
@@ -55,63 +55,63 @@
                 ],
                 "isAlpha": 1,
                 "isColor": 0,
-                "isConstantVelocity": 0,
-                "isNoise": 0,
-                "isRoring": 1,
+                "isConstantVelocity": 1,
+                "isNoise": 1,
+                "isRoring": 0,
                 "isScale": 1,
                 "isTransSpeed": 0,
                 "isTransVelocity": 0,
                 "maxRoringSpeed": [
                     0.0,
-                    2.0,
+                    0.0,
                     0.0
                 ],
                 "midAlpha": 1.0,
                 "minRoringSpeed": [
                     0.0,
-                    2.0,
+                    0.0,
                     0.0
                 ],
-                "startAlpha": 0.0,
+                "startAlpha": 1.0,
                 "startColor": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "startScale": 4.0,
+                "startScale": 0.4000000059604645,
                 "startSpeed": 0.0,
                 "startVelocity": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "strength": 0.0
+                "strength": 1.5
             },
             "isLoop": true,
-            "textureName": "cross_02.png"
+            "textureName": "corona.png"
         },
-        "kirakira": {
+        "Splash": {
             "Emitter": {
                 "BillboardType": 0,
                 "Color": [
-                    0.08737026154994965,
-                    0.9901960492134094,
-                    0.8574274182319641,
+                    1.0,
+                    0.49803921580314636,
+                    0.0,
                     0.0
                 ],
-                "Count": 5,
-                "EmitterType": 1,
-                "Frequency": 0.05000000074505806,
-                "LifeTime": 1.0,
-                "Radius": 3.0,
-                "Rotate": 360.0,
-                "Scale": 0.20000000298023224,
+                "Count": 200,
+                "EmitterType": 5,
+                "Frequency": 0.0,
+                "LifeTime": 0.30000001192092896,
+                "Radius": 1.0,
+                "Rotate": 0.0,
+                "Scale": 0.10000000149011612,
                 "Size": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "Speed": -2.0,
+                "Speed": -1.0,
                 "Translate": [
                     0.0,
                     0.0,
@@ -127,10 +127,10 @@
                 ],
                 "density": [
                     0.0,
-                    0.0,
+                    4.0,
                     0.0
                 ],
-                "endAlpha": 1.0,
+                "endAlpha": 0.0,
                 "endColor": [
                     0.0,
                     0.0,
@@ -143,24 +143,24 @@
                     0.0,
                     0.0
                 ],
-                "isAlpha": 1,
+                "isAlpha": 0,
                 "isColor": 0,
                 "isConstantVelocity": 0,
-                "isNoise": 0,
-                "isRoring": 1,
-                "isScale": 1,
+                "isNoise": 1,
+                "isRoring": 0,
+                "isScale": 0,
                 "isTransSpeed": 0,
                 "isTransVelocity": 0,
                 "maxRoringSpeed": [
                     0.0,
                     0.0,
-                    4.0
+                    0.0
                 ],
-                "midAlpha": 1.0,
+                "midAlpha": 0.0,
                 "minRoringSpeed": [
                     0.0,
                     0.0,
-                    4.0
+                    0.0
                 ],
                 "startAlpha": 0.0,
                 "startColor": [
@@ -168,17 +168,17 @@
                     0.0,
                     0.0
                 ],
-                "startScale": 2.0,
+                "startScale": 0.0,
                 "startSpeed": 0.0,
                 "startVelocity": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "strength": 0.0
+                "strength": 3.0
             },
             "isLoop": true,
-            "textureName": "flare_02.png"
+            "textureName": "circle.png"
         }
     }
 }

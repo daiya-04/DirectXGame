@@ -83,8 +83,10 @@ void IcicleManager::SetAttackData(const Vector3& pos, const Vector3& direction) 
 		{-4.0f,3.0f,0.0f}
 	};
 
+	float intervalList[icicleNum_] = { 2.5f,2.5f ,1.5f ,1.5f };
+
 	for (size_t index = 0; index < icicleNum_; index++) {
-		icicles_[index]->SetAttackData(pos + offset[index], direction);
+		icicles_[index]->SetAttackData(pos + offset[index], direction,intervalList[index]);
 	}
 
 }

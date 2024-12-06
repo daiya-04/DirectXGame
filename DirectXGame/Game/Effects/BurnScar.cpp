@@ -203,7 +203,7 @@ void BurnScar::Init(uint32_t textureHandle) {
 
 	color_ = Vector4(0.96f, 0.13f, 0.04f,1.0f);
 
-	flameEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
+	/*flameEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
 	flameEff_->SetParticleData(ParticleManager::Load("FireBallImpactFlame"));
 
 	coreEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
@@ -213,8 +213,9 @@ void BurnScar::Init(uint32_t textureHandle) {
 	fireSparkEff_->SetParticleData(ParticleManager::Load("FireBallImpactFireSpark"));
 
 	flareCircleEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
-	flareCircleEff_->SetParticleData(ParticleManager::Load("FireBallImpactFlareCircle"));
+	flareCircleEff_->SetParticleData(ParticleManager::Load("FireBallImpactFlareCircle"));*/
 
+	effect_ = ParticleManager::Load("FireBallImpact");
 
 }
 
@@ -224,15 +225,20 @@ void BurnScar::Update() {
 
 	EffectUpdate();
 
-	flameEff_->particleData_.emitter_.translate = position_;
+	/*flameEff_->particleData_.emitter_.translate = position_;
 	coreEff_->particleData_.emitter_.translate = position_;
 	fireSparkEff_->particleData_.emitter_.translate = position_;
-	flareCircleEff_->particleData_.emitter_.translate = position_ + Vector3(0.0f, 0.001f, 0.0f);
+	flareCircleEff_->particleData_.emitter_.translate = position_ + Vector3(0.0f, 0.001f, 0.0f);*/
 
-	flameEff_->Update();
+	for (auto& [group, particle] : effect_) {
+		particle->particleData_.emitter_.translate = position_ + Vector3(0.0f, 0.001f, 0.0f);
+		particle->Update();
+	}
+
+	/*flameEff_->Update();
 	coreEff_->Update();
 	fireSparkEff_->Update();
-	flareCircleEff_->Update();
+	flareCircleEff_->Update();*/
 
 }
 
@@ -262,11 +268,15 @@ void BurnScar::Draw(const Camera& camera) {
 }
 
 void BurnScar::DrawParticle(const Camera& camera) {
+
+	for (auto& [group, particle] : effect_) {
+		particle->Draw(camera);
+	}
 	
-	flameEff_->Draw(camera);
+	/*flameEff_->Draw(camera);
 	coreEff_->Draw(camera);
 	fireSparkEff_->Draw(camera);
-	flareCircleEff_->Draw(camera);
+	flareCircleEff_->Draw(camera);*/
 }
 
 void BurnScar::EffectStart(const Vector3& pos) {
@@ -274,9 +284,13 @@ void BurnScar::EffectStart(const Vector3& pos) {
 	BaseScar::EffectStart(pos);
 
 	
-	flameEff_->particleData_.emitter_.emit = 1;
+	/*flameEff_->particleData_.emitter_.emit = 1;
 	coreEff_->particleData_.emitter_.emit = 1;
 	fireSparkEff_->particleData_.emitter_.emit = 1;
-	flareCircleEff_->particleData_.emitter_.emit = 1;
+	flareCircleEff_->particleData_.emitter_.emit = 1;*/
+
+	for (auto& [group, particle] : effect_) {
+		particle->Emit();
+	}
 
 }

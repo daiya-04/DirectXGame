@@ -4,6 +4,7 @@
 #include <fstream>
 #include <cassert>
 #include <Windows.h>
+#include "TextureManager.h"
 
 using namespace nlohmann;
 
@@ -13,11 +14,11 @@ ParticleManager* ParticleManager::GetInstance() {
 	return &instance;
 }
 
-GPUParticle::ParticleData ParticleManager::Load(const std::string& fileName) {
+std::map<std::string, std::unique_ptr<GPUParticle>> ParticleManager::Load(const std::string& fileName) {
 	return ParticleManager::GetInstance()->LoadInternal(fileName);
 }
 
-GPUParticle::ParticleData ParticleManager::LoadInternal(const std::string& fileName) {
+std::map<std::string, std::unique_ptr<GPUParticle>> ParticleManager::LoadInternal(const std::string& fileName) {
 
 	//既に読み込んでいたらリターン
 	/*if (particleDatas_.find(fileName) != particleDatas_.end()) {
@@ -29,7 +30,7 @@ GPUParticle::ParticleData ParticleManager::LoadInternal(const std::string& fileN
 	//ファイルの拡張子
 	const std::string kExtension = ".json";
 
-	GPUParticle::ParticleData data{};
+	std::map<std::string, std::unique_ptr<GPUParticle>> outputData;
 
 	//フルパスの取得
 	const std::string fullPath = kDirectoryPath + fileName + kExtension;
@@ -42,7 +43,7 @@ GPUParticle::ParticleData ParticleManager::LoadInternal(const std::string& fileN
 	if (file.fail()) {
 		std::string message = "Failed open data file.";
 		MessageBoxA(nullptr, message.c_str(), "ParticleManager", 0);
-		return data;
+		return outputData;
 	}
 
 	json root;
@@ -55,76 +56,94 @@ GPUParticle::ParticleData ParticleManager::LoadInternal(const std::string& fileN
 	if (!root.contains(fileName)) {
 		std::string message = "The file contains no data.";
 		MessageBoxA(nullptr, message.c_str(), "ParticleEditor", 0);
-		return data;
+		return outputData;
 	}
 
-	//データ設定
-	data.isLoop_ = root[fileName]["isLoop"].get<bool>();
-	data.textureName_ = root[fileName]["textureName"].get<std::string>();
+	const auto& particles = root[fileName];
+	datas_[fileName];
 
-	auto& emitterData = data.emitter_;
-	json& emitterRoot = root[fileName]["Emitter"];
-	
-	json emitTranslate = emitterRoot["Translate"];
-	emitterData.translate = Vector3(static_cast<float>(emitTranslate[0]), static_cast<float>(emitTranslate[1]), static_cast<float>(emitTranslate[2]));
-	json emitSize = emitterRoot["Size"];
-	emitterData.size = Vector3(static_cast<float>(emitSize[0]), static_cast<float>(emitSize[1]), static_cast<float>(emitSize[2]));
-	emitterData.radius = emitterRoot["Radius"].get<float>();
-	emitterData.scale = emitterRoot["Scale"].get<float>();
-	emitterData.rotate = emitterRoot["Rotate"].get<float>();
-	emitterData.count = emitterRoot["Count"].get<uint32_t>();
-	emitterData.frequency = emitterRoot["Frequency"].get<float>();
-	json emitColor = emitterRoot["Color"];
-	emitterData.color = Vector4(static_cast<float>(emitColor[0]), static_cast<float>(emitColor[1]), static_cast<float>(emitColor[2]), static_cast<float>(emitColor[3]));
-	emitterData.lifeTime = emitterRoot["LifeTime"].get<float>();
-	emitterData.speed = emitterRoot["Speed"].get<float>();
-	emitterData.emitterType = emitterRoot["EmitterType"].get<uint32_t>();
-	if (emitterRoot.contains("BillboardType")) {
-		emitterData.billboardType = emitterRoot["BillboardType"].get<uint32_t>();
+	for (const auto& [group, particleRoot] : particles.items()) {
+		std::unique_ptr<GPUParticle> setData;
+
+		auto& data = datas_[fileName].particle[group];
+
+		//データ設定
+		data.isLoop_ = particleRoot["isLoop"].get<bool>();
+		data.textureName_ = particleRoot["textureName"].get<std::string>();
+
+		if (data.isLoop_) {
+			setData.reset(GPUParticle::Create(TextureManager::Load(data.textureName_), 10000));
+		}else {
+			setData.reset(GPUParticle::Create(TextureManager::Load(data.textureName_), 1024));
+		}
+
+		auto& emitterData = data.emitter_;
+		const json& emitterRoot = particleRoot["Emitter"];
+
+		json emitTranslate = emitterRoot["Translate"];
+		emitterData.translate = Vector3(static_cast<float>(emitTranslate[0]), static_cast<float>(emitTranslate[1]), static_cast<float>(emitTranslate[2]));
+		json emitSize = emitterRoot["Size"];
+		emitterData.size = Vector3(static_cast<float>(emitSize[0]), static_cast<float>(emitSize[1]), static_cast<float>(emitSize[2]));
+		emitterData.radius = emitterRoot["Radius"].get<float>();
+		emitterData.scale = emitterRoot["Scale"].get<float>();
+		emitterData.rotate = emitterRoot["Rotate"].get<float>();
+		emitterData.count = emitterRoot["Count"].get<uint32_t>();
+		emitterData.frequency = emitterRoot["Frequency"].get<float>();
+		json emitColor = emitterRoot["Color"];
+		emitterData.color = Vector4(static_cast<float>(emitColor[0]), static_cast<float>(emitColor[1]), static_cast<float>(emitColor[2]), static_cast<float>(emitColor[3]));
+		emitterData.lifeTime = emitterRoot["LifeTime"].get<float>();
+		emitterData.speed = emitterRoot["Speed"].get<float>();
+		emitterData.emitterType = emitterRoot["EmitterType"].get<uint32_t>();
+		if (emitterRoot.contains("BillboardType")) {
+			emitterData.billboardType = emitterRoot["BillboardType"].get<uint32_t>();
+		}
+
+		auto& overLifeTimeData = data.overLifeTime_;
+		const json& overLifeTimeRoot = particleRoot["OverLifeTime"];
+
+		overLifeTimeData.isConstantVelocity = overLifeTimeRoot["isConstantVelocity"].get<uint32_t>();
+		json velocity = overLifeTimeRoot["Velocity"];
+		overLifeTimeData.velocity = Vector3(static_cast<float>(velocity[0]), static_cast<float>(velocity[1]), static_cast<float>(velocity[2]));
+		overLifeTimeData.isTransVelocity = overLifeTimeRoot["isTransVelocity"].get<uint32_t>();
+		json startVelo = overLifeTimeRoot["startVelocity"];
+		overLifeTimeData.startVelocity = Vector3(static_cast<float>(startVelo[0]), static_cast<float>(startVelo[1]), static_cast<float>(startVelo[2]));
+		json endVelo = overLifeTimeRoot["endVelocity"];
+		overLifeTimeData.endVelocity = Vector3(static_cast<float>(endVelo[0]), static_cast<float>(endVelo[1]), static_cast<float>(endVelo[2]));
+		overLifeTimeData.isScale = overLifeTimeRoot["isScale"].get<uint32_t>();
+		overLifeTimeData.startScale = overLifeTimeRoot["startScale"].get<float>();
+		overLifeTimeData.endScale = overLifeTimeRoot["endScale"].get<float>();
+		overLifeTimeData.isColor = overLifeTimeRoot["isColor"].get<uint32_t>();
+		json startColor = overLifeTimeRoot["startColor"];
+		overLifeTimeData.startColor = Vector3(static_cast<float>(startColor[0]), static_cast<float>(startColor[1]), static_cast<float>(startColor[2]));
+		json endColor = overLifeTimeRoot["endColor"];
+		overLifeTimeData.endColor = Vector3(static_cast<float>(endColor[0]), static_cast<float>(endColor[1]), static_cast<float>(endColor[2]));
+		overLifeTimeData.isAlpha = overLifeTimeRoot["isAlpha"].get<uint32_t>();
+		overLifeTimeData.startAlpha = overLifeTimeRoot["startAlpha"].get<float>();
+		overLifeTimeData.midAlpha = overLifeTimeRoot["midAlpha"].get<float>();
+		overLifeTimeData.endAlpha = overLifeTimeRoot["endAlpha"].get<float>();
+		overLifeTimeData.isTransSpeed = overLifeTimeRoot["isTransSpeed"].get<uint32_t>();
+		overLifeTimeData.startSpeed = overLifeTimeRoot["startSpeed"].get<float>();
+		overLifeTimeData.endSpeed = overLifeTimeRoot["endSpeed"].get<float>();
+		overLifeTimeData.gravity = overLifeTimeRoot["Gravity"].get<float>();
+		if (overLifeTimeRoot.contains("isRoring")) {
+			overLifeTimeData.isRoring = overLifeTimeRoot["isRoring"].get<uint32_t>();
+			json minRoringSpeed = overLifeTimeRoot["minRoringSpeed"];
+			overLifeTimeData.minRoringSpeed = Vector3(static_cast<float>(minRoringSpeed[0]), static_cast<float>(minRoringSpeed[1]), static_cast<float>(minRoringSpeed[2]));
+			json maxRoringSpeed = overLifeTimeRoot["maxRoringSpeed"];
+			overLifeTimeData.maxRoringSpeed = Vector3(static_cast<float>(maxRoringSpeed[0]), static_cast<float>(maxRoringSpeed[1]), static_cast<float>(maxRoringSpeed[2]));
+		}
+		if (overLifeTimeRoot.contains("isNoise")) {
+			overLifeTimeData.isNoise = overLifeTimeRoot["isNoise"].get<uint32_t>();
+			json density = overLifeTimeRoot["density"];
+			overLifeTimeData.density = Vector3(static_cast<float>(density[0]), static_cast<float>(density[1]), static_cast<float>(density[2]));
+			overLifeTimeData.strength = overLifeTimeRoot["strength"].get<float>();
+		}
+
+		setData->SetParticleData(data);
+
+		outputData[group] = std::move(setData);
 	}
 
-	auto& overLifeTimeData = data.overLifeTime_;
-	json& overLifeTimeRoot = root[fileName]["OverLifeTime"];
-
-	overLifeTimeData.isConstantVelocity = overLifeTimeRoot["isConstantVelocity"].get<uint32_t>();
-	json velocity = overLifeTimeRoot["Velocity"];
-	overLifeTimeData.velocity = Vector3(static_cast<float>(velocity[0]), static_cast<float>(velocity[1]), static_cast<float>(velocity[2]));
-	overLifeTimeData.isTransVelocity = overLifeTimeRoot["isTransVelocity"].get<uint32_t>();
-	json startVelo = overLifeTimeRoot["startVelocity"];
-	overLifeTimeData.startVelocity = Vector3(static_cast<float>(startVelo[0]), static_cast<float>(startVelo[1]), static_cast<float>(startVelo[2]));
-	json endVelo = overLifeTimeRoot["endVelocity"];
-	overLifeTimeData.endVelocity = Vector3(static_cast<float>(endVelo[0]), static_cast<float>(endVelo[1]), static_cast<float>(endVelo[2]));
-	overLifeTimeData.isScale = overLifeTimeRoot["isScale"].get<uint32_t>();
-	overLifeTimeData.startScale = overLifeTimeRoot["startScale"].get<float>();
-	overLifeTimeData.endScale = overLifeTimeRoot["endScale"].get<float>();
-	overLifeTimeData.isColor = overLifeTimeRoot["isColor"].get<uint32_t>();
-	json startColor = overLifeTimeRoot["startColor"];
-	overLifeTimeData.startColor = Vector3(static_cast<float>(startColor[0]), static_cast<float>(startColor[1]), static_cast<float>(startColor[2]));
-	json endColor = overLifeTimeRoot["endColor"];
-	overLifeTimeData.endColor = Vector3(static_cast<float>(endColor[0]), static_cast<float>(endColor[1]), static_cast<float>(endColor[2]));
-	overLifeTimeData.isAlpha = overLifeTimeRoot["isAlpha"].get<uint32_t>();
-	overLifeTimeData.startAlpha = overLifeTimeRoot["startAlpha"].get<float>();
-	overLifeTimeData.midAlpha = overLifeTimeRoot["midAlpha"].get<float>();
-	overLifeTimeData.endAlpha = overLifeTimeRoot["endAlpha"].get<float>();
-	overLifeTimeData.isTransSpeed = overLifeTimeRoot["isTransSpeed"].get<uint32_t>();
-	overLifeTimeData.startSpeed = overLifeTimeRoot["startSpeed"].get<float>();
-	overLifeTimeData.endSpeed = overLifeTimeRoot["endSpeed"].get<float>();
-	overLifeTimeData.gravity = overLifeTimeRoot["Gravity"].get<float>();
-	if (overLifeTimeRoot.contains("isRoring")) {
-		overLifeTimeData.isRoring = overLifeTimeRoot["isRoring"].get<uint32_t>();
-		json minRoringSpeed = overLifeTimeRoot["minRoringSpeed"];
-		overLifeTimeData.minRoringSpeed = Vector3(static_cast<float>(minRoringSpeed[0]), static_cast<float>(minRoringSpeed[1]), static_cast<float>(minRoringSpeed[2]));
-		json maxRoringSpeed = overLifeTimeRoot["maxRoringSpeed"];
-		overLifeTimeData.maxRoringSpeed = Vector3(static_cast<float>(maxRoringSpeed[0]), static_cast<float>(maxRoringSpeed[1]), static_cast<float>(maxRoringSpeed[2]));
-	}
-	if (overLifeTimeRoot.contains("isNoise")) {
-		overLifeTimeData.isNoise = overLifeTimeRoot["isNoise"].get<uint32_t>();
-		overLifeTimeData.density = overLifeTimeRoot["density"].get<float>();
-		overLifeTimeData.strength = overLifeTimeRoot["strength"].get<float>();
-	}
-
-	particleDatas_[fileName] = data;
-
-	return particleDatas_[fileName];
+	return outputData;
 }
 

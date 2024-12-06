@@ -75,5 +75,7 @@ private:
 	std::unique_ptr<BurnScar> burnScars_;
 	std::unique_ptr<IceScar> iceScar_;
 
+	std::map<std::string, std::unique_ptr<GPUParticle>> effect_;
+
 };
 
