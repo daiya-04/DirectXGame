@@ -17,17 +17,6 @@ void MyGame::Init(){
 	BurnScar::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 	IceScar::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 
-#ifdef NDEBUG
-	SceneManager::GetInstance()->ChangeScene("Title");
-#endif // NDEBUG
-	
-
-#ifdef _DEBUG
-
-	SceneManager::GetInstance()->ChangeScene("Debug");
-
-#endif // _DEBUG
-
 }
 
 void MyGame::Update(){

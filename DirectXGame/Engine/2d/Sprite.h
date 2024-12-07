@@ -47,6 +47,8 @@ protected: //メンバ変数
 	D3D12_RESOURCE_DESC resourceDesc_;
 	//座標
 	Vector2 position_{};
+	//倍率
+	Vector2 scale_ = { 1.0f,1.0f };
 	//サイズ
 	Vector2 size_ = { 100.0f,100.0f };
 	//回転
@@ -90,6 +92,8 @@ public: //メンバ関数
 
 	//座標の取得
 	const Vector2& GetPosition() const { return position_; }
+	//倍率の取得
+	const Vector2& GetScale() const { return scale_; }
 	//サイズの取得
 	const Vector2& GetSize() const { return size_; }
 	//回転の取得

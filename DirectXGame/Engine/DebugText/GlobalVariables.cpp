@@ -57,6 +57,10 @@ void GlobalVariables::Update() {
 			else if (std::holds_alternative<Vector3>(item.value)) {
 				Vector3* ptr = std::get_if<Vector3>(&item.value);
 				ImGui::DragFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr), 0.01f);
+				//Vec2型の値保持していれば
+			}else if (std::holds_alternative<Vector2>(item.value)) {
+				Vector2* ptr = std::get_if<Vector2>(&item.value);
+				ImGui::DragFloat2(itemName.c_str(), reinterpret_cast<float*>(ptr), 0.1f);
 			}
 
 		}
@@ -114,6 +118,17 @@ void GlobalVariables::SetValue(const std::string& groupName, const std::string& 
 
 }
 
+void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, const Vector2& value) {
+	// グループの参照を取得
+	Group& group = datas_[groupName];
+	// 新しい項目のデータを設定
+	Item newItem{};
+	newItem.value = value;
+	// 設定した項目をstd::mapに追加
+	group.items[key] = newItem;
+
+}
+
 void GlobalVariables::SaveFile(const std::string& groupName) {
 
 	//グループを検索
@@ -149,6 +164,11 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 			//Vec3型の値を登録
 			Vector3 value = std::get<Vector3>(item.value);
 			root[groupName][itemName] = json::array({ value.x, value.y, value.z });
+		}
+		else if (std::holds_alternative<Vector2>(item.value)) {
+			//Vec2型の値を保持
+			Vector2 value = std::get<Vector2>(item.value);
+			root[groupName][itemName] = json::array({ value.x,value.y });
 		}
 	}
 
@@ -255,6 +275,12 @@ void GlobalVariables::LoadFile(const std::string& groupName) {
 			//float型のjson配列登録
 			Vector3 value = { itItem->at(0), itItem->at(1), itItem->at(2) };
 			SetValue(groupName, itemName, value);
+			//要素数2の配列であれば
+		}
+		else if (itItem->is_array() && itItem->size() == 2) {
+			//float型のjson配列登録
+			Vector2 value = { itItem->at(0), itItem->at(1) };
+			SetValue(groupName, itemName, value);
 		}
 
 	}
@@ -298,6 +324,18 @@ void GlobalVariables::AddItem(const std::string& groupName, const std::string& k
 	}
 }
 
+void GlobalVariables::AddItem(const std::string& groupName, const std::string& key, const Vector2& value) {
+	auto group = datas_.find(groupName);
+
+	if (group == datas_.end()) {
+		return;
+	}
+
+	if (group->second.items.find(key) == group->second.items.end()) {
+		SetValue(groupName, key, value);
+	}
+}
+
 int32_t GlobalVariables::GetIntValue(const std::string& groupName, const std::string& key) const {
 
 
@@ -324,7 +362,6 @@ float GlobalVariables::GetFloatValue(const std::string& groupName, const std::st
 
 Vector3 GlobalVariables::GetVec3Value(const std::string& groupName, const std::string& key) const {
 
-
 	assert(datas_.find(groupName) != datas_.end());
 
 	const Group& group = datas_.at(groupName);
@@ -332,4 +369,14 @@ Vector3 GlobalVariables::GetVec3Value(const std::string& groupName, const std::s
 	assert(group.items.find(key) != group.items.end());
 
 	return std::get<Vector3>(group.items.find(key)->second.value);
+}
+
+Vector2 GlobalVariables::GetVec2Value(const std::string& groupName, const std::string& key) const {
+	assert(datas_.find(groupName) != datas_.end());
+
+	const Group& group = datas_.at(groupName);
+
+	assert(group.items.find(key) != group.items.end());
+
+	return std::get<Vector2>(group.items.find(key)->second.value);
 }
