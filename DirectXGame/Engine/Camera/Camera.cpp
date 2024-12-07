@@ -47,6 +47,7 @@ void Camera::UpdateMatrix() {
 void Camera::UpdateViewMatrix() {
 	matView_ = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotation_, translation_).Inverse();
 	cMap_->matView = matView_;
+	UpdateCameraPos();
 }
 
 void Camera::UpdateProjectionMatrix() {

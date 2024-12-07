@@ -89,6 +89,7 @@ std::map<std::string, std::unique_ptr<GPUParticle>> ParticleManager::LoadInterna
 		emitterData.rotate = emitterRoot["Rotate"].get<float>();
 		emitterData.count = emitterRoot["Count"].get<uint32_t>();
 		emitterData.frequency = emitterRoot["Frequency"].get<float>();
+		emitterData.frequencyTime = emitterRoot["Frequency"].get<float>();
 		json emitColor = emitterRoot["Color"];
 		emitterData.color = Vector4(static_cast<float>(emitColor[0]), static_cast<float>(emitColor[1]), static_cast<float>(emitColor[2]), static_cast<float>(emitColor[3]));
 		emitterData.lifeTime = emitterRoot["LifeTime"].get<float>();

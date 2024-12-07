@@ -18,19 +18,27 @@ void SceneManager::Init() {
 
 	sceneFactory_ = std::make_unique<SceneFactory>();
 
-	fadeTex_ = TextureManager::Load("Black.png");
+	fadeTex_ = TextureManager::Load("white.png");
 
 	fade_.reset(Sprite::Create(fadeTex_, { 640.0f,360.0f }));
 	fade_->SetSize({ 1280.0f,720.0f });
 	fade_->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
 
-	
+#ifdef NDEBUG
+	scene_ = sceneFactory_->CreateScene("Title");
+#endif // NDEBUG
+
+#ifdef _DEBUG
+	scene_ = sceneFactory_->CreateScene("Title");
+#endif // _DEBUG
+
+	scene_->Init();
 
 }
 
 void SceneManager::Update(){
 
-	if (nextScene_) {
+	/*if (nextScene_) {
 		if (scene_) {
 			alpha_ += 0.03f;
 		}else {
@@ -44,9 +52,22 @@ void SceneManager::Update(){
 		}
 	}else {
 		alpha_ -= 0.03f;
+	}*/
+
+	
+	if (nextScene_ && alpha_ < 1.0f) {
+		alpha_ += 0.03f;
+		if (alpha_ >= 1.0f) {
+			scene_ = std::move(nextScene_);
+			scene_->Init();
+		}
 	}
 
-	if (alpha_ <= 0.0f) { alpha_ = 0.0f; }
+	if (!nextScene_ && alpha_ > 0.0f) {
+		alpha_ -= 0.03f;
+	}
+
+	alpha_ = std::clamp(alpha_, 0.0f, 1.0f);
 
 	if (!nextScene_ && alpha_ <= 0.0f) {
 		scene_->Update();

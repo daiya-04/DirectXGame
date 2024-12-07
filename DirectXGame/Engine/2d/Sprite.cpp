@@ -128,14 +128,14 @@ void Sprite::SetSize(const Vector2& size) {
 
 void Sprite::SetScale(float scale) {
 
-	size_ *= scale;
+	scale_ = Vector2(scale, scale);
 
 	TransferVertex();
 }
 
 void Sprite::SetScale(Vector2 scale) {
 
-	size_ = { size_.x * scale.x,size_.y * scale.y };
+	scale_ = scale;
 
 	TransferVertex();
 }
@@ -171,10 +171,10 @@ void Sprite::SetTextureArea(const Vector2& texBase, const Vector2& texSize) {
 
 void Sprite::TransferVertex(){
 
-	float left = (0.0f - anchorpoint_.x) * size_.x;
-	float right = (1.0f - anchorpoint_.x) * size_.x;
-	float top = (0.0f - anchorpoint_.y) * size_.y;
-	float bottom = (1.0f - anchorpoint_.y) * size_.y;
+	float left = (0.0f - anchorpoint_.x) * size_.x * scale_.x;
+	float right = (1.0f - anchorpoint_.x) * size_.x * scale_.x;
+	float top = (0.0f - anchorpoint_.y) * size_.y * scale_.y;
+	float bottom = (1.0f - anchorpoint_.y) * size_.y * scale_.y;
 
 	float uvLeft = texBase_.x / (float)resourceDesc_.Width;
 	float uvRight = (texBase_.x + texSize_.x) / (float)resourceDesc_.Width;

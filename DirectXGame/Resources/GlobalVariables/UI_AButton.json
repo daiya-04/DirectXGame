@@ -1,0 +1,11 @@
+{
+    "UI_AButton": {
+        "EffectSpeed": 0.05000000074505806,
+        "EndScale": 1.5,
+        "StartScale": 0.8999999761581421,
+        "Translation": [
+            640.0,
+            560.0
+        ]
+    }
+}
