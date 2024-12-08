@@ -31,7 +31,7 @@ void DebugTestScene::Init() {
 
 	skyBoxTex_ = TextureManager::Load("skyBox.dds");
 	tex_ = TextureManager::Load("test.png");
-	burnScarsTex_ = TextureManager::Load("ScarBase.png");
+	burnScarsTex_ = TextureManager::Load("BurnScars.png");
 
 	skyBox_.reset(SkyBox::Create(skyBoxTex_));
 
@@ -66,7 +66,7 @@ void DebugTestScene::Init() {
 	effect_ = ParticleManager::Load("FireBallImpact");
 
 
-	Update();
+	
 }
 
 void DebugTestScene::Update() {

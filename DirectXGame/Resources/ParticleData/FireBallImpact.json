@@ -9,7 +9,7 @@
                     0.029411792755126953,
                     0.0
                 ],
-                "Count": 20,
+                "Count": 30,
                 "EmitterType": 1,
                 "Frequency": 0.01600000075995922,
                 "LifeTime": 0.30000001192092896,
@@ -57,6 +57,7 @@
                 "isColor": 1,
                 "isConstantVelocity": 0,
                 "isNoise": 0,
+                "isRandom": 0,
                 "isRoring": 0,
                 "isScale": 1,
                 "isTransSpeed": 0,
@@ -78,7 +79,7 @@
                     0.5376890897750854,
                     0.14417533576488495
                 ],
-                "startScale": 0.0,
+                "startScale": 2.0,
                 "startSpeed": 0.0,
                 "startVelocity": [
                     0.0,
@@ -102,7 +103,7 @@
                 "Count": 25,
                 "EmitterType": 2,
                 "Frequency": 0.1599999964237213,
-                "LifeTime": 1.0,
+                "LifeTime": 3.0,
                 "Radius": 1.0,
                 "Rotate": 360.0,
                 "Scale": 1.0,
@@ -111,7 +112,7 @@
                     0.0,
                     0.0
                 ],
-                "Speed": 1.0,
+                "Speed": 0.30000001192092896,
                 "Translate": [
                     0.0,
                     0.0,
@@ -147,6 +148,7 @@
                 "isColor": 1,
                 "isConstantVelocity": 0,
                 "isNoise": 0,
+                "isRandom": 0,
                 "isRoring": 0,
                 "isScale": 1,
                 "isTransSpeed": 1,
@@ -169,7 +171,7 @@
                     0.09222415089607239
                 ],
                 "startScale": 0.699999988079071,
-                "startSpeed": 2.0,
+                "startSpeed": 0.6000000238418579,
                 "startVelocity": [
                     0.0,
                     0.0,
@@ -216,9 +218,9 @@
                     0.0
                 ],
                 "density": [
-                    0.05,
-                    0.05,
-                    0.05
+                    0.20000000298023224,
+                    0.0,
+                    0.20000000298023224
                 ],
                 "endAlpha": 1.0,
                 "endColor": [
@@ -237,6 +239,7 @@
                 "isColor": 0,
                 "isConstantVelocity": 1,
                 "isNoise": 1,
+                "isRandom": 1,
                 "isRoring": 0,
                 "isScale": 1,
                 "isTransSpeed": 0,
@@ -258,14 +261,14 @@
                     0.0,
                     0.0
                 ],
-                "startScale": 0.05000000074505806,
+                "startScale": 0.10000000149011612,
                 "startSpeed": 0.0,
                 "startVelocity": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "strength": 1.0
+                "strength": 1.5
             },
             "isLoop": false,
             "textureName": "circle.png"
@@ -327,6 +330,7 @@
                 "isColor": 0,
                 "isConstantVelocity": 0,
                 "isNoise": 0,
+                "isRandom": 0,
                 "isRoring": 0,
                 "isScale": 1,
                 "isTransSpeed": 0,

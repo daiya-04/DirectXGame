@@ -67,7 +67,7 @@ protected:
 
 	bool isEffect_ = false;
 
-	int32_t lifeTime_ = 60 * 4;
+	int32_t lifeTime_ = 60 * 6;
 	int32_t lifeTimer_ = lifeTime_;
 
 protected:

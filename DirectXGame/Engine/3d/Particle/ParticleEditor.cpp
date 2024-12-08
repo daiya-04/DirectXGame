@@ -131,6 +131,7 @@ void ParticleEditor::DataSave() {
 		overLifeTimeRoot["isNoise"] = overLifeTime.isNoise;
 		overLifeTimeRoot["density"] = json::array({ overLifeTime.density.x, overLifeTime.density.y, overLifeTime.density.z });
 		overLifeTimeRoot["strength"] = overLifeTime.strength;
+		overLifeTimeRoot["isRandom"] = overLifeTime.isRandom;
 	}
 
 	//ディレクトリがなければ作成する
@@ -285,6 +286,9 @@ void ParticleEditor::LoadDataFile(const std::string& fileName) {
 			json density = overLifeTimeRoot["density"];
 			overLifeTimeData.density = Vector3(static_cast<float>(density[0]), static_cast<float>(density[1]), static_cast<float>(density[2]));
 			overLifeTimeData.strength = overLifeTimeRoot["strength"].get<float>();
+			if (overLifeTimeRoot.contains("isRandom")) {
+				overLifeTimeData.isRandom = overLifeTimeRoot["isRandom"].get<uint32_t>();
+			}
 		}
 	}
 
@@ -509,6 +513,10 @@ void ParticleEditor::DebugGUI() {
 				if (ImGui::TreeNode("NoiseState")) {
 					ImGui::InputFloat3("density", &overlifeTime.density.x);
 					ImGui::InputFloat("strength", &overlifeTime.strength);
+					isCheck = (overlifeTime.isRandom != 0);
+					if (ImGui::Checkbox("isRandom", &isCheck)) {
+						overlifeTime.isRandom = static_cast<uint32_t>(isCheck);
+					}
 					ImGui::TreePop();
 				}
 			}

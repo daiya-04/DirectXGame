@@ -46,4 +46,5 @@ struct OverLifeTime {
     uint32_t isNoise;
     float32_t3 density;
     float32_t strength;
+    uint32_t isRandom;
 };
