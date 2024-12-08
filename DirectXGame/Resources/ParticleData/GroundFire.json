@@ -9,7 +9,7 @@
                     0.14215683937072754,
                     0.0
                 ],
-                "Count": 4,
+                "Count": 6,
                 "EmitterType": 5,
                 "Frequency": 0.01600000075995922,
                 "LifeTime": 0.5,
@@ -21,7 +21,7 @@
                     0.0,
                     0.0
                 ],
-                "Speed": 0.20000000298023224,
+                "Speed": 2.5,
                 "Translate": [
                     0.0,
                     0.0,
@@ -32,7 +32,7 @@
                 "Gravity": 0.0,
                 "Velocity": [
                     0.0,
-                    4.0,
+                    6.0,
                     0.0
                 ],
                 "density": [
@@ -57,6 +57,7 @@
                 "isColor": 1,
                 "isConstantVelocity": 1,
                 "isNoise": 0,
+                "isRandom": 0,
                 "isRoring": 0,
                 "isScale": 1,
                 "isTransSpeed": 0,
@@ -82,7 +83,7 @@
                 "startSpeed": 0.0,
                 "startVelocity": [
                     0.0,
-                    10.0,
+                    15.0,
                     0.0
                 ],
                 "strength": 0.0
@@ -99,10 +100,10 @@
                     0.2696078419685364,
                     0.0
                 ],
-                "Count": 3,
+                "Count": 4,
                 "EmitterType": 5,
                 "Frequency": 0.03200000151991844,
-                "LifeTime": 1.5,
+                "LifeTime": 3.0,
                 "Radius": 0.10000000149011612,
                 "Rotate": 360.0,
                 "Scale": 0.0,
@@ -126,9 +127,9 @@
                     0.0
                 ],
                 "density": [
-                    0.2,
-                    0.2,
-                    0.2
+                    0.20000000298023224,
+                    0.20000000298023224,
+                    0.20000000298023224
                 ],
                 "endAlpha": 1.0,
                 "endColor": [
@@ -147,6 +148,7 @@
                 "isColor": 0,
                 "isConstantVelocity": 1,
                 "isNoise": 0,
+                "isRandom": 1,
                 "isRoring": 0,
                 "isScale": 1,
                 "isTransSpeed": 0,

@@ -51,8 +51,8 @@ void Player::Update(){
 	behaviorUpdateTable_[behavior_]();
 
 	///プレイヤーの移動制限
-	obj_->worldTransform_.translation_.x = std::clamp(obj_->worldTransform_.translation_.x, -50.0f, 50.0f);
-	obj_->worldTransform_.translation_.z = std::clamp(obj_->worldTransform_.translation_.z, -20.0f, 80.0f);
+	obj_->worldTransform_.translation_.x = std::clamp(obj_->worldTransform_.translation_.x, -30.0f, 30.0f);
+	obj_->worldTransform_.translation_.z = std::clamp(obj_->worldTransform_.translation_.z, -20.0f, 40.0f);
 	///
 
 	BaseCharactor::Update();

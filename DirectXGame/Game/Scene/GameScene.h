@@ -5,6 +5,7 @@
 #include <vector>
 #include <optional>
 #include <map>
+#include <string>
 #include <functional>
 
 #include "Sprite.h"
@@ -85,7 +86,7 @@ private: //オブジェクト
 	
 	//プレイヤーの攻撃
 	std::list<std::unique_ptr<PlayerAttack>> playerAttacks_;
-	//std::unique_ptr<GPUParticle> attackEndEff_;
+	std::map<std::string, std::unique_ptr<GPUParticle>> attackEndEff_;
 	//追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
 	//戦闘が終了してからタイトルに戻るまでの時間

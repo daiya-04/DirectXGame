@@ -113,6 +113,7 @@ public:
 		uint32_t isNoise;
 		Vector3 density;
 		float strength;
+		uint32_t isRandom;
 
 	};
 

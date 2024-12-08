@@ -63,7 +63,7 @@ void GameScene::Init(){
 	uint32_t XButtonTex = TextureManager::Load("XButton.png");
 	uint32_t char_AttackTex = TextureManager::Load("char_Attack.png");
 	uint32_t gameOverTex = TextureManager::Load("GameOver.png");
-	burnScarsTex_ = TextureManager::Load("ScarBase.png");
+	burnScarsTex_ = TextureManager::Load("BurnScars.png");
 	skyBoxTex_ = TextureManager::Load("skyBox.dds");
 
 	postEffect_ = PostEffect::GetInstance();
@@ -91,8 +91,7 @@ void GameScene::Init(){
 	player_->Init({ playerStandingModel,playerRunningModel,playerAttackModel,playerDeadModel });
 	player_->SetGameScene(this);
 
-	//attackEndEff_.reset(GPUParticle::Create(TextureManager::Load("particle.png"), 10000));
-	//attackEndEff_->SetParticleData(ParticleManager::Load("PlayerAttackEnd"));
+	attackEndEff_ = ParticleManager::Load("PlayerAttackEnd");
 
 
 	//ボス
@@ -318,7 +317,9 @@ void GameScene::DrawPostEffect() {
 
 	boss_->DrawParticle(camera_);
 
-	//attackEndEff_->Draw(camera_);
+	for (auto& [group, particle] : attackEndEff_) {
+		particle->Draw(camera_);
+	}
 	
 	if (sceneEvent_ == SceneEvent::Battle) {
 		groundFlare_->DrawParticle(camera_);
@@ -361,8 +362,10 @@ void GameScene::BattleUpdate() {
 		playerAttack->Update();
 
 		if (!playerAttack->IsLife()) {
-			/*attackEndEff_->particleData_.emitter_.emit = 1;
-			attackEndEff_->particleData_.emitter_.translate = playerAttack->GetWorldPos();*/
+			for (auto& [group, particle] : attackEndEff_) {
+				particle->Emit();
+				particle->particleData_.emitter_.translate = playerAttack->GetWorldPos();
+			}
 		}
 
 	}
@@ -375,7 +378,9 @@ void GameScene::BattleUpdate() {
 
 	
 
-	//attackEndEff_->Update();
+	for (auto& [group, particle] : attackEndEff_) {
+		particle->Update();
+	}
 
 	///衝突判定
 
@@ -429,8 +434,10 @@ void GameScene::BattleUpdate() {
 				boss_->OnCollision();
 				playerAttack->OnCollision();
 
-				/*attackEndEff_->particleData_.emitter_.emit = 1;
-				attackEndEff_->particleData_.emitter_.translate = playerAttack->GetWorldPos();*/
+				for (auto& [group, particle] : attackEndEff_) {
+					particle->Emit();
+					particle->particleData_.emitter_.translate = playerAttack->GetWorldPos();
+				}
 			}
 		}
 	}
@@ -470,13 +477,17 @@ void GameScene::PlayerDeadUpdate() {
 		playerAttack->Update();
 
 		if (!playerAttack->IsLife()) {
-			/*attackEndEff_->particleData_.emitter_.emit = 1;
-			attackEndEff_->particleData_.emitter_.translate = playerAttack->GetWorldPos();*/
+			for (auto& [group, particle] : attackEndEff_) {
+				particle->Emit();
+				particle->particleData_.emitter_.translate = playerAttack->GetWorldPos();
+			}
 		}
 
 	}
 
-	//attackEndEff_->Update();
+	for (auto& [group, particle] : attackEndEff_) {
+		particle->Update();
+	}
 
 	if (player_->IsFinishDeadMotion()) {
 		if (++workPlayerDead_.count_ >= workPlayerDead_.interval_) {
@@ -506,13 +517,17 @@ void GameScene::BossDeadUpdate() {
 		playerAttack->Update();
 
 		if (!playerAttack->IsLife()) {
-			/*attackEndEff_->particleData_.emitter_.emit = 1;
-			attackEndEff_->particleData_.emitter_.translate = playerAttack->GetWorldPos();*/
+			for (auto& [group, particle] : attackEndEff_) {
+				particle->Emit();
+				particle->particleData_.emitter_.translate = playerAttack->GetWorldPos();
+			}
 		}
 
 	}
 
-	//attackEndEff_->Update();
+	for (auto& [group, particle] : attackEndEff_) {
+		particle->Update();
+	}
 
 	if (boss_->IsFinishDeadMotion()) {
 		if (++workBossDead_.count_ >= workBossDead_.interval_) {
@@ -540,13 +555,17 @@ void GameScene::ClearUpdate() {
 		playerAttack->Update();
 
 		if (!playerAttack->IsLife()) {
-			/*attackEndEff_->particleData_.emitter_.emit = 1;
-			attackEndEff_->particleData_.emitter_.translate = playerAttack->GetWorldPos();*/
+			for (auto& [group, particle] : attackEndEff_) {
+				particle->Emit();
+				particle->particleData_.emitter_.translate = playerAttack->GetWorldPos();
+			}
 		}
 
 	}
 
-	//attackEndEff_->Update();
+	for (auto& [group, particle] : attackEndEff_) {
+		particle->Update();
+	}
 
 	camera_.SetMatView(followCamera_->GetCamera().GetMatView());
 

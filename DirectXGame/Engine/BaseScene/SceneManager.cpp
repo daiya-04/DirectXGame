@@ -29,7 +29,7 @@ void SceneManager::Init() {
 #endif // NDEBUG
 
 #ifdef _DEBUG
-	scene_ = sceneFactory_->CreateScene("Title");
+	scene_ = sceneFactory_->CreateScene("Debug");
 #endif // _DEBUG
 
 	scene_->Init();

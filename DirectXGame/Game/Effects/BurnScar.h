@@ -42,6 +42,7 @@ private:
 	std::unique_ptr<GPUParticle> flareCircleEff_;*/
 
 	std::map<std::string, std::unique_ptr<GPUParticle>> effect_;
+	std::map<std::string, std::unique_ptr<GPUParticle>> residual_;
 
 public: //メンバ関数
 

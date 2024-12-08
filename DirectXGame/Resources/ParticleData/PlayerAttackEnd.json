@@ -1,88 +1,95 @@
 {
     "PlayerAttackEnd": {
-        "Emitter": {
-            "BillboardType": 0,
-            "Color": [
-                0.03094964660704136,
-                0.08218564838171005,
-                0.9019607901573181,
-                1.0
-            ],
-            "Count": 1000,
-            "EmitterType": 1,
-            "Frequency": 0.01600000075995922,
-            "LifeTime": 0.30000001192092896,
-            "Radius": 0.5,
-            "Rotate": 0.0,
-            "Scale": 0.10000000149011612,
-            "Size": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Speed": 0.20000000298023224,
-            "Translate": [
-                0.0,
-                0.0,
-                0.0
-            ]
-        },
-        "OverLifeTime": {
-            "Gravity": 0.0,
-            "Velocity": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "density": 5.0,
-            "endAlpha": 0.0,
-            "endColor": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "endScale": 0.0,
-            "endSpeed": 0.0,
-            "endVelocity": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "isAlpha": 1,
-            "isColor": 0,
-            "isConstantVelocity": 0,
-            "isNoise": 1,
-            "isRoring": 0,
-            "isScale": 0,
-            "isTransSpeed": 1,
-            "isTransVelocity": 0,
-            "maxRoringSpeed": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "midAlpha": 1.0,
-            "minRoringSpeed": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "startAlpha": 0.0,
-            "startColor": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "startScale": 0.0,
-            "startSpeed": 2.0,
-            "startVelocity": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "strength": 0.10000000149011612
-        },
-        "isLoop": false,
-        "textureName": "circle.png"
+        "particle1": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    0.08347753435373306,
+                    0.13421881198883057,
+                    0.9460784196853638,
+                    0.0
+                ],
+                "Count": 500,
+                "EmitterType": 1,
+                "Frequency": 0.01600000075995922,
+                "LifeTime": 0.800000011920929,
+                "Radius": 1.0,
+                "Rotate": 0.0,
+                "Scale": 0.10000000149011612,
+                "Size": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Speed": 2.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.10000000149011612,
+                "Velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 0.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 0,
+                "isConstantVelocity": 0,
+                "isNoise": 0,
+                "isRandom": 0,
+                "isRoring": 0,
+                "isScale": 1,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 1.0,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 0.20000000298023224,
+                "startSpeed": 2.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": false,
+            "textureName": "circle.png"
+        }
     }
 }

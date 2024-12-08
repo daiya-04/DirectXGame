@@ -1,0 +1,186 @@
+{
+    "Effect": {
+        "particle1": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    0.6299020051956177,
+                    0.2598039507865906,
+                    1.0,
+                    0.0
+                ],
+                "Count": 3,
+                "EmitterType": 5,
+                "Frequency": 0.01600000075995922,
+                "LifeTime": 1.0,
+                "Radius": 1.0,
+                "Rotate": 360.0,
+                "Scale": 0.5,
+                "Size": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Speed": 0.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    3.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 0.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 0,
+                "isConstantVelocity": 1,
+                "isNoise": 0,
+                "isRandom": 0,
+                "isRoring": 1,
+                "isScale": 0,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    6.0
+                ],
+                "midAlpha": 1.0,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    4.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 0.0,
+                "startSpeed": 0.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": true,
+            "textureName": "cross_02.png"
+        },
+        "particle2": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    0.499270498752594,
+                    0.2926758825778961,
+                    0.9950980544090271,
+                    0.0
+                ],
+                "Count": 2,
+                "EmitterType": 5,
+                "Frequency": 0.01600000075995922,
+                "LifeTime": 1.0,
+                "Radius": 1.0,
+                "Rotate": 0.0,
+                "Scale": 0.10000000149011612,
+                "Size": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Speed": 0.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    3.0,
+                    0.0
+                ],
+                "density": [
+                    1.0,
+                    0.0,
+                    1.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 0.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 0,
+                "isConstantVelocity": 1,
+                "isNoise": 1,
+                "isRandom": 1,
+                "isRoring": 0,
+                "isScale": 0,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 1.0,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 0.0,
+                "startSpeed": 0.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 1.5
+            },
+            "isLoop": true,
+            "textureName": "corona.png"
+        }
+    }
+}
