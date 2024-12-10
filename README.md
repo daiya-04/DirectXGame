@@ -1,3 +1,5 @@
+[![DebugBuild](https://github.com/daiya-04/DirectXGame/actions/workflows/DebugBuild.yml/badge.svg)](https://github.com/daiya-04/DirectXGame/actions/workflows/DebugBuild.yml)
+
 # 個人制作
 
 ## タイトル 「魔法師の戦い」
