@@ -1,4 +1,5 @@
 [![DebugBuild](https://github.com/daiya-04/DirectXGame/actions/workflows/DebugBuild.yml/badge.svg)](https://github.com/daiya-04/DirectXGame/actions/workflows/DebugBuild.yml)
+[![ReleaseBuild](https://github.com/daiya-04/DirectXGame/actions/workflows/ReleaseBuild.yml/badge.svg)](https://github.com/daiya-04/DirectXGame/actions/workflows/ReleaseBuild.yml)
 
 # 個人制作
 
