@@ -118,11 +118,11 @@ size_t Audio::LoadInternal(const std::string& filename) {
 	MFCreateMediaType(&MFMediaType);
 	MFMediaType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
 	MFMediaType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
-	MFSourceReader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, nullptr, MFMediaType.Get());
+	MFSourceReader->SetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), nullptr, MFMediaType.Get());
 
 	//MFMediaType->Release();
 	MFMediaType = nullptr;
-	MFSourceReader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, &MFMediaType);
+	MFSourceReader->GetCurrentMediaType(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), &MFMediaType);
 
 
 	//オーディオデータ形式の読み込み
@@ -135,7 +135,7 @@ size_t Audio::LoadInternal(const std::string& filename) {
 
 		ComPtr<IMFSample> MFSample;
 		DWORD dwStreamFlags{ 0 };
-		MFSourceReader->ReadSample(MF_SOURCE_READER_FIRST_AUDIO_STREAM, 0, nullptr, &dwStreamFlags, nullptr, &MFSample);
+		MFSourceReader->ReadSample(static_cast<DWORD>(MF_SOURCE_READER_FIRST_AUDIO_STREAM), 0, nullptr, &dwStreamFlags, nullptr, &MFSample);
 
 		if (dwStreamFlags & MF_SOURCE_READERF_ENDOFSTREAM) { break; }
 

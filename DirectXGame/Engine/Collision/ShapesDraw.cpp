@@ -53,12 +53,6 @@ namespace ShapesDraw {
 		Line::Draw(points[3], points[0], camera, color);
 	}
 
-	void DrawTriangle(const Shapes::Triangle& triangle, const Camera, const Vector4 color) {
-
-
-
-	}
-
 	void DrawAABB(const Shapes::AABB& aabb, const Camera& camera, const Vector4& color) {
 
 		Vector3 points[8];

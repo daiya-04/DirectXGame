@@ -96,10 +96,10 @@ void ModelManager::LoadObjFile(const std::string& modelName) {
 			}
 		}
 		
-		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+		aiMaterial* srcMaterial = scene->mMaterials[mesh->mMaterialIndex];
+		if (srcMaterial->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
 			aiString textureFilePath;
-			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+			srcMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
 			std::string materialFilename;
 			materialFilename = directoryPath_ + textureFilePath.C_Str();
 			Material material;
@@ -168,10 +168,10 @@ void ModelManager::LoadGltfFile(const std::string& modelName) {
 			}
 		}
 
-		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+		aiMaterial* srcMaterial = scene->mMaterials[mesh->mMaterialIndex];
+		if (srcMaterial->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
 			aiString textureFilePath;
-			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+			srcMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
 			std::string materialFilename;
 			materialFilename = directoryPath_ + textureFilePath.C_Str();
 			Material material;

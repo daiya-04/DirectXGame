@@ -1,6 +1,7 @@
 #include "BaseCharactor.h"
 
 #include "AnimationManager.h"
+#include "ShapesDraw.h"
 
 void BaseCharactor::Init(const std::vector<std::shared_ptr<Model>>& models) {
 
@@ -46,7 +47,13 @@ void BaseCharactor::UpdateCollider() {
 
 void BaseCharactor::Draw(const Camera& camera) {
 
+#ifdef _DEBUG
+	//衝突範囲の可視化
+	ShapesDraw::DrawOBB(collider_, camera);
+#endif // _DEBUG
 
+	obj_->Draw(camera);
+	skeletons_[actionIndex_].Draw(obj_->worldTransform_, camera);
 
 }
 

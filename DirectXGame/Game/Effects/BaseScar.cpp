@@ -32,7 +32,7 @@ void BaseScar::Init(uint32_t textureHandle) {
 
 	worldMatBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(Matrix4x4));
 	Matrix4x4* MatData = nullptr;
-	HRESULT hr = worldMatBuff_->Map(0, nullptr, reinterpret_cast<void**>(&MatData));
+	worldMatBuff_->Map(0, nullptr, reinterpret_cast<void**>(&MatData));
 	*MatData = MakeIdentity44();
 
 	scarDataBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(float));
@@ -50,8 +50,9 @@ void BaseScar::Draw(const Camera& camera) {
 	scarData_->threshold_ = threshold_;
 	scarData_->color_ = color_;
 
+	
 	Matrix4x4* MatData = nullptr;
-	HRESULT hr = worldMatBuff_->Map(0, nullptr, reinterpret_cast<void**>(&MatData));
+	worldMatBuff_->Map(0, nullptr, reinterpret_cast<void**>(&MatData));
 	*MatData = MakeAffineMatrix({ scale_.x,1.0f,scale_.y }, { 0.0f,rotate_,0.0f }, position_);
 
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);

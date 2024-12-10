@@ -84,7 +84,7 @@ void Sprite::Initialize() {
 
 	wvpResource_ = CreateBufferResource(device, sizeof(Matrix4x4));
 	Matrix4x4* wvpData = nullptr;
-	HRESULT hr = wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	*wvpData = MakeIdentity44();
 
 }
@@ -97,7 +97,7 @@ void Sprite::Draw(){
 	Matrix4x4 prijectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, static_cast<float>(WinApp::kClientWidth), static_cast<float>(WinApp::kClientHeight), 0.0f, 100.0f);
 	Matrix4x4 wvpMatrix = worldMatrix * viewMatrix * prijectionMatrix;
 	Matrix4x4* wvpData = nullptr;
-	HRESULT hr = wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	*wvpData = wvpMatrix;
 	
 	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();

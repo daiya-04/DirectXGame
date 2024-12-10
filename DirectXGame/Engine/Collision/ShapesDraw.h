@@ -12,8 +12,6 @@ namespace ShapesDraw {
 	void DrawSphere(const Shapes::Sphere& sphere, const Camera& camera, const Vector4& color = {1.0f,1.0f,1.0f,1.0f});
 	//平面描画
 	void DrawPlane(const Shapes::Plane& plane, const Camera& camera, const Vector4& color = { 1.0f,1.0f,1.0f,1.0f });
-	//三角形
-	void DrawTriangle(const Shapes::Triangle& triangle, const Camera, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f });
 	//AABB描画
 	void DrawAABB(const Shapes::AABB& aabb, const Camera& camera, const Vector4& color = { 1.0f,1.0f,1.0f,1.0f });
 	//OBB描画

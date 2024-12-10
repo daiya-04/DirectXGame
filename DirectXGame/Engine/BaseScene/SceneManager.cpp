@@ -93,7 +93,7 @@ void SceneManager::Update(){
 
 }
 
-void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
+void SceneManager::Draw([[maybe_unused]] ID3D12GraphicsCommandList* commandList){
 
 	DirectXCommon::GetInstance()->ClearDepthBaffer();
 

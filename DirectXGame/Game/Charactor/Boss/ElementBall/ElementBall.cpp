@@ -70,7 +70,7 @@ void ElementBall::Update() {
 	ColliderUpdate();
 }
 
-void ElementBall::Draw(const Camera& camera) {
+void ElementBall::Draw([[maybe_unused]]  const Camera& camera) {
 
 #ifdef _DEBUG
 	if (isLife_) {

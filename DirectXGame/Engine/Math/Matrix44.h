@@ -106,7 +106,6 @@ public:
 			// ピボット行を使用して他の行を掃き出す
 			for (size_t row = 0; row < kMatrixNum; row++) {
 				if (row == k) continue;
-				float factor = sweep[row][k];
 				pivot = -sweep[row][k];
 				for (size_t column = 0; column < (kMatrixNum * 2); column++) {
 					sweep[row][column] += sweep[k][column] * pivot;

@@ -67,14 +67,7 @@ void Player::UpdateUI() {
 
 void Player::Draw(const Camera& camera){
 
-#ifdef _DEBUG
-	//衝突範囲の可視化
-	ShapesDraw::DrawOBB(collider_, camera);
-#endif // _DEBUG
-
-
-	obj_->Draw(camera);
-	skeletons_[actionIndex_].Draw(obj_->worldTransform_, camera);
+	BaseCharactor::Draw(camera);
 
 }
 
