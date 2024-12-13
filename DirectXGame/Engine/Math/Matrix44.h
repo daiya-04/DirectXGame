@@ -1,22 +1,33 @@
 #pragma once
+///---------------------------------------------------------------------------------------------
+//
+// Matrix4x4
+//
+///---------------------------------------------------------------------------------------------
+
 #include <cmath>
 #include <assert.h>
 #include "Vec3.h"
 
+//4x4行列クラス
 class Matrix4x4 {
 public:
 
 	static const int kMatrixNum = 4;
 	float m[kMatrixNum][kMatrixNum];
 public:
-
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
 	inline Matrix4x4() {
 		m[0][0] = 1.0f, m[0][1] = 0.0f, m[0][2] = 0.0f, m[0][3] = 0.0f;  //1行目
 		m[1][0] = 0.0f, m[1][1] = 1.0f, m[1][2] = 0.0f, m[1][3] = 0.0f;  //2行目
 		m[2][0] = 0.0f, m[2][1] = 0.0f, m[2][2] = 1.0f, m[2][3] = 0.0f;  //3行目
 		m[3][0] = 0.0f, m[3][1] = 0.0f, m[3][2] = 0.0f, m[3][3] = 1.0f;  //4行目
 	}
-
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
 	inline Matrix4x4(
 		float m00, float m01, float m02, float m03,
 		float m10, float m11, float m12, float m13,
@@ -27,7 +38,7 @@ public:
 		m[2][0] = m20, m[2][1] = m21, m[2][2] = m22, m[2][3] = m23;  //3行目
 		m[3][0] = m30, m[3][1] = m31, m[3][2] = m32, m[3][3] = m33;  //4行目
 	}
-
+	//加算
 	friend inline Matrix4x4 operator+(const Matrix4x4& m1, const Matrix4x4& m2) {
 		Matrix4x4 result{};
 		for (size_t row = 0; row < kMatrixNum; row++) {
@@ -37,7 +48,7 @@ public:
 		}
 		return result;
 	}
-
+	//減算
 	friend inline Matrix4x4 operator-(const Matrix4x4& m1, const Matrix4x4& m2) {
 		Matrix4x4 result{};
 		for (size_t row = 0; row < kMatrixNum; row++) {
@@ -47,7 +58,7 @@ public:
 		}
 		return result;
 	}
-
+	//乗算
 	friend inline Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2) {
 		Matrix4x4 result{};
 		for (size_t row = 0; row < kMatrixNum; row++) {
@@ -57,7 +68,7 @@ public:
 		}
 		return result;
 	}
-
+	//乗算
 	friend inline Matrix4x4 operator*(const float scalar, const Matrix4x4& matrix) {
 		Matrix4x4 result{};
 		for (size_t row = 0; row < kMatrixNum; row++) {
@@ -66,11 +77,11 @@ public:
 			}
 		}
 	}
-
+	//乗算
 	friend inline Matrix4x4 operator*(const Matrix4x4& matrix, const float scalar) {
 		return scalar * matrix;
 	}
-
+	//逆行列
 	inline Matrix4x4 Inverse() {
 
 		Matrix4x4 result{};
@@ -123,7 +134,7 @@ public:
 		return result;
 
 	}
-
+	//置換
 	inline Matrix4x4 Transpose() const {
 		Matrix4x4 result{};
 		for (size_t row = 0; row < kMatrixNum; row++) {
@@ -134,7 +145,7 @@ public:
 		return result;
 	}
 };
-
+	//単位行列
     inline Matrix4x4 MakeIdentity44() {
 		return{
 			1.0f,0.0f,0.0f,0.0f,
@@ -143,7 +154,7 @@ public:
 			0.0f,0.0f,0.0f,1.0f
 		};
 	}
-
+	//トランスフォーム行列
 	inline Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
 		return {
 			1.0f,0.0f,0.0f,0.0f,
@@ -152,7 +163,7 @@ public:
 			translate.x,translate.y,translate.z,1.0f
 		};
 	}
-
+	//スケール行列
 	inline Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
 		return {
 			scale.x,0.0f,0.0f,0.0f,
@@ -161,7 +172,7 @@ public:
 			0.0f,0.0f,0.0f,1.0f
 		};
 	}
-
+	//射影変換
 	inline Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
 		Vector3 result{};
 		result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
@@ -175,7 +186,7 @@ public:
 
 		return result;
 	}
-
+	//X軸回転行列
 	inline Matrix4x4 MakeRotateXMatrix(float radian) {
 		return {
 			1.0f,0.0f,0.0f,0.0f,
@@ -184,7 +195,7 @@ public:
 			0.0f,0.0f,0.0f,1.0f
 		};
 	}
-
+	//Y軸回転行列
 	inline Matrix4x4 MakeRotateYMatrix(float radian) {
 		return {
 			std::cosf(radian),0.0f,-std::sinf(radian),0.0f,
@@ -193,7 +204,7 @@ public:
 			0.0f,0.0f,0.0f,1.0f
 		};
 	}
-
+	//Z軸回転行列
 	inline Matrix4x4 MakeRotateZMatrix(float radian) {
 		return {
 			std::cosf(radian),std::sinf(radian),0.0f,0.0f,
@@ -202,7 +213,7 @@ public:
 			0.0f,0.0f,0.0f,1.0f
 		};
 	}
-
+	//アフィン変換
 	inline Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translation) {
 		
 		Matrix4x4 rotateMatrix = MakeRotateXMatrix(rotate.x) * MakeRotateYMatrix(rotate.y) * MakeRotateZMatrix(rotate.z);
@@ -211,7 +222,7 @@ public:
 
 		return scaleMatrix * rotateMatrix * translateMatrix;
 	}
-
+	//透視投影行列
 	inline Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
 		Matrix4x4 result{};
 		result.m[0][0] = (1.0f / aspectRatio) * (1.0f / std::tanf(fovY / 2.0f));
@@ -222,7 +233,7 @@ public:
 
 		return result;
 	}
-
+	//正射影行列
 	inline Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip) {
 		Matrix4x4 result{};
 		result.m[0][0] = 2.0f / (right - left);
@@ -235,7 +246,7 @@ public:
 
 		return result;
 	}
-
+	//ビューポート行列
 	inline Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth = 0.0f, float maxDepth = 1.0f) {
 		Matrix4x4 result{};
 		float w = width / 2.0f;
@@ -251,14 +262,14 @@ public:
 
 		return result;
 	}
-
+	//ベクトル変換
 	inline Vector3 TransformNormal(const Vector3& vector, const Matrix4x4& matrix) {
 	    return {
 	        vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0],
 	        vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1],
 	        vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2]};
     }
-
+	//任意軸回転
 	inline Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
 		Matrix4x4 result = MakeIdentity44();
 
@@ -276,7 +287,7 @@ public:
 
 		return result;
 	}
-
+	//A方向からB方向へ
 	inline Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
 		Matrix4x4 result = MakeIdentity44();
 		Vector3 axis{};
@@ -317,7 +328,7 @@ public:
 
 		return result;
 	}
-
+	//スケール取り出し
 	inline Vector3 MakeScale(const Matrix4x4& matrix) {
 
 		Vector3 scaleX = { matrix.m[0][0],matrix.m[0][1] ,matrix.m[0][2] };

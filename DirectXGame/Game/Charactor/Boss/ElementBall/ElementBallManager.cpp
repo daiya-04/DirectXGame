@@ -3,7 +3,7 @@
 #include "ParticleManager.h"
 
 
-void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex) {
+void ElementBallManager::Init(const std::shared_ptr<Model>& model) {
 
 	for (auto& elementBall : elementBalls_) {
 		elementBall = std::make_unique<ElementBall>();
@@ -11,36 +11,11 @@ void ElementBallManager::Init(const std::shared_ptr<Model>& model, uint32_t tex)
 	}
 
 	for (auto& burnScars : burnScareses_) {
-		burnScars.reset(BurnScar::Create(tex));
+		burnScars.reset(BurnScar::Create(TextureManager::Load("BurnScars.png")));
 	}
 
 
 	///エフェクト設定
-	/*for (auto& fireField : fireFields_) {
-		fireField.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 15000));
-		fireField->particleData_.emitter_.color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-		fireField->particleData_.emitter_.emitterType = GPUParticle::EmitShape::Circle;
-		fireField->particleData_.emitter_.frequency = 1.0f / 60.0f;
-		fireField->particleData_.emitter_.count = 2000;
-		fireField->particleData_.emitter_.lifeTime = 10.0f / 60.0f;
-		fireField->particleData_.emitter_.speed = 0.1f;
-		fireField->particleData_.emitter_.scale = 0.2f;
-		fireField->particleData_.emitter_.radius = 2.5f;
-		fireField->particleData_.isLoop_ = false;
-
-		fireField->particleData_.overLifeTime_.isAlpha = 1;
-		fireField->particleData_.overLifeTime_.midAlpha = 1.0f;
-	}
-
-	for (auto& splash : splashes_) {
-		splash.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 10000));
-		splash->SetParticleData(ParticleManager::Load("FireBallSplash"));
-	}
-
-	for (auto& fireSpark : fireSparks_) {
-		fireSpark.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 2048));
-		fireSpark->SetParticleData(ParticleManager::Load("FireBallFireSpark"));
-	}*/
 	for (auto& effect : fireSetEffs_) {
 		effect = ParticleManager::Load("FireBallSet");
 		for (auto& [group, particle] : effect) {
@@ -86,39 +61,13 @@ void ElementBallManager::Update() {
 
 	for (auto& effect : fireSetEffs_) {
 		for (auto& [group, particle] : effect) {
+			//攻撃準備中のみエフェクトを出す
 			if (elementBalls_[0]->GetPhase() != ElementBall::Phase::kSet) {
 				particle->particleData_.isLoop_ = false;
 			}
 			particle->Update();
 		}
 	}
-
-	/*for (auto& splash : splashes_) {
-		if (elementBalls_[0]->GetPhase() == ElementBall::Phase::kSet) {
-			splash->particleData_.isLoop_ = true;
-		}
-		else {
-			splash->particleData_.isLoop_ = false;
-		}
-		splash->Update();
-	}
-
-	for (auto& fireSpark : fireSparks_) {
-		if (elementBalls_[0]->GetPhase() == ElementBall::Phase::kSet) {
-			fireSpark->particleData_.isLoop_ = true;
-		}else {
-			fireSpark->particleData_.isLoop_ = false;
-		}
-		fireSpark->Update();
-	}
-	
-
-	for (auto& fireField : fireFields_) {
-		if (elementBalls_[0]->GetPhase() == ElementBall::Phase::kCharge) {
-			fireField->particleData_.isLoop_ = false;
-		}
-		fireField->Update();
-	}*/
 
 }
 
@@ -143,15 +92,6 @@ void ElementBallManager::DrawParticle(const Camera& camera) {
 			particle->Draw(camera);
 		}
 	}
-	/*for (auto& fireField : fireFields_) {
-		fireField->Draw(camera);
-	}
-	for (auto& splash : splashes_) {
-		splash->Draw(camera);
-	}
-	for (auto& fireSpark : fireSparks_) {
-		fireSpark->Draw(camera);
-	}*/
 
 }
 
@@ -181,47 +121,36 @@ void ElementBallManager::SetTartget(const WorldTransform* target) {
 
 void ElementBallManager::SetAttackData(const Vector3& pos) {
 
-	Vector3 offset[4] = {
+	//攻撃位置のオフセット
+	const Vector3 kOffset[kElementBallNum_] = {
 		{4.0f,0.0f,2.0f},
 		{-4.0f,0.0f,2.0f},
 		{4.0f,0.0f,-2.0f},
 		{-4.0f,0.0f,-2.0f},
 	};
+	//インターバルの基準
+	const uint32_t kBaseInterval = 2;
+
 	//生成位置の設定
-	for (uint32_t index = 0; index < 4; index++) {
-		elementBalls_[index]->SetAttackData(pos + offset[index], 2 + index);
+	for (uint32_t index = 0; index < kElementBallNum_; index++) {
+		elementBalls_[index]->SetAttackData(pos + kOffset[index], kBaseInterval + index);
 	}
 
 }
 
 void ElementBallManager::AttackStart() {
 
-	/*for (auto& fireField : fireFields_) {
-		fireField->particleData_.isLoop_ = true;
-	}*/
-
 	for (auto& elementBall : elementBalls_) {
 		elementBall->AttackStart();
 	}
 	isAttack_ = true;
 
-	for (size_t index = 0; index < elementBallNum_; index++) {
+	for (size_t index = 0; index < kElementBallNum_; index++) {
 		for (auto& [group, particle] : fireSetEffs_[index]) {
 			particle->particleData_.isLoop_ = true;
 			particle->particleData_.emitter_.translate = elementBalls_[index]->GetWorldPos();
 			particle->particleData_.emitter_.translate.y = 0.01f;
 		}
 	}
-
-	/*for (size_t index = 0; index < 4; index++) {
-		fireFields_[index]->particleData_.emitter_.translate = elementBalls_[index]->GetWorldPos();
-		fireFields_[index]->particleData_.emitter_.translate.y = 0.1f;
-
-		splashes_[index]->particleData_.emitter_.translate = elementBalls_[index]->GetWorldPos();
-		splashes_[index]->particleData_.emitter_.translate.y = 0.1f;
-
-		fireSparks_[index]->particleData_.emitter_.translate = elementBalls_[index]->GetWorldPos();
-		fireSparks_[index]->particleData_.emitter_.translate.y = 0.1f;
-	}*/
 
 }

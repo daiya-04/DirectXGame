@@ -1,4 +1,11 @@
 #pragma once
+///---------------------------------------------------------------------------------------------
+// 
+// ゲームシーン
+// 
+///---------------------------------------------------------------------------------------------
+
+
 #include "IScene.h"
 #include <memory>
 #include <list>
@@ -36,44 +43,70 @@
 #include "PlasmaShotManager.h"
 #include "Rock.h"
 
-
+//ゲームシーンクラス
 class GameScene : public IScene {
 public:
-	//初期化
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	void Init()override;
-	//更新
+	/// <summary>
+	/// 更新
+	/// </summary>
 	void Update()override;
-	//背景描画
+	/// <summary>
+	/// 背景描画
+	/// </summary>
 	void DrawBackGround()override;
-	//モデル描画
+	/// <summary>
+	/// モデル描画
+	/// </summary>
 	void DrawModel()override;
-	//パーティクル3dモデル描画
+	/// <summary>
+	/// パーティクル3dモデル描画
+	/// </summary>
 	void DrawParticleModel()override;
-	//パーティクル描画
+	/// <summary>
+	/// パーティクル描画
+	/// </summary>
 	void DrawParticle()override;
-	//UI描画
+	/// <summary>
+	/// UI描画
+	/// </summary>
 	void DrawUI()override;
-	//ポストエフェクトを掛けるモデルなどの描画
+	/// <summary>
+	/// ポストエフェクトを掛けるモデルなどの描画
+	/// </summary>
 	void DrawPostEffect()override;
-	//レンダーテクスチャの描画
+	/// <summary>
+	/// レンダーテクスチャの描画
+	/// </summary>
 	void DrawRenderTexture()override;
-	//デバッグ用
+	/// <summary>
+	/// デバッグ用
+	/// </summary>
 	void DebugGUI()override;
-
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
 	~GameScene()override;
-
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
 	GameScene();
-	//プレイヤー攻撃追加
+	/// <summary>
+	/// プレイヤー攻撃をリストに追加
+	/// </summary>
+	/// <param name="playerAttack">プレイヤー攻撃クラスのポインタ</param>
 	void AddPlayerAttack(PlayerAttack* playerAttack);
 
 private:
-  
+	//カメラ
 	Camera camera_;
-
+	//ポイントライト
 	PointLight pointLight_;
+	//スポットライト
 	SpotLight spotLight_;
-
-private: //オブジェクト
 
 	//地面
 	std::unique_ptr<Ground> ground_;
@@ -86,72 +119,116 @@ private: //オブジェクト
 	
 	//プレイヤーの攻撃
 	std::list<std::unique_ptr<PlayerAttack>> playerAttacks_;
+	//プレイヤー攻撃が消えたときのエフェクト
 	std::map<std::string, std::unique_ptr<GPUParticle>> attackEndEff_;
 	//追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
 	//戦闘が終了してからタイトルに戻るまでの時間
 	uint32_t finishTime_ = 60 * 3;
+	//ゲーム終了カウンター
 	uint32_t finishCount_ = finishTime_;
-	//UI
-	std::unique_ptr<Sprite> XButton_;
-	std::unique_ptr<Sprite> char_Attack_;
-	std::unique_ptr<Sprite> gameOver_;
-	std::unique_ptr<Sprite> finish_;
 
+	///UI
+	//Xボタン
+	std::unique_ptr<Sprite> XButton_;
+	//攻撃文字
+	std::unique_ptr<Sprite> char_Attack_;
+	//ゲームオーバー文字
+	std::unique_ptr<Sprite> gameOver_;
+	//終了文字
+	std::unique_ptr<Sprite> finish_;
+	///
+
+	//ゲームオーバー文字のフェード用α値
 	float alpha_ = 0.0f;
 
 	//ポストエフェクト
 	PostEffect* postEffect_ = nullptr;
+	//アウトライン
 	OutLine* outLine_ = nullptr;
+	//HSVフィルター
 	HSVFilter* hsvFilter_ = nullptr;
 	//レベルデータ
 	std::unique_ptr<LevelData> levelData_;
 
-	uint32_t burnScarsTex_ = 0;
-
-	//敵の攻撃の各種マネージャ
+	///敵の攻撃の各種マネージャ
+	//地面から火が出るやつ
 	std::unique_ptr<GroundFlare> groundFlare_;
+	//つらら
 	std::unique_ptr<IcicleManager> icicle_;
+	//電気玉
 	std::unique_ptr<PlasmaShotManager> plasmaShot_;
+	//火の玉
 	std::unique_ptr<ElementBallManager> elementBall_;
+	///
 
 	//ゲームを止めるか
 	bool isGameStop_ = false;
 
 	//スカイボックス
-	uint32_t skyBoxTex_ = 0;
 	std::unique_ptr<SkyBox> skyBox_;
 
 private:
 	//シーンイベント
 	enum class SceneEvent {
+		//バトル
 		Battle,
+		//プレイヤー死亡
 		PlayerDead,
+		//ボス死亡
 		BossDead,
+		//クリア
 		Clear,
+		//ゲームオーバー
 		GameOver,
 	};
 
 private:
-	//バトル
+	/// <summary>
+	/// バトル初期化
+	/// </summary>
 	void BattleInit();
+	/// <summary>
+	/// バトル更新
+	/// </summary>
 	void BattleUpdate();
-	//プレイヤー死亡
+	/// <summary>
+	/// プレイヤー死亡初期化
+	/// </summary>
 	void PlayerDeadInit();
+	/// <summary>
+	/// プレイヤー死亡更新
+	/// </summary>
 	void PlayerDeadUpdate();
-	//ボス死亡
+	/// <summary>
+	/// ボス死亡初期化
+	/// </summary>
 	void BossDeadInit();
+	/// <summary>
+	/// ボス死亡更新
+	/// </summary>
 	void BossDeadUpdate();
-	//クリア
+	/// <summary>
+	/// クリア初期化
+	/// </summary>
 	void ClearInit();
+	/// <summary>
+	/// クリア更新
+	/// </summary>
 	void ClearUpdate();
-	//ゲームオーバー
+	/// <summary>
+	/// ゲームオーバー初期化
+	/// </summary>
 	void GameOverInit();
+	/// <summary>
+	/// ゲームオーバー更新
+	/// </summary>
 	void GameOverUpdate();
 
 private:
-
+	//現在のシーンイベント
 	SceneEvent sceneEvent_ = SceneEvent::Battle;
+	//次のシーンイベントのリクエスト
 	std::optional<SceneEvent> eventRequest_ = SceneEvent::Battle;
 	//シーンイベント初期化テーブル
 	std::map<SceneEvent, std::function<void()>> scenEventInitTable_{
@@ -197,8 +274,9 @@ private:
 		//ターゲットからのオフセット
 		Vector3 offset_ = { 1.5f, -0.5f, 6.0f };
 	};
-
+	//ボス死亡イベントのパラメータ
 	WorkBossDead workBossDead_;
+	//プレイヤー死亡イベントのパラメータ
 	WorkPlayerDead workPlayerDead_;
 
 };

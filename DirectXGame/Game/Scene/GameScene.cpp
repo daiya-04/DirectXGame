@@ -21,16 +21,18 @@ GameScene::~GameScene() {
 }
 
 void GameScene::Init(){
-  
+	//カメラ初期化
 	camera_.Init();
+	//ライト初期化
 	pointLight_.Init();
 	spotLight_.Init();
-
+	//object3dクラスにライトセット
 	Object3d::SetPointLight(&pointLight_);
 	Object3d::SetSpotLight(&spotLight_);
 
 	finishCount_ = finishTime_;
 
+	//ステージ情報読み込み
 	levelData_ = std::unique_ptr<LevelData>(LevelLoader::LoadFile("stage"));
 
 	/// モデルの読み込み
@@ -63,8 +65,7 @@ void GameScene::Init(){
 	uint32_t XButtonTex = TextureManager::Load("XButton.png");
 	uint32_t char_AttackTex = TextureManager::Load("char_Attack.png");
 	uint32_t gameOverTex = TextureManager::Load("GameOver.png");
-	burnScarsTex_ = TextureManager::Load("BurnScars.png");
-	skyBoxTex_ = TextureManager::Load("skyBox.dds");
+	uint32_t skyBoxTex = TextureManager::Load("skyBox.dds");
 
 	postEffect_ = PostEffect::GetInstance();
 	postEffect_->Init();
@@ -80,7 +81,7 @@ void GameScene::Init(){
 	///オブジェクト初期化
 	
 	//天球
-	skyBox_.reset(SkyBox::Create(skyBoxTex_));
+	skyBox_.reset(SkyBox::Create(skyBoxTex));
 
 	//地面
 	ground_ = std::make_unique<Ground>();
@@ -123,7 +124,7 @@ void GameScene::Init(){
 
 	//属性球
 	elementBall_ = std::make_unique<ElementBallManager>();
-	elementBall_->Init(elementBallModel,burnScarsTex_);
+	elementBall_->Init(elementBallModel);
 	elementBall_->SetTartget(&player_->GetWorldTransform());
 	boss_->SetElementBall(elementBall_.get());
 
@@ -173,7 +174,7 @@ void GameScene::Update() {
 	DebugGUI();
 
 #ifdef _DEBUG
-
+	//デバッグ用シーンの切り替えコマンド
 	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_1)) {
 		SceneManager::GetInstance()->ChangeScene("Title");
 	}
@@ -188,13 +189,13 @@ void GameScene::Update() {
 	if (eventRequest_) {
 
 		sceneEvent_ = eventRequest_.value();
-
+		//シーンイベント初期化
 		scenEventInitTable_[sceneEvent_]();
 
 		eventRequest_ = std::nullopt;
 	}
 	
-
+	//弾が消えたらリストから削除
 	playerAttacks_.remove_if([](const std::unique_ptr<PlayerAttack>& playerAttack) {
 		if (!playerAttack->IsLife()) {
 			return true;
@@ -202,6 +203,7 @@ void GameScene::Update() {
 		return false;
 	});
 
+	//シーンイベント更新
 	sceneEventUpdateTable_[sceneEvent_]();
 
 	
@@ -212,10 +214,12 @@ void GameScene::Update() {
 	
 	ground_->Update();
 
-	camera_.UpdateCameraPos();
+	//ライト更新
 	pointLight_.Update();
 	spotLight_.Update();
 
+	//カメラ更新
+	camera_.UpdateCameraPos();
 }
 
 void GameScene::DrawBackGround(){
@@ -361,6 +365,7 @@ void GameScene::BattleUpdate() {
 	for (const auto& playerAttack : playerAttacks_) {
 		playerAttack->Update();
 
+		//弾が消えたらエフェクトを出す
 		if (!playerAttack->IsLife()) {
 			for (auto& [group, particle] : attackEndEff_) {
 				particle->Emit();
@@ -475,7 +480,7 @@ void GameScene::PlayerDeadUpdate() {
 
 	for (const auto& playerAttack : playerAttacks_) {
 		playerAttack->Update();
-
+		//弾が消えたらエフェクト出す
 		if (!playerAttack->IsLife()) {
 			for (auto& [group, particle] : attackEndEff_) {
 				particle->Emit();
@@ -489,6 +494,7 @@ void GameScene::PlayerDeadUpdate() {
 		particle->Update();
 	}
 
+	//死亡アニメーションが終わったらゲームオーバー演出
 	if (player_->IsFinishDeadMotion()) {
 		if (++workPlayerDead_.count_ >= workPlayerDead_.interval_) {
 			eventRequest_ = SceneEvent::GameOver;
@@ -515,7 +521,7 @@ void GameScene::BossDeadUpdate() {
 
 	for (const auto& playerAttack : playerAttacks_) {
 		playerAttack->Update();
-
+		//弾が消えたらエフェクト出す
 		if (!playerAttack->IsLife()) {
 			for (auto& [group, particle] : attackEndEff_) {
 				particle->Emit();
@@ -529,6 +535,7 @@ void GameScene::BossDeadUpdate() {
 		particle->Update();
 	}
 
+	//死亡アニメーションが終わったらクリア
 	if (boss_->IsFinishDeadMotion()) {
 		if (++workBossDead_.count_ >= workBossDead_.interval_) {
 			eventRequest_ = SceneEvent::Clear;
@@ -543,7 +550,7 @@ void GameScene::ClearInit() {
 }
 
 void GameScene::ClearUpdate() {
-
+	//一定時間たったらタイトルへ
 	if (--finishCount_ <= 0) {
 		SceneManager::GetInstance()->ChangeScene("Title");
 	}
@@ -553,7 +560,7 @@ void GameScene::ClearUpdate() {
 
 	for (const auto& playerAttack : playerAttacks_) {
 		playerAttack->Update();
-
+		//弾が消えたらエフェクト出す
 		if (!playerAttack->IsLife()) {
 			for (auto& [group, particle] : attackEndEff_) {
 				particle->Emit();
@@ -588,6 +595,7 @@ void GameScene::GameOverUpdate() {
 		finishCount_--;
 	}
 
+	//一定時間たったらタイトルへ
 	if (finishCount_ <= 0) {
 		SceneManager::GetInstance()->ChangeScene("Title");
 	}
@@ -611,35 +619,6 @@ void GameScene::DebugGUI(){
 	ImGui::End();
 
 	hsvFilter_->DebugGUI();
-
-	ImGui::Begin("Light");
-
-	if (ImGui::TreeNode("PointLight")) {
-
-		ImGui::ColorEdit4("color", &pointLight_.color_.x);
-		ImGui::DragFloat3("position", &pointLight_.position_.x, 0.01f);
-		ImGui::SliderFloat("intensity", &pointLight_.intensity_, 0.0f, 1.0f);
-		ImGui::SliderFloat("radius", &pointLight_.radius_, 0.0f, 10.0f);
-		ImGui::SliderFloat("decay", &pointLight_.decay_, 0.01f, 2.0f);
-
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("SpotLight")) {
-
-		ImGui::ColorEdit4("color", &spotLight_.color_.x);
-		ImGui::DragFloat3("position", &spotLight_.position_.x, 0.01f);
-		ImGui::SliderFloat("intensity", &spotLight_.intensity_, 0.0f, 1.0f);
-		ImGui::SliderFloat3("direction", &spotLight_.direction_.x, -1.0f, 1.0f);
-		ImGui::SliderFloat("distance", &spotLight_.distance_, 0.0f, 10.0f);
-		ImGui::SliderFloat("decay", &spotLight_.decay_, 0.01f, 2.0f);
-		ImGui::SliderFloat("cosAngle", &spotLight_.cosAngle_, 0.0f, spotLight_.cosFalloffStart_ - 0.001f);
-		ImGui::SliderFloat("cosFalloffStart", &spotLight_.cosFalloffStart_, spotLight_.cosAngle_ + 0.001f, 1.0f);
-
-		ImGui::TreePop();
-	}
-
-	ImGui::End();
 
 #endif // _DEBUG
 }

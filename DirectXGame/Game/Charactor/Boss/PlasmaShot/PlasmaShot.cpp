@@ -12,18 +12,6 @@ void PlasmaShot::Init(const std::shared_ptr<Model>& model) {
 	collider_.radius = 0.5f;
 
 	///エフェクト設定
-	//particle_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 2000));
-	/*particle_->SetParticleData(ParticleManager::Load("PlasmaShotTrail"));
-	particle_->particleData_.isLoop_ = false;
-
-	hitEff_.reset(GPUParticle::Create(TextureManager::Load("PlasmaParticle.png"), 1024));
-	hitEff_->SetParticleData(ParticleManager::Load("PlasmaShotImpact"));
-
-	hitSpark_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
-	hitSpark_->SetParticleData(ParticleManager::Load("PlasmaShotImpactSpark"));
-
-	createEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 1024));
-	createEff_->SetParticleData(ParticleManager::Load("PlasmaShotCreate"));*/
 
 	createEff_ = ParticleManager::Load("PlasmaBallCreate");
 	hitEff_ = ParticleManager::Load("PlasmaBallImpact");
@@ -51,15 +39,10 @@ void PlasmaShot::Update() {
 	//フェーズ更新
 	phaseUpdateTable_[phase_]();
 
-
+	//行列更新
 	obj_->worldTransform_.UpdateMatrix();
-	/*particle_->particleData_.emitter_.translate = obj_->GetWorldPos();
 
-	particle_->Update();
-	hitEff_->Update();
-	hitSpark_->Update();
-	createEff_->Update();*/
-
+	//エフェクト更新
 	for (auto& [group, particle] : hitEff_) {
 		particle->Update();
 	}
@@ -83,10 +66,6 @@ void PlasmaShot::Draw(const Camera& camera) {
 }
 
 void PlasmaShot::DrawParticle(const Camera& camera) {
-	/*particle_->Draw(camera);
-	hitEff_->Draw(camera);
-	hitSpark_->Draw(camera);
-	createEff_->Draw(camera);*/
 	for (auto& [group, particle] : hitEff_) {
 		particle->Draw(camera);
 	}
@@ -103,12 +82,8 @@ void PlasmaShot::OnCollision() {
 	phaseRequest_ = Phase::kRoot;
 	isLife_ = false;
 
-	//particle_->particleData_.isLoop_ = false;
+	
 	//ヒットエフェクト開始
-	/*hitEff_->particleData_.emitter_.emit = 1;
-	hitSpark_->particleData_.emitter_.emit = 1;
-	hitEff_->particleData_.emitter_.translate = obj_->GetWorldPos();
-	hitSpark_->particleData_.emitter_.translate = obj_->GetWorldPos();*/
 	for (auto& [group, particle] : trailEff_) {
 		particle->particleData_.isLoop_ = false;
 	}
@@ -126,15 +101,14 @@ void PlasmaShot::AttackStart() {
 void PlasmaShot::SetAttackData(const Vector3& pos, float interval) {
 
 	obj_->worldTransform_.translation_ = pos;
-	waitData_.waitTime_ = int32_t(60.0f * interval);
+	const float kFramePerSecond = 60.0f;
+	waitData_.waitTime_ = static_cast<int32_t>(kFramePerSecond * interval);
 
 }
 
 void PlasmaShot::RootInit() {
 
 	obj_->worldTransform_.scale_ = {};
-	/*particle_->particleData_.isLoop_ = false;
-	createEff_->particleData_.isLoop_ = false;*/
 
 }
 
@@ -157,8 +131,6 @@ void PlasmaShot::CreateUpdate() {
 void PlasmaShot::WaitInit() {
 
 	waitData_.count_ = 0;
-	/*createEff_->particleData_.isLoop_ = true;
-	createEff_->particleData_.emitter_.translate = obj_->GetWorldPos();*/
 	for (auto& [group, particle] : createEff_) {
 		particle->particleData_.isLoop_ = true;
 		particle->particleData_.emitter_.translate = obj_->GetWorldPos();
@@ -178,14 +150,11 @@ void PlasmaShot::WaitUpdate() {
 }
 
 void PlasmaShot::ShotInit() {
-
-	obj_->worldTransform_.scale_ = { 0.5f,0.5f,0.5f };
+	const float objScale = 0.5f;
+	obj_->worldTransform_.scale_ = { objScale,objScale,objScale };
 	//ターゲットの方向
 	targetDict_ = target_->translation_ - obj_->worldTransform_.translation_;
 
-	/*particle_->particleData_.isLoop_ = true;
-
-	createEff_->particleData_.isLoop_ = false;*/
 	for (auto& [group, particle] : createEff_) {
 		particle->particleData_.isLoop_ = false;
 	}
@@ -197,7 +166,7 @@ void PlasmaShot::ShotInit() {
 }
 
 void PlasmaShot::ShotUpdate() {
-
+	//速度の計算
 	velocity_ = targetDict_.Normalize() * speed_;
 
 	obj_->worldTransform_.translation_ += velocity_;

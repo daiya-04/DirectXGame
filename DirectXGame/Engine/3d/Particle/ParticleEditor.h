@@ -18,11 +18,10 @@ public:
 	void Draw(const Camera& camera);
 
 private:
-
+	//データファイル読み込み
 	void LoadDataFile(const std::string& fileName);
-
+	//データファイル保存
 	void DataSave();
-
 	void DebugGUI();
 
 private:

@@ -48,7 +48,7 @@ public:
 	//音声ロード
 
 	size_t LoadInternal(const std::string& filename);
-
+	//再生停止
 	void StopSound(size_t playhandle);
 	void SetPitch(size_t playHandle, float pitch);
 	void SetValume(size_t playHandle, float volume);

@@ -20,13 +20,6 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	BaseCharactor::Init(models);
 
 	///エフェクト初期化
-	/*appearEff_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
-	appearEff2_.reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
-
-	appearEff_->SetParticleData(ParticleManager::Load("BossEnterParticle"));
-	appearEff_->particleData_.isLoop_ = false;
-	appearEff2_->SetParticleData(ParticleManager::Load("BossEnterParticle_2"));
-	appearEff2_->particleData_.isLoop_ = false;*/
 	effect_ = ParticleManager::Load("BossEnter");
 	for (auto& [group, particle] : effect_) {
 		particle->particleData_.isLoop_ = false;
@@ -40,11 +33,12 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 
 	//HPの設定
 	hp_ = maxHp_;
+	hpBarSize_ = { 500.0f,10.0f };
 
 	//UIの設定
 	hpBar_.reset(Sprite::Create(TextureManager::Load("Boss_HP.png"), { 390.0f,40.0f }));
 	hpBar_->SetAnchorpoint({ 0.0f,0.5f });
-	hpBar_->SetSize({ 500.0f,10.0f });
+	hpBar_->SetSize(hpBarSize_);
 
 }
 
@@ -66,13 +60,6 @@ void Boss::Update() {
 	BaseCharactor::Update();
 
 	//エフェクト発生位置更新
-	/*appearEff_->particleData_.emitter_.translate = appearEff2_->particleData_.emitter_.translate = obj_->GetWorldPos();
-	appearEff_->particleData_.emitter_.translate.y = appearEff2_->particleData_.emitter_.translate.y = 0.01f;*/
-
-	//エフェクト更新
-	/*appearEff_->Update();
-	appearEff2_->Update();*/
-
 	for (auto& [group, particle] : effect_) {
 		particle->particleData_.emitter_.translate = obj_->GetWorldPos();
 		particle->particleData_.emitter_.translate.y = 0.01f;
@@ -85,7 +72,7 @@ void Boss::UpdateUI() {
 	//現在のHPのパーセント計算
 	float percent = static_cast<float>(hp_) / static_cast<float>(maxHp_);
 	//HPのUIを割合に合わせる
-	hpBar_->SetSize({ 500.0f * percent,10.0f });
+	hpBar_->SetSize({ hpBarSize_.x * percent,hpBarSize_.y });
 }
 
 void Boss::Draw(const Camera& camera) {
@@ -95,8 +82,6 @@ void Boss::Draw(const Camera& camera) {
 }
 
 void Boss::DrawParticle(const Camera& camera) {
-	/*appearEff_->Draw(camera);
-	appearEff2_->Draw(camera);*/
 	for (auto& [group, particle] : effect_) {
 		particle->Draw(camera);
 	}
@@ -117,18 +102,20 @@ void Boss::OnCollision() {
 
 void Boss::RootInit() {
 
-	workAttack_.param = 0;
+	workAttack_.param_ = 0;
+	//立ちアニメーションに
 	actionIndex_ = Action::Standing;
 	animations_[actionIndex_].Start();
 	direction_ = { 0.0f,0.0f,-1.0f };
 
+	//向いてる方向から回転行列計算
 	rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
 
 }
 
 void Boss::RootUpdate() {
-
-	if (++workAttack_.param > workAttack_.coolTime) {
+	//一定時間で攻撃
+	if (++workAttack_.param_ > workAttack_.coolTime_) {
 		behaviorRequest_ = Behavior::kAttack;
 	}
 	
@@ -195,15 +182,13 @@ void Boss::AttackUpdate() {
 
 void Boss::AppearInit() {
 
-	workAppear_.startPos = obj_->GetWorldPos();
-	workAppear_.endPos = obj_->GetWorldPos();
-	workAppear_.endPos.y = 0.0f;
-	obj_->worldTransform_.translation_ = workAppear_.startPos;
-	workAppear_.param = 0.0f;
+	workAppear_.startPos_ = obj_->GetWorldPos();
+	workAppear_.endPos_ = obj_->GetWorldPos();
+	workAppear_.endPos_.y = 0.0f;
+	obj_->worldTransform_.translation_ = workAppear_.startPos_;
+	workAppear_.param_ = 0.0f;
 
 	//登場演出開始
-	/*appearEff_->particleData_.isLoop_ = true;
-	appearEff2_->particleData_.isLoop_ = true;*/
 	for (auto& [group, particle] : effect_) {
 		particle->particleData_.isLoop_ = true;
 	}
@@ -212,27 +197,25 @@ void Boss::AppearInit() {
 
 void Boss::AppearUpdate() {
 	//移動が終わったら通常行動に
-	if (workAppear_.param >= 1.0f) {
+	if (workAppear_.param_ >= 1.0f) {
 		behaviorRequest_ = Behavior::kRoot;
-		/*appearEff_->particleData_.isLoop_ = false;
-		appearEff2_->particleData_.isLoop_ = false;*/
 		for (auto& [group, particle] : effect_) {
 			particle->particleData_.isLoop_ = false;
 		}
 		return;
 	}
 
-	float T = Easing::easeInOutQuart(workAppear_.param);
-	obj_->worldTransform_.translation_ = Lerp(T, workAppear_.startPos, workAppear_.endPos);
+	//移動処理
+	float T = Easing::easeInOutQuart(workAppear_.param_);
+	obj_->worldTransform_.translation_ = Lerp(T, workAppear_.startPos_, workAppear_.endPos_);
 
-	workAppear_.param += 0.005f;
+	workAppear_.param_ += workAppear_.speed_;
 
 }
 
 void Boss::DeadInit() {
 
 	actionIndex_ = Action::Dead;
-	animations_[actionIndex_].SetAnimationSpeed(1.0f / 60.0f);
 	animations_[actionIndex_].Start(false);
 	//ディゾルブ用パラメータ初期化
 	obj_->threshold_ = 0.0f;
@@ -244,7 +227,7 @@ void Boss::DeadUpdate() {
 	if (!animations_[actionIndex_].IsPlaying()) {
 		isFinishDeadMotion_ = true;
 	}
-
+	//ディゾルブ用パラメータの計算
 	obj_->threshold_ = animations_[actionIndex_].GetAnimationTime() / animations_[actionIndex_].GetDuration();
 	obj_->threshold_ = std::clamp(obj_->threshold_, 0.0f, animations_[actionIndex_].GetDuration());
 

@@ -38,23 +38,7 @@ void SceneManager::Init() {
 
 void SceneManager::Update(){
 
-	/*if (nextScene_) {
-		if (scene_) {
-			alpha_ += 0.03f;
-		}else {
-			scene_ = std::move(nextScene_);
-			scene_->Init();
-		}
-
-		if (alpha_ >= 1.0f) {
-			scene_ = std::move(nextScene_);
-			scene_->Init();
-		}
-	}else {
-		alpha_ -= 0.03f;
-	}*/
-
-	
+	// 次のシーンが存在し、かつフェードインが完了していない場合
 	if (nextScene_ && alpha_ < 1.0f) {
 		alpha_ += 0.03f;
 		if (alpha_ >= 1.0f) {
@@ -63,12 +47,14 @@ void SceneManager::Update(){
 		}
 	}
 
+	//次のシーンが存在せず、かつフェードアウトが完了していない場合
 	if (!nextScene_ && alpha_ > 0.0f) {
 		alpha_ -= 0.03f;
 	}
 
 	alpha_ = std::clamp(alpha_, 0.0f, 1.0f);
 
+	//次のシーンが存在せず、フェードアウトが完了している場合
 	if (!nextScene_ && alpha_ <= 0.0f) {
 		scene_->Update();
 	}

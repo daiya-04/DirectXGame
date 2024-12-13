@@ -198,7 +198,7 @@ void IceScar::preDraw() {
 }
 
 void IceScar::Init(uint32_t textureHandle) {
-
+	//基底クラス初期化
 	BaseScar::Init(textureHandle);
 
 	color_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -216,14 +216,15 @@ void IceScar::Update() {
 void IceScar::EffectUpdate() {
 
 	lifeTimer_--;
+	//フェードアウト開始時間
+	const int32_t kFadeOutStartTime = 60 * 2;
 
-	const int32_t kDissolveStartTime = 60 * 2;
-
-	if (lifeTimer_ < kDissolveStartTime) {
-		threshold_ = float(kDissolveStartTime - lifeTimer_) / (float)kDissolveStartTime;
+	if (lifeTimer_ < kFadeOutStartTime) {
+		//フェードアウト用の閾値の計算
+		threshold_ = float(kFadeOutStartTime - lifeTimer_) / (float)kFadeOutStartTime;
 		threshold_ = std::clamp(threshold_, 0.0f, 1.0f);
 	}
-
+	
 	if (lifeTimer_ <= 0) {
 		isEffect_ = false;
 	}

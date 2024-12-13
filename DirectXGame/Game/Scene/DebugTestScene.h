@@ -1,4 +1,14 @@
 #pragma once
+///---------------------------------------------------------------------------------------------
+// 
+// デバッグテストシーン
+// 基本的にエンジンの描画とかの機能テスト用
+// ゲーム中には呼び出されないし、呼び出さない
+// 今はパーティクルエディタでエフェクトを作ってるけど
+// いずれ別でエディタ用のシーンを作成する予定
+// 
+///---------------------------------------------------------------------------------------------
+
 #include "IScene.h"
 #include <memory>
 #include <list>
@@ -20,36 +30,63 @@
 #include "Dissolve.h"
 #include "PostEffect.h"
 
+//デバッグテストシーンクラス
 class DebugTestScene : public IScene {
 public:
-	//初期化
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	void Init()override;
-	//更新
+	/// <summary>
+	/// 更新
+	/// </summary>
 	void Update()override;
-	//背景描画
+	/// <summary>
+	/// 背景描画
+	/// </summary>
 	void DrawBackGround()override;
-	//モデル描画
+	/// <summary>
+	/// モデル描画
+	/// </summary>
 	void DrawModel()override;
-	//パーティクル3dモデル描画
+	/// <summary>
+	/// パーティクル3dモデル描画
+	/// </summary>
 	void DrawParticleModel()override;
-	//パーティクル描画
+	/// <summary>
+	/// パーティクル描画
+	/// </summary>
 	void DrawParticle()override;
-	//UI描画
+	/// <summary>
+	/// UI描画
+	/// </summary>
 	void DrawUI()override;
-	//ポストエフェクトを掛けるモデルなどの描画
+	/// <summary>
+	/// ポストエフェクトを掛けるモデルなどの描画
+	/// </summary>
 	void DrawPostEffect()override;
-	//レンダーテクスチャの描画
+	/// <summary>
+	/// レンダーテクスチャの描画
+	/// </summary>
 	void DrawRenderTexture()override;
-	//デバッグ用
+	/// <summary>
+	/// デバッグ用
+	/// </summary>
 	void DebugGUI()override;
-
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
 	~DebugTestScene()override {}
 
-private:
-
+private: //必須項目
+	//カメラ
 	Camera camera_;
+	//ポイントライト
 	PointLight pointLight_;
+	//スポットライト
 	SpotLight spotLight_;
+
+private: //テスト用の変数
 
 	std::unique_ptr<SkinningObject> human_;
 	std::shared_ptr<Model> humanModel_;

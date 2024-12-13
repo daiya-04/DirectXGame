@@ -1,5 +1,11 @@
 #pragma once
+///---------------------------------------------------------------------------------------------
+//
+// Vector4
+//
+///---------------------------------------------------------------------------------------------
 
+//Vector4クラス
 class Vector4 {
 public:
 
@@ -9,7 +15,7 @@ public:
 	float w = 0.0f;
 
 public:
-
+	//コンストラクタ
 	Vector4() {};
 	Vector4(float x, float y, float z, float w) :x(x), y(y), z(z), w(w) {};
 	Vector4(const Vector4& vector) :x(vector.x), y(vector.y), z(vector.z), w(vector.w) {};

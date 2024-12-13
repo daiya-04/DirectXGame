@@ -14,7 +14,7 @@ public:
 	static DXCompiler* GetInstance();
 
 	void Init();
-
+	//シェーダーのコンパイル
 	ComPtr<IDxcBlob> ShaderCompile(const std::wstring& fileName, const wchar_t* profile);
 
 private:

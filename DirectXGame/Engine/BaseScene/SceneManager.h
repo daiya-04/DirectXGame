@@ -13,6 +13,7 @@ private:
 	std::unique_ptr<IScene> scene_;
 	std::unique_ptr<IScene> nextScene_;
 
+	//フェード演出用
 	uint32_t fadeTex_ = 0;
 	std::unique_ptr<Sprite> fade_;
 	float alpha_ = 0.0f;
@@ -26,7 +27,10 @@ public:
 	void Update();
 
 	void Draw(ID3D12GraphicsCommandList* commandList);
-
+	/// <summary>
+	/// シーン切り替え
+	/// </summary>
+	/// <param name="sceneName">シーンの名前</param>
 	void ChangeScene(const std::string& sceneName);
 
 private:

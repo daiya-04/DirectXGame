@@ -14,15 +14,17 @@
 #include "ParticleManager.h"
 
 void DebugTestScene::Init() {
-
+	///必須処理
+	//カメラ初期化
 	camera_.Init();
+	//ライト初期化
 	pointLight_.Init();
-	pointLight_.intensity_ = 0.0f;
 	spotLight_.Init();
-	spotLight_.intensity_ = 0.0f;
-
+	//Object3dにライトセット
 	Object3d::SetPointLight(&pointLight_);
 	Object3d::SetSpotLight(&spotLight_);
+
+	///
 
 	humanModel_ = ModelManager::LoadGLTF("Skin");
 	standingModel_ = ModelManager::LoadGLTF("Standing");
@@ -74,7 +76,7 @@ void DebugTestScene::Update() {
 	dissolve_->DebugGUI();
 
 #ifdef _DEBUG
-
+	//デバッグ用シーンの切り替えコマンド
 	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_1)) {
 		SceneManager::GetInstance()->ChangeScene("Title");
 	}
@@ -118,10 +120,13 @@ void DebugTestScene::Update() {
 	for (auto& [group, particle] : effect_) {
 		particle->Update();
 	}
-
+	///必須処理
+	//行列更新
 	camera_.UpdateViewMatrix();
+	//ライト更新
 	pointLight_.Update();
 	spotLight_.Update();
+	///
 }
 
 void DebugTestScene::DrawBackGround() {

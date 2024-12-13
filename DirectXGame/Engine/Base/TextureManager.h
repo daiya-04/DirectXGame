@@ -32,9 +32,9 @@ private:
 public:
 
 	static TextureManager* GetInstance();
-
+	//テクスチャ読み込み
 	static uint32_t Load(const std::string& fileName);
-
+	//モデル読み込み時にUV画像を読み込む
 	static uint32_t LoadUv(const std::string& fileName, const std::string& filePath);
 
 	void Initialize();

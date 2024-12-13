@@ -6,7 +6,7 @@
 inline void Log(const std::string& message) {
 	OutputDebugStringA(message.c_str());
 }
-
+//マルチバイト文字からワイド文字変換
 inline std::wstring ConvertString(const std::string& str) {
 	if (str.empty()) {
 		return std::wstring();
@@ -20,7 +20,7 @@ inline std::wstring ConvertString(const std::string& str) {
 	MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), &result[0], sizeNeeded);
 	return result;
 }
-
+//ワイド文字からマルチバイト文字に変換
 inline std::string ConvertString(const std::wstring& str) {
 	if (str.empty()) {
 		return std::string();

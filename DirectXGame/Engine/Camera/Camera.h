@@ -5,6 +5,7 @@
 #include <wrl.h>
 #include <numbers>
 
+//カメラデータ
 struct CBufferDataCamera {
 	Matrix4x4 matView;
 	Matrix4x4 matProjection;
@@ -13,11 +14,10 @@ struct CBufferDataCamera {
 
 class Camera {
 public:
-
+	//位置座標
 	Vector3 translation_ = { 0.0f, 0.0f, -5.0f };
+	//回転
 	Vector3 rotation_ = {};
-
-	
 
 private:
 
@@ -25,23 +25,34 @@ private:
 	float aspectRatio = (float)16 / (float)9;
 	float nearZ = 0.1f;
 	float farZ = 1000.0f;
-
+	//ビュー行列
 	Matrix4x4 matView_ = MakeIdentity44();
+	//プロジェクション行列
 	Matrix4x4 matProjection_ = MakeIdentity44();
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> cBuffer_;
 	CBufferDataCamera* cMap_ = nullptr;
 
 public:
-
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	void Init();
-
+	/// <summary>
+	/// 行列更新
+	/// </summary>
 	void UpdateMatrix();
-
+	/// <summary>
+	/// ビュー行列更新
+	/// </summary>
 	void UpdateViewMatrix();
-
+	/// <summary>
+	/// プロジェクション行列更新
+	/// </summary>
 	void UpdateProjectionMatrix();
-
+	/// <summary>
+	/// カメラ位置更新
+	/// </summary>
 	void UpdateCameraPos();
 
 	void SetMatView(const Matrix4x4& matView) { 

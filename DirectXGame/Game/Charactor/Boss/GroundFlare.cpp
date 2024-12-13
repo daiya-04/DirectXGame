@@ -10,27 +10,21 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 		warningZone.reset(Object3d::Create(model));
 	}
 
-	/*for (auto& particle : particles_) {
-		particle.reset(GPUParticle::Create(TextureManager::Load("Steam.png"), 5000));
-		particle->SetParticleData(ParticleManager::Load("GroundFlare"));
-	}*/
-
-	for (auto& effect : effects_) {
-		effect = ParticleManager::Load("GroundFire");
-		for (auto& [group, particle] : effect) {
+	for (auto& fire : fires_) {
+		fire = ParticleManager::Load("GroundFire");
+		for (auto& [group, particle] : fire) {
 			particle->particleData_.isLoop_ = false;
 		}
 	}
 
-
-	collider_.size = {2.0f,3.0f,2.0f};
+	collider_.size = { 2.0f,3.0f,2.0f };
 
 	//中心を基準にした発射位置のオフセット
 	offset_[0] = {}; //中心
-	offset_[1] = { -1.5f,0.0f,1.5f }; //左上
-	offset_[2] = { 1.5f,0.0f,1.5f }; //右上
-	offset_[3] = { -1.5f,0.0f,-1.5f }; //左下
-	offset_[4] = { 1.5f,0.0f,-1.5f }; //右下
+	offset_[1] = { -offsetLength_,0.0f,offsetLength_ }; //左上
+	offset_[2] = { offsetLength_,0.0f,offsetLength_ }; //右上
+	offset_[3] = { -offsetLength_,0.0f,-offsetLength_ }; //左下
+	offset_[4] = { offsetLength_,0.0f,-offsetLength_ }; //右下
 
 	phase_ = Phase::kRoot;
 
@@ -58,12 +52,8 @@ void GroundFlare::Update() {
 	//フェーズ更新
 	phaseUpdateTable_[phase_]();
 
-	/*for (auto& particle : particles_) {
-		particle->Update();
-	}*/
-
-	for (auto& effect : effects_) {
-		for (auto& [group, particle] : effect) {
+	for (auto& fire : fires_) {
+		for (auto& [group, particle] : fire) {
 			particle->Update();
 		}
 	}
@@ -96,11 +86,8 @@ void GroundFlare::Draw(const Camera& camera) {
 
 void GroundFlare::DrawParticle(const Camera& camera) {
 
-	/*for (auto& particle : particles_) {
-		particle->Draw(camera);
-	}*/
-	for (auto& effect : effects_) {
-		for (auto& [group, particle] : effect) {
+	for (auto& fire : fires_) {
+		for (auto& [group, particle] : fire) {
 			particle->Draw(camera);
 		}
 	}
@@ -137,9 +124,7 @@ void GroundFlare::WarningInit() {
 
 	//発射位置の計算
 	for (size_t index = 0; index < flareNum_; index++) {
-		/*particles_[index]->particleData_.emitter_.translate = centerPos_ + offset_[index];
-		particles_[index]->particleData_.emitter_.translate.y += particles_[index]->particleData_.emitter_.size.y;*/
-		for (auto& [group, particle] : effects_[index]) {
+		for (auto& [group, particle] : fires_[index]) {
 			particle->particleData_.emitter_.translate = centerPos_ + offset_[index];
 		}
 		warningZones_[index]->worldTransform_.translation_ = centerPos_ + offset_[index];
@@ -151,11 +136,11 @@ void GroundFlare::WarningInit() {
 
 void GroundFlare::WarningUpdate() {
 
-	workWarning_.param_ += 0.01f;
+	workWarning_.param_ += workWarning_.speed_;
 	float T = Easing::easeInSine(workWarning_.param_);
 	//少しずつ大きくする
 	for (auto& warningZone : warningZones_) {
-		warningZone->worldTransform_.scale_ = Lerp(T, Vector3(0.0f, 1.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f));
+		warningZone->worldTransform_.scale_ = Lerp(T, workWarning_.startScale_, workWarning_.endScale_);
 	}
 
 	if (workWarning_.param_ >= 1.0f) {
@@ -169,11 +154,8 @@ void GroundFlare::FireInit() {
 	isHit_ = true;
 	workFire_.param_ = 0;
 
-	/*for (auto& particle : particles_) {
-		particle->particleData_.emitter_.emit = 1;
-	}*/
-	for (auto& effect : effects_) {
-		for (auto& [group, particle] : effect) {
+	for (auto& fire : fires_) {
+		for (auto& [group, particle] : fire) {
 			particle->particleData_.isLoop_ = true;
 		}
 	}
@@ -185,9 +167,11 @@ void GroundFlare::FireUpdate() {
 	workFire_.param_++;
 
 	if (workFire_.param_ >= workFire_.fireCount_) {
+		//通常状態に戻す
 		phaseRequest_ = Phase::kRoot;
-		for (auto& effect : effects_) {
-			for (auto& [group, particle] : effect) {
+		//演出終了
+		for (auto& fire : fires_) {
+			for (auto& [group, particle] : fire) {
 				particle->particleData_.isLoop_ = false;
 			}
 		}

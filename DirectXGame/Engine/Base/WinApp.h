@@ -25,7 +25,7 @@ public: //メンバ関数
 	HWND GetHwnd() const { return hwnd_; }
 
 	HINSTANCE GetHInstance() const { return wc_.hInstance; }
-
+	//ウィンドウ生成
 	void CreateGameWindow(const wchar_t* title = L"DirectXGame", int32_t clientWidth = kClientWidth, int32_t clientHeight = kClientHeight);
 
 	bool ProcessMessage();

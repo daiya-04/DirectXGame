@@ -23,7 +23,7 @@ void IcicleManager::Init(const std::shared_ptr<Model>& model) {
 void IcicleManager::Update() {
 	preIsAttack_ = isAttack_;
 	//攻撃が当たるか地面に着いたら
-	for (uint32_t index = 0; index < icicleNum_; index++) {
+	for (uint32_t index = 0; index < kIcicleNum_; index++) {
 		if (icicles_[index]->DeadFlag()) {
 			OnCollision(index);
 		}
@@ -75,18 +75,24 @@ void IcicleManager::AttackStart() {
 }
 
 void IcicleManager::SetAttackData(const Vector3& pos, const Vector3& direction) {
+
 	//生成場所のオフセット
-	Vector3 offset[icicleNum_] = {
+	const Vector3 kOffset[kIcicleNum_] = {
 		{2.0f,4.0f,0.0f},
 		{-2.0f,4.0f,0.0f},
 		{4.0f,3.0f,0.0f},
 		{-4.0f,3.0f,0.0f}
 	};
 
-	float intervalList[icicleNum_] = { 2.5f,2.5f ,1.5f ,1.5f };
+	//インターバル最小値
+	const float kIntervalMin = 1.5f;
+	//インターバル最大値
+	const float kIntervalMax = 2.5;
+	//攻撃のインターバル
+	const float kIntervalList[kIcicleNum_] = { kIntervalMax, kIntervalMax, kIntervalMin, kIntervalMin };
 
-	for (size_t index = 0; index < icicleNum_; index++) {
-		icicles_[index]->SetAttackData(pos + offset[index], direction,intervalList[index]);
+	for (size_t index = 0; index < kIcicleNum_; index++) {
+		icicles_[index]->SetAttackData(pos + kOffset[index], direction, kIntervalList[index]);
 	}
 
 }

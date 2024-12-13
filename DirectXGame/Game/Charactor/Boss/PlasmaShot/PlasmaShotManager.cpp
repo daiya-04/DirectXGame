@@ -4,7 +4,7 @@
 
 
 void PlasmaShotManager::Init(const std::shared_ptr<Model>& model) {
-
+	//電気玉生成
 	for (auto& plasmaShot : plasmaShots_) {
 		plasmaShot = std::make_unique<PlasmaShot>();
 		plasmaShot->Init(model);
@@ -59,10 +59,10 @@ void PlasmaShotManager::AttackStart() {
 
 void PlasmaShotManager::SetAttackData(const Vector3& pos) {
 	//発射時間の設定
-	float intervalTime[plasmaShotNum_] = { 1.5f,1.8f,2.1f };
+	const float kIntervalTime[kPlasmaShotNum_] = { 1.5f, 1.8f, 2.1f };
 
-	for (size_t index = 0; index < plasmaShotNum_;index++) {
-		plasmaShots_[index]->SetAttackData(pos, intervalTime[index]);
+	for (size_t index = 0; index < kPlasmaShotNum_;index++) {
+		plasmaShots_[index]->SetAttackData(pos, kIntervalTime[index]);
 	}
 
 }

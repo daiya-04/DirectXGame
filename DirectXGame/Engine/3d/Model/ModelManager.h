@@ -88,9 +88,9 @@ private:
 public:
 
 	static ModelManager* GetInstance();
-
+	//.objファイルの読み込み
 	static std::shared_ptr<Model> LoadOBJ(const std::string& modelName);
-
+	//.gltfファイルの読み込み
 	static std::shared_ptr<Model> LoadGLTF(const std::string& modelName);
 
 private:
@@ -102,7 +102,7 @@ private:
 	void LoadGltfFile(const std::string& modelName);
 
 	//void LoadMaterialTemplateFile(const std::string& fileName);
-
+	//ノードの読み込み
 	Model::Node ReadNode(aiNode* node);
 
 private:
@@ -138,7 +138,7 @@ public:
 	Vector3 GetSkeletonPos(const std::string& jointName);
 
 private:
-
+	//ジョイント生成
 	static int32_t CreateJoint(const Model::Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints);
 
 public:

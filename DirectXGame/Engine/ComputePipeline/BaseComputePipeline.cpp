@@ -12,7 +12,7 @@ void BaseComputePipeline::Init() {
 void BaseComputePipeline::preDispatch() {
 
 	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
-
+	//コマンドリストに設定
 	commandList->SetComputeRootSignature(rootSignature_.Get());
 	commandList->SetPipelineState(pipelineState_.Get());
 

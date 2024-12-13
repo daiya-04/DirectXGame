@@ -9,11 +9,11 @@ class ParticleManager {
 public:
 
 	static ParticleManager* GetInstance();
-
+	//データファイルの読み込み
 	static std::map<std::string, std::unique_ptr<GPUParticle>> Load(const std::string& fileName);
 
 private:
-
+	//データファイルの読み込み
 	std::map<std::string, std::unique_ptr<GPUParticle>> LoadInternal(const std::string& fileName);
 
 private:

@@ -1,4 +1,11 @@
 #pragma once
+///---------------------------------------------------------------------------------------------
+// 
+// 電気玉
+// ボスの攻撃の一種
+// 
+///---------------------------------------------------------------------------------------------
+
 #include "ModelManager.h"
 #include "Vec3.h"
 #include "Vec2.h"
@@ -15,20 +22,25 @@
 #include <functional>
 #include <map>
 
-
+//電気玉クラス
 class PlasmaShot{
 public:
 	//フェーズ
 	enum class Phase {
+		//通常
 		kRoot,
+		//生成
 		kCreate,
+		//待ち
 		kWait,
+		//発射
 		kShot,
 	};
 
 private:
-
+	//現在のフェーズ
 	Phase phase_ = Phase::kRoot;
+	//次のフェーズのリクエスト
 	std::optional<Phase> phaseRequest_ = Phase::kRoot;
 	//フェーズ初期化テーブル
 	std::map<Phase, std::function<void()>> phaseInitTable_{
@@ -46,76 +58,131 @@ private:
 	};
 
 private:
-	//通常
+	/// <summary>
+	/// 通常初期化
+	/// </summary>
 	void RootInit();
+	/// <summary>
+	/// 通常更新
+	/// </summary>
 	void RootUpdate();
-	//生成
+	/// <summary>
+	/// 生成初期化
+	/// </summary>
 	void CreateInit();
+	/// <summary>
+	/// 生成更新
+	/// </summary>
 	void CreateUpdate();
-	//待ち
+	/// <summary>
+	/// 待ち初期化
+	/// </summary>
 	void WaitInit();
+	/// <summary>
+	/// 待ち更新
+	/// </summary>
 	void WaitUpdate();
-	//発射
+	/// <summary>
+	/// 発射初期化
+	/// </summary>
 	void ShotInit();
+	/// <summary>
+	/// 発射更新
+	/// </summary>
 	void ShotUpdate();
 
 
 public:
-	//初期化
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="model">モデル</param>
 	void Init(const std::shared_ptr<Model>& model);
-	//更新
+	/// <summary>
+	/// 更新
+	/// </summary>
 	void Update();
+	/// <summary>
+	/// コライダー更新
+	/// </summary>
 	void ColliderUpdate();
-	//描画
+	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="camera">カメラ</param>
 	void Draw(const Camera& camera);
+	/// <summary>
+	/// パーティクル描画
+	/// </summary>
+	/// <param name="camera">カメラ</param>
 	void DrawParticle(const Camera& camera);
-	//衝突時
+	/// <summary>
+	/// 衝突時
+	/// </summary>
 	void OnCollision();
-
+	/// <summary>
+	/// 攻撃開始
+	/// </summary>
 	void AttackStart();
-
+	/// <summary>
+	/// ターゲットセット
+	/// </summary>
+	/// <param name="target">ターゲットのワールドトランスフォーム</param>
 	void SetTarget(const WorldTransform* target) { target_ = target; }
+	/// <summary>
+	/// 攻撃に必要なデータの設定
+	/// </summary>
+	/// <param name="pos">発射座標</param>
+	/// <param name="interval">待ち時間</param>
 	void SetAttackData(const Vector3& pos, float interval);
 
-	
+	/// <summary>
+	/// コライダー取得
+	/// </summary>
+	/// <returns>コライダー</returns>
 	Shapes::Sphere GetCollider() const { return collider_; }
+	/// <summary>
+	/// 存在しているか
+	/// </summary>
+	/// <returns>生存していたらtrue、それ以外false</returns>
 	bool IsLife() const { return isLife_; }
 
 private:
-	
+	//攻撃先(ターゲット)
 	const WorldTransform* target_;
+	//ターゲットがいる方向
 	Vector3 targetDict_ = { 0.0f,0.0f,1.0f };
-
+	//オブジェクト
 	std::unique_ptr<Object3d> obj_;
-	//エフェクト
-	//std::unique_ptr<GPUParticle> particle_;
-	//std::unique_ptr<GPUParticle> hitEff_;
-	//std::unique_ptr<GPUParticle> hitSpark_;
-	//std::unique_ptr<GPUParticle> createEff_;
-
+	///エフェクト
+	//生成
 	std::map<std::string, std::unique_ptr<GPUParticle>> createEff_;
+	//ヒット時
 	std::map<std::string, std::unique_ptr<GPUParticle>> hitEff_;
+	//軌跡
 	std::map<std::string, std::unique_ptr<GPUParticle>> trailEff_;
+	///
 
+	//コライダー(形状)
 	Shapes::Sphere collider_;
 
+	//速度
 	Vector3 velocity_;
+	//スピード
 	float speed_ = 0.7f;
-
+	//生存フラグ
 	bool isLife_ = false;
 
 private:
-	//生成に必要なパラメータ
-	struct CreateData {
-		float param_ = 0.0f;
-	};
+	
 	//待ちに必要なパラメータ
 	struct WaitData {
+		//待ち中の現在の時間
 		int32_t count_ = 0;
+		//待ち時間
 		int32_t waitTime_ = 60 * 1;
 	};
-
-	CreateData createData_;
+	//待ち用のパラメータ
 	WaitData waitData_;
 };
 

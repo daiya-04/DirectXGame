@@ -56,11 +56,10 @@ void Line::AllDraw() {
 void Line::Draw(const Vector3& start, const Vector3& end, const Camera& camera, const Vector4& color) {
 	//描画数が最大数以上だったら止める
 	assert(drawNum_ < kMaxDrawNum_);
-	//始点と終点が同じだったら止める。線にならん
-	//assert(start != end);
 
 	datas_[drawNum_].color_ = color;
 
+	//行列計算
 	Vector3 scale{};
 	scale.x = (end - start).Length();
 	Vector3 to = (end - start).Normalize();

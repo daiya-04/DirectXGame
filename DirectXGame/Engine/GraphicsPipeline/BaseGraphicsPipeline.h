@@ -1,4 +1,12 @@
 #pragma once
+///---------------------------------------------------------------------------------------------
+//
+// BaseGraphicsPipeline
+// パイプラインステート生成の基底クラス
+//
+///---------------------------------------------------------------------------------------------
+
+
 #include <d3d12.h>
 #include <wrl.h>
 #include "DXCompiler.h"
@@ -8,11 +16,17 @@ protected:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 public:
-
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	virtual void Init();
-
+	/// <summary>
+	/// 描画前
+	/// </summary>
 	virtual void preDraw();
-
+	/// <summary>
+	/// スクリーンブレンド描画前(苦し紛れ)
+	/// </summary>
 	void preDrawScreen();
 
 protected:

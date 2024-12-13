@@ -11,7 +11,7 @@ void BaseGraphicsPipeline::Init() {
 void BaseGraphicsPipeline::preDraw() {
 
 	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
-
+	//コマンドリストにセット
 	commandList->SetGraphicsRootSignature(rootSignature_.Get());
 	commandList->SetPipelineState(pipelineState_.Get());
 	commandList->IASetPrimitiveTopology(primitiveTopology_);
@@ -19,7 +19,7 @@ void BaseGraphicsPipeline::preDraw() {
 
 void BaseGraphicsPipeline::preDrawScreen() {
 	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
-
+	//コマンドリストにセット
 	commandList->SetGraphicsRootSignature(rootSignature_.Get());
 	commandList->SetPipelineState(screenPS_.Get());
 	commandList->IASetPrimitiveTopology(primitiveTopology_);

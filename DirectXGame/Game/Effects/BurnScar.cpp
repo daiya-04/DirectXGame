@@ -199,11 +199,12 @@ void BurnScar::preDraw() {
 }
 
 void BurnScar::Init(uint32_t textureHandle) {
+	//基底クラス初期化
 	BaseScar::Init(textureHandle);
-
+	
 	color_ = Vector4(0.96f, 0.13f, 0.04f,1.0f);
 
-	effect_ = ParticleManager::Load("FireBallImpact");
+	impact_ = ParticleManager::Load("FireBallImpact");
 
 	residual_ = ParticleManager::Load("fireResidual");
 	for (auto& [group, particle] : residual_) {
@@ -216,7 +217,7 @@ void BurnScar::Update() {
 
 	EffectUpdate();
 
-	for (auto& [group, particle] : effect_) {
+	for (auto& [group, particle] : impact_) {
 		particle->particleData_.emitter_.translate = position_ + Vector3(0.0f, 0.001f, 0.0f);
 		particle->Update();
 	}
@@ -231,14 +232,15 @@ void BurnScar::EffectUpdate() {
 	if (!isEffect_) { return; }
 
 	lifeTimer_--;
-	
+	//ディゾルブ開始時間
 	const int32_t kDissolveStartTime = 60 * 2;
 	
 	if (lifeTimer_ < kDissolveStartTime) {
+		//ディゾルブ用閾値の計算
 		threshold_ = float(kDissolveStartTime - lifeTimer_) / (float)kDissolveStartTime;
 		threshold_ = std::clamp(threshold_, 0.0f, 1.0f);
 	}
-	
+	//エフェクト終了
 	if (lifeTimer_ <= 0) {
 		isEffect_ = false;
 		for (auto& [group, particle] : residual_) {
@@ -258,7 +260,7 @@ void BurnScar::Draw(const Camera& camera) {
 
 void BurnScar::DrawParticle(const Camera& camera) {
 
-	for (auto& [group, particle] : effect_) {
+	for (auto& [group, particle] : impact_) {
 		particle->Draw(camera);
 	}
 	for (auto& [group, particle] : residual_) {
@@ -271,7 +273,7 @@ void BurnScar::EffectStart(const Vector3& pos) {
 
 	BaseScar::EffectStart(pos);
 
-	for (auto& [group, particle] : effect_) {
+	for (auto& [group, particle] : impact_) {
 		particle->Emit();
 	}
 	for (auto& [group, particle] : residual_) {

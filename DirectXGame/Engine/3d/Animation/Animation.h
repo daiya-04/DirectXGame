@@ -38,13 +38,14 @@ public:
 	//再生
 	void Play(const Model::Node& rootNode);
 	void Play(Skeleton& skeleton);
-
+	//再生開始
 	void Start(bool isLoop = true) { 
 		if (isPlaying_) { return; }
 		isPlaying_ = true;
 		isLoop_ = isLoop;
 		TimeReset();
 	}
+	//再生終了
 	void End() { isPlaying_ = false; }
 
 	void SetAnimationSpeed(float speed) { animationSpeed_ = speed; }
@@ -54,6 +55,7 @@ public:
 
 	float GetDuration() const { return duration_; }
 	float GetAnimationTime() const { return animationTime_; }
+	//再生中か
 	bool IsPlaying() const { return isPlaying_; }
 
 private:

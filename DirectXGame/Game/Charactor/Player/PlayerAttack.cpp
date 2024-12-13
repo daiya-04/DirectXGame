@@ -42,8 +42,9 @@ void PlayerAttack::Init(std::shared_ptr<Model> model, const Vector3& startPos, c
 void PlayerAttack::Update() {
 	//移動
 	obj_->worldTransform_.translation_ += velocity_;
-
+	//行列計算
 	obj_->worldTransform_.UpdateMatrix();
+
 	particle_->particleData_.emitter_.translate = GetWorldPos();
 	collider_.center = GetWorldPos();
 	

@@ -68,6 +68,7 @@ void BaseCharactor::SetData(const LevelData::ObjectData& data) {
 
 	collider_.size = data.colliderSize;
 
+	//回転行列計算
 	rotateMat_ = MakeRotateXMatrix(data.rotation.x) * MakeRotateYMatrix(data.rotation.y) * MakeRotateZMatrix(data.rotation.z);
 	direction_ = Transform(direction_, rotateMat_);
 

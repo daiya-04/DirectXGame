@@ -1,5 +1,6 @@
 #include "Dissolve.h"
 
+
 #include <d3dx12.h>
 #include <DirectXTex.h>
 #include <format>
@@ -10,12 +11,11 @@
 #include "DirectXCommon.h"
 #include "TextureManager.h"
 #include "ImGuiManager.h"
-
-#pragma comment(lib,"d3dcompiler.lib")
+#include "DXCompiler.h"
 
 using namespace Microsoft::WRL;
 
-const float Dissolve::clearColor_[4] = { 0.1f,0.25f,0.5f,1.0f };
+const float Dissolve::kClearColor_[4] = { 0.1f,0.25f,0.5f,1.0f };
 
 Dissolve* Dissolve::GetInstance() {
 	static Dissolve instance;
@@ -46,7 +46,7 @@ Dissolve::Dissolve() {
 
 	D3D12_CLEAR_VALUE clearColorValue{};
 	clearColorValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	memcpy(clearColorValue.Color, clearColor_, sizeof(float) * 4);
+	memcpy(clearColorValue.Color, kClearColor_, sizeof(float) * 4);
 
 	//テクスチャバッファの生成
 	hr = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(
@@ -151,7 +151,7 @@ void Dissolve::PreDrawScene(ID3D12GraphicsCommandList* cmdList) {
 	cmdList->RSSetScissorRects(1, &scissorRect);  //Scissorを設定
 
 	//全画面クリア
-	cmdList->ClearRenderTargetView(rtvHandleCPU_, clearColor_, 0, nullptr);
+	cmdList->ClearRenderTargetView(rtvHandleCPU_, kClearColor_, 0, nullptr);
 
 	//描画用のDescriptorHeapの設定
 	ID3D12DescriptorHeap* descriptorHeaps[] = { DirectXCommon::GetInstance()->GetSrvHeap() };
@@ -182,7 +182,7 @@ void Dissolve::DebugGUI() {
 
 	ImGui::Begin("Dissolve");
 
-	ImGui::SliderFloat("threshold : ", &buffData_->mask_, 0.0f, 1.0f);
+	ImGui::SliderFloat("threshold : ", &buffData_->threshold_, 0.0f, 1.0f);
 
 	ImGui::End();
 
@@ -191,19 +191,6 @@ void Dissolve::DebugGUI() {
 }
 
 void Dissolve::CreateGraphicsPipelineState() {
-
-	//dxcCompilerを初期化
-	IDxcUtils* dxcUtils = nullptr;
-	IDxcCompiler3* dxcCompiler = nullptr;
-	HRESULT hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils));
-	assert(SUCCEEDED(hr));
-	hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler));
-	assert(SUCCEEDED(hr));
-
-	//現時点でincludeはしないが、includeに対応するための設定を行っておく
-	IDxcIncludeHandler* includeHandler = nullptr;
-	hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
-	assert(SUCCEEDED(hr));
 
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
@@ -258,7 +245,7 @@ void Dissolve::CreateGraphicsPipelineState() {
 	//シリアライズしてバイナリにする
 	ComPtr<ID3DBlob> signatureBlob;
 	ComPtr<ID3DBlob> errorBlob;
-	hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
+	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
 		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
@@ -298,10 +285,10 @@ void Dissolve::CreateGraphicsPipelineState() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	//Shaderをコンパイルする
-	ComPtr<IDxcBlob> verterShaderBlob = CompileShader(L"Resources/shaders/PostEffect.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+	ComPtr<IDxcBlob> verterShaderBlob = DXCompiler::GetInstance()->ShaderCompile(L"PostEffect.VS.hlsl", L"vs_6_0");
 	assert(verterShaderBlob != nullptr);
 
-	ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Resources/shaders/Dissolve.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+	ComPtr<IDxcBlob> pixelShaderBlob = DXCompiler::GetInstance()->ShaderCompile(L"Dissolve.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	//DepthStencilStateの設定
@@ -362,62 +349,4 @@ ComPtr<ID3D12Resource> Dissolve::CreateBufferResource(ID3D12Device* device, size
 	assert(SUCCEEDED(hr));
 
 	return Resource;
-}
-
-ComPtr<IDxcBlob> Dissolve::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer) {
-
-	//これからシェーダーをコンパイルする旨をログに出す
-	Log(ConvertString(std::format(L"Begin CompileShader, Path:{},profile:{}\n", filePath, profile)));
-	//hlslファイルを読む
-	IDxcBlobEncoding* shaderSource = nullptr;
-	HRESULT hr = dxcUtils->LoadFile(filePath.c_str(), nullptr, &shaderSource);
-	//読めなかったら止める
-	assert(SUCCEEDED(hr));
-	//読み込んだファイルの内容を設定する
-	DxcBuffer shaserSourceBuffer{};
-	shaserSourceBuffer.Ptr = shaderSource->GetBufferPointer();
-	shaserSourceBuffer.Size = shaderSource->GetBufferSize();
-	shaserSourceBuffer.Encoding = DXC_CP_UTF8;   //UTF8の文字コードであることを通知
-
-	LPCWSTR arguments[] = {
-		filePath.c_str(),  //コンパイル対象のhlslファイル名
-		L"-E",L"main",  //エントリーポイントの指定。基本的にmain以外にはしない
-		L"-T",profile,  //shaderProfileの設定
-		L"-Zi",L"-Qembed_debug",  //デバッグ用の情報を埋め込む
-		L"-Od", //最適化を外しておく
-		L"-Zpr",  //メモリレイアウトは行優先
-	};
-	//実際にshaderをコンパイルする
-	IDxcResult* shaderResult = nullptr;
-	hr = dxcCompiler->Compile(
-		&shaserSourceBuffer,   //読み込んだファイル
-		arguments,             //コンパイルオプション
-		_countof(arguments),   //コンパイルオプションの数
-		includeHandleer,       //includeが含まれた諸々
-		IID_PPV_ARGS(&shaderResult)  //コンパイルの結果
-	);
-	//コンパイルエラーではなくdxcが起動できないなど致命的な状況
-	assert(SUCCEEDED(hr));
-
-	//警告・エラーが出てたらログに出して止める
-	IDxcBlobUtf8* shaderError = nullptr;
-	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
-	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
-		Log(shaderError->GetStringPointer());
-		//警告・エラーダメ絶対
-		assert(false);
-	}
-
-	//コンパイル結果から実行用のバイナリ部分を取得
-	ComPtr<IDxcBlob> shaderBlob;
-	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
-	assert(SUCCEEDED(hr));
-	//成功したログを出す
-	Log(ConvertString(std::format(L"Compile Succeeded, Path:{}, profile:{}\n", filePath, profile)));
-	//もう使わないリソースを解放
-	shaderSource->Release();
-	shaderResult->Release();
-	//実行用のバイナリを返却
-	return shaderBlob;
-
 }
