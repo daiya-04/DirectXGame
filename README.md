@@ -5,7 +5,7 @@
 
 ## タイトル 「魔法師の戦い」
 
-[動画](https://youtu.be/fDO03_xzYW8)
+[動画](https://youtu.be/O24rCQqD6VE)
 
 ### ゲームの概要
 
