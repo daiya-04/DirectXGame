@@ -196,7 +196,7 @@ void GameScene::Update() {
 	}
 	
 	//弾が消えたらリストから削除
-	playerAttacks_.remove_if([](const std::unique_ptr<PlayerAttack>& playerAttack) {
+	playerAttacks_.remove_if([](const std::unique_ptr<PlayerMagicBall>& playerAttack) {
 		if (!playerAttack->IsLife()) {
 			return true;
 		}
@@ -623,7 +623,7 @@ void GameScene::DebugGUI(){
 #endif // _DEBUG
 }
 
-void GameScene::AddPlayerAttack(PlayerAttack* playerAttack) {
-	playerAttacks_.push_back(std::unique_ptr<PlayerAttack>(playerAttack));
+void GameScene::AddPlayerAttack(PlayerMagicBall* playerAttack) {
+	playerAttacks_.push_back(std::unique_ptr<PlayerMagicBall>(playerAttack));
 }
 

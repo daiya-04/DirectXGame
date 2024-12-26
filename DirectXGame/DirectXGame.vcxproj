@@ -63,7 +63,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)externals\assimp\include;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\BaseScene;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\DebugText;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;$(ProjectDir)Engine\3d\Light;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\3d\Animation;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Loader;$(ProjectDir)Engine\Easing;$(ProjectDir)Engine\GraphicsPipeline;$(ProjectDir)Engine\ComputePipeline;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\Line;$(ProjectDir)Game\;$(ProjectDir)Game\Effects;$(ProjectDir)Game\Scene;$(ProjectDir)Game\GameObject;$(ProjectDir)Game\Charactor;$(ProjectDir)Game\Charactor\Player;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;$(ProjectDir)Game\Charactor\Boss\ElementBall;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)externals\assimp\include;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\BaseScene;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\DebugText;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;$(ProjectDir)Engine\3d\Light;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\3d\Animation;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Loader;$(ProjectDir)Engine\Easing;$(ProjectDir)Engine\GraphicsPipeline;$(ProjectDir)Engine\ComputePipeline;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\Line;$(ProjectDir)Game\;$(ProjectDir)Game\Effects;$(ProjectDir)Game\Scene;$(ProjectDir)Game\GameObject;$(ProjectDir)Game\Charactor;$(ProjectDir)Game\Charactor\Player;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;$(ProjectDir)Game\Charactor\Boss\ElementBall;$(ProjectDir)Game\Charactor\Boss\Behavior;$(ProjectDir)Game\Charactor\Boss\Behavior\Idel;$(ProjectDir)Game\Charactor\Boss\Behavior\Attack;$(ProjectDir)Game\Charactor\Boss\Behavior\Dead;$(ProjectDir)Game\Charactor\Boss\Behavior\Appear;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -110,6 +110,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BossAppear.cpp" />
+    <ClCompile Include="BossAttack.cpp" />
+    <ClCompile Include="BossDead.cpp" />
+    <ClCompile Include="BossIdel.cpp" />
     <ClCompile Include="Game\Charactor\BaseCharactor.cpp" />
     <ClCompile Include="Engine\ComputePipeline\BaseComputePipeline.cpp" />
     <ClCompile Include="Engine\GraphicsPipeline\BaseGraphicsPipeline.cpp" />
@@ -166,7 +170,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Material.cpp" />
     <ClCompile Include="Engine\3d\Mesh.cpp" />
     <ClCompile Include="Engine\PostEffect\OutLine.cpp" />
-    <ClCompile Include="Game\Charactor\Player\PlayerAttack.cpp" />
+    <ClCompile Include="Game\Charactor\Player\PlayerMagicBall.cpp" />
     <ClCompile Include="Game\Charactor\Boss\PlasmaShot\PlasmaShot.cpp" />
     <ClCompile Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.cpp" />
     <ClCompile Include="Game\GameObject\Rock.cpp" />
@@ -185,8 +189,17 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\ComputePipeline\ParticleEmitComputePipeline.cpp" />
     <ClCompile Include="Engine\ComputePipeline\ParticleUpdateComputePipeline.cpp" />
     <ClCompile Include="Engine\GraphicsPipeline\ParticleGraphicsPipeline.cpp" />
+    <ClCompile Include="PlayerAttack.cpp" />
+    <ClCompile Include="PlayerDash.cpp" />
+    <ClCompile Include="PlayerDead.cpp" />
+    <ClCompile Include="PlayerIdel.cpp" />
+    <ClCompile Include="PlayerJog.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BossAppear.h" />
+    <ClInclude Include="BossAttack.h" />
+    <ClInclude Include="BossDead.h" />
+    <ClInclude Include="BossIdel.h" />
     <ClInclude Include="Game\Charactor\BaseCharactor.h" />
     <ClInclude Include="Engine\ComputePipeline\BaseComputePipeline.h" />
     <ClInclude Include="Engine\GraphicsPipeline\BaseGraphicsPipeline.h" />
@@ -246,7 +259,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\Mesh.h" />
     <ClInclude Include="Engine\PostEffect\OutLine.h" />
     <ClInclude Include="Engine\PostEffect\HSVFilter.h" />
-    <ClInclude Include="Game\Charactor\Player\PlayerAttack.h" />
+    <ClInclude Include="Game\Charactor\Player\PlayerMagicBall.h" />
     <ClInclude Include="Game\Charactor\Boss\GroundFlare.h" />
     <ClInclude Include="Game\Charactor\Boss\Icicle\Icicle.h" />
     <ClInclude Include="Game\Charactor\Boss\Icicle\IcicleManager.h" />
@@ -271,6 +284,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\ComputePipeline\ParticleEmitComputePipeline.h" />
     <ClInclude Include="Engine\ComputePipeline\ParticleUpdateComputePipeline.h" />
     <ClInclude Include="Engine\GraphicsPipeline\ParticleGraphicsPipeline.h" />
+    <ClInclude Include="IBossBehavior.h" />
+    <ClInclude Include="IPlayerBehavior.h" />
+    <ClInclude Include="PlayerAttack.h" />
+    <ClInclude Include="PlayerDash.h" />
+    <ClInclude Include="PlayerDead.h" />
+    <ClInclude Include="PlayerIdel.h" />
+    <ClInclude Include="PlayerJog.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

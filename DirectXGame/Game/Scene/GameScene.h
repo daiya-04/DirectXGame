@@ -35,7 +35,7 @@
 #include "Boss.h"
 #include "FollowCamera.h"
 #include "ElementBallManager.h"
-#include "PlayerAttack.h"
+#include "PlayerMagicBall.h"
 #include "BurnScar.h"
 #include "IceScar.h"
 #include "GroundFlare.h"
@@ -98,7 +98,7 @@ public:
 	/// プレイヤー攻撃をリストに追加
 	/// </summary>
 	/// <param name="playerAttack">プレイヤー攻撃クラスのポインタ</param>
-	void AddPlayerAttack(PlayerAttack* playerAttack);
+	void AddPlayerAttack(PlayerMagicBall* playerAttack);
 
 private:
 	//カメラ
@@ -118,7 +118,7 @@ private:
 	std::vector<std::unique_ptr<Rock>> rocks_;
 	
 	//プレイヤーの攻撃
-	std::list<std::unique_ptr<PlayerAttack>> playerAttacks_;
+	std::list<std::unique_ptr<PlayerMagicBall>> playerAttacks_;
 	//プレイヤー攻撃が消えたときのエフェクト
 	std::map<std::string, std::unique_ptr<GPUParticle>> attackEndEff_;
 	//追従カメラ

@@ -8,6 +8,10 @@
 #include "ShapesDraw.h"
 #include "AnimationManager.h"
 #include "ParticleManager.h"
+#include "BossIdel.h"
+#include "BossAttack.h"
+#include "BossAppear.h"
+#include "BossDead.h"
 
 #include "GroundFlare.h"
 
@@ -27,7 +31,7 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	///
 
 	//状態設定
-	behaviorRequest_ = Behavior::kAppear;
+	ChangeBehavior("Appear");
 	//攻撃設定
 	attackType_ = AttackType::kElementBall;
 
@@ -44,18 +48,14 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 
 void Boss::Update() {
 
-	//状態が切り替わった時の初期化処理
 	if (behaviorRequest_) {
 
-		behavior_ = behaviorRequest_.value();
+		behavior_ = std::move(behaviorRequest_);
+		behavior_->Init();
 
-		behaviorInitTable_[behavior_]();
-
-		behaviorRequest_ = std::nullopt;
 	}
 
-	//状態の更新
-	behaviorUpdateTable_[behavior_]();
+	behavior_->Update();
 
 	BaseCharactor::Update();
 
@@ -96,139 +96,36 @@ void Boss::OnCollision() {
 	//HPが0になったら...
 	if (hp_ <= 0) {
 		isDead_ = true;
-		behaviorRequest_ = Behavior::kDead;
+		ChangeBehavior("Dead");
 	}
 }
 
-void Boss::RootInit() {
+void Boss::ChangeBehavior(const std::string& behaviorName) {
 
-	workAttack_.param_ = 0;
-	//立ちアニメーションに
-	actionIndex_ = Action::Standing;
-	animations_[actionIndex_].Start();
-	direction_ = { 0.0f,0.0f,-1.0f };
+	static const std::unordered_map<std::string, std::function<std::unique_ptr<IBossBehavior>()>> behaviorTable{
+		{"Idel", [this]() { return std::make_unique<BossIdel>(this); }},
+		{"Attack", [this]() {return std::make_unique<BossAttack>(this); }},
+		{"Appear", [this]() {return std::make_unique<BossAppear>(this); }},
+		{"Dead", [this]() {return std::make_unique<BossDead>(this); }},
+	};
 
-	//向いてる方向から回転行列計算
-	rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
 
-}
-
-void Boss::RootUpdate() {
-	//一定時間で攻撃
-	if (++workAttack_.param_ > workAttack_.coolTime_) {
-		behaviorRequest_ = Behavior::kAttack;
-	}
-	
-}
-
-void Boss::AttackInit() {
-
-	//攻撃の設定
-	if (attackType_ == AttackType::kElementBall) {
-		//データのセットと開始
-		elementBall_->SetAttackData(obj_->worldTransform_.translation_);
-		elementBall_->AttackStart();
-		
-		//次の攻撃
-		attackType_ = AttackType::kGroundFlare;
-		
-	}else if (attackType_ == AttackType::kGroundFlare) {
-		groundFlare_->AttackStart();
-		//次の攻撃
-		attackType_ = AttackType::kIcicle;
-	}
-	else if (attackType_ == AttackType::kIcicle) {
-		//データのセットと開始
-		icicle_->SetAttackData(GetCenterPos(), Vector3(0.0f, 0.0f, -1.0f));
-		icicle_->AttackStart();
-		//次の攻撃
-		attackType_ = AttackType::kPlasmaShot;
-	}
-	else if (attackType_ == AttackType::kPlasmaShot) {
-		//データのセットと開始
-		direction_ = (target_->translation_ - obj_->worldTransform_.translation_).Normalize();
-		rotateMat_ = DirectionToDirection({ 0.0f,0.0f,1.0f }, direction_);
-		Vector3 offset = { 0.0f,0.0f,2.0f };
-		offset = Transform(offset, rotateMat_);
-
-		plasmaShot_->SetAttackData(GetCenterPos() + offset);
-		plasmaShot_->AttackStart();
-
-		//次の攻撃
-		attackType_ = AttackType::kElementBall;
+	auto nextBehavior = behaviorTable.find(behaviorName);
+	if (nextBehavior != behaviorTable.end()) {
+		behaviorRequest_ = nextBehavior->second();
 	}
 
-	actionIndex_ = Action::AttackSet;
-	animations_[actionIndex_].Start(false);
+}	
 
-}
-
-void Boss::AttackUpdate() {
-	//攻撃のセット、攻撃のモーションが終わったら立ちアニメーションにする
-	if ((actionIndex_ == Action::Attack || actionIndex_ == Action::AttackSet) && !animations_[actionIndex_].IsPlaying()) {
-		actionIndex_ = Action::Standing;
-		animations_[actionIndex_].Start();
-	}
-	//攻撃が始まったら攻撃のアニメーションに
-	if (groundFlare_->FireStartFlag() || elementBall_->ShotStart()) {
-		actionIndex_ = Action::Attack;
-	}
-	//攻撃が終わったら通常行動に
-	if (groundFlare_->AttackFinish() || icicle_->AttackFinish() || plasmaShot_->AttackFinish() || elementBall_->AttackFinish()) {
-		behaviorRequest_ = Behavior::kRoot;
-	}
-	
-}
-
-void Boss::AppearInit() {
-
-	workAppear_.startPos_ = obj_->GetWorldPos();
-	workAppear_.endPos_ = obj_->GetWorldPos();
-	workAppear_.endPos_.y = 0.0f;
-	obj_->worldTransform_.translation_ = workAppear_.startPos_;
-	workAppear_.param_ = 0.0f;
-
-	//登場演出開始
+void Boss::AppearEffectStart() {
 	for (auto& [group, particle] : effect_) {
 		particle->particleData_.isLoop_ = true;
 	}
-
 }
 
-void Boss::AppearUpdate() {
-	//移動が終わったら通常行動に
-	if (workAppear_.param_ >= 1.0f) {
-		behaviorRequest_ = Behavior::kRoot;
-		for (auto& [group, particle] : effect_) {
-			particle->particleData_.isLoop_ = false;
-		}
-		return;
+void Boss::AppearEffectEnd() {
+	for (auto& [group, particle] : effect_) {
+		particle->particleData_.isLoop_ = false;
 	}
-
-	//移動処理
-	float T = Easing::easeInOutQuart(workAppear_.param_);
-	obj_->worldTransform_.translation_ = Lerp(T, workAppear_.startPos_, workAppear_.endPos_);
-
-	workAppear_.param_ += workAppear_.speed_;
-
 }
 
-void Boss::DeadInit() {
-
-	actionIndex_ = Action::Dead;
-	animations_[actionIndex_].Start(false);
-	//ディゾルブ用パラメータ初期化
-	obj_->threshold_ = 0.0f;
-	
-}
-
-void Boss::DeadUpdate() {
-	//アニメーション終了
-	if (!animations_[actionIndex_].IsPlaying()) {
-		isFinishDeadMotion_ = true;
-	}
-	//ディゾルブ用パラメータの計算
-	obj_->threshold_ = animations_[actionIndex_].GetAnimationTime() / animations_[actionIndex_].GetDuration();
-	obj_->threshold_ = std::clamp(obj_->threshold_, 0.0f, animations_[actionIndex_].GetDuration());
-
-}
