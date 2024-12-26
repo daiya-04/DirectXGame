@@ -101,6 +101,39 @@
     <Filter Include="Engine\3d\Animation">
       <UniqueIdentifier>{ed94aa1d-7784-4b1e-978a-e3bf889eb516}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Charactor\Boss\Behavior">
+      <UniqueIdentifier>{5a54c480-bf69-469a-9bb8-98b34cbbc7fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Boss\Behavior\Idel">
+      <UniqueIdentifier>{9b6f1872-5b5b-4f17-b578-961e5999f616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Boss\Behavior\Attack">
+      <UniqueIdentifier>{63dd1c23-d9f8-4cc3-8d36-b589189432a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Boss\Behavior\Dead">
+      <UniqueIdentifier>{ad862d1c-b5c6-4b59-bfd2-07c3aeb9db0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Boss\Behavior\Appear">
+      <UniqueIdentifier>{85c4d18b-9eed-4f92-957d-42895a4fc9ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Player\Behavior">
+      <UniqueIdentifier>{a0f9ea71-bd70-4bb9-b5f6-329436e5ad4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Player\Behavior\PlayerIdel">
+      <UniqueIdentifier>{a47c9477-5490-4852-b087-17f40811e839}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Player\Behavior\PlayerDead">
+      <UniqueIdentifier>{defda373-a9c3-449e-9c80-0844531439ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Player\Behavior\PlayerAttack">
+      <UniqueIdentifier>{417ff748-f27b-452c-ba29-97e50fb6b967}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Player\Behavior\PlayerDash">
+      <UniqueIdentifier>{d85f18d8-a75b-4774-a9c4-d1adeab2a8c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Player\Behavior\PlayerJog">
+      <UniqueIdentifier>{d878d9ff-6fb4-4923-bae6-b4f414fcbd58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -224,7 +257,7 @@
     <ClCompile Include="Game\Charactor\Player\Player.cpp">
       <Filter>Game\Charactor\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Charactor\Player\PlayerAttack.cpp">
+    <ClCompile Include="Game\Charactor\Player\PlayerMagicBall.cpp">
       <Filter>Game\Charactor\Player</Filter>
     </ClCompile>
     <ClCompile Include="Game\Charactor\Boss\GroundFlare.cpp">
@@ -325,6 +358,33 @@
     </ClCompile>
     <ClCompile Include="Game\Charactor\BaseCharactor.cpp">
       <Filter>Game\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="BossIdel.cpp">
+      <Filter>Game\Charactor\Boss\Behavior\Idel</Filter>
+    </ClCompile>
+    <ClCompile Include="BossAttack.cpp">
+      <Filter>Game\Charactor\Boss\Behavior\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="BossDead.cpp">
+      <Filter>Game\Charactor\Boss\Behavior\Dead</Filter>
+    </ClCompile>
+    <ClCompile Include="BossAppear.cpp">
+      <Filter>Game\Charactor\Boss\Behavior\Appear</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerIdel.cpp">
+      <Filter>Game\Charactor\Player\Behavior\PlayerIdel</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerDead.cpp">
+      <Filter>Game\Charactor\Player\Behavior\PlayerDead</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerAttack.cpp">
+      <Filter>Game\Charactor\Player\Behavior\PlayerAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerDash.cpp">
+      <Filter>Game\Charactor\Player\Behavior\PlayerDash</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerJog.cpp">
+      <Filter>Game\Charactor\Player\Behavior\PlayerJog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -475,7 +535,7 @@
     <ClInclude Include="Game\Charactor\Player\Player.h">
       <Filter>Game\Charactor\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Charactor\Player\PlayerAttack.h">
+    <ClInclude Include="Game\Charactor\Player\PlayerMagicBall.h">
       <Filter>Game\Charactor\Player</Filter>
     </ClInclude>
     <ClInclude Include="Game\Charactor\Boss\GroundFlare.h">
@@ -579,6 +639,39 @@
     </ClInclude>
     <ClInclude Include="Game\Charactor\BaseCharactor.h">
       <Filter>Game\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="IBossBehavior.h">
+      <Filter>Game\Charactor\Boss\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="BossIdel.h">
+      <Filter>Game\Charactor\Boss\Behavior\Idel</Filter>
+    </ClInclude>
+    <ClInclude Include="BossAttack.h">
+      <Filter>Game\Charactor\Boss\Behavior\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="BossDead.h">
+      <Filter>Game\Charactor\Boss\Behavior\Dead</Filter>
+    </ClInclude>
+    <ClInclude Include="BossAppear.h">
+      <Filter>Game\Charactor\Boss\Behavior\Appear</Filter>
+    </ClInclude>
+    <ClInclude Include="IPlayerBehavior.h">
+      <Filter>Game\Charactor\Player\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerIdel.h">
+      <Filter>Game\Charactor\Player\Behavior\PlayerIdel</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerDead.h">
+      <Filter>Game\Charactor\Player\Behavior\PlayerDead</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerAttack.h">
+      <Filter>Game\Charactor\Player\Behavior\PlayerAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerDash.h">
+      <Filter>Game\Charactor\Player\Behavior\PlayerDash</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerJog.h">
+      <Filter>Game\Charactor\Player\Behavior\PlayerJog</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

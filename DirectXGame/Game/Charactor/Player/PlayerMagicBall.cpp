@@ -1,9 +1,9 @@
-#include "PlayerAttack.h"
+#include "PlayerMagicBall.h"
 
 #include "TextureManager.h"
 
 
-void PlayerAttack::Init(std::shared_ptr<Model> model, const Vector3& startPos, const Vector3& direction) {
+void PlayerMagicBall::Init(std::shared_ptr<Model> model, const Vector3& startPos, const Vector3& direction) {
 
 	obj_.reset(Object3d::Create(model));
 
@@ -39,7 +39,7 @@ void PlayerAttack::Init(std::shared_ptr<Model> model, const Vector3& startPos, c
 
 }
 
-void PlayerAttack::Update() {
+void PlayerMagicBall::Update() {
 	//移動
 	obj_->worldTransform_.translation_ += velocity_;
 	//行列計算
@@ -57,18 +57,18 @@ void PlayerAttack::Update() {
 
 }
 
-void PlayerAttack::Draw(const Camera& camera) {
+void PlayerMagicBall::Draw(const Camera& camera) {
 	obj_->Draw(camera);
 }
 
-void PlayerAttack::DrawParticle(const Camera& camera) {
+void PlayerMagicBall::DrawParticle(const Camera& camera) {
 	particle_->Draw(camera);
 }
 
-void PlayerAttack::OnCollision() {
+void PlayerMagicBall::OnCollision() {
 	isLife_ = false;
 }
 
-Vector3 PlayerAttack::GetWorldPos() const {
+Vector3 PlayerMagicBall::GetWorldPos() const {
 	return { obj_->worldTransform_.matWorld_.m[3][0],obj_->worldTransform_.matWorld_.m[3][1] ,obj_->worldTransform_.matWorld_.m[3][2] };
 }

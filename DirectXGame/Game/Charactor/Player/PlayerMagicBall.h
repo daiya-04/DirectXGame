@@ -15,7 +15,7 @@
 
 
 //プレイヤー攻撃クラス
-class PlayerAttack {
+class PlayerMagicBall {
 public:
 	/// <summary>
 	/// 初期化

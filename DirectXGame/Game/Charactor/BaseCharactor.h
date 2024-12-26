@@ -21,6 +21,7 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 
 //キャラクターの基底クラス
 class BaseCharactor {
@@ -80,6 +81,37 @@ public:
 	/// </summary>
 	/// <returns>オブジェクトのワールドトランスフォーム</returns>
 	const WorldTransform& GetWorldTransform() { return obj_->worldTransform_; }
+	/// <summary>
+	/// アニメーションの設定
+	/// </summary>
+	void SetAnimation(size_t actionIndex, bool isLoop = true);
+	//キャラの向きの取得と設定
+	const Vector3 GetDirection() const { return direction_; }
+	void SetDirection(const Vector3& direction);
+
+	const Matrix4x4 GetRotateMat() const { return rotateMat_; }
+	/// <summary>
+	/// 行動の切り替え
+	/// </summary>
+	/// <param name="behaviorName">切り替える行動の名前</param>
+	virtual void ChangeBehavior(const std::string& behaviorName) = 0;
+	/// <summary>
+	/// obj_の取得
+	/// </summary>
+	/// <returns></returns>
+	SkinningObject* GetObj() { return obj_.get(); }
+	/// <summary>
+	/// キャラがディゾルブで消えていく
+	/// </summary>
+	void DissolveUpdate();
+	/// <summary>
+	/// 現在のアニメーションの取得
+	/// </summary>
+	/// <returns></returns>
+	Animation& GetNowAnimation() { return animations_[actionIndex_]; }
+	const size_t GetActionIndex() const { return actionIndex_; }
+
+	Skeleton& GetNowSkelton() { return skeletons_[actionIndex_]; }
 
 protected:
 
@@ -96,7 +128,7 @@ protected:
 	std::vector<SkinCluster> skinClusters_;
 
 	//アクションインデックス(今なんのアニメーションか)
-	int32_t actionIndex_ = 0;
+	size_t actionIndex_ = 0;
 	//コライダー(形状)
 	Shapes::OBB collider_;
 

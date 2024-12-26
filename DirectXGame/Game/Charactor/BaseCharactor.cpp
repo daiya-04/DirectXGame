@@ -84,3 +84,23 @@ Vector3 BaseCharactor::GetCenterPos() const {
 
 	return centerPos;
 }
+
+void BaseCharactor::SetAnimation(size_t actionIndex, bool isLoop) {
+
+	actionIndex_ = actionIndex;
+	animations_[actionIndex_].Start(isLoop);
+	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
+
+}
+
+void BaseCharactor::SetDirection(const Vector3& direction) {
+	direction_ = direction;
+	rotateMat_ = DirectionToDirection(Vector3(0.0f, 0.0f, 1.0f), direction_);
+}
+
+void BaseCharactor::DissolveUpdate() {
+
+	obj_->threshold_ = animations_[actionIndex_].GetAnimationTime() / animations_[actionIndex_].GetDuration();
+	obj_->threshold_ = std::clamp(obj_->threshold_, 0.0f, animations_[actionIndex_].GetDuration());
+
+}

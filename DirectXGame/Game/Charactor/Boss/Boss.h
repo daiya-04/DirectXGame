@@ -25,9 +25,8 @@
 #include "ElementBallManager.h"
 #include "GroundFlare.h"
 #include "BaseCharactor.h"
+#include "IBossBehavior.h"
 
-#include <memory>
-#include <vector>
 #include <array>
 #include <optional>
 #include <functional>
@@ -40,7 +39,7 @@ public:
 	//行動
 	enum Behavior {
 		//通常
-		kRoot,
+		kIdel,
 		//攻撃
 		kAttack,
 		//登場
@@ -48,60 +47,6 @@ public:
 		//死亡
 		kDead,
 	};
-	//現在の行動
-	Behavior behavior_ = Behavior::kAppear;
-	//次の行動リクエスト
-	std::optional<Behavior> behaviorRequest_ = Behavior::kAppear;
-
-	//行動初期化テーブル
-	std::map<Behavior, std::function<void()>> behaviorInitTable_{
-		{Behavior::kRoot,[this]() {RootInit(); }},
-		{Behavior::kAttack,[this]() {AttackInit(); }},
-		{Behavior::kAppear,[this]() {AppearInit(); }},
-		{Behavior::kDead,[this]() {DeadInit(); }},
-	};
-
-	//行動更新テーブル
-	std::map<Behavior, std::function<void()>> behaviorUpdateTable_{
-		{Behavior::kRoot,[this]() {RootUpdate(); }},
-		{Behavior::kAttack,[this]() {AttackUpdate(); }},
-		{Behavior::kAppear,[this]() {AppearUpdate(); }},
-		{Behavior::kDead,[this]() {DeadUpdate(); }},
-	};
-
-private:
-	/// <summary>
-	/// 通常行動初期化
-	/// </summary>
-	void RootInit();
-	/// <summary>
-	/// 通常行動更新
-	/// </summary>
-	void RootUpdate();
-	/// <summary>
-	/// 登場行動初期化
-	/// </summary>
-	void AppearInit();
-	/// <summary>
-	/// 登場行動更新
-	/// </summary>
-	void AppearUpdate();
-	/// <summary>
-	/// 攻撃行動初期化
-	/// </summary>
-	void AttackInit();
-	/// <summary>
-	/// 攻撃行動更新
-	/// </summary>
-	void AttackUpdate();
-	/// <summary>
-	/// 死亡行動初期化
-	/// </summary>
-	void DeadInit();
-	/// <summary>
-	/// 死亡行動更新
-	/// </summary>
-	void DeadUpdate();
 
 public:
 	//アクション(アニメーション)
@@ -152,6 +97,10 @@ private:
 	};
 
 private:
+
+	std::unique_ptr<IBossBehavior> behavior_;
+	std::unique_ptr<IBossBehavior> behaviorRequest_;
+
 	//登場演出
 	std::map<std::string, std::unique_ptr<GPUParticle>> effect_;
 	//攻撃種類
@@ -214,41 +163,48 @@ public:
 	/// 衝突時
 	/// </summary>
 	void OnCollision();
-	/// <summary>
-	/// ターゲット設定
-	/// </summary>
-	/// <param name="target">ターゲットのワールドトランスフォーム</param>
+	
+	const WorldTransform* GetTarget() { return target_; }
 	void SetTarget(const WorldTransform* target) { target_ = target; }
-	/// <summary>
-	/// 火の玉攻撃のセット
-	/// </summary>
-	/// <param name="elementBall"></param>
+	
+
 	void SetElementBall(ElementBallManager* elementBall) { elementBall_ = elementBall; }
-	/// <summary>
-	/// つらら攻撃のセット
-	/// </summary>
-	/// <param name="icicle"></param>
+	ElementBallManager* GetElementBall() { return elementBall_; }
+	
 	void SetIcicle(IcicleManager* icicle) { icicle_ = icicle; }
-	/// <summary>
-	/// 電気玉攻撃のセット
-	/// </summary>
-	/// <param name="plasmaShot"></param>
+	IcicleManager* GetIcicle() { return icicle_; }
+	
 	void SetPlasmaShot(PlasmaShotManager* plasmaShot) { plasmaShot_ = plasmaShot; }
-	/// <summary>
-	/// 地面から炎の攻撃のセット
-	/// </summary>
-	/// <param name="groundFlare"></param>
+	PlasmaShotManager* GetPlasmaShot() { return plasmaShot_; }
+	
 	void SetGroudFlare(GroundFlare* groundFlare) { groundFlare_ = groundFlare; }
+	GroundFlare* GetGroundFlare() { return groundFlare_; }
+
 	/// <summary>
-	/// 攻撃しているか
+	/// 死亡アニメーションの終了
 	/// </summary>
-	/// <returns>攻撃中ならtrue、それ以外false</returns>
-	bool IsAttack() const { return (behavior_ == Behavior::kAttack) ? true : false; }
+	void FinishDeadMotion() { isFinishDeadMotion_ = true; }
 	/// <summary>
 	/// 死亡アニメーションが終わったか
 	/// </summary>
 	/// <returns>死亡アニメーションが終わっていたらtrue、それ以外false</returns>
 	bool IsFinishDeadMotion() const { return isFinishDeadMotion_; }
+	/// <summary>
+	/// 行動の切り替え
+	/// </summary>
+	/// <param name="behaviorName">切り替える行動の名前</param>
+	void ChangeBehavior(const std::string& behaviorName) override;
+	/// <summary>
+	/// 登場演出開始
+	/// </summary>
+	void AppearEffectStart();
+	/// <summary>
+	/// 登場演出終了
+	/// </summary>
+	void AppearEffectEnd();
+	//攻撃の種類の取得と設定
+	AttackType GetAttackType() { return attackType_; }
+	void SetAttackType(const AttackType& attackType) { attackType_ = attackType; }
 
 };
 

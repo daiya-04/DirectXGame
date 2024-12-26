@@ -8,6 +8,7 @@
 
 #include "FollowCamera.h"
 #include "BaseCharactor.h"
+#include "IPlayerBehavior.h"
 
 #include <memory>
 #include <list>
@@ -25,69 +26,16 @@ private: //ふるまい用メンバ変数
 	//行動
 	enum class Behavior {
 		//通常
-		kRoot,
+		kIdel,
 		//攻撃
 		kAttack,
+		//移動(ジョギング)
+		kJog,
 		//ダッシュ
 		kDash,
 		//死亡
 		kDead,
 	};
-	//現在の行動
-	Behavior behavior_ = Behavior::kRoot;
-	//次の行動リクエスト
-	std::optional<Behavior> behaviorRequest_ = Behavior::kRoot;
-
-	//行動初期化テーブル
-	std::map<Behavior, std::function<void()>> behaviorInitTable_{
-		{Behavior::kRoot,[this]() {RootInit(); }},
-		{Behavior::kAttack,[this]() {AttackInit(); }},
-		{Behavior::kDash,[this]() {DashInit(); }},
-		{Behavior::kDead,[this]() {DeadInit(); }},
-	};
-	//行動更新テーブル
-	std::map<Behavior, std::function<void()>> behaviorUpdateTable_{
-		{Behavior::kRoot,[this]() {RootUpdate(); }},
-		{Behavior::kAttack,[this]() {AttackUpdate(); }},
-		{Behavior::kDash,[this]() {DashUpdate(); }},
-		{Behavior::kDead,[this]() {DeadUpdate(); }},
-	};
-	
-
-public: //ふるまい用メンバ関数
-
-	/// <summary>
-	/// 通常行動初期化
-	/// </summary>
-	void RootInit();
-	/// <summary>
-	/// 通常行動更新
-	/// </summary>
-	void RootUpdate();
-	/// <summary>
-	/// 攻撃行動初期化
-	/// </summary>
-	void AttackInit();
-	/// <summary>
-	/// 攻撃行動更新
-	/// </summary>
-	void AttackUpdate();
-	/// <summary>
-	/// ダッシュ初期化
-	/// </summary>
-	void DashInit();
-	/// <summary>
-	/// ダッシュ更新
-	/// </summary>
-	void DashUpdate();
-	/// <summary>
-	/// 死亡初期化
-	/// </summary>
-	void DeadInit();
-	/// <summary>
-	/// 死亡更新
-	/// </summary>
-	void DeadUpdate();
 
 public:
 	//ダッシュに必要なパラメータ
@@ -150,8 +98,8 @@ public:
 	enum Action {
 		//立ち
 		Standing,
-		//歩き
-		Walking,
+		//ジョギング
+		Jogging,
 		//攻撃
 		Attack,
 		//死亡
@@ -162,6 +110,10 @@ public:
 	};
 
 private:
+
+	std::unique_ptr<IPlayerBehavior> behavior_;
+	std::unique_ptr<IPlayerBehavior> behaviorRequest_;
+
 	//ターゲット(ボス)
 	const WorldTransform* target_ = nullptr;
 	//最大HP
@@ -218,22 +170,31 @@ public:
 	/// 衝突時
 	/// </summary>
 	void OnCollision();
+	/// <summary>
+	/// 行動の切り替え
+	/// </summary>
+	/// <param name="behaviorName">切り替える行動の名前</param>
+	void ChangeBehavior(const std::string& behaviorName) override;
+	/// <summary>
+	/// 攻撃の発射
+	/// </summary>
+	void ShotMagicBall();
 
-	/// <summary>
-	/// カメラの設定
-	/// </summary>
-	/// <param name="followCamera">追従カメラ</param>
+	//カメラの取得と設定
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
-	/// <summary>
-	/// ターゲット設定
-	/// </summary>
-	/// <param name="target">ターゲットのワールドトランスフォーム</param>
+	FollowCamera* GetFollowCamera() { return followCamera_; }
+	//
 	void SetTerget(const WorldTransform* target) { target_ = target; }
+	const WorldTransform* GetTarget() { return target_; }
 	/// <summary>
 	/// ゲームシーン設定
 	/// </summary>
 	/// <param name="gameScene">ゲームシーンのポインタ</param>
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
+	/// <summary>
+	/// 死亡アニメーションの終了
+	/// </summary>
+	void FinishDeadMotion() { isFinishDeadMotion_ = true; }
 	/// <summary>
 	/// 死亡アニメーションが終わったか
 	/// </summary>

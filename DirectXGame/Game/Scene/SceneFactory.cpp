@@ -3,22 +3,21 @@
 #include "TitleScene.h"
 #include "DebugTestScene.h"
 
+#include <unordered_map>
+#include <functional>
+
 std::unique_ptr<IScene> SceneFactory::CreateScene(const std::string& sceneName){
-    //新しいシーン
-    std::unique_ptr<IScene> newScene = nullptr;
 
-    if (sceneName == "Game") {
-        //ゲームシーン生成
-        newScene = std::make_unique<GameScene>();
-    }
-    if (sceneName == "Title") {
-        //タイトルシーン生成
-        newScene = std::make_unique<TitleScene>();
-    }
-    if (sceneName == "Debug") {
-        //デバッグシーン生成
-        newScene = std::make_unique<DebugTestScene>();
+    static const std::unordered_map<std::string, std::function<std::unique_ptr<IScene>()>> sceneTable{
+        {"Game",[]() { return std::make_unique<GameScene>(); }},
+        {"Title",[]() {return std::make_unique<TitleScene>(); }},
+        {"Debug",[]() {return std::make_unique<DebugTestScene>(); }},
+    };
+
+    auto newScene = sceneTable.find(sceneName);
+    if (newScene != sceneTable.end()) {
+        return newScene->second();
     }
 
-    return newScene;
+    return nullptr;
 }
