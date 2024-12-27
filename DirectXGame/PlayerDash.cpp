@@ -8,6 +8,8 @@ void PlayerDash::Init() {
 
 	assert(player_);
 
+	player_->SetAnimation(Player::Action::Accel);
+
 	Vector3 zeroVector{};
 	if (player_->GetDirection() == zeroVector) {
 		dashDirection_ = { 0.0f,0.0f,1.0f };
@@ -20,10 +22,11 @@ void PlayerDash::Init() {
 }
 
 void PlayerDash::Update() {
+	//加速
+	dashSpeed_ += absAccel_;
+	dashSpeed_ = std::clamp(dashSpeed_, 0.0f, maxSpeed_);
 
-	float dashSpeed = 1.5f;
-
-	player_->GetObj()->worldTransform_.translation_ += dashDirection_.Normalize() * dashSpeed;
+	player_->GetObj()->worldTransform_.translation_ += dashDirection_.Normalize() * dashSpeed_;
 
 	if (++count_ >= dashTime_) {
 		//スティック入力がされたままだったらJogStateへ

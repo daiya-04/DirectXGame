@@ -24,9 +24,9 @@ void PlayerIdel::Update() {
 		player_->ChangeBehavior("Attack");
 	}
 
-	////ダッシュ
-	//if (Input::GetInstance()->TriggerButton(Input::Button::RIGHT_SHOULDER)) {
-	//	player_->ChangeBehavior("Dash");
-	//}
+	//ダッシュ
+	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+		player_->ChangeBehavior("Dash");
+	}
 
 }

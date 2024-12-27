@@ -134,6 +134,9 @@
     <Filter Include="Game\Charactor\Player\Behavior\PlayerJog">
       <UniqueIdentifier>{d878d9ff-6fb4-4923-bae6-b4f414fcbd58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Charactor\Player\Behavior\PlayerKnockBack">
+      <UniqueIdentifier>{05c8b22b-63d2-4990-8257-46ad351d9d7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -385,6 +388,9 @@
     </ClCompile>
     <ClCompile Include="PlayerJog.cpp">
       <Filter>Game\Charactor\Player\Behavior\PlayerJog</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerKnockBack.cpp">
+      <Filter>Game\Charactor\Player\Behavior\PlayerKnockBack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -672,6 +678,9 @@
     </ClInclude>
     <ClInclude Include="PlayerJog.h">
       <Filter>Game\Charactor\Player\Behavior\PlayerJog</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerKnockBack.h">
+      <Filter>Game\Charactor\Player\Behavior\PlayerKnockBack</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

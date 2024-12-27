@@ -162,6 +162,8 @@ public:
 	/// <returns>攻撃が開始した瞬間true、それ以外はfalse</returns>
 	bool FireStartFlag() const { return(isHit_ && !preIsHit_); }
 
+	Vector3 GetCenterPos() { return centerPos_; }
+
 private:
 	//攻撃先(ターゲット)
 	const WorldTransform* target_;

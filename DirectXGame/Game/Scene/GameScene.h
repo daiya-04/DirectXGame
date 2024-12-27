@@ -131,8 +131,12 @@ private:
 	///UI
 	//Xボタン
 	std::unique_ptr<Sprite> XButton_;
+	//Aボタン
+	std::unique_ptr<Sprite> AButton_;
 	//攻撃文字
 	std::unique_ptr<Sprite> char_Attack_;
+	//走る文字
+	std::unique_ptr<Sprite> char_Dash_;
 	//ゲームオーバー文字
 	std::unique_ptr<Sprite> gameOver_;
 	//終了文字
