@@ -119,22 +119,22 @@
     <Filter Include="Game\Charactor\Player\Behavior">
       <UniqueIdentifier>{a0f9ea71-bd70-4bb9-b5f6-329436e5ad4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Charactor\Player\Behavior\PlayerIdel">
-      <UniqueIdentifier>{a47c9477-5490-4852-b087-17f40811e839}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Charactor\Player\Behavior\PlayerDead">
-      <UniqueIdentifier>{defda373-a9c3-449e-9c80-0844531439ef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Charactor\Player\Behavior\PlayerAttack">
+    <Filter Include="Game\Charactor\Player\Behavior\Attack">
       <UniqueIdentifier>{417ff748-f27b-452c-ba29-97e50fb6b967}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Charactor\Player\Behavior\PlayerDash">
+    <Filter Include="Game\Charactor\Player\Behavior\Dash">
       <UniqueIdentifier>{d85f18d8-a75b-4774-a9c4-d1adeab2a8c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Charactor\Player\Behavior\PlayerJog">
+    <Filter Include="Game\Charactor\Player\Behavior\Dead">
+      <UniqueIdentifier>{defda373-a9c3-449e-9c80-0844531439ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Player\Behavior\Idel">
+      <UniqueIdentifier>{a47c9477-5490-4852-b087-17f40811e839}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Player\Behavior\Jog">
       <UniqueIdentifier>{d878d9ff-6fb4-4923-bae6-b4f414fcbd58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Charactor\Player\Behavior\PlayerKnockBack">
+    <Filter Include="Game\Charactor\Player\Behavior\KnockBack">
       <UniqueIdentifier>{05c8b22b-63d2-4990-8257-46ad351d9d7a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -362,35 +362,35 @@
     <ClCompile Include="Game\Charactor\BaseCharactor.cpp">
       <Filter>Game\Charactor</Filter>
     </ClCompile>
-    <ClCompile Include="BossIdel.cpp">
+    <ClCompile Include="Game\Charactor\Boss\Behavior\Idel\BossIdel.cpp">
       <Filter>Game\Charactor\Boss\Behavior\Idel</Filter>
     </ClCompile>
-    <ClCompile Include="BossAttack.cpp">
+    <ClCompile Include="Game\Charactor\Boss\Behavior\Attack\BossAttack.cpp">
       <Filter>Game\Charactor\Boss\Behavior\Attack</Filter>
     </ClCompile>
-    <ClCompile Include="BossDead.cpp">
+    <ClCompile Include="Game\Charactor\Boss\Behavior\Dead\BossDead.cpp">
       <Filter>Game\Charactor\Boss\Behavior\Dead</Filter>
     </ClCompile>
-    <ClCompile Include="BossAppear.cpp">
+    <ClCompile Include="Game\Charactor\Boss\Behavior\Appear\BossAppear.cpp">
       <Filter>Game\Charactor\Boss\Behavior\Appear</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerIdel.cpp">
-      <Filter>Game\Charactor\Player\Behavior\PlayerIdel</Filter>
+    <ClCompile Include="Game\Charactor\Player\Behavior\Idel\PlayerIdel.cpp">
+      <Filter>Game\Charactor\Player\Behavior\Idel</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerDead.cpp">
-      <Filter>Game\Charactor\Player\Behavior\PlayerDead</Filter>
+    <ClCompile Include="Game\Charactor\Player\Behavior\Dead\PlayerDead.cpp">
+      <Filter>Game\Charactor\Player\Behavior\Dead</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerAttack.cpp">
-      <Filter>Game\Charactor\Player\Behavior\PlayerAttack</Filter>
+    <ClCompile Include="Game\Charactor\Player\Behavior\Attack\PlayerAttack.cpp">
+      <Filter>Game\Charactor\Player\Behavior\Attack</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerDash.cpp">
-      <Filter>Game\Charactor\Player\Behavior\PlayerDash</Filter>
+    <ClCompile Include="Game\Charactor\Player\Behavior\Dash\PlayerDash.cpp">
+      <Filter>Game\Charactor\Player\Behavior\Dash</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerJog.cpp">
-      <Filter>Game\Charactor\Player\Behavior\PlayerJog</Filter>
+    <ClCompile Include="Game\Charactor\Player\Behavior\Jog\PlayerJog.cpp">
+      <Filter>Game\Charactor\Player\Behavior\Jog</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerKnockBack.cpp">
-      <Filter>Game\Charactor\Player\Behavior\PlayerKnockBack</Filter>
+    <ClCompile Include="Game\Charactor\Player\Behavior\KnockBack\PlayerKnockBack.cpp">
+      <Filter>Game\Charactor\Player\Behavior\KnockBack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -646,41 +646,41 @@
     <ClInclude Include="Game\Charactor\BaseCharactor.h">
       <Filter>Game\Charactor</Filter>
     </ClInclude>
-    <ClInclude Include="IBossBehavior.h">
+    <ClInclude Include="Game\Charactor\Boss\Behavior\IBossBehavior.h">
       <Filter>Game\Charactor\Boss\Behavior</Filter>
     </ClInclude>
-    <ClInclude Include="BossIdel.h">
+    <ClInclude Include="Game\Charactor\Boss\Behavior\Idel\BossIdel.h">
       <Filter>Game\Charactor\Boss\Behavior\Idel</Filter>
     </ClInclude>
-    <ClInclude Include="BossAttack.h">
+    <ClInclude Include="Game\Charactor\Boss\Behavior\Attack\BossAttack.h">
       <Filter>Game\Charactor\Boss\Behavior\Attack</Filter>
     </ClInclude>
-    <ClInclude Include="BossDead.h">
+    <ClInclude Include="Game\Charactor\Boss\Behavior\Dead\BossDead.h">
       <Filter>Game\Charactor\Boss\Behavior\Dead</Filter>
     </ClInclude>
-    <ClInclude Include="BossAppear.h">
+    <ClInclude Include="Game\Charactor\Boss\Behavior\Appear\BossAppear.h">
       <Filter>Game\Charactor\Boss\Behavior\Appear</Filter>
     </ClInclude>
-    <ClInclude Include="IPlayerBehavior.h">
+    <ClInclude Include="Game\Charactor\Player\Behavior\IPlayerBehavior.h">
       <Filter>Game\Charactor\Player\Behavior</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerIdel.h">
-      <Filter>Game\Charactor\Player\Behavior\PlayerIdel</Filter>
+    <ClInclude Include="Game\Charactor\Player\Behavior\Idel\PlayerIdel.h">
+      <Filter>Game\Charactor\Player\Behavior\Idel</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerDead.h">
-      <Filter>Game\Charactor\Player\Behavior\PlayerDead</Filter>
+    <ClInclude Include="Game\Charactor\Player\Behavior\Dead\PlayerDead.h">
+      <Filter>Game\Charactor\Player\Behavior\Dead</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerAttack.h">
-      <Filter>Game\Charactor\Player\Behavior\PlayerAttack</Filter>
+    <ClInclude Include="Game\Charactor\Player\Behavior\Attack\PlayerAttack.h">
+      <Filter>Game\Charactor\Player\Behavior\Attack</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerDash.h">
-      <Filter>Game\Charactor\Player\Behavior\PlayerDash</Filter>
+    <ClInclude Include="Game\Charactor\Player\Behavior\Dash\PlayerDash.h">
+      <Filter>Game\Charactor\Player\Behavior\Dash</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerJog.h">
-      <Filter>Game\Charactor\Player\Behavior\PlayerJog</Filter>
+    <ClInclude Include="Game\Charactor\Player\Behavior\Jog\PlayerJog.h">
+      <Filter>Game\Charactor\Player\Behavior\Jog</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerKnockBack.h">
-      <Filter>Game\Charactor\Player\Behavior\PlayerKnockBack</Filter>
+    <ClInclude Include="Game\Charactor\Player\Behavior\KnockBack\PlayerKnockBack.h">
+      <Filter>Game\Charactor\Player\Behavior\KnockBack</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
