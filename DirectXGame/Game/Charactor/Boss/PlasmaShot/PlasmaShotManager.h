@@ -80,6 +80,8 @@ public:
 	/// <returns>電気玉の総数</returns>
 	uint32_t GetPlasmaShotCount() const { return kPlasmaShotNum_; }
 
+	Vector3 GetWorldPos(uint32_t index) { return plasmaShots_[index]->GetWorldPos(); }
+
 private:
 	//電気玉の数
 	static const uint32_t kPlasmaShotNum_ = 3;

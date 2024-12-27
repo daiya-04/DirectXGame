@@ -137,6 +137,12 @@ public:
 	void SetAttackData(const Vector3& pos, float interval);
 
 	/// <summary>
+	/// ワールド座標取得
+	/// </summary>
+	/// <returns>ワールド座標</returns>
+	Vector3 GetWorldPos() const { return obj_->GetWorldPos(); }
+
+	/// <summary>
 	/// コライダー取得
 	/// </summary>
 	/// <returns>コライダー</returns>

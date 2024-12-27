@@ -89,6 +89,7 @@ void BaseCharactor::SetAnimation(size_t actionIndex, bool isLoop) {
 
 	actionIndex_ = actionIndex;
 	animations_[actionIndex_].Start(isLoop);
+	animations_[actionIndex_].TimeReset();
 	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
 
 }

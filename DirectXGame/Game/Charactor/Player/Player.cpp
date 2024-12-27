@@ -11,14 +11,7 @@
 #include "PlayerDash.h"
 #include "PlayerDead.h"
 #include "PlayerJog.h"
-
-const std::array<Player::ComboAttack, Player::comboNum_> Player::kComboAttacks_ = {
-	{
-		{30,20,5},
-		{30,20,5},
-		{30,20,10}
-	}
-};
+#include "PlayerKnockBack.h"
 
 void Player::Init(const std::vector<std::shared_ptr<Model>>& models){
 
@@ -77,12 +70,29 @@ void Player::DrawUI() {
 	hpBar_->Draw();
 }
 
-void Player::OnCollision() {
+void Player::OnCollision(const Vector3& hitPos) {
+
+	if (actionIndex_ == Action::Accel) {
+		return;
+	}
+
 	hp_--;
+
+	Vector3 attackPos = hitPos;
+	attackPos.y = GetCenterPos().y;
+
+	knockBackBaseDict_ = (attackPos - GetCenterPos());
+	if (knockBackBaseDict_.Length() <= 0.0f) {
+		knockBackBaseDict_ = direction_;
+	}
+
 	//HPが0になったら...
 	if (hp_ <= 0) {
 		isDead_ = true;
 		ChangeBehavior("Dead");
+	}
+	else {
+		ChangeBehavior("KnockBack");
 	}
 }
 
@@ -94,6 +104,7 @@ void Player::ChangeBehavior(const std::string& behaviorName) {
 		{"Jog",[this]() {return std::make_unique<PlayerJog>(this); }},
 		{"Dash",[this]() {return std::make_unique<PlayerDash>(this); }},
 		{"Dead",[this]() {return std::make_unique<PlayerDead>(this); }},
+		{"KnockBack",[this]() {return std::make_unique<PlayerKnockBack>(this); }},
 	};
 
 	auto nextBehavior = behaviorTable.find(behaviorName);

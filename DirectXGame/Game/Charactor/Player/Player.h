@@ -38,62 +38,7 @@ private: //ふるまい用メンバ変数
 	};
 
 public:
-	//ダッシュに必要なパラメータ
-	struct WorkDash {
-		//ダッシュ中の現在の時間
-		uint32_t dashParam_ = 0;
-		//ダッシュ方向
-		Vector3 dashDirection_{};
-		//ダッシュの時間
-		uint32_t dashTime_ = 10;
-	};
-	//攻撃に必要なパラメータ
-	struct WorkAttack {
-		//攻撃中の現在の時間
-		uint32_t attackParam_ = 0;
-		//現在のコンボ数(何段目か)
-		uint32_t comboIndex_ = 0;
-		//一段の中のどのフェーズか
-		uint32_t InComboPhase_ = 0;
-		//コンボが続くか
-		bool comboNext_ = false;
-		//攻撃の速さ
-		float speed_ = 0.0f;
-		//攻撃の速度
-		Vector3 velocity_{};
-	};
-	//コンボに必要なパラメータ
-	struct ComboAttack {
-		//チャージの時間
-		uint32_t chargeTime_;
-		//攻撃(パーティクルの生存)時間
-		uint32_t attackTime_;
-		//攻撃後の硬直時間
-		uint32_t recoveryTime_;
-	};
-
-	enum class ComboPhase {
-		//溜め
-		Charge,
-		//攻撃
-		Attack,
-		//硬直
-		Recovery,
-	};
-
-	enum class ComboIndex {
-		//1コンボ目
-		First,
-		//2コンボ目
-		Second,
-		//3コンボ目
-		Third,
-	};
-
-	//コンボ数
-	static const int comboNum_ = 3;
-	static const std::array<ComboAttack, comboNum_> kComboAttacks_;
-
+	
 	//アクション(アニメーション)
 	enum Action {
 		//立ち
@@ -104,6 +49,10 @@ public:
 		Attack,
 		//死亡
 		Dead,
+		//加速
+		Accel,
+		//ノックバック
+		KnockBack,
 
 		//アクション総数
 		kActionNum,
@@ -124,10 +73,8 @@ private:
 	//攻撃アニメーションのスピード
 	float attackAnimeSpeed_ = 1.0f / 30.0f;
 
-	//ダッシュ用パラメータ
-	WorkDash workDash_;
-	//攻撃用パラメータ
-	WorkAttack workAttack_;
+	Vector3 knockBackBaseDict_ = {};
+
 	//追従カメラ
 	FollowCamera* followCamera_ = nullptr;
 	//デルタタイム
@@ -169,7 +116,7 @@ public:
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision();
+	void OnCollision(const Vector3& hitPos);
 	/// <summary>
 	/// 行動の切り替え
 	/// </summary>
@@ -205,6 +152,8 @@ public:
 	/// </summary>
 	/// <returns>現在のHP</returns>
 	uint32_t GetHP() const { return hp_; }
+
+	Vector3 GetKnockBackBaseDict() { return knockBackBaseDict_; }
 
 };
 

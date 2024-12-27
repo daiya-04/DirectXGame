@@ -39,11 +39,14 @@ void GameScene::Init(){
 
 	std::shared_ptr<Model> skydomeModel = ModelManager::LoadOBJ("skydome");
 	std::shared_ptr<Model> groundModel = ModelManager::LoadOBJ("ground");
+	//プレイヤー
 	std::shared_ptr<Model> playerStandingModel = ModelManager::LoadGLTF("Standing");
 	std::shared_ptr<Model> playerRunningModel = ModelManager::LoadGLTF("Running");
 	std::shared_ptr<Model> playerAttackModel = ModelManager::LoadGLTF("PlayerAttack");
 	std::shared_ptr<Model> playerDeadModel = ModelManager::LoadGLTF("PlayerDead");
-
+	std::shared_ptr<Model> playerAccelModel = ModelManager::LoadGLTF("Accel");
+	std::shared_ptr<Model> playerKnockBackModel = ModelManager::LoadGLTF("KnockBack");
+	//ボス
 	std::shared_ptr<Model> bossStandingModel = ModelManager::LoadGLTF("Standing");
 	std::shared_ptr<Model> bossSetModel = ModelManager::LoadGLTF("SetMotion");
 	std::shared_ptr<Model> bossAttackModel = ModelManager::LoadGLTF("BossAttack");
@@ -63,7 +66,9 @@ void GameScene::Init(){
 
 	uint32_t finishTex = TextureManager::Load("finish.png");
 	uint32_t XButtonTex = TextureManager::Load("XButton.png");
+	uint32_t AButtonTex = TextureManager::Load("AButton_P.png");
 	uint32_t char_AttackTex = TextureManager::Load("char_Attack.png");
+	uint32_t char_DashTex = TextureManager::Load("char_Dash.png");
 	uint32_t gameOverTex = TextureManager::Load("GameOver.png");
 	uint32_t skyBoxTex = TextureManager::Load("skyBox.dds");
 
@@ -89,7 +94,7 @@ void GameScene::Init(){
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
-	player_->Init({ playerStandingModel,playerRunningModel,playerAttackModel,playerDeadModel });
+	player_->Init({ playerStandingModel,playerRunningModel,playerAttackModel,playerDeadModel,playerAccelModel,playerKnockBackModel });
 	player_->SetGameScene(this);
 
 	attackEndEff_ = ParticleManager::Load("PlayerAttackEnd");
@@ -160,7 +165,11 @@ void GameScene::Init(){
 	
 	XButton_.reset(Sprite::Create(XButtonTex, {1200.0f,70.0f}));
 
-	char_Attack_.reset(Sprite::Create(char_AttackTex, {1100.0f,70.0f}));
+	AButton_.reset(Sprite::Create(AButtonTex, { 1200.0f,170.0f }));
+
+	char_Attack_.reset(Sprite::Create(char_AttackTex, {1080.0f,70.0f}));
+
+	char_Dash_.reset(Sprite::Create(char_DashTex, { 1080.0f,170.0f }));
 
 	gameOver_.reset(Sprite::Create(gameOverTex, { 670.0f,200.0f }));
 
@@ -248,7 +257,9 @@ void GameScene::DrawUI(){
 
 	if (sceneEvent_ == SceneEvent::Battle) {
 		XButton_->Draw();
+		AButton_->Draw();
 		char_Attack_->Draw();
+		char_Dash_->Draw();
 		player_->DrawUI();
 		boss_->DrawUI();
 	}
@@ -396,7 +407,7 @@ void GameScene::BattleUpdate() {
 				continue;
 			}
 			if (IsCollision(player_->GetCollider(), elementBall_->GetCollider(index))) {
-				player_->OnCollision();
+				player_->OnCollision(elementBall_->GetWorldPos(index));
 				elementBall_->OnCollision(index);
 			}
 		}
@@ -405,7 +416,7 @@ void GameScene::BattleUpdate() {
 	//プレイヤーと火が噴き出すやつ
 	if (groundFlare_->IsHit()) {
 		if (IsCollision(groundFlare_->GetCollider(), player_->GetCollider())) {
-			player_->OnCollision();
+			player_->OnCollision(groundFlare_->GetCenterPos());
 			groundFlare_->OnCollision();
 		}
 	}
@@ -415,7 +426,7 @@ void GameScene::BattleUpdate() {
 		for (uint32_t index = 0; index < icicle_->GetIcicleCount(); index++) {
 			if (!icicle_->IsLife(index)) { continue; }
 			if (IsCollision(player_->GetCollider(), icicle_->GetCollider(index))) {
-				player_->OnCollision();
+				player_->OnCollision(icicle_->GetWorldPos(index));
 				icicle_->OnCollision(index);
 			}
 		}
@@ -426,7 +437,7 @@ void GameScene::BattleUpdate() {
 		for (uint32_t index = 0; index < plasmaShot_->GetPlasmaShotCount(); index++) {
 			if (!plasmaShot_->IsLife(index)) { continue; }
 			if (IsCollision(player_->GetCollider(), plasmaShot_->GetCollider(index))) {
-				player_->OnCollision();
+				player_->OnCollision(plasmaShot_->GetWorldPos(index));
 				plasmaShot_->OnCollision(index);
 			}
 		}
