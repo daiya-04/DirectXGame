@@ -84,24 +84,28 @@ void LevelLoader::ObjectScan(nlohmann::json& object, LevelData* levelData) {
 		//トランスフォームのパラメータ読み込み
 		nlohmann::json& transform = object["transform"];
 		//平行移動
-		objectData.translation.x = (float)transform["translation"][0];
-		objectData.translation.y = (float)transform["translation"][2];
-		objectData.translation.z = -(float)transform["translation"][1];
+		objectData.translation.x = static_cast<float>(transform["translation"][0]);
+		objectData.translation.y = static_cast<float>(transform["translation"][2]);
+		objectData.translation.z = -static_cast<float>(transform["translation"][1]);
 		//回転角
-		objectData.rotation.x = (-(float)transform["rotation"][0] / 180.0f) * std::numbers::pi_v<float>;
-		objectData.rotation.y = (-(float)transform["rotation"][2] / 180.0f) * std::numbers::pi_v<float>;
-		objectData.rotation.z = (-(float)transform["rotation"][1] / 180.0f) * std::numbers::pi_v<float>;
+		objectData.rotation.x = (-static_cast<float>(transform["rotation"][0]) / 180.0f) * std::numbers::pi_v<float>;
+		objectData.rotation.y = (-static_cast<float>(transform["rotation"][2]) / 180.0f) * std::numbers::pi_v<float>;
+		objectData.rotation.z = (-static_cast<float>(transform["rotation"][1]) / 180.0f) * std::numbers::pi_v<float>;
 		//スケーリング
-		objectData.scaling.x = (float)transform["scaling"][0];
-		objectData.scaling.y = (float)transform["scaling"][2];
-		objectData.scaling.z = (float)transform["scaling"][1];
+		objectData.scaling.x = static_cast<float>(transform["scaling"][0]);
+		objectData.scaling.y = static_cast<float>(transform["scaling"][2]);
+		objectData.scaling.z = static_cast<float>(transform["scaling"][1]);
 
 		if (object.contains("collider")) {
 			nlohmann::json& collider = object["collider"];
 
-			objectData.colliderSize.x = (float)collider["size"][0] * objectData.scaling.x;
-			objectData.colliderSize.y = (float)collider["size"][2] * objectData.scaling.y;
-			objectData.colliderSize.z = (float)collider["size"][1] * objectData.scaling.z;
+			objectData.colliderCenter.x = static_cast<float>(collider["center"][0]);
+			objectData.colliderCenter.y = static_cast<float>(collider["center"][2]);
+			objectData.colliderCenter.z = static_cast<float>(collider["center"][1]);
+
+			objectData.colliderSize.x = static_cast<float>(collider["size"][0]) * objectData.scaling.x;
+			objectData.colliderSize.y = static_cast<float>(collider["size"][2]) * objectData.scaling.y;
+			objectData.colliderSize.z = static_cast<float>(collider["size"][1]) * objectData.scaling.z;
 		}
 
 		

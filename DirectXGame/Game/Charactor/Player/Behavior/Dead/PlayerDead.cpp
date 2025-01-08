@@ -15,7 +15,7 @@ void PlayerDead::Init() {
 
 void PlayerDead::Update() {
 
-	if (player_->GetNowAnimation().IsPlaying()) {
+	if (!player_->GetNowAnimation().IsPlaying()) {
 		player_->FinishDeadMotion();
 	}
 

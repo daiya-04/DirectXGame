@@ -12,6 +12,7 @@
 #include "BossAttack.h"
 #include "BossAppear.h"
 #include "BossDead.h"
+#include "ColliderManager.h"
 
 #include "GroundFlare.h"
 
@@ -22,6 +23,11 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	
 	//モデル関連の初期化
 	BaseCharactor::Init(models);
+
+	collider_ = ColliderManager::CreateOBB();
+	collider_->Init("Boss", obj_->worldTransform_, {});
+	collider_->SetCallbackFunc([this](Collider* other) {this->OnCollision(other); });
+	collider_->ColliderOn();
 
 	///エフェクト初期化
 	effect_ = ParticleManager::Load("BossEnter");
@@ -91,8 +97,12 @@ void Boss::DrawUI() {
 	hpBar_->Draw();
 }
 
-void Boss::OnCollision() {
-	hp_--;
+void Boss::OnCollision(Collider* other) {
+
+	if (other->GetTag() == "PlayerAttack") {
+		hp_--;
+	}
+	
 	//HPが0になったら...
 	if (hp_ <= 0) {
 		isDead_ = true;
@@ -102,7 +112,7 @@ void Boss::OnCollision() {
 
 void Boss::ChangeBehavior(const std::string& behaviorName) {
 
-	static const std::unordered_map<std::string, std::function<std::unique_ptr<IBossBehavior>()>> behaviorTable{
+	const std::unordered_map<std::string, std::function<std::unique_ptr<IBossBehavior>()>> behaviorTable{
 		{"Idel", [this]() { return std::make_unique<BossIdel>(this); }},
 		{"Attack", [this]() {return std::make_unique<BossAttack>(this); }},
 		{"Appear", [this]() {return std::make_unique<BossAppear>(this); }},

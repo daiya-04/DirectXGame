@@ -106,7 +106,7 @@ private:
 	//攻撃種類
 	AttackType attackType_ = AttackType::kElementBall;
 	//最大HP
-	uint32_t maxHp_ = 15;
+	uint32_t maxHp_ = 20;
 	//死亡アニメーション終了フラグ
 	bool isFinishDeadMotion_ = false;
 	//攻撃のターゲット(プレイヤー)
@@ -162,7 +162,7 @@ public:
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision();
+	void OnCollision(Collider* other) override;
 	
 	const WorldTransform* GetTarget() { return target_; }
 	void SetTarget(const WorldTransform* target) { target_ = target; }

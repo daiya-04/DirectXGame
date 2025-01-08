@@ -12,6 +12,7 @@
 #include "GPUParticle.h"
 #include "Vec3.h"
 #include "CollisionShapes.h"
+#include "OBBCollider.h"
 
 #include <memory>
 #include <array>
@@ -54,7 +55,7 @@ private:
 		//イージング用
 		float param_ = 0.0f;
 		//円が広がるスピード
-		float speed_ = 0.01f;
+		float speed_ = 0.02f;
 		//開始スケール
 		Vector3 startScale_ = { 0.0f, 1.0f, 0.0f };
 		//終了スケール
@@ -110,10 +111,6 @@ public:
 	/// </summary>
 	void Update();
 	/// <summary>
-	/// コライダー更新
-	/// </summary>
-	void ColliderUpdate();
-	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
@@ -126,7 +123,7 @@ public:
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision();
+	void OnCollision(Collider* other);
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>
@@ -134,13 +131,13 @@ public:
 	/// <summary>
 	/// ターゲットのセット
 	/// </summary>
-	/// <param name="target">ターゲットのワールドトランスフォーム</param>
-	void SetTerget(const WorldTransform* target) { target_ = target; }
+	/// <param name="target">ターゲット</param>
+	void SetTerget(const Vector3* target) { target_ = target; }
 	/// <summary>
 	/// コライダー取得
 	/// </summary>
 	/// <returns>コライダー</returns>
-	Shapes::OBB GetCollider() { return collider_; }
+	OBBCollider* GetCollider() const { return collider_; }
 	/// <summary>
 	/// フラグ取得
 	/// </summary>
@@ -162,11 +159,9 @@ public:
 	/// <returns>攻撃が開始した瞬間true、それ以外はfalse</returns>
 	bool FireStartFlag() const { return(isHit_ && !preIsHit_); }
 
-	Vector3 GetCenterPos() { return centerPos_; }
-
 private:
 	//攻撃先(ターゲット)
-	const WorldTransform* target_;
+	const Vector3* target_;
 	//噴射する数
 	static const uint32_t flareNum_ = 5;
 	//エフェクト
@@ -178,10 +173,11 @@ private:
 	std::array<Vector3, flareNum_> offset_;
 	//オフセットの距離
 	const float offsetLength_ = 1.5f;
-	//コライダー(形状)
-	Shapes::OBB collider_;
+	//コライダー
+	OBBCollider* collider_ = nullptr;
+	Matrix4x4 rotateMat_ = MakeIdentity44();
 	//中心座標
-	Vector3 centerPos_{};
+	WorldTransform worldtransform_;
 
 	//攻撃中か
 	bool isAttack_ = false;

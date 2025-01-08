@@ -3,8 +3,11 @@
 #include "Easing.h"
 #include "TextureManager.h"
 #include "ParticleManager.h"
+#include "ColliderManager.h"
 
 void GroundFlare::Init(std::shared_ptr<Model> model) {
+
+	worldtransform_.Init();
 
 	for (auto& warningZone : warningZones_) {
 		warningZone.reset(Object3d::Create(model));
@@ -17,7 +20,10 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 		}
 	}
 
-	collider_.size = { 2.0f,3.0f,2.0f };
+	collider_ = ColliderManager::CreateOBB();
+	collider_->Init("BossAttack", worldtransform_, Vector3(2.0, 3.0f, 2.0f));
+	collider_->SetPosition(Vector3(0.0, collider_->GetSize().y, 0.0f));
+	collider_->SetCallbackFunc([this](Collider* other) {this->OnCollision(other); });
 
 	//中心を基準にした発射位置のオフセット
 	offset_[0] = {}; //中心
@@ -62,16 +68,8 @@ void GroundFlare::Update() {
 		warningZone->worldTransform_.UpdateMatrix();
 	}
 
-	ColliderUpdate();
-}
-
-void GroundFlare::ColliderUpdate() {
-
-	collider_.orientation[0] = { 1.0f,0.0f,0.0f };
-	collider_.orientation[1] = { 0.0f,1.0f,0.0f };
-	collider_.orientation[2] = { 0.0f,0.0f,1.0f };
-
-	collider_.center = centerPos_ + Vector3(0.0f, collider_.size.y, 0.0f);
+	worldtransform_.UpdateMatrixRotate(rotateMat_);
+	collider_->Update(rotateMat_);
 }
 
 void GroundFlare::Draw(const Camera& camera) {
@@ -94,8 +92,11 @@ void GroundFlare::DrawParticle(const Camera& camera) {
 
 }
 
-void GroundFlare::OnCollision() {
-	isHit_ = false;
+void GroundFlare::OnCollision([[maybe_unused]] Collider* other) {
+	if (other->GetTag() == "Player") {
+		isHit_ = false;
+		collider_->ColliderOff();
+	}
 }
 
 void GroundFlare::AttackStart() {
@@ -108,6 +109,7 @@ void GroundFlare::RootInit() {
 
 	isHit_ = false;
 	isAttack_ = false;
+	collider_->ColliderOff();
 
 }
 
@@ -117,17 +119,17 @@ void GroundFlare::RootUpdate() {
 
 void GroundFlare::WarningInit() {
 
-	centerPos_ = target_->translation_;
-	centerPos_.y = 0.01f;
+	worldtransform_.translation_ = *target_;
+	worldtransform_.translation_.y = 0.01f;
 
 	workWarning_.param_ = 0.0f;
 
 	//発射位置の計算
 	for (size_t index = 0; index < flareNum_; index++) {
 		for (auto& [group, particle] : fires_[index]) {
-			particle->particleData_.emitter_.translate = centerPos_ + offset_[index];
+			particle->particleData_.emitter_.translate = worldtransform_.translation_ + offset_[index];
 		}
-		warningZones_[index]->worldTransform_.translation_ = centerPos_ + offset_[index];
+		warningZones_[index]->worldTransform_.translation_ = worldtransform_.translation_ + offset_[index];
 	}
 
 	isAttack_ = true;
@@ -159,6 +161,8 @@ void GroundFlare::FireInit() {
 			particle->particleData_.isLoop_ = true;
 		}
 	}
+
+	collider_->ColliderOn();
 
 }
 

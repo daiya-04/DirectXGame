@@ -6,9 +6,10 @@
 
 void IcicleManager::Init(const std::shared_ptr<Model>& model) {
 
-	for (auto& icicle : icicles_) {
-		icicle = std::make_unique<Icicle>();
-		icicle->Init(model);
+	for (size_t index = 0; index < icicles_.size(); index++) {
+		icicles_[index] = std::make_unique<Icicle>();
+		icicles_[index]->Init(model);
+		icicles_[index]->GetCollider()->SetCallbackFunc([this, number = index](Collider* other) {this->OnCollision(number, other); });
 	}
 
 	for (auto& iceScar : iceScars_) {
@@ -24,9 +25,9 @@ void IcicleManager::Update() {
 	preIsAttack_ = isAttack_;
 	//攻撃が当たるか地面に着いたら
 	for (uint32_t index = 0; index < kIcicleNum_; index++) {
-		if (icicles_[index]->DeadFlag()) {
+		/*if (icicles_[index]->DeadFlag()) {
 			OnCollision(index);
-		}
+		}*/
 
 		icicles_[index]->Update();
 	}
@@ -49,10 +50,14 @@ void IcicleManager::Draw(const Camera& camera) {
 	}
 }
 
-void IcicleManager::OnCollision(uint32_t index) {
-	icicles_[index]->OnCollision();
-	iceScars_[index]->EffectStart(icicles_[index]->GetWorldPos());
-	iceScars_[index]->HeightAdjustment(0.0001f + (0.0001f * (float)index));
+void IcicleManager::OnCollision(size_t index, Collider* other) {
+
+	if (other->GetTag() == "Player" || other->GetTag() == "Ground") {
+		icicles_[index]->OnCollision(other);
+		iceScars_[index]->EffectStart(icicles_[index]->GetWorldPos());
+		iceScars_[index]->HeightAdjustment(0.0001f + (0.0001f * (float)index));
+	}
+	
 }
 
 void IcicleManager::DrawParticle(const Camera& camera) {
@@ -97,7 +102,7 @@ void IcicleManager::SetAttackData(const Vector3& pos, const Vector3& direction) 
 
 }
 
-void IcicleManager::SetTarget(const WorldTransform* target) {
+void IcicleManager::SetTarget(const Vector3* target) {
 	for (auto& icicle : icicles_) {
 		icicle->SetTarget(target);
 	}

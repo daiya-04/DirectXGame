@@ -3,13 +3,15 @@
 #include "Easing.h"
 #include "TextureManager.h"
 #include "ParticleManager.h"
+#include "ColliderManager.h"
 
 
 void Icicle::Init(const std::shared_ptr<Model>& model) {
 
 	obj_.reset(Object3d::Create(model));
 
-	collider_.radius = 1.0f;
+	collider_ = ColliderManager::CreateSphere();
+	collider_->Init("BossAttack", obj_->worldTransform_, 1.0f);
 
 
 	///エフェクト設定
@@ -62,7 +64,7 @@ void Icicle::Update() {
 		particle->Update();
 	}
 
-	ColliderUpdate();
+	collider_->Update();
 }
 
 void Icicle::Draw(const Camera& camera) {
@@ -82,7 +84,7 @@ void Icicle::DrawParticle(const Camera& camera) {
 
 }
 
-void Icicle::OnCollision() {
+void Icicle::OnCollision([[maybe_unused]] Collider* other) {
 	phaseRequest_ = Phase::kRoot;
 	isLife_ = false;
 
@@ -95,6 +97,8 @@ void Icicle::OnCollision() {
 		particle->Emit();
 		particle->particleData_.emitter_.translate = obj_->GetWorldPos();
 	}
+
+	collider_->ColliderOff();
 
 }
 
@@ -179,17 +183,18 @@ void Icicle::ShotInit() {
 		particle->particleData_.isLoop_ = true;
 	}
 
+	collider_->ColliderOn();
 
 }
 
 void Icicle::ShotUpdate() {
 	//つららとターゲットの向き計算
-	Vector3 diff = target_->translation_ - obj_->worldTransform_.translation_;
+	Vector3 diff = *target_ - obj_->worldTransform_.translation_;
 	//距離計算
 	float distance = diff.Length();
 	//一定距離まで追尾
 	if (distance >= shotData_.trackingDist_) {
-		targetDict_ = target_->translation_ - obj_->worldTransform_.translation_;
+		targetDict_ = *target_ - obj_->worldTransform_.translation_;
 	}
 	
 	shotData_.param_ += shotData_.rotateSpeed_;
@@ -201,9 +206,9 @@ void Icicle::ShotUpdate() {
 
 	obj_->worldTransform_.translation_ += velocity_;
 	//地面より下にはいかない
-	if (obj_->worldTransform_.translation_.y <= 0.0f) {
+	/*if (obj_->worldTransform_.translation_.y <= 0.0f) {
 		OnCollision();
-	}
+	}*/
 
 }
 

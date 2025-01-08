@@ -43,12 +43,12 @@ public:
 	/// 衝突時
 	/// </summary>
 	/// <param name="index">インデックス</param>
-	void OnCollision(uint32_t index);
+	void OnCollision(size_t index, Collider* other);
 	/// <summary>
 	/// ターゲットセット
 	/// </summary>
-	/// <param name="target">ターゲットのワールドトランスフォーム発射座標</param>
-	void SetTarget(const WorldTransform* target);
+	/// <param name="target">ターゲットの中心座標</param>
+	void SetTarget(const Vector3* target);
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>
@@ -75,12 +75,6 @@ public:
 	/// <param name="index">インデックス</param>
 	/// <returns>存在していればtrue、それ以外false</returns>
 	bool IsLife(uint32_t index) { return icicles_[index]->IsLife(); }
-	/// <summary>
-	/// コライダー取得
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>コライダー</returns>
-	Shapes::Sphere GetCollider(uint32_t index) { return icicles_[index]->GetCollider(); }
 	/// <summary>
 	/// つららの総数
 	/// </summary>

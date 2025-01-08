@@ -9,6 +9,7 @@
 #include "FollowCamera.h"
 #include "BaseCharactor.h"
 #include "IPlayerBehavior.h"
+#include "PlayerMagicBall.h"
 
 #include <memory>
 #include <list>
@@ -17,8 +18,6 @@
 #include <optional>
 #include <map>
 #include <functional>
-//ゲームシーン前方宣言
-class GameScene;
 
 //プレイヤークラス
 class Player : public BaseCharactor {
@@ -66,7 +65,7 @@ private:
 	//ターゲット(ボス)
 	const WorldTransform* target_ = nullptr;
 	//最大HP
-	int32_t maxHp_ = 20;
+	int32_t maxHp_ = 15;
 	//攻撃の射程
 	float attackRange_ = 20.0f;
 
@@ -82,8 +81,9 @@ private:
 
 	//死亡演出(アニメーション)が終わったか
 	bool isFinishDeadMotion_ = false;
-	//ゲームシーン
-	GameScene* gameScene_ = nullptr;
+	
+	std::array<std::unique_ptr<PlayerMagicBall>, 10> attacks_;
+	uint32_t shotIndex = 0;
 
 public:
 	/// <summary>
@@ -109,6 +109,10 @@ public:
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	void Draw(const Camera& camera) override;
+
+	void DrawAttack(const Camera& camera);
+
+	void DrawParticle(const Camera& camera);
 	/// <summary>
 	/// UI描画
 	/// </summary>
@@ -116,7 +120,7 @@ public:
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision(const Vector3& hitPos);
+	void OnCollision(Collider* other) override;
 	/// <summary>
 	/// 行動の切り替え
 	/// </summary>
@@ -133,11 +137,6 @@ public:
 	//
 	void SetTerget(const WorldTransform* target) { target_ = target; }
 	const WorldTransform* GetTarget() { return target_; }
-	/// <summary>
-	/// ゲームシーン設定
-	/// </summary>
-	/// <param name="gameScene">ゲームシーンのポインタ</param>
-	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	/// <summary>
 	/// 死亡アニメーションの終了
 	/// </summary>

@@ -6,6 +6,7 @@
 #include "Line.h"
 #include "ImGuiManager.h"
 #include "TextureManager.h"
+#include "ColliderManager.h"
 #include <cassert>
 
 SceneManager* SceneManager::GetInstance(){
@@ -29,7 +30,7 @@ void SceneManager::Init() {
 #endif // NDEBUG
 
 #ifdef _DEBUG
-	scene_ = sceneFactory_->CreateScene("Debug");
+	scene_ = sceneFactory_->CreateScene("Game");
 #endif // _DEBUG
 
 	scene_->Init();
@@ -43,6 +44,7 @@ void SceneManager::Update(){
 		alpha_ += 0.03f;
 		if (alpha_ >= 1.0f) {
 			scene_ = std::move(nextScene_);
+			ColliderManager::GetInstance()->ColliderClear();
 			scene_->Init();
 		}
 	}

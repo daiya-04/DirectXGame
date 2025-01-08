@@ -3,13 +3,15 @@
 #include "TextureManager.h"
 #include "Easing.h"
 #include "ParticleManager.h"
+#include "ColliderManager.h"
 
 
 void PlasmaShot::Init(const std::shared_ptr<Model>& model) {
 
 	obj_.reset(Object3d::Create(model));
 
-	collider_.radius = 0.5f;
+	collider_ = ColliderManager::CreateSphere();
+	collider_->Init("BossAttack", obj_->worldTransform_, 0.5f);
 
 	///エフェクト設定
 
@@ -54,11 +56,7 @@ void PlasmaShot::Update() {
 		particle->Update();
 	}
 	
-	ColliderUpdate();
-}
-
-void PlasmaShot::ColliderUpdate() {
-	collider_.center = obj_->GetWorldPos();
+	collider_->Update();
 }
 
 void PlasmaShot::Draw(const Camera& camera) {
@@ -78,10 +76,11 @@ void PlasmaShot::DrawParticle(const Camera& camera) {
 }
 
 
-void PlasmaShot::OnCollision() {
+void PlasmaShot::OnCollision([[maybe_unused]] Collider* other) {
 	phaseRequest_ = Phase::kRoot;
 	isLife_ = false;
 
+	collider_->ColliderOff();
 	
 	//ヒットエフェクト開始
 	for (auto& [group, particle] : trailEff_) {
@@ -153,7 +152,7 @@ void PlasmaShot::ShotInit() {
 	const float objScale = 0.5f;
 	obj_->worldTransform_.scale_ = { objScale,objScale,objScale };
 	//ターゲットの方向
-	targetDict_ = target_->translation_ - obj_->worldTransform_.translation_;
+	targetDict_ = *target_ - obj_->worldTransform_.translation_;
 
 	for (auto& [group, particle] : createEff_) {
 		particle->particleData_.isLoop_ = false;
@@ -162,6 +161,7 @@ void PlasmaShot::ShotInit() {
 		particle->particleData_.isLoop_ = true;
 	}
 
+	collider_->ColliderOn();
 
 }
 
@@ -170,9 +170,5 @@ void PlasmaShot::ShotUpdate() {
 	velocity_ = targetDict_.Normalize() * speed_;
 
 	obj_->worldTransform_.translation_ += velocity_;
-	//地面より下にはいかない
-	if (obj_->worldTransform_.translation_.y <= 0.0f) {
-		OnCollision();
-	}
 
 }

@@ -10,7 +10,9 @@
 #include "Camera.h"
 #include "Object3d.h"
 #include "Vec3.h"
+#include "Matrix44.h"
 #include "LevelLoader.h"
+#include "OBBCollider.h"
 #include <memory>
 
 //地面クラス
@@ -18,6 +20,9 @@ class Ground{
 private:
 	//オブジェクト
 	std::unique_ptr<Object3d> obj_;
+
+	OBBCollider* collider_ = nullptr;
+	Matrix4x4 rotateMat_ = MakeIdentity44();
 
 public:
 	/// <summary>
@@ -39,6 +44,8 @@ public:
 	/// </summary>
 	/// <param name="data">オブジェクトデータ</param>
 	void SetData(const LevelData::ObjectData& data);
+
+	void OnCollision(Collider* other);
 
 };
 

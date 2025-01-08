@@ -15,6 +15,7 @@
 #include "Object3d.h"
 #include "CollisionShapes.h"
 #include "GPUParticle.h"
+#include "SphereCollider.h"
 
 #include <memory>
 #include <string>
@@ -103,10 +104,6 @@ public:
 	/// </summary>
 	void Update();
 	/// <summary>
-	/// コライダー更新
-	/// </summary>
-	void ColliderUpdate();
-	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
@@ -119,7 +116,7 @@ public:
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision();
+	void OnCollision(Collider* other);
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>
@@ -127,35 +124,34 @@ public:
 	/// <summary>
 	/// ターゲットセット
 	/// </summary>
-	/// <param name="target">ターゲットのワールドトランスフォーム</param>
-	void SetTarget(const WorldTransform* target) { target_ = target; }
+	/// <param name="target">ターゲット</param>
+	void SetTarget(const Vector3* target) { target_ = target; }
 	/// <summary>
 	/// 攻撃に必要なデータの設定
 	/// </summary>
 	/// <param name="pos">発射座標</param>
 	/// <param name="interval">待ち時間</param>
 	void SetAttackData(const Vector3& pos, float interval);
-
+	/// <summary>
+	/// コライダーの取得
+	/// </summary>
+	/// <returns></returns>
+	SphereCollider* GetCollider() const { return collider_; }
 	/// <summary>
 	/// ワールド座標取得
 	/// </summary>
 	/// <returns>ワールド座標</returns>
 	Vector3 GetWorldPos() const { return obj_->GetWorldPos(); }
-
-	/// <summary>
-	/// コライダー取得
-	/// </summary>
-	/// <returns>コライダー</returns>
-	Shapes::Sphere GetCollider() const { return collider_; }
 	/// <summary>
 	/// 存在しているか
 	/// </summary>
 	/// <returns>生存していたらtrue、それ以外false</returns>
 	bool IsLife() const { return isLife_; }
 
+
 private:
 	//攻撃先(ターゲット)
-	const WorldTransform* target_;
+	const Vector3* target_;
 	//ターゲットがいる方向
 	Vector3 targetDict_ = { 0.0f,0.0f,1.0f };
 	//オブジェクト
@@ -169,8 +165,8 @@ private:
 	std::map<std::string, std::unique_ptr<GPUParticle>> trailEff_;
 	///
 
-	//コライダー(形状)
-	Shapes::Sphere collider_;
+	//コライダー
+	SphereCollider* collider_ = nullptr;
 
 	//速度
 	Vector3 velocity_;

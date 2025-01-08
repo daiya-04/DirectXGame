@@ -25,6 +25,7 @@ void BaseCharactor::Update() {
 
 	//行列更新
 	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
+	UpdateCenterPos();
 	//アニメーション再生
 	animations_[actionIndex_].Play(skeletons_[actionIndex_]);
 
@@ -33,23 +34,22 @@ void BaseCharactor::Update() {
 	//UI更新
 	UpdateUI();
 	//コライダー更新
-	UpdateCollider();
+	collider_->Update(rotateMat_);
 }
 
-void BaseCharactor::UpdateCollider() {
-
-	collider_.orientation[0] = { rotateMat_.m[0][0],rotateMat_.m[0][1],rotateMat_.m[0][2] };
-	collider_.orientation[1] = { rotateMat_.m[1][0],rotateMat_.m[1][1],rotateMat_.m[1][2] };
-	collider_.orientation[2] = { rotateMat_.m[2][0],rotateMat_.m[2][1],rotateMat_.m[2][2] };
-	
-	collider_.center = GetCenterPos();
+void BaseCharactor::UpdateCenterPos() {
+	centerPos_ = {
+		obj_->worldTransform_.matWorld_.m[3][0],
+		obj_->worldTransform_.matWorld_.m[3][1] + collider_->GetSize().y,
+		obj_->worldTransform_.matWorld_.m[3][2],
+	};
 }
 
 void BaseCharactor::Draw(const Camera& camera) {
 
 #ifdef _DEBUG
 	//衝突範囲の可視化
-	ShapesDraw::DrawOBB(collider_, camera);
+	ShapesDraw::DrawOBB(std::get<Shapes::OBB>(collider_->GetShape()), camera);
 #endif // _DEBUG
 
 	obj_->Draw(camera);
@@ -66,23 +66,14 @@ void BaseCharactor::SetData(const LevelData::ObjectData& data) {
 	obj_->worldTransform_.translation_ = data.translation;
 	obj_->worldTransform_.scale_ = data.scaling;
 
-	collider_.size = data.colliderSize;
+	collider_->SetSize(data.colliderSize);
+	collider_->SetPosition(data.colliderCenter);
 
 	//回転行列計算
 	rotateMat_ = MakeRotateXMatrix(data.rotation.x) * MakeRotateYMatrix(data.rotation.y) * MakeRotateZMatrix(data.rotation.z);
 	direction_ = Transform(direction_, rotateMat_);
 
 	BaseCharactor::Update();
-}
-
-Vector3 BaseCharactor::GetCenterPos() const {
-	Vector3 centerPos{};
-
-	centerPos.x = obj_->GetWorldPos().x;
-	centerPos.y = obj_->GetWorldPos().y + collider_.size.y;
-	centerPos.z = obj_->GetWorldPos().z;
-
-	return centerPos;
 }
 
 void BaseCharactor::SetAnimation(size_t actionIndex, bool isLoop) {

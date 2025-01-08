@@ -392,6 +392,10 @@
     <ClCompile Include="Game\Charactor\Player\Behavior\KnockBack\PlayerKnockBack.cpp">
       <Filter>Game\Charactor\Player\Behavior\KnockBack</Filter>
     </ClCompile>
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="ColliderManager.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
+    <ClCompile Include="OBBCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -682,5 +686,9 @@
     <ClInclude Include="Game\Charactor\Player\Behavior\KnockBack\PlayerKnockBack.h">
       <Filter>Game\Charactor\Player\Behavior\KnockBack</Filter>
     </ClInclude>
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="ColliderManager.h" />
+    <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="OBBCollider.h" />
   </ItemGroup>
 </Project>

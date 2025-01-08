@@ -11,6 +11,7 @@
 #include "Hit.h"
 #include <random>
 #include <algorithm>
+#include "ColliderManager.h"
 
 GameScene::GameScene() {
 	
@@ -51,8 +52,6 @@ void GameScene::Init(){
 	std::shared_ptr<Model> bossSetModel = ModelManager::LoadGLTF("SetMotion");
 	std::shared_ptr<Model> bossAttackModel = ModelManager::LoadGLTF("BossAttack");
 	std::shared_ptr<Model> bossDeadModel = ModelManager::LoadGLTF("BossDead");
-
-	std::shared_ptr<Model> playerBulletModel = ModelManager::LoadOBJ("PlayerBullet");
 
 	std::shared_ptr<Model> warningZoneModel = ModelManager::LoadOBJ("WarningZone");
 	std::shared_ptr<Model> icicleModel = ModelManager::LoadOBJ("Icicle");
@@ -95,9 +94,6 @@ void GameScene::Init(){
 	//プレイヤー
 	player_ = std::make_unique<Player>();
 	player_->Init({ playerStandingModel,playerRunningModel,playerAttackModel,playerDeadModel,playerAccelModel,playerKnockBackModel });
-	player_->SetGameScene(this);
-
-	attackEndEff_ = ParticleManager::Load("PlayerAttackEnd");
 
 
 	//ボス
@@ -130,25 +126,25 @@ void GameScene::Init(){
 	//属性球
 	elementBall_ = std::make_unique<ElementBallManager>();
 	elementBall_->Init(elementBallModel);
-	elementBall_->SetTartget(&player_->GetWorldTransform());
+	elementBall_->SetTartget(&player_->GetCenterPos());
 	boss_->SetElementBall(elementBall_.get());
 
 	//地面から火が出るやつ
 	groundFlare_ = std::make_unique<GroundFlare>();
 	groundFlare_->Init(warningZoneModel);
-	groundFlare_->SetTerget(&player_->GetWorldTransform());
+	groundFlare_->SetTerget(&player_->GetCenterPos());
 	boss_->SetGroudFlare(groundFlare_.get());
 
 	//つらら飛ばすやつ
 	icicle_ = std::make_unique<IcicleManager>();
 	icicle_->Init(icicleModel);
-	icicle_->SetTarget(&player_->GetWorldTransform());
+	icicle_->SetTarget(&player_->GetCenterPos());
 	boss_->SetIcicle(icicle_.get());
 
 	//電気玉
 	plasmaShot_ = std::make_unique<PlasmaShotManager>();
 	plasmaShot_->Init(plasmaBallModel);
-	plasmaShot_->SetTarget(&player_->GetWorldTransform());
+	plasmaShot_->SetTarget(&player_->GetCenterPos());
 	boss_->SetPlasmaShot(plasmaShot_.get());
 
 	///
@@ -195,6 +191,14 @@ void GameScene::Update() {
 
 	if (isGameStop_) { return; }
 
+	if (player_->IsDead() && sceneEvent_ == SceneEvent::Battle) {
+		eventRequest_ = SceneEvent::PlayerDead;
+	}
+
+	if (boss_->IsDead() && sceneEvent_ == SceneEvent::Battle) {
+		eventRequest_ = SceneEvent::BossDead;
+	}
+
 	if (eventRequest_) {
 
 		sceneEvent_ = eventRequest_.value();
@@ -203,14 +207,6 @@ void GameScene::Update() {
 
 		eventRequest_ = std::nullopt;
 	}
-	
-	//弾が消えたらリストから削除
-	playerAttacks_.remove_if([](const std::unique_ptr<PlayerMagicBall>& playerAttack) {
-		if (!playerAttack->IsLife()) {
-			return true;
-		}
-		return false;
-	});
 
 	//シーンイベント更新
 	sceneEventUpdateTable_[sceneEvent_]();
@@ -300,10 +296,10 @@ void GameScene::DrawPostEffect() {
 	
 	ground_->Draw(camera_);
 	
-	
-	for (const auto& playerAttack : playerAttacks_) {
-		playerAttack->Draw(camera_);
+	if (sceneEvent_ == SceneEvent::Battle || sceneEvent_ == SceneEvent::Clear) {
+		player_->DrawAttack(camera_);
 	}
+	
 	if (sceneEvent_ == SceneEvent::Battle) {
 		icicle_->Draw(camera_);
 		plasmaShot_->Draw(camera_);
@@ -326,15 +322,14 @@ void GameScene::DrawPostEffect() {
 	skyBox_->Draw(camera_);
 
 	GPUParticle::preDraw();
-	for (auto& playerAttack : playerAttacks_) {
-		playerAttack->DrawParticle(camera_);
-	}
 
 	boss_->DrawParticle(camera_);
 
-	for (auto& [group, particle] : attackEndEff_) {
-		particle->Draw(camera_);
+	if (sceneEvent_ == SceneEvent::Battle || sceneEvent_ == SceneEvent::Clear) {
+		player_->DrawParticle(camera_);
 	}
+	
+	
 	
 	if (sceneEvent_ == SceneEvent::Battle) {
 		groundFlare_->DrawParticle(camera_);
@@ -373,18 +368,6 @@ void GameScene::BattleUpdate() {
 	player_->Update();
 	boss_->Update();
 	
-	for (const auto& playerAttack : playerAttacks_) {
-		playerAttack->Update();
-
-		//弾が消えたらエフェクトを出す
-		if (!playerAttack->IsLife()) {
-			for (auto& [group, particle] : attackEndEff_) {
-				particle->Emit();
-				particle->particleData_.emitter_.translate = playerAttack->GetWorldPos();
-			}
-		}
-
-	}
 	followCamera_->Update();
 
 	groundFlare_->Update();
@@ -392,82 +375,70 @@ void GameScene::BattleUpdate() {
 	plasmaShot_->Update();
 	elementBall_->Update();
 
-	
-
-	for (auto& [group, particle] : attackEndEff_) {
-		particle->Update();
-	}
-
 	///衝突判定
 
-	//プレイヤーと属性球
-	if (elementBall_->IsAttack()) {
-		for (uint32_t index = 0; index < elementBall_->GetElementballCount(); index++) {
-			if (!elementBall_->IsLife(index)) { 
-				continue;
-			}
-			if (IsCollision(player_->GetCollider(), elementBall_->GetCollider(index))) {
-				player_->OnCollision(elementBall_->GetWorldPos(index));
-				elementBall_->OnCollision(index);
-			}
-		}
-	}
+	////プレイヤーと属性球
+	//if (elementBall_->IsAttack()) {
+	//	for (uint32_t index = 0; index < elementBall_->GetElementballCount(); index++) {
+	//		if (!elementBall_->IsLife(index)) { 
+	//			continue;
+	//		}
+	//		if (IsCollision(player_->GetCollider(), elementBall_->GetCollider(index))) {
+	//			player_->OnCollision(elementBall_->GetWorldPos(index));
+	//			elementBall_->OnCollision(index);
+	//		}
+	//	}
+	//}
 
-	//プレイヤーと火が噴き出すやつ
-	if (groundFlare_->IsHit()) {
-		if (IsCollision(groundFlare_->GetCollider(), player_->GetCollider())) {
-			player_->OnCollision(groundFlare_->GetCenterPos());
-			groundFlare_->OnCollision();
-		}
-	}
+	////プレイヤーと火が噴き出すやつ
+	//if (groundFlare_->IsHit()) {
+	//	if (IsCollision(groundFlare_->GetCollider(), player_->GetCollider())) {
+	//		player_->OnCollision(groundFlare_->GetCenterPos());
+	//		groundFlare_->OnCollision();
+	//	}
+	//}
 
-	//プレイヤーとつらら
-	if (icicle_->IsAttack()) {
-		for (uint32_t index = 0; index < icicle_->GetIcicleCount(); index++) {
-			if (!icicle_->IsLife(index)) { continue; }
-			if (IsCollision(player_->GetCollider(), icicle_->GetCollider(index))) {
-				player_->OnCollision(icicle_->GetWorldPos(index));
-				icicle_->OnCollision(index);
-			}
-		}
-	}
+	////プレイヤーとつらら
+	//if (icicle_->IsAttack()) {
+	//	for (uint32_t index = 0; index < icicle_->GetIcicleCount(); index++) {
+	//		if (!icicle_->IsLife(index)) { continue; }
+	//		if (IsCollision(player_->GetCollider(), icicle_->GetCollider(index))) {
+	//			player_->OnCollision(icicle_->GetWorldPos(index));
+	//			icicle_->OnCollision(index);
+	//		}
+	//	}
+	//}
 
-	//プレイヤーと電気玉
-	if (plasmaShot_->IsAttack()) {
-		for (uint32_t index = 0; index < plasmaShot_->GetPlasmaShotCount(); index++) {
-			if (!plasmaShot_->IsLife(index)) { continue; }
-			if (IsCollision(player_->GetCollider(), plasmaShot_->GetCollider(index))) {
-				player_->OnCollision(plasmaShot_->GetWorldPos(index));
-				plasmaShot_->OnCollision(index);
-			}
-		}
-	}
+	////プレイヤーと電気玉
+	//if (plasmaShot_->IsAttack()) {
+	//	for (uint32_t index = 0; index < plasmaShot_->GetPlasmaShotCount(); index++) {
+	//		if (!plasmaShot_->IsLife(index)) { continue; }
+	//		if (IsCollision(player_->GetCollider(), plasmaShot_->GetCollider(index))) {
+	//			player_->OnCollision(plasmaShot_->GetWorldPos(index));
+	//			plasmaShot_->OnCollision(index);
+	//		}
+	//	}
+	//}
 
-	//ボスとプレイヤー攻撃
-	if (!playerAttacks_.empty()) {
-		for (const auto& playerAttack : playerAttacks_) {
-			if (IsCollision(boss_->GetCollider(), playerAttack->GetCollider())) {
-				boss_->OnCollision();
-				playerAttack->OnCollision();
+	////ボスとプレイヤー攻撃
+	//if (!playerAttacks_.empty()) {
+	//	for (const auto& playerAttack : playerAttacks_) {
+	//		if (IsCollision(boss_->GetCollider(), playerAttack->GetCollider())) {
+	//			boss_->OnCollision();
+	//			playerAttack->OnCollision();
 
-				for (auto& [group, particle] : attackEndEff_) {
-					particle->Emit();
-					particle->particleData_.emitter_.translate = playerAttack->GetWorldPos();
-				}
-			}
-		}
-	}
+	//			for (auto& [group, particle] : attackEndEff_) {
+	//				particle->Emit();
+	//				particle->particleData_.emitter_.translate = playerAttack->GetWorldPos();
+	//			}
+	//		}
+	//	}
+	//}
+
+	ColliderManager::GetInstance()->CheckAllCollision();
 	
 
 	///
-
-	if (player_->IsDead()) {
-		eventRequest_ = SceneEvent::PlayerDead;
-	}
-
-	if (boss_->IsDead()) {
-		eventRequest_ = SceneEvent::BossDead;
-	}
 
 	camera_.SetMatView(followCamera_->GetCamera().GetMatView());
 
@@ -488,22 +459,6 @@ void GameScene::PlayerDeadInit() {
 void GameScene::PlayerDeadUpdate() {
 	
 	player_->Update();
-
-	for (const auto& playerAttack : playerAttacks_) {
-		playerAttack->Update();
-		//弾が消えたらエフェクト出す
-		if (!playerAttack->IsLife()) {
-			for (auto& [group, particle] : attackEndEff_) {
-				particle->Emit();
-				particle->particleData_.emitter_.translate = playerAttack->GetWorldPos();
-			}
-		}
-
-	}
-
-	for (auto& [group, particle] : attackEndEff_) {
-		particle->Update();
-	}
 
 	//死亡アニメーションが終わったらゲームオーバー演出
 	if (player_->IsFinishDeadMotion()) {
@@ -530,22 +485,6 @@ void GameScene::BossDeadUpdate() {
 
 	boss_->Update();
 
-	for (const auto& playerAttack : playerAttacks_) {
-		playerAttack->Update();
-		//弾が消えたらエフェクト出す
-		if (!playerAttack->IsLife()) {
-			for (auto& [group, particle] : attackEndEff_) {
-				particle->Emit();
-				particle->particleData_.emitter_.translate = playerAttack->GetWorldPos();
-			}
-		}
-
-	}
-
-	for (auto& [group, particle] : attackEndEff_) {
-		particle->Update();
-	}
-
 	//死亡アニメーションが終わったらクリア
 	if (boss_->IsFinishDeadMotion()) {
 		if (++workBossDead_.count_ >= workBossDead_.interval_) {
@@ -556,7 +495,6 @@ void GameScene::BossDeadUpdate() {
 }
 
 void GameScene::ClearInit() {
-	playerAttacks_.clear();
 	alpha_ = 0.0f;
 }
 
@@ -569,22 +507,6 @@ void GameScene::ClearUpdate() {
 	player_->Update();
 	followCamera_->Update();
 
-	for (const auto& playerAttack : playerAttacks_) {
-		playerAttack->Update();
-		//弾が消えたらエフェクト出す
-		if (!playerAttack->IsLife()) {
-			for (auto& [group, particle] : attackEndEff_) {
-				particle->Emit();
-				particle->particleData_.emitter_.translate = playerAttack->GetWorldPos();
-			}
-		}
-
-	}
-
-	for (auto& [group, particle] : attackEndEff_) {
-		particle->Update();
-	}
-
 	camera_.SetMatView(followCamera_->GetCamera().GetMatView());
 
 }
@@ -593,7 +515,6 @@ void GameScene::GameOverInit() {
 
 	postEffect_->SetGrayScaleEffect(true);
 	alpha_ = 0.0f;
-	playerAttacks_.clear();
 
 }
 
@@ -633,8 +554,3 @@ void GameScene::DebugGUI(){
 
 #endif // _DEBUG
 }
-
-void GameScene::AddPlayerAttack(PlayerMagicBall* playerAttack) {
-	playerAttacks_.push_back(std::unique_ptr<PlayerMagicBall>(playerAttack));
-}
-

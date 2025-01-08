@@ -12,6 +12,7 @@
 #include "Vec3.h"
 #include "CollisionShapes.h"
 #include "GPUParticle.h"
+#include "SphereCollider.h"
 
 #include <memory>
 #include <optional>
@@ -111,7 +112,7 @@ private:
 private:
 
 	//攻撃先(ターゲット)
-	const WorldTransform* target_;
+	const Vector3* target_;
 	//オブジェクト
 	std::unique_ptr<Object3d> obj_;
 	//アニメーション
@@ -120,8 +121,9 @@ private:
 	//速度
 	Vector3 velocity_ = {};
 
-	//コライダー(形状)
-	Shapes::Sphere collider_{};
+	//コライダー
+	SphereCollider* collider_ = nullptr;
+
 	//生存フラグ
 	bool isLife_ = false;
 	bool preIsLife_ = false;
@@ -140,12 +142,6 @@ public:
 	/// </summary>
 	void Update();
 	/// <summary>
-	/// コライダー更新
-	/// </summary>
-	void ColliderUpdate() {
-		collider_.center = obj_->GetWorldPos();
-	}
-	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
@@ -158,12 +154,12 @@ public:
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision();
+	void OnCollision(Collider* other);
 	/// <summary>
 	/// ターゲットのセット
 	/// </summary>
-	/// <param name="target">ターゲットのワールドトランスフォーム</param>
-	void SetTarget(const WorldTransform* target) { target_ = target; }
+	/// <param name="target">ターゲット</param>
+	void SetTarget(const Vector3* target) { target_ = target; }
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>
@@ -184,11 +180,8 @@ public:
 	/// </summary>
 	/// <returns>死んだ瞬間ならtrue、それ以外はfalse</returns>
 	bool DeadFlag() const { return (!isLife_ && preIsLife_); }
-	/// <summary>
-	/// コライダー取得
-	/// </summary>
-	/// <returns>コライダー</returns>
-	Shapes::Sphere GetCollider() const { return collider_; }
+
+	SphereCollider* GetCollider() const { return collider_; }
 	/// <summary>
 	/// 現在のフェーズ取得
 	/// </summary>
