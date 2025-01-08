@@ -40,8 +40,9 @@ void GPUParticle::Init(uint32_t textureHandle, int32_t particleNum) {
 	particleData_ = {};
 
 	particleData_.isLoop_ = true;
-	particleData_.emitter_.billboardType = BillboardType::Billboard;
 	particleData_.textureName_ = TextureManager::GetInstance()->GetTextureName(uvHandle_);
+
+	DataInit();
 
 	ExecuteInitCS();
 
@@ -433,6 +434,33 @@ void GPUParticle::ExecuteUpdateCS() {
 	postBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
 	postBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	commandList_->ResourceBarrier(1, &postBarrier);
+
+
+}
+
+void GPUParticle::DataInit() {
+
+	auto& emitter = particleData_.emitter_;
+
+	emitter.translate = {};
+	emitter.size = { 1.0f,1.0f,1.0f };
+	emitter.radius = 1.0f;
+	emitter.scale = 0.1f;
+	emitter.rotate = 0.0f;
+	emitter.count = 10;
+	emitter.frequency = 1.0f / 60.0f;
+	emitter.color = { 1.0f,1.0f,1.0f,1.0f };
+	emitter.lifeTime = 1.0f;
+	emitter.speed = 0.0f;
+	emitter.emitterType = EmitShape::Sphere;
+	emitter.billboardType = BillboardType::Billboard;
+
+	auto& overLifeTime = particleData_.overLifeTime_;
+
+	overLifeTime.isAlpha = 1;
+	overLifeTime.startAlpha = 0.0f;
+	overLifeTime.midAlpha = 1.0f;
+	overLifeTime.endAlpha = 0.0f;
 
 
 }

@@ -214,5 +214,7 @@ private:
 
 	void ExecuteUpdateCS();
 
+	void DataInit();
+
 };
 
