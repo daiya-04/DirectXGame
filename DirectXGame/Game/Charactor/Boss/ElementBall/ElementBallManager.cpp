@@ -5,9 +5,11 @@
 
 void ElementBallManager::Init(const std::shared_ptr<Model>& model) {
 
-	for (auto& elementBall : elementBalls_) {
-		elementBall = std::make_unique<ElementBall>();
-		elementBall->Init(model);
+
+	for (size_t index = 0; index < elementBalls_.size(); index++) {
+		elementBalls_[index] = std::make_unique<ElementBall>();
+		elementBalls_[index]->Init(model);
+		elementBalls_[index]->GetCollider()->SetCallbackFunc([this, number = index](Collider* other) {this->OnCollision(number, other); });
 	}
 
 	for (auto& burnScars : burnScareses_) {
@@ -36,9 +38,9 @@ void ElementBallManager::Update() {
 	preIsShot_ = isShot_;
 	//攻撃が当たるか地面に着いたら
 	for (uint32_t index = 0; index < elementBalls_.size();index++) {
-		if (elementBalls_[index]->DeadFlag()) {
+		/*if (elementBalls_[index]->DeadFlag()) {
 			OnCollision(index);
-		}
+		}*/
 
 		elementBalls_[index]->Update();
 	}
@@ -103,15 +105,17 @@ void ElementBallManager::DrawBurnScars(const Camera& camera) {
 
 }
 
-void ElementBallManager::OnCollision(uint32_t index) {
+void ElementBallManager::OnCollision(size_t index, Collider* other) {
 
-	elementBalls_[index]->OnCollision();
-	burnScareses_[index]->EffectStart(elementBalls_[index]->GetWorldPos());
-	burnScareses_[index]->HeightAdjustment(0.0001f + (0.0001f * (float)index));
+	if (other->GetTag() == "Player" || other->GetTag() == "Ground") {
+		elementBalls_[index]->OnCollision(other);
+		burnScareses_[index]->EffectStart(elementBalls_[index]->GetWorldPos());
+		burnScareses_[index]->HeightAdjustment(0.0001f + (0.0001f * (float)index));
+	}
 
 }
 
-void ElementBallManager::SetTartget(const WorldTransform* target) {
+void ElementBallManager::SetTartget(const Vector3* target) {
 
 	for (auto& elementBall : elementBalls_) {
 		elementBall->SetTarget(target);

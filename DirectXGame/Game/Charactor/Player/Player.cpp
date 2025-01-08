@@ -5,13 +5,13 @@
 #include "TextureManager.h"
 #include "ShapesDraw.h"
 #include "AnimationManager.h"
-#include "GameScene.h"
 #include "PlayerIdel.h"
 #include "PlayerAttack.h"
 #include "PlayerDash.h"
 #include "PlayerDead.h"
 #include "PlayerJog.h"
 #include "PlayerKnockBack.h"
+#include "ColliderManager.h"
 
 void Player::Init(const std::vector<std::shared_ptr<Model>>& models){
 
@@ -20,6 +20,18 @@ void Player::Init(const std::vector<std::shared_ptr<Model>>& models){
 	
 	//モデル関連の初期化
 	BaseCharactor::Init(models);
+
+	std::shared_ptr<Model> attackModel = ModelManager::LoadOBJ("PlayerBullet");
+
+	for (auto& attack : attacks_) {
+		attack = std::make_unique<PlayerMagicBall>();
+		attack->Init(attackModel);
+	}
+
+	collider_ = ColliderManager::CreateOBB();
+	collider_->Init("Player", obj_->worldTransform_, {});
+	collider_->SetCallbackFunc([this](Collider* other) {this->OnCollision(other); });
+	collider_->ColliderOn();
 
 	//状態の設定
 	ChangeBehavior("Idel");
@@ -37,10 +49,8 @@ void Player::Init(const std::vector<std::shared_ptr<Model>>& models){
 void Player::Update(){
 
 	if (behaviorRequest_) {
-
 		behavior_ = std::move(behaviorRequest_);
 		behavior_->Init();
-
 	}
 
 	behavior_->Update();
@@ -49,6 +59,10 @@ void Player::Update(){
 	obj_->worldTransform_.translation_.x = std::clamp(obj_->worldTransform_.translation_.x, -30.0f, 30.0f);
 	obj_->worldTransform_.translation_.z = std::clamp(obj_->worldTransform_.translation_.z, -20.0f, 40.0f);
 	///
+
+	for (auto& attack : attacks_) {
+		attack->Update();
+	}
 
 	BaseCharactor::Update();
 }
@@ -66,24 +80,40 @@ void Player::Draw(const Camera& camera){
 
 }
 
+void Player::DrawAttack(const Camera& camera) {
+	for (auto& attack : attacks_) {
+		attack->Draw(camera);
+	}
+}
+
+void Player::DrawParticle(const Camera& camera) {
+	for (auto& attack : attacks_) {
+		attack->DrawParticle(camera);
+	}
+}
+
 void Player::DrawUI() {
 	hpBar_->Draw();
 }
 
-void Player::OnCollision(const Vector3& hitPos) {
+void Player::OnCollision(Collider* other) {
 
 	if (actionIndex_ == Action::Accel) {
 		return;
 	}
 
-	hp_--;
+	if (other->GetTag() == "BossAttack") {
+		hp_--;
 
-	Vector3 attackPos = hitPos;
-	attackPos.y = GetCenterPos().y;
+		Vector3 attackPos = other->GetWorldPos();
+		attackPos.y = GetCenterPos().y;
 
-	knockBackBaseDict_ = (attackPos - GetCenterPos());
-	if (knockBackBaseDict_.Length() <= 0.0f) {
-		knockBackBaseDict_ = direction_;
+		knockBackBaseDict_ = (attackPos - GetCenterPos());
+		if (knockBackBaseDict_.Length() <= 0.0f) {
+			knockBackBaseDict_ = direction_;
+		}
+
+		ChangeBehavior("KnockBack");
 	}
 
 	//HPが0になったら...
@@ -91,14 +121,11 @@ void Player::OnCollision(const Vector3& hitPos) {
 		isDead_ = true;
 		ChangeBehavior("Dead");
 	}
-	else {
-		ChangeBehavior("KnockBack");
-	}
 }
 
 void Player::ChangeBehavior(const std::string& behaviorName) {
 
-	static const std::map<std::string, std::function<std::unique_ptr<IPlayerBehavior>()>> behaviorTable{
+	const std::map<std::string, std::function<std::unique_ptr<IPlayerBehavior>()>> behaviorTable{
 		{"Idel",[this]() {return std::make_unique<PlayerIdel>(this); }},
 		{"Attack",[this]() {return std::make_unique<PlayerAttack>(this); }},
 		{"Jog",[this]() {return std::make_unique<PlayerJog>(this); }},
@@ -120,14 +147,13 @@ void Player::ShotMagicBall() {
 	direction = TransformNormal(direction, rotateMat_);
 
 	///攻撃の玉の生成
-
-	PlayerMagicBall* playerAttack = new PlayerMagicBall();
-	std::shared_ptr<Model> attackModel = ModelManager::LoadOBJ("PlayerBullet");
 	Vector3 offset = { 0.0f,0.0f,1.0f };
 	offset = TransformNormal(offset, rotateMat_);
 	Vector3 shotPos = Transform(skeletons_[actionIndex_].GetSkeletonPos("mixamorig1:RightHand"), obj_->worldTransform_.matWorld_) + offset;
-	playerAttack->Init(attackModel, shotPos, direction);
-	gameScene_->AddPlayerAttack(playerAttack);
+
+	attacks_[shotIndex]->StartAttack(shotPos, direction);
+	shotIndex++;
+	shotIndex = shotIndex % 10;
 
 	///
 }

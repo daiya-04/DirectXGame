@@ -18,6 +18,7 @@
 #include "Vec3.h"
 #include "Matrix44.h"
 #include "Sprite.h"
+#include "OBBCollider.h"
 
 #include <memory>
 #include <vector>
@@ -40,9 +41,11 @@ public:
 	/// </summary>
 	virtual void UpdateUI() {};
 	/// <summary>
-	/// コライダー更新
+	/// 中心座標の更新
 	/// </summary>
-	void UpdateCollider();
+	/// <param name="camera"></param>
+	/// <returns></returns>
+	void UpdateCenterPos();
 
 	/// <summary>
 	/// モデル描画
@@ -54,6 +57,8 @@ public:
 	/// </summary>
 	virtual void DrawUI();
 
+	virtual void OnCollision([[maybe_unused]] Collider* other) {};
+
 	/// <summary>
 	/// データ設定
 	/// </summary>
@@ -64,18 +69,13 @@ public:
 	/// キャラの中心位置取得
 	/// </summary>
 	/// <returns>キャラの中心座標</returns>
-	Vector3 GetCenterPos() const;
+	const Vector3& GetCenterPos() const { return centerPos_; }
 	/// <summary>
 	/// 死亡しているか
 	/// </summary>
 	/// <returns>死んでいたらtrue、生きていればfalse</returns>
 	bool IsDead() const { return isDead_; }
 
-	/// <summary>
-	/// コライダー取得
-	/// </summary>
-	/// <returns>コライダー</returns>
-	Shapes::OBB GetCollider() const { return collider_; }
 	/// <summary>
 	/// ワールドトランスフォーム取得
 	/// </summary>
@@ -113,6 +113,8 @@ public:
 
 	Skeleton& GetNowSkelton() { return skeletons_[actionIndex_]; }
 
+	Collider* GetCollider() { return collider_; }
+
 protected:
 
 	///スキニングアニメーションに必要なもの
@@ -129,9 +131,9 @@ protected:
 
 	//アクションインデックス(今なんのアニメーションか)
 	size_t actionIndex_ = 0;
-	//コライダー(形状)
-	Shapes::OBB collider_;
-
+	//コライダー
+	OBBCollider* collider_ = nullptr;
+	Vector3 centerPos_ = {};
 	//回転行列
 	Matrix4x4 rotateMat_;
 	//向いている方向

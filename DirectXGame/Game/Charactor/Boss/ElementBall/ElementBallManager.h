@@ -44,12 +44,12 @@ public:
 	/// 衝突時
 	/// </summary>
 	/// <param name="index">インデックス</param>
-	void OnCollision(uint32_t index);
+	void OnCollision(size_t index, Collider* other);
 	/// <summary>
 	/// ターゲットセット
 	/// </summary>
 	/// <param name="target">ターゲットのワールドトランスフォーム</param>
-	void SetTartget(const WorldTransform* target);
+	void SetTartget(const Vector3* target);
 	/// <summary>
 	/// データセット
 	/// </summary>
@@ -80,12 +80,6 @@ public:
 	/// <param name="index">インデックス</param>
 	/// <returns>存在していればtrue、それ以外はfalse</returns>
 	bool IsLife(uint32_t index)const { return elementBalls_[index]->IsLife(); }
-	/// <summary>
-	/// コライダー取得
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>コライダー</returns>
-	Shapes::Sphere GetCollider(uint32_t index) { return elementBalls_[index]->GetCollider(); }
 	/// <summary>
 	/// 火の玉の数取得
 	/// </summary>

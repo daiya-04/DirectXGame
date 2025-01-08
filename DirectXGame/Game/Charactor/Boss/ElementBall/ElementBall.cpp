@@ -5,13 +5,15 @@
 #include "AnimationManager.h"
 #include "TextureManager.h"
 #include "ParticleManager.h"
+#include "ColliderManager.h"
 
 void ElementBall::Init(std::shared_ptr<Model> model) {
 
 	obj_.reset(Object3d::Create(model));
 	animation_ = AnimationManager::Load(obj_->GetModel()->name_);
 
-	collider_.radius = 1.3f;
+	collider_ = ColliderManager::CreateSphere();
+	collider_->Init("BossAttack", obj_->worldTransform_, 1.3f);
 
 	//エフェクト設定
 	effect_ = ParticleManager::Load("FireBall");
@@ -53,7 +55,7 @@ void ElementBall::Update() {
 		particle->Update();
 	}
 
-	ColliderUpdate();
+	collider_->Update();
 }
 
 void ElementBall::Draw([[maybe_unused]]  const Camera& camera) {
@@ -74,9 +76,10 @@ void ElementBall::DrawParticle(const Camera& camera) {
 	}
 }
 
-void ElementBall::OnCollision() {
+void ElementBall::OnCollision([[maybe_unused]] Collider* other) {
 	isLife_ = false;
 	phaseRequest_ = Phase::kRoot;
+	collider_->ColliderOff();
 }
 
 void ElementBall::AttackStart() {
@@ -156,12 +159,13 @@ void ElementBall::ChargeUpdate() {
 void ElementBall::ShotInit() {
 
 	workShot_.isTrack_ = true;
+	collider_->ColliderOn();
 
 }
 
 void ElementBall::ShotUpdate() {
 	//進む方向を計算
-	Vector3 diff = target_->translation_ - obj_->worldTransform_.translation_;
+	Vector3 diff = *target_ - obj_->worldTransform_.translation_;
 	float distance = diff.Length();
 	const float kSpeed = 0.5f;
 	//一定距離まで追尾
@@ -169,14 +173,14 @@ void ElementBall::ShotUpdate() {
 		workShot_.isTrack_ = false;
 	}
 	//追尾中の速度計算
-	if (workShot_.isTrack_ || obj_->worldTransform_.translation_.y >= collider_.radius) {
+	if (workShot_.isTrack_ || obj_->worldTransform_.translation_.y >= collider_->GetRadius()) {
 		velocity_ = diff.Normalize() * kSpeed;
 	}
 
 	obj_->worldTransform_.translation_ += velocity_;
 
 	if (obj_->worldTransform_.translation_.y < 0.0f) {
-		isLife_ = false;
+		OnCollision(nullptr);
 	}
 
 }

@@ -37,12 +37,12 @@ public:
 	/// 衝突時
 	/// </summary>
 	/// <param name="index">インデックス</param>
-	void OnCollision(uint32_t index);
+	void OnCollision(size_t index, Collider* other);
 	/// <summary>
 	/// ターゲットセット
 	/// </summary>
-	/// <param name="target">ターゲットのワールドトランスフォーム</param>
-	void SetTarget(const WorldTransform* target);
+	/// <param name="target">ターゲット</param>
+	void SetTarget(const Vector3* target);
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>
@@ -68,12 +68,6 @@ public:
 	/// <param name="index">インデックス</param>
 	/// <returns>存在していたらtrue、それ以外はfalse</returns>
 	bool IsLife(uint32_t index) const { return plasmaShots_[index]->IsLife(); }
-	/// <summary>
-	/// コライダー取得
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	/// <returns>コライダー</returns>
-	Shapes::Sphere GetCollider(uint32_t index) { return plasmaShots_[index]->GetCollider(); }
 	/// <summary>
 	/// 電気玉の総数取得
 	/// </summary>

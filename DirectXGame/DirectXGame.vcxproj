@@ -110,6 +110,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="ColliderManager.cpp" />
     <ClCompile Include="Game\Charactor\Boss\Behavior\Appear\BossAppear.cpp" />
     <ClCompile Include="Game\Charactor\Boss\Behavior\Attack\BossAttack.cpp" />
     <ClCompile Include="Game\Charactor\Boss\Behavior\Dead\BossDead.cpp" />
@@ -195,8 +197,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Charactor\Player\Behavior\Idel\PlayerIdel.cpp" />
     <ClCompile Include="Game\Charactor\Player\Behavior\Jog\PlayerJog.cpp" />
     <ClCompile Include="Game\Charactor\Player\Behavior\KnockBack\PlayerKnockBack.cpp" />
+    <ClCompile Include="OBBCollider.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="ColliderManager.h" />
     <ClInclude Include="Game\Charactor\Boss\Behavior\Appear\BossAppear.h" />
     <ClInclude Include="Game\Charactor\Boss\Behavior\Attack\BossAttack.h" />
     <ClInclude Include="Game\Charactor\Boss\Behavior\Dead\BossDead.h" />
@@ -293,6 +299,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Charactor\Player\Behavior\Idel\PlayerIdel.h" />
     <ClInclude Include="Game\Charactor\Player\Behavior\Jog\PlayerJog.h" />
     <ClInclude Include="Game\Charactor\Player\Behavior\KnockBack\PlayerKnockBack.h" />
+    <ClInclude Include="OBBCollider.h" />
+    <ClInclude Include="SphereCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

@@ -94,11 +94,6 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	GameScene();
-	/// <summary>
-	/// プレイヤー攻撃をリストに追加
-	/// </summary>
-	/// <param name="playerAttack">プレイヤー攻撃クラスのポインタ</param>
-	void AddPlayerAttack(PlayerMagicBall* playerAttack);
 
 private:
 	//カメラ
@@ -116,11 +111,6 @@ private:
 	std::unique_ptr<Boss> boss_;
 	//岩
 	std::vector<std::unique_ptr<Rock>> rocks_;
-	
-	//プレイヤーの攻撃
-	std::list<std::unique_ptr<PlayerMagicBall>> playerAttacks_;
-	//プレイヤー攻撃が消えたときのエフェクト
-	std::map<std::string, std::unique_ptr<GPUParticle>> attackEndEff_;
 	//追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
 	//戦闘が終了してからタイトルに戻るまでの時間

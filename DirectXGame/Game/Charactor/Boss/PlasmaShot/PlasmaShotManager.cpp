@@ -5,9 +5,10 @@
 
 void PlasmaShotManager::Init(const std::shared_ptr<Model>& model) {
 	//電気玉生成
-	for (auto& plasmaShot : plasmaShots_) {
-		plasmaShot = std::make_unique<PlasmaShot>();
-		plasmaShot->Init(model);
+	for (size_t index = 0; index < plasmaShots_.size(); index++) {
+		plasmaShots_[index] = std::make_unique<PlasmaShot>();
+		plasmaShots_[index]->Init(model);
+		plasmaShots_[index]->GetCollider()->SetCallbackFunc([this, number = index](Collider* other) {this->OnCollision(number, other); });
 	}
 
 	isAttack_ = false;
@@ -44,8 +45,10 @@ void PlasmaShotManager::DrawParticle(const Camera& camera) {
 
 }
 
-void PlasmaShotManager::OnCollision(uint32_t index) {
-	plasmaShots_[index]->OnCollision();
+void PlasmaShotManager::OnCollision(size_t index, Collider* other) {
+	if (other->GetTag() == "Player" || other->GetTag() == "Ground") {
+		plasmaShots_[index]->OnCollision(other);
+	}
 }
 
 void PlasmaShotManager::AttackStart() {
@@ -67,7 +70,7 @@ void PlasmaShotManager::SetAttackData(const Vector3& pos) {
 
 }
 
-void PlasmaShotManager::SetTarget(const WorldTransform* target) {
+void PlasmaShotManager::SetTarget(const Vector3* target) {
 	for (auto& plasmaShot : plasmaShots_) {
 		plasmaShot->SetTarget(target);
 	}

@@ -28,6 +28,8 @@ public:
 		Vector3 rotation;
 		//スケール
 		Vector3 scaling;
+		//コライダーの中心座標
+		Vector3 colliderCenter;
 		//コライダーの大きさ
 		Vector3 colliderSize;
 		//子

@@ -179,7 +179,20 @@
                     1.0
                 ]
             },
-            "object_name": "Ground"
+            "object_name": "Ground",
+            "collider": {
+                "type": "BOX",
+                "center": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "size": [
+                    100.0,
+                    100.0,
+                    0.0010000000474974513
+                ]
+            }
         },
         {
             "type": "MESH",
