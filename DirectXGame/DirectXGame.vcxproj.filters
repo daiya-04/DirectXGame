@@ -137,6 +137,9 @@
     <Filter Include="Game\Charactor\Player\Behavior\KnockBack">
       <UniqueIdentifier>{05c8b22b-63d2-4990-8257-46ad351d9d7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Collision\Collider">
+      <UniqueIdentifier>{190b78bf-70cd-41d5-800d-dbda524a7239}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -392,10 +395,18 @@
     <ClCompile Include="Game\Charactor\Player\Behavior\KnockBack\PlayerKnockBack.cpp">
       <Filter>Game\Charactor\Player\Behavior\KnockBack</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp" />
-    <ClCompile Include="ColliderManager.cpp" />
-    <ClCompile Include="SphereCollider.cpp" />
-    <ClCompile Include="OBBCollider.cpp" />
+    <ClCompile Include="Engine\Collision\Collider\SphereCollider.cpp">
+      <Filter>Engine\Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Collision\Collider\OBBCollider.cpp">
+      <Filter>Engine\Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Collision\Collider\ColliderManager.cpp">
+      <Filter>Engine\Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Collision\Collider\Collider.cpp">
+      <Filter>Engine\Collision\Collider</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -686,9 +697,17 @@
     <ClInclude Include="Game\Charactor\Player\Behavior\KnockBack\PlayerKnockBack.h">
       <Filter>Game\Charactor\Player\Behavior\KnockBack</Filter>
     </ClInclude>
-    <ClInclude Include="Collider.h" />
-    <ClInclude Include="ColliderManager.h" />
-    <ClInclude Include="SphereCollider.h" />
-    <ClInclude Include="OBBCollider.h" />
+    <ClInclude Include="Engine\Collision\Collider\SphereCollider.h">
+      <Filter>Engine\Collision\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collision\Collider\OBBCollider.h">
+      <Filter>Engine\Collision\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collision\Collider\ColliderManager.h">
+      <Filter>Engine\Collision\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collision\Collider\Collider.h">
+      <Filter>Engine\Collision\Collider</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
