@@ -34,6 +34,9 @@ private:
 	std::string addParticelName_;
 	const std::string kDirectoryPath_ = "Resources/ParticleData/";
 
+	std::string modelName_;
+	bool isModel_ = false;
+
 	std::vector<std::string> billboardList_;
 	std::vector<std::string> emitterShapeList_;
 
