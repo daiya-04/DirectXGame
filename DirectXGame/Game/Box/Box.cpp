@@ -4,6 +4,7 @@ void Box::Init(std::vector<Object3d*> models)
 {
 	models_ = models;
 
+
 	world_.Init();
 
 	Character::SetColliderSize({ 1.0f,1.0f,1.0f });
