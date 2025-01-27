@@ -26,6 +26,7 @@ void DSFramework::Init(){
 	Audio::GetInstance()->Initialize();
 
 	TextureManager::GetInstance()->Initialize();
+	TextureManager::GetInstance()->LoadAllFile();
 
 	PipelineManager::GetInstance()->Init();
 

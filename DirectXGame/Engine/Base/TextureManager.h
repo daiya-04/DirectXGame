@@ -39,11 +39,17 @@ public:
 
 	void Initialize();
 
+	void LoadAllFile();
+
 	void SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* commandList, UINT rootParamIndex, uint32_t textureHandle);
 
 	const D3D12_RESOURCE_DESC GetResourceDesc(uint32_t textureHandle);
 
 	std::string GetTextureName(uint32_t textureHandle);
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle(uint32_t textureHandle);
+
+	std::array<Texture, kNumTextures> GetTextures() const { return textures_; }
 	
 
 private:
@@ -51,6 +57,8 @@ private:
 	uint32_t LoadInternal(const std::string& fileName);
 
 	uint32_t LoadUvInternal(const std::string& fileName, const std::string& filePath);
+
+	void LoadFile(const std::string& fileName);
 
 	//リソースの生成
 	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);

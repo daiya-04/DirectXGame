@@ -65,7 +65,6 @@ void GPUParticle::Update() {
 			particleData_.emitter_.emit = 0;
 		}
 	}
-	
 
 	
 	std::memcpy(overLifeTimeData_, &particleData_.overLifeTime_, sizeof(OverLifeTime));
@@ -74,11 +73,7 @@ void GPUParticle::Update() {
 		std::memcpy(emitterData_, &particleData_.emitter_, sizeof(Emitter));
 
 		ExecuteEmitCS();
-
 	}
-	
-
-	
 	
 	ExecuteUpdateCS();
 
@@ -110,17 +105,38 @@ void GPUParticle::Draw(const Camera& camera, bool isScreen) {
 	commandList_->ResourceBarrier(1, &preBarrier);
 
 	//VBVを設定
-	commandList_->IASetVertexBuffers(0, 1, &vbv_);
-	commandList_->IASetIndexBuffer(&ibv_);
-	
-	//wvp用のCBufferの場所の設定
-	//commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	commandList_->SetGraphicsRootDescriptorTable(static_cast<UINT>(RootParameter::kParticleGPU), srvHandle_.second);
-	commandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kPerView), perViewBuff_->GetGPUVirtualAddress());
-	//SRVのDescriptorTableの先頭を設定。
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, static_cast<UINT>(RootParameter::kTexture), uvHandle_);
 
-	commandList_->DrawIndexedInstanced(6, maxParticleNum_, 0, 0, 0);
+	if (particleData_.model_) {
+		for (auto& mesh : particleData_.model_->meshes_) {
+			commandList_->IASetVertexBuffers(0, 1, mesh.GetVBV());
+			commandList_->IASetIndexBuffer(mesh.GetIVB());
+
+			//wvp用のCBufferの場所の設定
+			//commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
+			commandList_->SetGraphicsRootDescriptorTable(static_cast<UINT>(RootParameter::kParticleGPU), srvHandle_.second);
+			commandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kPerView), perViewBuff_->GetGPUVirtualAddress());
+			//SRVのDescriptorTableの先頭を設定。
+			TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, static_cast<UINT>(RootParameter::kTexture), uvHandle_);
+
+			commandList_->DrawIndexedInstanced(static_cast<UINT>(mesh.indices_.size()), maxParticleNum_, 0, 0, 0);
+		}
+		
+	}else {
+		commandList_->IASetVertexBuffers(0, 1, &vbv_);
+		commandList_->IASetIndexBuffer(&ibv_);
+
+		//wvp用のCBufferの場所の設定
+		//commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
+		commandList_->SetGraphicsRootDescriptorTable(static_cast<UINT>(RootParameter::kParticleGPU), srvHandle_.second);
+		commandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kPerView), perViewBuff_->GetGPUVirtualAddress());
+		//SRVのDescriptorTableの先頭を設定。
+		TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, static_cast<UINT>(RootParameter::kTexture), uvHandle_);
+
+		commandList_->DrawIndexedInstanced(6, maxParticleNum_, 0, 0, 0);
+	}
+	
+	
+	
 
 	D3D12_RESOURCE_BARRIER postBarrier = {};
 	postBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -140,6 +156,10 @@ void GPUParticle::SetParticleData(const ParticleData& particleData) {
 
 void GPUParticle::SetTextureHandle() {
 	uvHandle_ = TextureManager::Load(particleData_.textureName_);
+}
+
+void GPUParticle::SetModel(const std::string& modelname) {
+	particleData_.model_ = ModelManager::LoadOBJ(modelname);
 }
 
 void GPUParticle::CreateBuffer() {

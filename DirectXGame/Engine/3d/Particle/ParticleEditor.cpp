@@ -76,6 +76,7 @@ void ParticleEditor::DataSave() {
 		//rootに保存するパラメータの登録
 		particleRoot["isLoop"] = data.isLoop_;
 		particleRoot["textureName"] = data.textureName_;
+		particleRoot["modelName"] = modelName_;
 
 		json& emitterRoot = particleRoot["Emitter"];
 		const auto& emitter = data.emitter_;
@@ -222,6 +223,12 @@ void ParticleEditor::LoadDataFile(const std::string& fileName) {
 		data.isLoop_ = isLoop_ = particleRoot["isLoop"].get<bool>();
 		data.textureName_ = particleRoot["textureName"].get<std::string>();
 		particles_[group]->SetTextureHandle();
+		if (particleRoot.contains("modelName")) {
+			if (particleRoot["modelName"].get<std::string>() != "") {
+				particles_[group]->SetModel(particleRoot["modelName"].get<std::string>());
+				isModel_ = true;
+			}
+		}
 
 		auto& emitterData = data.emitter_;
 		const json& emitterRoot = particleRoot["Emitter"];
@@ -383,6 +390,56 @@ void ParticleEditor::DebugGUI() {
 			}
 			if (ImGui::Button("Apply")) {
 				particle->SetTextureHandle();
+			}
+
+			const auto& textures = TextureManager::GetInstance()->GetTextures();
+
+			if (ImGui::TreeNode("Texture")) {
+
+				int32_t count = 2;
+				int32_t index = 0;
+
+				ImGui::BeginChild("Texture List", ImVec2(0, 200), true);
+				for (const auto& texture : textures) {
+
+					if (texture.name == "") { continue; }
+
+					if (ImGui::ImageButton(texture.name.c_str(), (ImTextureID)texture.textureSrvHandleGPU_.ptr, ImVec2(64, 64))) {
+						data.textureName_ = texture.name;
+						particle->SetTextureHandle();
+					}
+
+					index++;
+					if (index < count) {
+						ImGui::SameLine();
+					}
+					else {
+						index = 0; // 次の行に移る
+					}
+
+				}
+				ImGui::EndChild();
+
+				ImGui::TreePop();
+			}
+			
+
+
+			strncpy_s(strBuff, modelName_.c_str(), sizeof(strBuff));
+			strBuff[sizeof(strBuff) - 1] = '\0';
+			ImGui::Checkbox("isModel", &isModel_);
+
+			if (isModel_) {
+				if (ImGui::InputText("ModelName", strBuff, sizeof(strBuff))) {
+					modelName_ = strBuff;
+				}
+				if (ImGui::Button("Set")) {
+					particle->SetModel(modelName_);
+				}
+			}
+			else {
+				particle->ModelReset();
+				modelName_ = "";
 			}
 
 			int32_t billboardType = static_cast<int32_t>(emitter.billboardType);

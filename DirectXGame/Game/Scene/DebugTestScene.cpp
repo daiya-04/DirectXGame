@@ -215,5 +215,21 @@ void DebugTestScene::DebugGUI() {
 
 	ImGui::End();
 
+	ImGui::Begin("texture");
+
+	uint32_t image = TextureManager::Load("cross_01.png");
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = TextureManager::GetInstance()->GetSRVGPUHandle(image);
+
+	ImGui::ImageButton("cross_01", (ImTextureID)gpuHandle.ptr, ImVec2(128, 128));
+
+	image = TextureManager::Load("ring_03.png");
+	gpuHandle = TextureManager::GetInstance()->GetSRVGPUHandle(image);
+
+	ImGui::SameLine();
+
+	ImGui::ImageButton("ring_03", (ImTextureID)gpuHandle.ptr, ImVec2(128, 128));
+
+	ImGui::End();
+
 #endif // _DEBUG
 }

@@ -6,6 +6,7 @@
 #include "Vec4.h"
 #include "Matrix44.h"
 #include "WorldTransform.h"
+#include "ModelManager.h"
 #include "Camera.h"
 #include "Log.h"
 #include <string>
@@ -122,6 +123,8 @@ public:
 		OverLifeTime overLifeTime_;
 		bool isLoop_ = true;
 		std::string textureName_;
+		std::shared_ptr<Model> model_;
+		
 	};
 
 	struct PerFrame {
@@ -199,6 +202,9 @@ public:
 	void SetParticleData(const ParticleData& particleData);
 
 	void SetTextureHandle();
+
+	void SetModel(const std::string& modelName);
+	void ModelReset() { particleData_.model_ = nullptr; }
 
 	void Emit() { particleData_.emitter_.emit = 1; }
 
