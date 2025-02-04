@@ -4,16 +4,16 @@
 #include "Hit.h"
 
 
-void IcicleManager::Init(const std::shared_ptr<Model>& model) {
+void IcicleManager::Init(const std::shared_ptr<DaiEngine::Model>& model) {
 
 	for (size_t index = 0; index < icicles_.size(); index++) {
 		icicles_[index] = std::make_unique<Icicle>();
 		icicles_[index]->Init(model);
-		icicles_[index]->GetCollider()->SetCallbackFunc([this, number = index](Collider* other) {this->OnCollision(number, other); });
+		icicles_[index]->GetCollider()->SetCallbackFunc([this, number = index](DaiEngine::Collider* other) {this->OnCollision(number, other); });
 	}
 
 	for (auto& iceScar : iceScars_) {
-		iceScar.reset(IceScar::Create(TextureManager::Load("ScarBase.png")));
+		iceScar.reset(IceScar::Create(DaiEngine::TextureManager::Load("ScarBase.png")));
 	}
 	
 	isAttack_ = false;
@@ -42,7 +42,7 @@ void IcicleManager::Update() {
 
 }
 
-void IcicleManager::Draw(const Camera& camera) {
+void IcicleManager::Draw(const DaiEngine::Camera& camera) {
 	if (!isAttack_) { return; }
 
 	for (auto& icicle : icicles_) {
@@ -50,7 +50,7 @@ void IcicleManager::Draw(const Camera& camera) {
 	}
 }
 
-void IcicleManager::OnCollision(size_t index, Collider* other) {
+void IcicleManager::OnCollision(size_t index, DaiEngine::Collider* other) {
 
 	if (other->GetTag() == "Player" || other->GetTag() == "Ground") {
 		icicles_[index]->OnCollision(other);
@@ -60,13 +60,13 @@ void IcicleManager::OnCollision(size_t index, Collider* other) {
 	
 }
 
-void IcicleManager::DrawParticle(const Camera& camera) {
+void IcicleManager::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& icicle : icicles_) {
 		icicle->DrawParticle(camera);
 	}
 }
 
-void IcicleManager::DrawScar(const Camera& camera) {
+void IcicleManager::DrawScar(const DaiEngine::Camera& camera) {
 	for (auto& iceScar : iceScars_) {
 		iceScar->Draw(camera);
 	}

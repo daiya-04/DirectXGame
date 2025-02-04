@@ -9,7 +9,7 @@
 
 #include "BaseComputePipeline.h"
 
-class ParticleUpdateComputePipeline : public BaseComputePipeline {
+class ParticleUpdateComputePipeline : public DaiEngine::BaseComputePipeline {
 public:
 	/// <summary>
 	/// 初期化

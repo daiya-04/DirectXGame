@@ -133,7 +133,7 @@ void IceScar::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList* comman
 	//三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
-	DXCompiler* dxCompiler = DXCompiler::GetInstance();
+	DaiEngine::DXCompiler* dxCompiler = DaiEngine::DXCompiler::GetInstance();
 
 	//Shaderをコンパイルする
 	ComPtr<IDxcBlob> verterShaderBlob = dxCompiler->ShaderCompile(L"Scar.VS.hlsl", L"vs_6_0");
@@ -231,7 +231,7 @@ void IceScar::EffectUpdate() {
 
 }
 
-void IceScar::Draw(const Camera& camera) {
+void IceScar::Draw(const DaiEngine::Camera& camera) {
 
 	if (!isEffect_) { return; }
 

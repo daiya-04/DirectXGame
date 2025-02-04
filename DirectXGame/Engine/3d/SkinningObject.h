@@ -13,65 +13,65 @@
 #include "Animation.h"
 #include "SkinCluster.h"
 
+namespace DaiEngine {
+	class SkinningObject {
+	private:
+		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	private:
 
-class SkinningObject{
-private:
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-private:
+		struct SkinningInfoData {
+			uint32_t numVertex_;
+		};
 
-	struct SkinningInfoData {
-		uint32_t numVertex_;
+		struct DeadEffectData {
+			float  threshold_;
+		};
+
+	public: //静的メンバ関数
+
+		//モデルの生成
+		static SkinningObject* Create(std::shared_ptr<Model> model);
+		//描画前処理
+		static void preDraw();
+		//描画後処理
+		static void postDraw();
+
+		static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
+
+	private: //メンバ変数
+
+		std::shared_ptr<Model> model_;
+		SkinCluster* skinCluster_ = nullptr;
+
+		ComPtr<ID3D12Resource> skinningInfoBuff_;
+		SkinningInfoData* skinningInfoData_ = nullptr;
+
+		ComPtr<ID3D12Resource> deadEffectBuffer_;
+		DeadEffectData* deadEffectData_ = nullptr;
+
+	public:
+
+		WorldTransform worldTransform_;
+		float threshold_ = 0.0f;
+
+	public: //メンバ関数
+
+		//初期化
+		void Initialize(std::shared_ptr<Model> model);
+		//更新
+		//void Update();
+		//描画
+		void Draw(const Camera& camera);
+
+		void SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
+
+		void SetModelHandle(std::shared_ptr<Model> model) { model_ = model; }
+
+		void SetSkinCluster(SkinCluster* skinCluster) { skinCluster_ = skinCluster; }
+
+		std::shared_ptr<Model> GetModel() const { return model_; }
+
+		Vector3 GetWorldPos() const;
+
 	};
-
-	struct DeadEffectData {
-		float  threshold_;
-	};
-
-public: //静的メンバ関数
-
-	//モデルの生成
-	static SkinningObject* Create(std::shared_ptr<Model> model);
-	//描画前処理
-	static void preDraw();
-	//描画後処理
-	static void postDraw();
-
-	static ComPtr<ID3D12Resource> CreateBufferResource(ComPtr<ID3D12Device> device, size_t sizeInBytes);
-
-private: //メンバ変数
-
-	std::shared_ptr<Model> model_;
-	SkinCluster* skinCluster_ = nullptr;
-
-	ComPtr<ID3D12Resource> skinningInfoBuff_;
-	SkinningInfoData* skinningInfoData_ = nullptr;
-
-	ComPtr<ID3D12Resource> deadEffectBuffer_;
-	DeadEffectData* deadEffectData_ = nullptr;
-
-public:
-
-	WorldTransform worldTransform_;
-	float threshold_ = 0.0f;
-
-public: //メンバ関数
-
-	//初期化
-	void Initialize(std::shared_ptr<Model> model);
-	//更新
-	//void Update();
-	//描画
-	void Draw(const Camera& camera);
-
-	void SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
-
-	void SetModelHandle(std::shared_ptr<Model> model) { model_ = model; }
-
-	void SetSkinCluster(SkinCluster* skinCluster) { skinCluster_ = skinCluster; }
-
-	std::shared_ptr<Model> GetModel() const { return model_; }
-
-	Vector3 GetWorldPos() const;
-
-};
-
+}

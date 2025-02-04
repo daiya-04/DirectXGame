@@ -10,27 +10,27 @@
 #include <wrl.h>
 #include "DXCompiler.h"
 
+namespace DaiEngine {
+	class BaseComputePipeline {
+	protected:
+		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-class BaseComputePipeline {
-protected:
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	public:
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		virtual void Init();
+		/// <summary>
+		/// ディスパッチ起動前
+		/// </summary>
+		virtual void preDispatch();
 
-public:
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	virtual void Init();
-	/// <summary>
-	/// ディスパッチ起動前
-	/// </summary>
-	virtual void preDispatch();
+	protected:
 
-protected:
+		ID3D12Device* device_ = nullptr;
+		DXCompiler* dxCompiler_ = nullptr;
+		ComPtr<ID3D12RootSignature> rootSignature_;
+		ComPtr<ID3D12PipelineState> pipelineState_;
 
-	ID3D12Device* device_ = nullptr;
-	DXCompiler* dxCompiler_ = nullptr;
-	ComPtr<ID3D12RootSignature> rootSignature_;
-	ComPtr<ID3D12PipelineState> pipelineState_;
-
-};
-
+	};
+}

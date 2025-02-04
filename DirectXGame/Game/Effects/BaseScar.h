@@ -108,7 +108,7 @@ protected:
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	virtual void Draw(const Camera& camera);
+	virtual void Draw(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// 演出開始
 	/// </summary>

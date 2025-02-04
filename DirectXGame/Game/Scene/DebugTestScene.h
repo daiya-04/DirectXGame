@@ -31,7 +31,7 @@
 #include "PostEffect.h"
 
 //デバッグテストシーンクラス
-class DebugTestScene : public IScene {
+class DebugTestScene : public DaiEngine::IScene {
 public:
 	/// <summary>
 	/// 初期化
@@ -80,39 +80,39 @@ public:
 
 private: //必須項目
 	//カメラ
-	Camera camera_;
+	DaiEngine::Camera camera_;
 	//ポイントライト
-	PointLight pointLight_;
+	DaiEngine::PointLight pointLight_;
 	//スポットライト
-	SpotLight spotLight_;
+	DaiEngine::SpotLight spotLight_;
 
 private: //テスト用の変数
 
-	std::unique_ptr<SkinningObject> human_;
-	std::shared_ptr<Model> humanModel_;
-	std::shared_ptr<Model> standingModel_;
-	std::shared_ptr<Model> sneakModel_;
-	Animation animation_;
-	Skeleton skeleton_;
-	SkinCluster skinCluster_;
+	std::unique_ptr<DaiEngine::SkinningObject> human_;
+	std::shared_ptr<DaiEngine::Model> humanModel_;
+	std::shared_ptr<DaiEngine::Model> standingModel_;
+	std::shared_ptr<DaiEngine::Model> sneakModel_;
+	DaiEngine::Animation animation_;
+	DaiEngine::Skeleton skeleton_;
+	DaiEngine::SkinCluster skinCluster_;
 
 	uint32_t skyBoxTex_ = 0;
-	std::unique_ptr<SkyBox> skyBox_;
+	std::unique_ptr<DaiEngine::SkyBox> skyBox_;
 
-	std::shared_ptr<Model> model_;
-	std::unique_ptr<Object3d> obj_;
+	std::shared_ptr<DaiEngine::Model> model_;
+	std::unique_ptr<DaiEngine::Object3d> obj_;
 
 	Dissolve* dissolve_;
 	PostEffect* postEffect_ = nullptr;
 
 	uint32_t tex_ = 0;
-	std::unique_ptr<Sprite> sprite_;
+	std::unique_ptr<DaiEngine::Sprite> sprite_;
 
 	uint32_t burnScarsTex_ = 0;
 	std::unique_ptr<BurnScar> burnScars_;
 	std::unique_ptr<IceScar> iceScar_;
 
-	std::map<std::string, std::unique_ptr<GPUParticle>> effect_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> effect_;
 
 };
 

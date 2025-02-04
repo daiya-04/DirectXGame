@@ -2,19 +2,20 @@
 #include "Collider.h"
 #include "Matrix44.h"
 
-class OBBCollider : public Collider {
-public:
+namespace DaiEngine {
+	class OBBCollider : public Collider {
+	public:
 
-	void Init(const std::string& tag, const WorldTransform& parent, const Vector3& size);
+		void Init(const std::string& tag, const WorldTransform& parent, const Vector3& size);
 
-	void Update(const Matrix4x4& rotateMat);
+		void Update(const Matrix4x4& rotateMat);
 
-	void SetSize(const Vector3& size) { obb_->size = size; }
-	const Vector3 GetSize() const { return obb_->size; }
+		void SetSize(const Vector3& size) { obb_->size = size; }
+		const Vector3 GetSize() const { return obb_->size; }
 
-private:
+	private:
 
-	Shapes::OBB* obb_ = nullptr;
+		Shapes::OBB* obb_ = nullptr;
 
-};
-
+	};
+}

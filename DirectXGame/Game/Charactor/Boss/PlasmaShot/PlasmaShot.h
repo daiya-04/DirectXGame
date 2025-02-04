@@ -94,11 +94,14 @@ private:
 
 
 public:
+
+	~PlasmaShot();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<Model>& model);
+	void Init(const std::shared_ptr<DaiEngine::Model>& model);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -107,16 +110,16 @@ public:
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const Camera& camera);
+	void Draw(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision(Collider* other);
+	void OnCollision(DaiEngine::Collider* other);
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>
@@ -136,7 +139,7 @@ public:
 	/// コライダーの取得
 	/// </summary>
 	/// <returns></returns>
-	SphereCollider* GetCollider() const { return collider_; }
+	DaiEngine::SphereCollider* GetCollider() const { return collider_.get(); }
 	/// <summary>
 	/// ワールド座標取得
 	/// </summary>
@@ -155,18 +158,18 @@ private:
 	//ターゲットがいる方向
 	Vector3 targetDict_ = { 0.0f,0.0f,1.0f };
 	//オブジェクト
-	std::unique_ptr<Object3d> obj_;
+	std::unique_ptr<DaiEngine::Object3d> obj_;
 	///エフェクト
 	//生成
-	std::map<std::string, std::unique_ptr<GPUParticle>> createEff_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> createEff_;
 	//ヒット時
-	std::map<std::string, std::unique_ptr<GPUParticle>> hitEff_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> hitEff_;
 	//軌跡
-	std::map<std::string, std::unique_ptr<GPUParticle>> trailEff_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> trailEff_;
 	///
 
 	//コライダー
-	SphereCollider* collider_ = nullptr;
+	std::unique_ptr<DaiEngine::SphereCollider> collider_;
 
 	//速度
 	Vector3 velocity_;

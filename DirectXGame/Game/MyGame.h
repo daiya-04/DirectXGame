@@ -11,7 +11,7 @@
 #include "PostEffect.h"
 
 //ゲームクラス
-class MyGame : public DSFramework {
+class MyGame : public DaiEngine::DSFramework {
 public:
 	/// <summary>
 	/// 初期化

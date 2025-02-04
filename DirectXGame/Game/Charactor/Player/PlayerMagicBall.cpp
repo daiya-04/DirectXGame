@@ -4,15 +4,19 @@
 #include "ColliderManager.h"
 #include "ParticleManager.h"
 
+PlayerMagicBall::~PlayerMagicBall() {
+	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
+}
 
-void PlayerMagicBall::Init(std::shared_ptr<Model> model) {
+void PlayerMagicBall::Init(std::shared_ptr<DaiEngine::Model> model) {
 
-	obj_.reset(Object3d::Create(model));
+	obj_.reset(DaiEngine::Object3d::Create(model));
 
-	collider_ = ColliderManager::CreateSphere();
+	collider_ = std::make_unique<DaiEngine::SphereCollider>();
 	collider_->Init("PlayerAttack", obj_->worldTransform_, 0.3f);
-	collider_->SetCallbackFunc([this](Collider* other) {this->OnCollision(other); });
+	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->ColliderOff();
+	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 	///エフェクト設定
 
@@ -56,12 +60,12 @@ void PlayerMagicBall::Update() {
 
 }
 
-void PlayerMagicBall::Draw(const Camera& camera) {
+void PlayerMagicBall::Draw(const DaiEngine::Camera& camera) {
 	if (phase_ == Phase::kRoot) { return; }
 	obj_->Draw(camera);
 }
 
-void PlayerMagicBall::DrawParticle(const Camera& camera) {
+void PlayerMagicBall::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& [group, particle] : trailEff_) {
 		particle->Draw(camera);
 	}
@@ -70,7 +74,7 @@ void PlayerMagicBall::DrawParticle(const Camera& camera) {
 	}
 }
 
-void PlayerMagicBall::OnCollision([[maybe_unused]] Collider* other) {
+void PlayerMagicBall::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
 	isLife_ = false;
 	phaseRequest_ = Phase::kRoot;
 

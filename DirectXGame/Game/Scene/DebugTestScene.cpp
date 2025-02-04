@@ -21,32 +21,32 @@ void DebugTestScene::Init() {
 	pointLight_.Init();
 	spotLight_.Init();
 	//Object3dにライトセット
-	Object3d::SetPointLight(&pointLight_);
-	Object3d::SetSpotLight(&spotLight_);
+	DaiEngine::Object3d::SetPointLight(&pointLight_);
+	DaiEngine::Object3d::SetSpotLight(&spotLight_);
 
 	///
 
-	humanModel_ = ModelManager::LoadGLTF("Skin");
-	standingModel_ = ModelManager::LoadGLTF("Standing");
-	sneakModel_ = ModelManager::LoadGLTF("BossDead");
-	model_ = ModelManager::LoadOBJ("Rock");
+	humanModel_ = DaiEngine::ModelManager::LoadGLTF("Skin");
+	standingModel_ = DaiEngine::ModelManager::LoadGLTF("Standing");
+	sneakModel_ = DaiEngine::ModelManager::LoadGLTF("BossDead");
+	model_ = DaiEngine::ModelManager::LoadOBJ("Rock");
 
-	skyBoxTex_ = TextureManager::Load("skyBox.dds");
-	tex_ = TextureManager::Load("test.png");
-	burnScarsTex_ = TextureManager::Load("BurnScars.png");
+	skyBoxTex_ = DaiEngine::TextureManager::Load("skyBox.dds");
+	tex_ = DaiEngine::TextureManager::Load("test.png");
+	burnScarsTex_ = DaiEngine::TextureManager::Load("BurnScars.png");
 
-	skyBox_.reset(SkyBox::Create(skyBoxTex_));
+	skyBox_.reset(DaiEngine::SkyBox::Create(skyBoxTex_));
 
-	human_.reset(SkinningObject::Create(humanModel_));
-	animation_ = AnimationManager::Load(standingModel_->name_);
-	skeleton_ = Skeleton::Create(standingModel_->rootNode_);
+	human_.reset(DaiEngine::SkinningObject::Create(humanModel_));
+	animation_ = DaiEngine::AnimationManager::Load(standingModel_->name_);
+	skeleton_ = DaiEngine::Skeleton::Create(standingModel_->rootNode_);
 	skinCluster_.Create(skeleton_, standingModel_);
 	human_->SetSkinCluster(&skinCluster_);
 
-	obj_.reset(Object3d::Create(model_));
+	obj_.reset(DaiEngine::Object3d::Create(model_));
 	obj_->worldTransform_.rotation_.y = 3.14f;
 
-	sprite_.reset(Sprite::Create(tex_, { 640.0f,360.0f }));
+	sprite_.reset(DaiEngine::Sprite::Create(tex_, { 640.0f,360.0f }));
 	
 	dissolve_ = Dissolve::GetInstance();
 	dissolve_->Init();
@@ -77,31 +77,31 @@ void DebugTestScene::Update() {
 
 #ifdef _DEBUG
 	//デバッグ用シーンの切り替えコマンド
-	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_1)) {
-		SceneManager::GetInstance()->ChangeScene("Title");
+	if (DaiEngine::Input::GetInstance()->PushKey(DIK_LCONTROL) && DaiEngine::Input::GetInstance()->TriggerKey(DIK_1)) {
+		DaiEngine::SceneManager::GetInstance()->ChangeScene("Title");
 	}
-	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_2)) {
-		SceneManager::GetInstance()->ChangeScene("Game");
+	if (DaiEngine::Input::GetInstance()->PushKey(DIK_LCONTROL) && DaiEngine::Input::GetInstance()->TriggerKey(DIK_2)) {
+		DaiEngine::SceneManager::GetInstance()->ChangeScene("Game");
 	}
 	
 #endif // _DEBUG
 	
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+	if (DaiEngine::Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		human_->SetModelHandle(sneakModel_);
-		animation_ = AnimationManager::Load(sneakModel_->name_);
-		skeleton_ = Skeleton::Create(sneakModel_->rootNode_);
+		animation_ = DaiEngine::AnimationManager::Load(sneakModel_->name_);
+		skeleton_ = DaiEngine::Skeleton::Create(sneakModel_->rootNode_);
 		skinCluster_.Create(skeleton_, sneakModel_);
 		animation_.SetAnimationSpeed(1.0f / 30.0f);
 	}
-	else if(Input::GetInstance()->ReleaseKey(DIK_SPACE)){
+	else if(DaiEngine::Input::GetInstance()->ReleaseKey(DIK_SPACE)){
 		//human_->SetModelHandle(humanModel_);
-		animation_ = AnimationManager::Load(standingModel_->name_);
-		skeleton_ = Skeleton::Create(standingModel_->rootNode_);
+		animation_ = DaiEngine::AnimationManager::Load(standingModel_->name_);
+		skeleton_ = DaiEngine::Skeleton::Create(standingModel_->rootNode_);
 		skinCluster_.Create(skeleton_, standingModel_);
 		animation_.SetAnimationSpeed(1.0f / 60.0f);
 	}
 
-	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_H)) {
+	if (DaiEngine::Input::GetInstance()->PushKey(DIK_LCONTROL) && DaiEngine::Input::GetInstance()->TriggerKey(DIK_H)) {
 		for (auto& [group, particle] : effect_) {
 			particle->Emit();
 		}
@@ -137,12 +137,12 @@ void DebugTestScene::DrawBackGround() {
 
 void DebugTestScene::DrawModel() {
 
-	SkinningObject::preDraw();
+	DaiEngine::SkinningObject::preDraw();
 	//human_->Draw(camera_);
 	//skeleton_.Draw(human_->worldTransform_, camera_);
 
 
-	Object3d::preDraw();
+	DaiEngine::Object3d::preDraw();
 	//obj_->Draw(camera_);
 
 	//skyBox_->Draw(camera_);
@@ -166,7 +166,7 @@ void DebugTestScene::DrawParticleModel() {
 
 void DebugTestScene::DrawParticle() {
 
-	GPUParticle::preDraw();
+	DaiEngine::GPUParticle::preDraw();
 
 	for (auto& [group, particle] : effect_) {
 		particle->Draw(camera_);
@@ -217,13 +217,13 @@ void DebugTestScene::DebugGUI() {
 
 	ImGui::Begin("texture");
 
-	uint32_t image = TextureManager::Load("cross_01.png");
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = TextureManager::GetInstance()->GetSRVGPUHandle(image);
+	uint32_t image = DaiEngine::TextureManager::Load("cross_01.png");
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = DaiEngine::TextureManager::GetInstance()->GetSRVGPUHandle(image);
 
 	ImGui::ImageButton("cross_01", (ImTextureID)gpuHandle.ptr, ImVec2(128, 128));
 
-	image = TextureManager::Load("ring_03.png");
-	gpuHandle = TextureManager::GetInstance()->GetSRVGPUHandle(image);
+	image = DaiEngine::TextureManager::Load("ring_03.png");
+	gpuHandle = DaiEngine::TextureManager::GetInstance()->GetSRVGPUHandle(image);
 
 	ImGui::SameLine();
 

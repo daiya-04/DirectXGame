@@ -9,13 +9,13 @@
 namespace ShapesDraw {
 
 	//球体描画
-	void DrawSphere(const Shapes::Sphere& sphere, const Camera& camera, const Vector4& color = {1.0f,1.0f,1.0f,1.0f});
+	void DrawSphere(const Shapes::Sphere& sphere, const DaiEngine::Camera& camera, const Vector4& color = {1.0f,1.0f,1.0f,1.0f});
 	//平面描画
-	void DrawPlane(const Shapes::Plane& plane, const Camera& camera, const Vector4& color = { 1.0f,1.0f,1.0f,1.0f });
+	void DrawPlane(const Shapes::Plane& plane, const DaiEngine::Camera& camera, const Vector4& color = { 1.0f,1.0f,1.0f,1.0f });
 	//AABB描画
-	void DrawAABB(const Shapes::AABB& aabb, const Camera& camera, const Vector4& color = { 1.0f,1.0f,1.0f,1.0f });
+	void DrawAABB(const Shapes::AABB& aabb, const DaiEngine::Camera& camera, const Vector4& color = { 1.0f,1.0f,1.0f,1.0f });
 	//OBB描画
-	void DrawOBB(const Shapes::OBB& obb, const Camera& camera, const Vector4& color = { 1.0f,1.0f,1.0f,1.0f });
+	void DrawOBB(const Shapes::OBB& obb, const DaiEngine::Camera& camera, const Vector4& color = { 1.0f,1.0f,1.0f,1.0f });
 
 
 }

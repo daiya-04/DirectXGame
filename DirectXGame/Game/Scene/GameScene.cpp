@@ -28,8 +28,8 @@ void GameScene::Init(){
 	pointLight_.Init();
 	spotLight_.Init();
 	//object3dクラスにライトセット
-	Object3d::SetPointLight(&pointLight_);
-	Object3d::SetSpotLight(&spotLight_);
+	DaiEngine::Object3d::SetPointLight(&pointLight_);
+	DaiEngine::Object3d::SetSpotLight(&spotLight_);
 
 	finishCount_ = finishTime_;
 
@@ -38,38 +38,38 @@ void GameScene::Init(){
 
 	/// モデルの読み込み
 
-	std::shared_ptr<Model> skydomeModel = ModelManager::LoadOBJ("skydome");
-	std::shared_ptr<Model> groundModel = ModelManager::LoadOBJ("ground");
+	std::shared_ptr<DaiEngine::Model> skydomeModel = DaiEngine::ModelManager::LoadOBJ("skydome");
+	std::shared_ptr<DaiEngine::Model> groundModel = DaiEngine::ModelManager::LoadOBJ("ground");
 	//プレイヤー
-	std::shared_ptr<Model> playerStandingModel = ModelManager::LoadGLTF("Standing");
-	std::shared_ptr<Model> playerRunningModel = ModelManager::LoadGLTF("Running");
-	std::shared_ptr<Model> playerAttackModel = ModelManager::LoadGLTF("PlayerAttack");
-	std::shared_ptr<Model> playerDeadModel = ModelManager::LoadGLTF("PlayerDead");
-	std::shared_ptr<Model> playerAccelModel = ModelManager::LoadGLTF("Accel");
-	std::shared_ptr<Model> playerKnockBackModel = ModelManager::LoadGLTF("KnockBack");
+	std::shared_ptr<DaiEngine::Model> playerStandingModel = DaiEngine::ModelManager::LoadGLTF("Standing");
+	std::shared_ptr<DaiEngine::Model> playerRunningModel = DaiEngine::ModelManager::LoadGLTF("Running");
+	std::shared_ptr<DaiEngine::Model> playerAttackModel = DaiEngine::ModelManager::LoadGLTF("PlayerAttack");
+	std::shared_ptr<DaiEngine::Model> playerDeadModel = DaiEngine::ModelManager::LoadGLTF("PlayerDead");
+	std::shared_ptr<DaiEngine::Model> playerAccelModel = DaiEngine::ModelManager::LoadGLTF("Accel");
+	std::shared_ptr<DaiEngine::Model> playerKnockBackModel = DaiEngine::ModelManager::LoadGLTF("KnockBack");
 	//ボス
-	std::shared_ptr<Model> bossStandingModel = ModelManager::LoadGLTF("Standing");
-	std::shared_ptr<Model> bossSetModel = ModelManager::LoadGLTF("SetMotion");
-	std::shared_ptr<Model> bossAttackModel = ModelManager::LoadGLTF("BossAttack");
-	std::shared_ptr<Model> bossDeadModel = ModelManager::LoadGLTF("BossDead");
+	std::shared_ptr<DaiEngine::Model> bossStandingModel = DaiEngine::ModelManager::LoadGLTF("Standing");
+	std::shared_ptr<DaiEngine::Model> bossSetModel = DaiEngine::ModelManager::LoadGLTF("SetMotion");
+	std::shared_ptr<DaiEngine::Model> bossAttackModel = DaiEngine::ModelManager::LoadGLTF("BossAttack");
+	std::shared_ptr<DaiEngine::Model> bossDeadModel = DaiEngine::ModelManager::LoadGLTF("BossDead");
 
-	std::shared_ptr<Model> warningZoneModel = ModelManager::LoadOBJ("WarningZone");
-	std::shared_ptr<Model> icicleModel = ModelManager::LoadOBJ("Icicle");
-	std::shared_ptr<Model> plasmaBallModel = ModelManager::LoadOBJ("PlasmaBall");
-	std::shared_ptr<Model> elementBallModel = ModelManager::LoadGLTF("ElementBall");
-	std::shared_ptr<Model> rockModel = ModelManager::LoadOBJ("Rock");
+	std::shared_ptr<DaiEngine::Model> warningZoneModel = DaiEngine::ModelManager::LoadOBJ("WarningZone");
+	std::shared_ptr<DaiEngine::Model> icicleModel = DaiEngine::ModelManager::LoadOBJ("Icicle");
+	std::shared_ptr<DaiEngine::Model> plasmaBallModel = DaiEngine::ModelManager::LoadOBJ("PlasmaBall");
+	std::shared_ptr<DaiEngine::Model> elementBallModel = DaiEngine::ModelManager::LoadGLTF("ElementBall");
+	std::shared_ptr<DaiEngine::Model> rockModel = DaiEngine::ModelManager::LoadOBJ("Rock");
 
 	///
 
 	///テクスチャの読み込み
 
-	uint32_t finishTex = TextureManager::Load("finish.png");
-	uint32_t XButtonTex = TextureManager::Load("XButton.png");
-	uint32_t AButtonTex = TextureManager::Load("AButton_P.png");
-	uint32_t char_AttackTex = TextureManager::Load("char_Attack.png");
-	uint32_t char_DashTex = TextureManager::Load("char_Dash.png");
-	uint32_t gameOverTex = TextureManager::Load("GameOver.png");
-	uint32_t skyBoxTex = TextureManager::Load("skyBox.dds");
+	uint32_t finishTex = DaiEngine::TextureManager::Load("finish.png");
+	uint32_t XButtonTex = DaiEngine::TextureManager::Load("XButton.png");
+	uint32_t AButtonTex = DaiEngine::TextureManager::Load("AButton_P.png");
+	uint32_t char_AttackTex = DaiEngine::TextureManager::Load("char_Attack.png");
+	uint32_t char_DashTex = DaiEngine::TextureManager::Load("char_Dash.png");
+	uint32_t gameOverTex = DaiEngine::TextureManager::Load("GameOver.png");
+	uint32_t skyBoxTex = DaiEngine::TextureManager::Load("skyBox.dds");
 
 	postEffect_ = PostEffect::GetInstance();
 	postEffect_->Init();
@@ -85,19 +85,23 @@ void GameScene::Init(){
 	///オブジェクト初期化
 	
 	//天球
-	skyBox_.reset(SkyBox::Create(skyBoxTex));
+	skyBox_.reset(DaiEngine::SkyBox::Create(skyBoxTex));
 
 	//地面
 	ground_ = std::make_unique<Ground>();
 	ground_->Init(groundModel);
 
+
+	charactors_[static_cast<size_t>(CharactorType::kPlayer)] = std::make_unique<Player>();
+	charactors_[static_cast<size_t>(CharactorType::kBoss)] = std::make_unique<Boss>();
+
 	//プレイヤー
-	player_ = std::make_unique<Player>();
+	player_ = dynamic_cast<Player*>(charactors_[static_cast<size_t>(CharactorType::kPlayer)].get());
 	player_->Init({ playerStandingModel,playerRunningModel,playerAttackModel,playerDeadModel,playerAccelModel,playerKnockBackModel });
 
 
 	//ボス
-	boss_ = std::make_unique<Boss>();
+	boss_ = dynamic_cast<Boss*>(charactors_[static_cast<size_t>(CharactorType::kBoss)].get());
 	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel,bossDeadModel });
 	boss_->SetTarget(&player_->GetWorldTransform());
 	player_->SetTerget(&boss_->GetWorldTransform());
@@ -159,17 +163,17 @@ void GameScene::Init(){
 
 	//UI
 	
-	XButton_.reset(Sprite::Create(XButtonTex, {1200.0f,70.0f}));
+	XButton_.reset(DaiEngine::Sprite::Create(XButtonTex, {1200.0f,70.0f}));
 
-	AButton_.reset(Sprite::Create(AButtonTex, { 1200.0f,170.0f }));
+	AButton_.reset(DaiEngine::Sprite::Create(AButtonTex, { 1200.0f,170.0f }));
 
-	char_Attack_.reset(Sprite::Create(char_AttackTex, {1080.0f,70.0f}));
+	char_Attack_.reset(DaiEngine::Sprite::Create(char_AttackTex, {1080.0f,70.0f}));
 
-	char_Dash_.reset(Sprite::Create(char_DashTex, { 1080.0f,170.0f }));
+	char_Dash_.reset(DaiEngine::Sprite::Create(char_DashTex, { 1080.0f,170.0f }));
 
-	gameOver_.reset(Sprite::Create(gameOverTex, { 670.0f,200.0f }));
+	gameOver_.reset(DaiEngine::Sprite::Create(gameOverTex, { 670.0f,200.0f }));
 
-	finish_.reset(Sprite::Create(finishTex, { 670.0f,200.0f }));
+	finish_.reset(DaiEngine::Sprite::Create(finishTex, { 670.0f,200.0f }));
 
 	///
 
@@ -180,11 +184,11 @@ void GameScene::Update() {
 
 #ifdef _DEBUG
 	//デバッグ用シーンの切り替えコマンド
-	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_1)) {
-		SceneManager::GetInstance()->ChangeScene("Title");
+	if (DaiEngine::Input::GetInstance()->PushKey(DIK_LCONTROL) && DaiEngine::Input::GetInstance()->TriggerKey(DIK_1)) {
+		DaiEngine::SceneManager::GetInstance()->ChangeScene("Title");
 	}
-	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_3)) {
-		SceneManager::GetInstance()->ChangeScene("Debug");
+	if (DaiEngine::Input::GetInstance()->PushKey(DIK_LCONTROL) && DaiEngine::Input::GetInstance()->TriggerKey(DIK_3)) {
+		DaiEngine::SceneManager::GetInstance()->ChangeScene("Debug");
 	}
 
 #endif // _DEBUG
@@ -274,9 +278,9 @@ void GameScene::DrawPostEffect() {
 
 	///
 
-	outLine_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+	outLine_->PreDrawScene(DaiEngine::DirectXCommon::GetInstance()->GetCommandList());
 
-	SkinningObject::preDraw();
+	DaiEngine::SkinningObject::preDraw();
 	if (sceneEvent_ != SceneEvent::Clear) {
 		boss_->Draw(camera_);
 	}
@@ -284,15 +288,15 @@ void GameScene::DrawPostEffect() {
 		player_->Draw(camera_);
 	}
 
-	outLine_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+	outLine_->PostDrawScene(DaiEngine::DirectXCommon::GetInstance()->GetCommandList());
 
 	///
 
-	postEffect_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+	postEffect_->PreDrawScene(DaiEngine::DirectXCommon::GetInstance()->GetCommandList());
 
-	outLine_->Draw(DirectXCommon::GetInstance()->GetCommandList());
+	outLine_->Draw(DaiEngine::DirectXCommon::GetInstance()->GetCommandList());
 
-	Object3d::preDraw();
+	DaiEngine::Object3d::preDraw();
 	
 	ground_->Draw(camera_);
 	
@@ -321,7 +325,7 @@ void GameScene::DrawPostEffect() {
 
 	skyBox_->Draw(camera_);
 
-	GPUParticle::preDraw();
+	DaiEngine::GPUParticle::preDraw();
 
 	boss_->DrawParticle(camera_);
 
@@ -339,13 +343,13 @@ void GameScene::DrawPostEffect() {
 	}
 	
 
-	postEffect_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+	postEffect_->PostDrawScene(DaiEngine::DirectXCommon::GetInstance()->GetCommandList());
 
 	///
 
 	hsvFilter_->PreDrawScene();
 
-	postEffect_->Draw(DirectXCommon::GetInstance()->GetCommandList());
+	postEffect_->Draw(DaiEngine::DirectXCommon::GetInstance()->GetCommandList());
 
 	hsvFilter_->PostDrawScene();
 
@@ -365,8 +369,9 @@ void GameScene::BattleInit() {
 
 void GameScene::BattleUpdate() {
 	
-	player_->Update();
-	boss_->Update();
+	for (auto& charactor : charactors_) {
+		charactor->Update();
+	}
 	
 	followCamera_->Update();
 
@@ -377,66 +382,7 @@ void GameScene::BattleUpdate() {
 
 	///衝突判定
 
-	////プレイヤーと属性球
-	//if (elementBall_->IsAttack()) {
-	//	for (uint32_t index = 0; index < elementBall_->GetElementballCount(); index++) {
-	//		if (!elementBall_->IsLife(index)) { 
-	//			continue;
-	//		}
-	//		if (IsCollision(player_->GetCollider(), elementBall_->GetCollider(index))) {
-	//			player_->OnCollision(elementBall_->GetWorldPos(index));
-	//			elementBall_->OnCollision(index);
-	//		}
-	//	}
-	//}
-
-	////プレイヤーと火が噴き出すやつ
-	//if (groundFlare_->IsHit()) {
-	//	if (IsCollision(groundFlare_->GetCollider(), player_->GetCollider())) {
-	//		player_->OnCollision(groundFlare_->GetCenterPos());
-	//		groundFlare_->OnCollision();
-	//	}
-	//}
-
-	////プレイヤーとつらら
-	//if (icicle_->IsAttack()) {
-	//	for (uint32_t index = 0; index < icicle_->GetIcicleCount(); index++) {
-	//		if (!icicle_->IsLife(index)) { continue; }
-	//		if (IsCollision(player_->GetCollider(), icicle_->GetCollider(index))) {
-	//			player_->OnCollision(icicle_->GetWorldPos(index));
-	//			icicle_->OnCollision(index);
-	//		}
-	//	}
-	//}
-
-	////プレイヤーと電気玉
-	//if (plasmaShot_->IsAttack()) {
-	//	for (uint32_t index = 0; index < plasmaShot_->GetPlasmaShotCount(); index++) {
-	//		if (!plasmaShot_->IsLife(index)) { continue; }
-	//		if (IsCollision(player_->GetCollider(), plasmaShot_->GetCollider(index))) {
-	//			player_->OnCollision(plasmaShot_->GetWorldPos(index));
-	//			plasmaShot_->OnCollision(index);
-	//		}
-	//	}
-	//}
-
-	////ボスとプレイヤー攻撃
-	//if (!playerAttacks_.empty()) {
-	//	for (const auto& playerAttack : playerAttacks_) {
-	//		if (IsCollision(boss_->GetCollider(), playerAttack->GetCollider())) {
-	//			boss_->OnCollision();
-	//			playerAttack->OnCollision();
-
-	//			for (auto& [group, particle] : attackEndEff_) {
-	//				particle->Emit();
-	//				particle->particleData_.emitter_.translate = playerAttack->GetWorldPos();
-	//			}
-	//		}
-	//	}
-	//}
-
-	ColliderManager::GetInstance()->CheckAllCollision();
-	
+	DaiEngine::ColliderManager::GetInstance()->CheckAllCollision();
 
 	///
 
@@ -501,7 +447,7 @@ void GameScene::ClearInit() {
 void GameScene::ClearUpdate() {
 	//一定時間たったらタイトルへ
 	if (--finishCount_ <= 0) {
-		SceneManager::GetInstance()->ChangeScene("Title");
+		DaiEngine::SceneManager::GetInstance()->ChangeScene("Title");
 	}
 
 	player_->Update();
@@ -529,7 +475,7 @@ void GameScene::GameOverUpdate() {
 
 	//一定時間たったらタイトルへ
 	if (finishCount_ <= 0) {
-		SceneManager::GetInstance()->ChangeScene("Title");
+		DaiEngine::SceneManager::GetInstance()->ChangeScene("Title");
 	}
 
 
@@ -545,7 +491,7 @@ void GameScene::DebugGUI(){
 	ImGui::Checkbox("GameStop", &isGameStop_);
 
 	if (ImGui::Button("StageFileLoad")) {
-		SceneManager::GetInstance()->ChangeScene("Game");
+		DaiEngine::SceneManager::GetInstance()->ChangeScene("Game");
 	}
 
 	ImGui::End();

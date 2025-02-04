@@ -102,7 +102,7 @@ private:
 	std::unique_ptr<IBossBehavior> behaviorRequest_;
 
 	//登場演出
-	std::map<std::string, std::unique_ptr<GPUParticle>> effect_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> effect_;
 	//攻撃種類
 	AttackType attackType_ = AttackType::kElementBall;
 	//最大HP
@@ -110,7 +110,7 @@ private:
 	//死亡アニメーション終了フラグ
 	bool isFinishDeadMotion_ = false;
 	//攻撃のターゲット(プレイヤー)
-	const WorldTransform* target_ = nullptr;
+	const DaiEngine::WorldTransform* target_ = nullptr;
 	//登場用のパラメータ
 	WorkAppear workAppear_;
 	//攻撃用のパラメータ
@@ -132,11 +132,13 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	Boss() {};
+
+	~Boss() override {}
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="models">モデルのベクター配列</param>
-	void Init(const std::vector<std::shared_ptr<Model>>& models) override;
+	void Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models) override;
 	/// <summary>/
 	/// 更新
 	/// </summary>
@@ -149,12 +151,12 @@ public:
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const Camera& camera) override;
+	void Draw(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// UI描画
 	/// </summary>
@@ -162,10 +164,10 @@ public:
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision(Collider* other) override;
+	void OnCollision(DaiEngine::Collider* other) override;
 	
-	const WorldTransform* GetTarget() { return target_; }
-	void SetTarget(const WorldTransform* target) { target_ = target; }
+	const DaiEngine::WorldTransform* GetTarget() { return target_; }
+	void SetTarget(const DaiEngine::WorldTransform* target) { target_ = target; }
 	
 
 	void SetElementBall(ElementBallManager* elementBall) { elementBall_ = elementBall; }

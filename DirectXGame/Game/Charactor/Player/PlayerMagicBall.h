@@ -64,13 +64,15 @@ private:
 
 
 public:
+
+	~PlayerMagicBall();
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="startPos">開始位置座標</param>
 	/// <param name="direction">発射方向</param>
-	void Init(std::shared_ptr<Model> model);
+	void Init(std::shared_ptr<DaiEngine::Model> model);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -79,16 +81,16 @@ public:
 	/// モデル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const Camera& camera);
+	void Draw(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision(Collider* other);
+	void OnCollision(DaiEngine::Collider* other);
 
 	void StartAttack(const Vector3& startPos, const Vector3& direction);
 	/// <summary>
@@ -100,7 +102,7 @@ public:
 	/// コライダー取得
 	/// </summary>
 	/// <returns>コライダー</returns>
-	SphereCollider* GetCollider() const { return collider_; }
+	DaiEngine::SphereCollider* GetCollider() const { return collider_.get(); }
 	/// <summary>
 	/// ワールド座標取得
 	/// </summary>
@@ -109,9 +111,9 @@ public:
 
 private:
 	//オブジェクト
-	std::unique_ptr<Object3d> obj_;
+	std::unique_ptr<DaiEngine::Object3d> obj_;
 	//衝突判定用
-	SphereCollider* collider_ = nullptr;
+	std::unique_ptr<DaiEngine::SphereCollider> collider_;
 	//スピード
 	float speed_ = 0.5f;
 	//速度
@@ -119,8 +121,8 @@ private:
 	//生存フラグ
 	bool isLife_ = true;
 	//エフェクト
-	std::map<std::string, std::unique_ptr<GPUParticle>> trailEff_;
-	std::map<std::string, std::unique_ptr<GPUParticle>> endEff_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> trailEff_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> endEff_;
 
 	//攻撃開始地点
 	Vector3 startPos_{};

@@ -5,13 +5,17 @@
 #include "ParticleManager.h"
 #include "ColliderManager.h"
 
+Icicle::~Icicle() {
+	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
+}
 
-void Icicle::Init(const std::shared_ptr<Model>& model) {
+void Icicle::Init(const std::shared_ptr<DaiEngine::Model>& model) {
 
-	obj_.reset(Object3d::Create(model));
+	obj_.reset(DaiEngine::Object3d::Create(model));
 
-	collider_ = ColliderManager::CreateSphere();
+	collider_ = std::make_unique<DaiEngine::SphereCollider>();
 	collider_->Init("BossAttack", obj_->worldTransform_, 1.0f);
+	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 
 	///エフェクト設定
@@ -67,11 +71,11 @@ void Icicle::Update() {
 	collider_->Update();
 }
 
-void Icicle::Draw(const Camera& camera) {
+void Icicle::Draw(const DaiEngine::Camera& camera) {
 	obj_->Draw(camera);
 }
 
-void Icicle::DrawParticle(const Camera& camera) {
+void Icicle::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& [group, particle] : createEffect_) {
 		particle->Draw(camera, true);
 	}
@@ -84,7 +88,7 @@ void Icicle::DrawParticle(const Camera& camera) {
 
 }
 
-void Icicle::OnCollision([[maybe_unused]] Collider* other) {
+void Icicle::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
 	phaseRequest_ = Phase::kRoot;
 	isLife_ = false;
 

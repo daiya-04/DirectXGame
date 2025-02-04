@@ -8,9 +8,9 @@ ID3D12GraphicsCommandList* BaseScar::commandList_ = nullptr;
 
 void BaseScar::Init(uint32_t textureHandle) {
 	textureHandle_ = textureHandle;
-	maskTex_ = TextureManager::Load("noise0.png");
+	maskTex_ = DaiEngine::TextureManager::Load("noise0.png");
 	//頂点リソースの生成
-	vertexBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(VertexData) * 4);
+	vertexBuff_ = CreateBufferResource(DaiEngine::DirectXCommon::GetInstance()->GetDevice(), sizeof(VertexData) * 4);
 
 	vertexBufferView_.BufferLocation = vertexBuff_->GetGPUVirtualAddress();
 	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
@@ -18,7 +18,7 @@ void BaseScar::Init(uint32_t textureHandle) {
 	
 	TransferVertex();
 	//インデックスリソースの生成
-	indexBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(uint32_t) * 6);
+	indexBuff_ = CreateBufferResource(DaiEngine::DirectXCommon::GetInstance()->GetDevice(), sizeof(uint32_t) * 6);
 
 	indexBufferView_.BufferLocation = indexBuff_->GetGPUVirtualAddress();
 	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
@@ -30,12 +30,12 @@ void BaseScar::Init(uint32_t textureHandle) {
 	indices[0] = 0;  indices[1] = 1;  indices[2] = 3;
 	indices[3] = 1;  indices[4] = 3;  indices[5] = 2;
 	//ワールド行列リソースの生成
-	worldMatBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(Matrix4x4));
+	worldMatBuff_ = CreateBufferResource(DaiEngine::DirectXCommon::GetInstance()->GetDevice(), sizeof(Matrix4x4));
 	Matrix4x4* MatData = nullptr;
 	worldMatBuff_->Map(0, nullptr, reinterpret_cast<void**>(&MatData));
 	*MatData = MakeIdentity44();
 	//固有データのリソース生成
-	scarDataBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(float));
+	scarDataBuff_ = CreateBufferResource(DaiEngine::DirectXCommon::GetInstance()->GetDevice(), sizeof(float));
 	scarDataBuff_->Map(0, nullptr, reinterpret_cast<void**>(&scarData_));
 }
 
@@ -45,7 +45,7 @@ void BaseScar::Update() {
 
 }
 
-void BaseScar::Draw(const Camera& camera) {
+void BaseScar::Draw(const DaiEngine::Camera& camera) {
 
 	scarData_->threshold_ = threshold_;
 	scarData_->color_ = color_;
@@ -63,8 +63,8 @@ void BaseScar::Draw(const Camera& camera) {
 	//カメラ用のCBufferの場所の設定
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kCamera, camera.GetGPUVirtualAddress());
 	//テクスチャ用のCBufferの場所の設定
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, textureHandle_);
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kMaskTex, maskTex_);
+	DaiEngine::TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, textureHandle_);
+	DaiEngine::TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kMaskTex, maskTex_);
 	//固有データ用のCBufferの場所の設定
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kScarData, scarDataBuff_->GetGPUVirtualAddress());
 	//ドローコール

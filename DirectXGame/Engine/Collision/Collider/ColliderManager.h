@@ -8,36 +8,34 @@
 /// <summary>
 /// コライダー管理クラス
 /// </summary>
-class ColliderManager {
-public:
 
-	static ColliderManager* GetInstance();
+namespace DaiEngine {
+	class ColliderManager {
+	public:
 
-	static SphereCollider* CreateSphere();
-	static OBBCollider* CreateOBB();
+		static ColliderManager* GetInstance();
 
-	void CheckAllCollision();
+		void AddCollider(Collider* collider) { colliders_.push_back(collider); }
 
-	void ColliderClear() { colliders_.clear(); }
-	
-private:
+		void RemoveCollider(Collider* collider);
 
-	SphereCollider* InternalCreateSphere();
-	OBBCollider* internalCreateOBB();
+		void CheckAllCollision();
 
-	bool CheckCollision(Collider* colliderA, Collider* colliderB);
+	private:
 
-private:
-	//コライダーのvector配列
-	std::vector<std::unique_ptr<Collider>> colliders_;
+		bool CheckCollision(Collider* colliderA, Collider* colliderB);
+
+	private:
+		//コライダーのvector配列
+		std::vector<Collider*> colliders_;
 
 
-private:
+	private:
 
-	ColliderManager() = default;
-	~ColliderManager() = default;
-	ColliderManager(const ColliderManager&) = default;
-	ColliderManager& operator=(const ColliderManager&) = default;
+		ColliderManager() = default;
+		~ColliderManager() = default;
+		ColliderManager(const ColliderManager&) = default;
+		ColliderManager& operator=(const ColliderManager&) = default;
 
-};
-
+	};
+}

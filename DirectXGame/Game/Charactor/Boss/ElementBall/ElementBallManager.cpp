@@ -3,17 +3,17 @@
 #include "ParticleManager.h"
 
 
-void ElementBallManager::Init(const std::shared_ptr<Model>& model) {
+void ElementBallManager::Init(const std::shared_ptr<DaiEngine::Model>& model) {
 
 
 	for (size_t index = 0; index < elementBalls_.size(); index++) {
 		elementBalls_[index] = std::make_unique<ElementBall>();
 		elementBalls_[index]->Init(model);
-		elementBalls_[index]->GetCollider()->SetCallbackFunc([this, number = index](Collider* other) {this->OnCollision(number, other); });
+		elementBalls_[index]->GetCollider()->SetCallbackFunc([this, number = index](DaiEngine::Collider* other) {this->OnCollision(number, other); });
 	}
 
 	for (auto& burnScars : burnScareses_) {
-		burnScars.reset(BurnScar::Create(TextureManager::Load("BurnScars.png")));
+		burnScars.reset(BurnScar::Create(DaiEngine::TextureManager::Load("BurnScars.png")));
 	}
 
 
@@ -73,7 +73,7 @@ void ElementBallManager::Update() {
 
 }
 
-void ElementBallManager::Draw(const Camera& camera) {
+void ElementBallManager::Draw(const DaiEngine::Camera& camera) {
 
 	for (auto& elementBall : elementBalls_) {
 		elementBall->Draw(camera);
@@ -81,7 +81,7 @@ void ElementBallManager::Draw(const Camera& camera) {
 
 }
 
-void ElementBallManager::DrawParticle(const Camera& camera) {
+void ElementBallManager::DrawParticle(const DaiEngine::Camera& camera) {
 
 	for (auto& elementBall : elementBalls_) {
 		elementBall->DrawParticle(camera);
@@ -97,7 +97,7 @@ void ElementBallManager::DrawParticle(const Camera& camera) {
 
 }
 
-void ElementBallManager::DrawBurnScars(const Camera& camera) {
+void ElementBallManager::DrawBurnScars(const DaiEngine::Camera& camera) {
 
 	for (auto& burnScars : burnScareses_) {
 		burnScars->Draw(camera);
@@ -105,7 +105,7 @@ void ElementBallManager::DrawBurnScars(const Camera& camera) {
 
 }
 
-void ElementBallManager::OnCollision(size_t index, Collider* other) {
+void ElementBallManager::OnCollision(size_t index, DaiEngine::Collider* other) {
 
 	if (other->GetTag() == "Player" || other->GetTag() == "Ground") {
 		elementBalls_[index]->OnCollision(other);

@@ -7,30 +7,30 @@
 #include <map>
 #include "Animation.h"
 
-class AnimationManager {
+namespace DaiEngine {
+	class AnimationManager {
+	public:
+
+		static AnimationManager* GetInstance();
+
+		static DaiEngine::Animation Load(const std::string& filename);
 
 
-public:
+	private:
 
-	static AnimationManager* GetInstance();
+		DaiEngine::Animation LoadInterval(const std::string& filename);
 
-	static Animation Load(const std::string& filename);
+	private:
 
+		std::vector<DaiEngine::Animation> animations_;
 
-private:
+	private:
 
-	Animation LoadInterval(const std::string& filename);
-	
-private:
+		AnimationManager() = default;
+		~AnimationManager() = default;
+		AnimationManager(const AnimationManager&) = default;
+		AnimationManager& operator=(const AnimationManager&) = default;
 
-	std::vector<Animation> animations_;
-
-private:
-
-	AnimationManager() = default;
-	~AnimationManager() = default;
-	AnimationManager(const AnimationManager&) = default;
-	AnimationManager& operator=(const AnimationManager&) = default;
-
-};
+	};
+}
 

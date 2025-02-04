@@ -13,7 +13,7 @@
 TitleScene::~TitleScene() {}
 
 void TitleScene::SetGlobalVariables() {
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	DaiEngine::GlobalVariables* globalVariables = DaiEngine::GlobalVariables::GetInstance();
 
 	//タイトル文字の調整項目追加
 	std::string groupName = "TitleText";
@@ -41,7 +41,7 @@ void TitleScene::SetGlobalVariables() {
 }
 
 void TitleScene::ApplyGlobalVariables() {
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	DaiEngine::GlobalVariables* globalVariables = DaiEngine::GlobalVariables::GetInstance();
 	//タイトル文字のパラメータ設定
 	std::string groupName = "TitleText";
 	titleText_->worldTransform_.translation_ = globalVariables->GetVec3Value(groupName, "Translation");
@@ -76,33 +76,33 @@ void TitleScene::Init() {
 	//スポットライト初期化
 	spotLight_.Init();
 	//Object3dクラスにライトのセット
-	Object3d::SetPointLight(&pointLight_);
-	Object3d::SetSpotLight(&spotLight_);
+	DaiEngine::Object3d::SetPointLight(&pointLight_);
+	DaiEngine::Object3d::SetSpotLight(&spotLight_);
 
 	///テクスチャ読み込み
-	uint32_t AbuttonTex = TextureManager::Load("AButton.png");
-	uint32_t backGroundTex = TextureManager::Load("Black.png");
-	uint32_t AbuttonEffectTex = TextureManager::Load("ButtonEffect.png");
-	uint32_t fadeSpriteTex = TextureManager::Load("white.png");
+	uint32_t AbuttonTex = DaiEngine::TextureManager::Load("AButton.png");
+	uint32_t backGroundTex = DaiEngine::TextureManager::Load("Black.png");
+	uint32_t AbuttonEffectTex = DaiEngine::TextureManager::Load("ButtonEffect.png");
+	uint32_t fadeSpriteTex = DaiEngine::TextureManager::Load("white.png");
 	///
 
 	//モデル読み込み
-	std::shared_ptr<Model> titleTextModel = ModelManager::LoadOBJ("TitleText");
+	std::shared_ptr<DaiEngine::Model> titleTextModel = DaiEngine::ModelManager::LoadOBJ("TitleText");
 
 	//タイトル文字初期化
-	titleText_.reset(Object3d::Create(titleTextModel));
+	titleText_.reset(DaiEngine::Object3d::Create(titleTextModel));
 	
 	//背景初期化
-	backGround_.reset(Sprite::Create(backGroundTex, { WinApp::kClientWidth / 2.0f, WinApp::kClientHeight / 2.0f }));
-	backGround_->SetSize(Vector2(WinApp::kClientWidth, WinApp::kClientHeight));
+	backGround_.reset(DaiEngine::Sprite::Create(backGroundTex, { DaiEngine::WinApp::kClientWidth / 2.0f,DaiEngine::WinApp::kClientHeight / 2.0f }));
+	backGround_->SetSize(Vector2(DaiEngine::WinApp::kClientWidth, DaiEngine::WinApp::kClientHeight));
 
 	//フェード用スプライト初期化
-	fadeSprite_.reset(Sprite::Create(fadeSpriteTex, { WinApp::kClientWidth / 2.0f, WinApp::kClientHeight / 2.0f }));
-	fadeSprite_->SetSize(Vector2(WinApp::kClientWidth, WinApp::kClientHeight));
+	fadeSprite_.reset(DaiEngine::Sprite::Create(fadeSpriteTex, { DaiEngine::WinApp::kClientWidth / 2.0f,DaiEngine::WinApp::kClientHeight / 2.0f }));
+	fadeSprite_->SetSize(Vector2(DaiEngine::WinApp::kClientWidth, DaiEngine::WinApp::kClientHeight));
 
 	//AボタンUI初期化
-	Abutton_.reset(Sprite::Create(AbuttonTex, {}));
-	AbuttonEff_.reset(Sprite::Create(AbuttonEffectTex, {}));
+	Abutton_.reset(DaiEngine::Sprite::Create(AbuttonTex, {}));
+	AbuttonEff_.reset(DaiEngine::Sprite::Create(AbuttonEffectTex, {}));
 
 	///エフェクト読み込み
 	//道
@@ -130,20 +130,20 @@ void TitleScene::Update() {
 
 #ifdef _DEBUG
 	//デバッグ用シーン切り替えコマンド
-	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_2)) {
-		SceneManager::GetInstance()->ChangeScene("Game");
+	if (DaiEngine::Input::GetInstance()->PushKey(DIK_LCONTROL) && DaiEngine::Input::GetInstance()->TriggerKey(DIK_2)) {
+		DaiEngine::SceneManager::GetInstance()->ChangeScene("Game");
 	}
-	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_3)) {
-		SceneManager::GetInstance()->ChangeScene("Debug");
+	if (DaiEngine::Input::GetInstance()->PushKey(DIK_LCONTROL) && DaiEngine::Input::GetInstance()->TriggerKey(DIK_3)) {
+		DaiEngine::SceneManager::GetInstance()->ChangeScene("Debug");
 	}
 	//デバッグ用ゲーム開始演出開始
-	if (Input::GetInstance()->TriggerKey(DIK_H)) {
+	if (DaiEngine::Input::GetInstance()->TriggerKey(DIK_H)) {
 		warpTransitionParam_.isTransition_ = true;
 	}
 
 #endif // _DEBUG
 	//Aボタンでゲーム開始
-	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::A)) {
 		warpTransitionParam_.isTransition_ = true;
 	}
 
@@ -288,7 +288,7 @@ void TitleScene::WarpTransitionUpdate() {
 
 	//演出が終わったらシーンチェンジ
 	if (warpTransitionParam_.param_ >= 1.0f) {
-		SceneManager::GetInstance()->ChangeScene("Game");
+		DaiEngine::SceneManager::GetInstance()->ChangeScene("Game");
 	}
 
 }

@@ -13,36 +13,38 @@ struct CBufferDataPointLight {
 	float padding[2];
 };
 
-class PointLight{
-private:
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+namespace DaiEngine {
+	class PointLight {
+	private:
+		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-public:
+	public:
 
-	void Init();
-	void Update();
+		void Init();
+		void Update();
 
-	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {
-		return cBuffer_->GetGPUVirtualAddress();
-	}
+		D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {
+			return cBuffer_->GetGPUVirtualAddress();
+		}
 
-private:
+	private:
 
-	void CreateCBuffer();
-	void Map();
+		void CreateCBuffer();
+		void Map();
 
-public:
+	public:
 
-	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
-	Vector3 position_ = {};
-	float intensity_ = 0.0f;
-	float radius_ = 5.0f;
-	float decay_ = 1.0f;
+		Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
+		Vector3 position_ = {};
+		float intensity_ = 0.0f;
+		float radius_ = 5.0f;
+		float decay_ = 1.0f;
 
-private:
+	private:
 
-	ComPtr<ID3D12Resource> cBuffer_;
-	CBufferDataPointLight* cMap_ = nullptr;
+		ComPtr<ID3D12Resource> cBuffer_;
+		CBufferDataPointLight* cMap_ = nullptr;
 
-};
+	};
+}
 

@@ -8,28 +8,29 @@
 class WinApp;
 class DirectXCommon;
 
-class ImGuiManager{
-public:
+namespace DaiEngine {
+	class ImGuiManager {
+	public:
 
-	static ImGuiManager* GetInstance();
+		static ImGuiManager* GetInstance();
 
-	//初期化
-	void Initialize();
-	//ImGuiの受付開始
-	void Begin();
-	//ImGui受付終了
-	void End();
-	//画面への描画
-	void Draw();
-	//解放
-	void Finalize();
+		//初期化
+		void Initialize();
+		//ImGuiの受付開始
+		void Begin();
+		//ImGui受付終了
+		void End();
+		//画面への描画
+		void Draw();
+		//解放
+		void Finalize();
 
-private:
+	private:
 
-	ImGuiManager() = default;
-	~ImGuiManager() = default;
-	ImGuiManager(const ImGuiManager&) = delete;
-	ImGuiManager& operator=(const ImGuiManager&) = delete;
+		ImGuiManager() = default;
+		~ImGuiManager() = default;
+		ImGuiManager(const ImGuiManager&) = delete;
+		ImGuiManager& operator=(const ImGuiManager&) = delete;
 
-};
-
+	};
+}

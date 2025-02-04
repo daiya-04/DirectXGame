@@ -5,13 +5,17 @@
 #include "ParticleManager.h"
 #include "ColliderManager.h"
 
+PlasmaShot::~PlasmaShot() {
+	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
+}
 
-void PlasmaShot::Init(const std::shared_ptr<Model>& model) {
+void PlasmaShot::Init(const std::shared_ptr<DaiEngine::Model>& model) {
 
-	obj_.reset(Object3d::Create(model));
+	obj_.reset(DaiEngine::Object3d::Create(model));
 
-	collider_ = ColliderManager::CreateSphere();
+	collider_ = std::make_unique<DaiEngine::SphereCollider>();
 	collider_->Init("BossAttack", obj_->worldTransform_, 0.5f);
+	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 	///エフェクト設定
 
@@ -59,11 +63,11 @@ void PlasmaShot::Update() {
 	collider_->Update();
 }
 
-void PlasmaShot::Draw(const Camera& camera) {
+void PlasmaShot::Draw(const DaiEngine::Camera& camera) {
 	obj_->Draw(camera);
 }
 
-void PlasmaShot::DrawParticle(const Camera& camera) {
+void PlasmaShot::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& [group, particle] : hitEff_) {
 		particle->Draw(camera);
 	}
@@ -76,7 +80,7 @@ void PlasmaShot::DrawParticle(const Camera& camera) {
 }
 
 
-void PlasmaShot::OnCollision([[maybe_unused]] Collider* other) {
+void PlasmaShot::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
 	phaseRequest_ = Phase::kRoot;
 	isLife_ = false;
 

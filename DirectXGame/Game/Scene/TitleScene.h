@@ -24,7 +24,7 @@
 
 
 //タイトルシーンクラス
-class TitleScene : public IScene {
+class TitleScene : public DaiEngine::IScene {
 public:
 	/// <summary>
 	/// 初期化
@@ -99,29 +99,29 @@ private:
 
 private:
 	//カメラ
-	Camera camera_;
+	DaiEngine::Camera camera_;
 	//ポイントライト
-	PointLight pointLight_;
+	DaiEngine::PointLight pointLight_;
 	//スポットライト
-	SpotLight spotLight_;
+	DaiEngine::SpotLight spotLight_;
 	//背景
-	std::unique_ptr<Sprite> backGround_;
+	std::unique_ptr<DaiEngine::Sprite> backGround_;
 	//AボタンUI
-	std::unique_ptr<Sprite> Abutton_;
+	std::unique_ptr<DaiEngine::Sprite> Abutton_;
 	//AボタンUIエフェクト
-	std::unique_ptr<Sprite> AbuttonEff_;
+	std::unique_ptr<DaiEngine::Sprite> AbuttonEff_;
 	//ワープホールまでの道
-	std::map<std::string, std::unique_ptr<GPUParticle>> runWay_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> runWay_;
 	//道の座標
 	Vector3 runWayPos_{ 0.0f,-1.0f,0.0f };
 	//ワープホール
-	std::map<std::string, std::unique_ptr<GPUParticle>> warpHole_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> warpHole_;
 	//ワープホールの位置座標
 	Vector3 warpHolePos_ = {};
 	//タイトル文字(3D)
-	std::unique_ptr<Object3d> titleText_;
+	std::unique_ptr<DaiEngine::Object3d> titleText_;
 	//開始演出に使うフェード用スプライト
-	std::unique_ptr<Sprite> fadeSprite_;
+	std::unique_ptr<DaiEngine::Sprite> fadeSprite_;
 
 private://パラメータまとめたやつら
 

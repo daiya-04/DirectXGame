@@ -57,9 +57,9 @@ private: //メンバ変数
 
 	///エフェクト
 	//着弾時
-	std::map<std::string, std::unique_ptr<GPUParticle>> impact_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> impact_;
 	//跡から出てくる火の粉
-	std::map<std::string, std::unique_ptr<GPUParticle>> residual_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> residual_;
 
 public: //メンバ関数
 
@@ -80,12 +80,12 @@ public: //メンバ関数
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const Camera& camera) override;
+	void Draw(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera"></param>
-	void DrawParticle(const Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// 演出開始
 	/// </summary>

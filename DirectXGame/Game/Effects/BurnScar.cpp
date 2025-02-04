@@ -134,7 +134,7 @@ void BurnScar::StaticInit(ID3D12Device* device, ID3D12GraphicsCommandList* comma
 	//三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
-	DXCompiler* dxCompiler = DXCompiler::GetInstance();
+	DaiEngine::DXCompiler* dxCompiler = DaiEngine::DXCompiler::GetInstance();
 
 	//Shaderをコンパイルする
 	ComPtr<IDxcBlob> verterShaderBlob = dxCompiler->ShaderCompile(L"Scar.VS.hlsl", L"vs_6_0");
@@ -222,6 +222,7 @@ void BurnScar::Update() {
 		particle->Update();
 	}
 	for (auto& [group, particle] : residual_) {
+		particle->particleData_.emitter_.translate = position_;
 		particle->Update();
 	}
 
@@ -250,7 +251,7 @@ void BurnScar::EffectUpdate() {
 
 }
 
-void BurnScar::Draw(const Camera& camera) {
+void BurnScar::Draw(const DaiEngine::Camera& camera) {
 
 	if (!isEffect_) { return; }
 
@@ -258,7 +259,7 @@ void BurnScar::Draw(const Camera& camera) {
 
 }
 
-void BurnScar::DrawParticle(const Camera& camera) {
+void BurnScar::DrawParticle(const DaiEngine::Camera& camera) {
 
 	for (auto& [group, particle] : impact_) {
 		particle->Draw(camera);
@@ -277,7 +278,6 @@ void BurnScar::EffectStart(const Vector3& pos) {
 		particle->Emit();
 	}
 	for (auto& [group, particle] : residual_) {
-		particle->particleData_.emitter_.translate = position_;
 		particle->particleData_.isLoop_ = true;
 	}
 

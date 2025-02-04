@@ -1,15 +1,20 @@
 #include "Ground.h"
 #include "ColliderManager.h"
 
-void Ground::Init(std::shared_ptr<Model> model){
+Ground::~Ground() {
+	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
+}
+
+void Ground::Init(std::shared_ptr<DaiEngine::Model> model){
 
 	//オブジェクト生成
-	obj_.reset(Object3d::Create(model));
+	obj_.reset(DaiEngine::Object3d::Create(model));
 
-	collider_ = ColliderManager::CreateOBB();
+	collider_ = std::make_unique<DaiEngine::OBBCollider>();
 	collider_->Init("Ground", obj_->worldTransform_, {});
-	collider_->SetCallbackFunc([this](Collider* other) {this->OnCollision(other); });
+	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->ColliderOn();
+	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 }
 
@@ -20,7 +25,7 @@ void Ground::Update(){
 	collider_->Update(rotateMat_);
 }
 
-void Ground::Draw(const Camera& camera){
+void Ground::Draw(const DaiEngine::Camera& camera){
 
 	obj_->Draw(camera);
 
@@ -38,6 +43,6 @@ void Ground::SetData(const LevelData::ObjectData& data) {
 	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
 }
 
-void Ground::OnCollision([[maybe_unused]] Collider* other) {
+void Ground::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
 
 }

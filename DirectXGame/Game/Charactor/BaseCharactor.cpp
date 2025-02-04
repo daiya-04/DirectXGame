@@ -2,20 +2,28 @@
 
 #include "AnimationManager.h"
 #include "ShapesDraw.h"
+#include "ColliderManager.h"
 
-void BaseCharactor::Init(const std::vector<std::shared_ptr<Model>>& models) {
+BaseCharactor::~BaseCharactor() {
+	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
+}
+
+void BaseCharactor::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models) {
 
 	animationModels_ = models;
 
 	//モデルやアニメーションの設定
-	obj_.reset(SkinningObject::Create(animationModels_[actionIndex_]));
+	obj_.reset(DaiEngine::SkinningObject::Create(animationModels_[actionIndex_]));
 	skinClusters_.resize(animationModels_.size());
 	for (size_t index = 0; index < animationModels_.size(); index++) {
-		animations_.emplace_back(AnimationManager::Load(animationModels_[index]->name_));
-		skeletons_.emplace_back(Skeleton::Create(animationModels_[index]->rootNode_));
+		animations_.emplace_back(DaiEngine::AnimationManager::Load(animationModels_[index]->name_));
+		skeletons_.emplace_back(DaiEngine::Skeleton::Create(animationModels_[index]->rootNode_));
 		skinClusters_[index].Create(skeletons_[index], animationModels_[index]);
 	}
 	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
+
+	collider_ = std::make_unique<DaiEngine::OBBCollider>();
+	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 }
 
@@ -45,7 +53,7 @@ void BaseCharactor::UpdateCenterPos() {
 	};
 }
 
-void BaseCharactor::Draw(const Camera& camera) {
+void BaseCharactor::Draw(const DaiEngine::Camera& camera) {
 
 #ifdef _DEBUG
 	//衝突範囲の可視化

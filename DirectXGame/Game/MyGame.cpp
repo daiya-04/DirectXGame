@@ -12,16 +12,16 @@
 
 void MyGame::Init(){
 	//エンジン層の初期化
-	DSFramework::Init();
+	DaiEngine::DSFramework::Init();
 	//ゲーム固有のパイプラインの生成
-	BurnScar::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
-	IceScar::StaticInit(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
+	BurnScar::StaticInit(DaiEngine::DirectXCommon::GetInstance()->GetDevice(), DaiEngine::DirectXCommon::GetInstance()->GetCommandList());
+	IceScar::StaticInit(DaiEngine::DirectXCommon::GetInstance()->GetDevice(), DaiEngine::DirectXCommon::GetInstance()->GetCommandList());
 
 }
 
 void MyGame::Update(){
 	//エンジン層の更新
-	DSFramework::Update();
+	DaiEngine::DSFramework::Update();
 
 	///ゲーム固有処理
 
@@ -29,16 +29,16 @@ void MyGame::Update(){
 	
 	///
 	//ImGuiの終了
-	ImGuiManager::GetInstance()->End();
+	DaiEngine::ImGuiManager::GetInstance()->End();
 }
 
 void MyGame::Draw(){
 	//描画
-	SceneManager::GetInstance()->Draw(DirectXCommon::GetInstance()->GetCommandList());
+	DaiEngine::SceneManager::GetInstance()->Draw(DaiEngine::DirectXCommon::GetInstance()->GetCommandList());
 
 }
 
 void MyGame::Finalize(){
 	//エンジン層の解放
-	DSFramework::Finalize();
+	DaiEngine::DSFramework::Finalize();
 }

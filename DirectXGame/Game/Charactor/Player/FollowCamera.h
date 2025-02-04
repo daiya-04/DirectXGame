@@ -14,9 +14,9 @@
 class FollowCamera{
 private:
 	//カメラ
-	Camera camera_;
+	DaiEngine::Camera camera_;
 	//追従先
-	const WorldTransform* target_ = nullptr;
+	const DaiEngine::WorldTransform* target_ = nullptr;
 
 	//追従対象の残像座標
 	Vector3 interTarget_{};
@@ -48,12 +48,12 @@ public:
 	/// ターゲットセット
 	/// </summary>
 	/// <param name="target">追従先のワールドトランスフォーム</param>
-	void SetTarget(const WorldTransform* target);
+	void SetTarget(const DaiEngine::WorldTransform* target);
 	/// <summary>
 	/// カメラ情報取得
 	/// </summary>
 	/// <returns>カメラ</returns>
-	Camera& GetCamera() { return camera_; }
+	DaiEngine::Camera& GetCamera() { return camera_; }
 
 };
 

@@ -21,7 +21,7 @@ void PlayerKnockBack::Update() {
 
 	if (!player_->GetNowAnimation().IsPlaying()) {
 		//スティック入力がされたままだったらJogStateへ
-		if (Input::GetInstance()->TiltLStick(Input::Stick::All)) {
+		if (DaiEngine::Input::GetInstance()->TiltLStick(DaiEngine::Input::Stick::All)) {
 			player_->ChangeBehavior("Jog");
 		}else {
 			player_->ChangeBehavior("Idel");

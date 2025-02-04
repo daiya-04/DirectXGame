@@ -3,12 +3,12 @@
 #include "Hit.h"
 
 
-void PlasmaShotManager::Init(const std::shared_ptr<Model>& model) {
+void PlasmaShotManager::Init(const std::shared_ptr<DaiEngine::Model>& model) {
 	//電気玉生成
 	for (size_t index = 0; index < plasmaShots_.size(); index++) {
 		plasmaShots_[index] = std::make_unique<PlasmaShot>();
 		plasmaShots_[index]->Init(model);
-		plasmaShots_[index]->GetCollider()->SetCallbackFunc([this, number = index](Collider* other) {this->OnCollision(number, other); });
+		plasmaShots_[index]->GetCollider()->SetCallbackFunc([this, number = index](DaiEngine::Collider* other) {this->OnCollision(number, other); });
 	}
 
 	isAttack_ = false;
@@ -29,7 +29,7 @@ void PlasmaShotManager::Update() {
 
 }
 
-void PlasmaShotManager::Draw(const Camera& camera) {
+void PlasmaShotManager::Draw(const DaiEngine::Camera& camera) {
 	if (!isAttack_) { return; }
 
 	for (auto& plasmaShot : plasmaShots_) {
@@ -37,7 +37,7 @@ void PlasmaShotManager::Draw(const Camera& camera) {
 	}
 }
 
-void PlasmaShotManager::DrawParticle(const Camera& camera) {
+void PlasmaShotManager::DrawParticle(const DaiEngine::Camera& camera) {
 
 	for (auto& plasmaShot : plasmaShots_) {
 		plasmaShot->DrawParticle(camera);
@@ -45,7 +45,7 @@ void PlasmaShotManager::DrawParticle(const Camera& camera) {
 
 }
 
-void PlasmaShotManager::OnCollision(size_t index, Collider* other) {
+void PlasmaShotManager::OnCollision(size_t index, DaiEngine::Collider* other) {
 	if (other->GetTag() == "Player" || other->GetTag() == "Ground") {
 		plasmaShots_[index]->OnCollision(other);
 	}

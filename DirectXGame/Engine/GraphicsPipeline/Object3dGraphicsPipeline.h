@@ -9,7 +9,7 @@
 
 #include "BaseGraphicsPipeline.h"
 
-class Object3dGraphicsPipeline : public BaseGraphicsPipeline {
+class Object3dGraphicsPipeline : public DaiEngine::BaseGraphicsPipeline {
 public:
 	/// <summary>
 	/// 初期化

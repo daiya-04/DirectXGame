@@ -10,16 +10,16 @@ public:
 
 	static ParticleManager* GetInstance();
 	//データファイルの読み込み
-	static std::map<std::string, std::unique_ptr<GPUParticle>> Load(const std::string& fileName);
+	static std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> Load(const std::string& fileName);
 
 private:
 	//データファイルの読み込み
-	std::map<std::string, std::unique_ptr<GPUParticle>> LoadInternal(const std::string& fileName);
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> LoadInternal(const std::string& fileName);
 
 private:
 
 	struct Data {
-		std::map<std::string, GPUParticle::ParticleData> particle;
+		std::map<std::string, DaiEngine::GPUParticle::ParticleData> particle;
 	};
 
 	std::map<std::string,Data> datas_;

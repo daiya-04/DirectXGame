@@ -67,7 +67,7 @@ public:
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const Camera& camera) override;
+	void Draw(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// 演出開始
 	/// </summary>
