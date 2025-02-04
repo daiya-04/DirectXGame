@@ -68,10 +68,6 @@ namespace DaiEngine {
 
 		ImGui::Text("Frame rate: %6.2f fps", ImGui::GetIO().Framerate);
 
-		ImGui::Text("SrvHeapCount : %d", DirectXCommon::GetInstance()->GetSrvHeapCount());
-		ImGui::Text("DsvHeapCount : %d", DirectXCommon::GetInstance()->GetDsvHeapCount());
-		ImGui::Text("RtvHeapCount : %d", DirectXCommon::GetInstance()->GetRtvHeapCount());
-
 		ImGui::End();
 
 
