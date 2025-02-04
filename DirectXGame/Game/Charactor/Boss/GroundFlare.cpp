@@ -5,12 +5,16 @@
 #include "ParticleManager.h"
 #include "ColliderManager.h"
 
-void GroundFlare::Init(std::shared_ptr<Model> model) {
+GroundFlare::~GroundFlare() {
+	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
+}
+
+void GroundFlare::Init(std::shared_ptr<DaiEngine::Model> model) {
 
 	worldtransform_.Init();
 
 	for (auto& warningZone : warningZones_) {
-		warningZone.reset(Object3d::Create(model));
+		warningZone.reset(DaiEngine::Object3d::Create(model));
 	}
 
 	for (auto& fire : fires_) {
@@ -20,10 +24,11 @@ void GroundFlare::Init(std::shared_ptr<Model> model) {
 		}
 	}
 
-	collider_ = ColliderManager::CreateOBB();
+	collider_ = std::make_unique<DaiEngine::OBBCollider>();
 	collider_->Init("BossAttack", worldtransform_, Vector3(2.0, 3.0f, 2.0f));
 	collider_->SetPosition(Vector3(0.0, collider_->GetSize().y, 0.0f));
-	collider_->SetCallbackFunc([this](Collider* other) {this->OnCollision(other); });
+	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
+	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 	//中心を基準にした発射位置のオフセット
 	offset_[0] = {}; //中心
@@ -72,7 +77,7 @@ void GroundFlare::Update() {
 	collider_->Update(rotateMat_);
 }
 
-void GroundFlare::Draw(const Camera& camera) {
+void GroundFlare::Draw(const DaiEngine::Camera& camera) {
 
 	if (phase_==Phase::kWarning) {
 		for (auto& warningZone : warningZones_) {
@@ -82,7 +87,7 @@ void GroundFlare::Draw(const Camera& camera) {
 
 }
 
-void GroundFlare::DrawParticle(const Camera& camera) {
+void GroundFlare::DrawParticle(const DaiEngine::Camera& camera) {
 
 	for (auto& fire : fires_) {
 		for (auto& [group, particle] : fire) {
@@ -92,7 +97,7 @@ void GroundFlare::DrawParticle(const Camera& camera) {
 
 }
 
-void GroundFlare::OnCollision([[maybe_unused]] Collider* other) {
+void GroundFlare::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
 	if (other->GetTag() == "Player") {
 		isHit_ = false;
 		collider_->ColliderOff();

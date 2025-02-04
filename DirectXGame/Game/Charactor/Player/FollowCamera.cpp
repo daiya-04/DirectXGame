@@ -18,7 +18,7 @@ void FollowCamera::Update(){
 	const float rotateMax = 45.0f;
 	const float rotateMin = -5.0f;
 
-	camera_.rotation_ += Input::GetInstance()->GetCameraRotate() * rotateSpeed;
+	camera_.rotation_ += DaiEngine::Input::GetInstance()->GetCameraRotate() * rotateSpeed;
 	//角度制限
 	camera_.rotation_.x = min(camera_.rotation_.x, rotateMax * std::numbers::pi_v<float> / 180.0f);
 	camera_.rotation_.x = max(camera_.rotation_.x, -rotateMin * std::numbers::pi_v<float> / 180.0f);
@@ -68,7 +68,7 @@ Vector3 FollowCamera::OffsetCalc() const {
 	return offset;
 }
 
-void FollowCamera::SetTarget(const WorldTransform* target) {
+void FollowCamera::SetTarget(const DaiEngine::WorldTransform* target) {
 	target_ = target;
 	//オフセット計算
 	Vector3 offset = OffsetCalc();

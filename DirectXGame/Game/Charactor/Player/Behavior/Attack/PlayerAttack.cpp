@@ -36,7 +36,7 @@ void PlayerAttack::Update() {
 
 	//1コンボ目、2コンボ目だったら入力を受け付ける
 	if (comboIndex_ < comboNum_ - 1) {
-		if (Input::GetInstance()->TriggerButton(Input::Button::X)) {
+		if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::X)) {
 			comboNext_ = true;
 		}
 	}
@@ -70,7 +70,7 @@ void PlayerAttack::Update() {
 		else {
 			//続かないなら...
 			//スティック入力がされたままだったらJogStateへ
-			if (Input::GetInstance()->TiltLStick(Input::Stick::All)) {
+			if (DaiEngine::Input::GetInstance()->TiltLStick(DaiEngine::Input::Stick::All)) {
 				player_->ChangeBehavior("Jog");
 			}
 			else {

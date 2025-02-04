@@ -44,7 +44,7 @@
 #include "Rock.h"
 
 //ゲームシーンクラス
-class GameScene : public IScene {
+class GameScene : public DaiEngine::IScene {
 public:
 	/// <summary>
 	/// 初期化
@@ -97,18 +97,19 @@ public:
 
 private:
 	//カメラ
-	Camera camera_;
+	DaiEngine::Camera camera_;
 	//ポイントライト
-	PointLight pointLight_;
+	DaiEngine::PointLight pointLight_;
 	//スポットライト
-	SpotLight spotLight_;
-
+	DaiEngine::SpotLight spotLight_;
 	//地面
 	std::unique_ptr<Ground> ground_;
+
+	std::array<std::unique_ptr<BaseCharactor>, 2> charactors_;
 	//プレイヤー
-	std::unique_ptr<Player> player_;
+	Player* player_ = nullptr;
 	//ボス
-	std::unique_ptr<Boss> boss_;
+	Boss* boss_ = nullptr;
 	//岩
 	std::vector<std::unique_ptr<Rock>> rocks_;
 	//追従カメラ
@@ -120,17 +121,17 @@ private:
 
 	///UI
 	//Xボタン
-	std::unique_ptr<Sprite> XButton_;
+	std::unique_ptr<DaiEngine::Sprite> XButton_;
 	//Aボタン
-	std::unique_ptr<Sprite> AButton_;
+	std::unique_ptr<DaiEngine::Sprite> AButton_;
 	//攻撃文字
-	std::unique_ptr<Sprite> char_Attack_;
+	std::unique_ptr<DaiEngine::Sprite> char_Attack_;
 	//走る文字
-	std::unique_ptr<Sprite> char_Dash_;
+	std::unique_ptr<DaiEngine::Sprite> char_Dash_;
 	//ゲームオーバー文字
-	std::unique_ptr<Sprite> gameOver_;
+	std::unique_ptr<DaiEngine::Sprite> gameOver_;
 	//終了文字
-	std::unique_ptr<Sprite> finish_;
+	std::unique_ptr<DaiEngine::Sprite> finish_;
 	///
 
 	//ゲームオーバー文字のフェード用α値
@@ -160,9 +161,16 @@ private:
 	bool isGameStop_ = false;
 
 	//スカイボックス
-	std::unique_ptr<SkyBox> skyBox_;
+	std::unique_ptr<DaiEngine::SkyBox> skyBox_;
 
 private:
+
+	enum class CharactorType {
+		kPlayer,
+		kBoss,
+	};
+
+
 	//シーンイベント
 	enum class SceneEvent {
 		//バトル

@@ -1,9 +1,9 @@
 #include "Rock.h"
 
 
-void Rock::Init(const std::shared_ptr<Model>& model) {
+void Rock::Init(const std::shared_ptr<DaiEngine::Model>& model) {
 	//オブジェクト生成
-	obj_.reset(Object3d::Create(model));
+	obj_.reset(DaiEngine::Object3d::Create(model));
 
 }
 
@@ -13,7 +13,7 @@ void Rock::Update() {
 	obj_->worldTransform_.UpdateMatrix();
 }
 
-void Rock::Draw(const Camera& camera) {
+void Rock::Draw(const DaiEngine::Camera& camera) {
 	obj_->Draw(camera);
 }
 

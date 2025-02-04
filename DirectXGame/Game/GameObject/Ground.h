@@ -19,17 +19,19 @@
 class Ground{
 private:
 	//オブジェクト
-	std::unique_ptr<Object3d> obj_;
+	std::unique_ptr<DaiEngine::Object3d> obj_;
 
-	OBBCollider* collider_ = nullptr;
+	std::unique_ptr<DaiEngine::OBBCollider> collider_;
 	Matrix4x4 rotateMat_ = MakeIdentity44();
 
 public:
+
+	~Ground();
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(std::shared_ptr<Model> model);
+	void Init(std::shared_ptr<DaiEngine::Model> model);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -38,14 +40,14 @@ public:
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const Camera& camera);
+	void Draw(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// データのセット
 	/// </summary>
 	/// <param name="data">オブジェクトデータ</param>
 	void SetData(const LevelData::ObjectData& data);
 
-	void OnCollision(Collider* other);
+	void OnCollision(DaiEngine::Collider* other);
 
 };
 

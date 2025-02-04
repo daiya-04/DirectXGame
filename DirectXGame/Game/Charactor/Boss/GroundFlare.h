@@ -101,11 +101,13 @@ private:
 
 
 public:
+
+	~GroundFlare();
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(std::shared_ptr<Model> model);
+	void Init(std::shared_ptr<DaiEngine::Model> model);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -114,16 +116,16 @@ public:
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const Camera& camera);
+	void Draw(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision(Collider* other);
+	void OnCollision(DaiEngine::Collider* other);
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>
@@ -137,7 +139,7 @@ public:
 	/// コライダー取得
 	/// </summary>
 	/// <returns>コライダー</returns>
-	OBBCollider* GetCollider() const { return collider_; }
+	DaiEngine::OBBCollider* GetCollider() const { return collider_.get(); }
 	/// <summary>
 	/// フラグ取得
 	/// </summary>
@@ -165,19 +167,19 @@ private:
 	//噴射する数
 	static const uint32_t flareNum_ = 5;
 	//エフェクト
-	std::array<std::map<std::string, std::unique_ptr<GPUParticle>>, flareNum_> fires_;
+	std::array<std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>>, flareNum_> fires_;
 
 	//警告の円
-	std::array<std::unique_ptr<Object3d>, flareNum_> warningZones_;
+	std::array<std::unique_ptr<DaiEngine::Object3d>, flareNum_> warningZones_;
 	//警告円のオフセット
 	std::array<Vector3, flareNum_> offset_;
 	//オフセットの距離
 	const float offsetLength_ = 1.5f;
 	//コライダー
-	OBBCollider* collider_ = nullptr;
+	std::unique_ptr<DaiEngine::OBBCollider> collider_;
 	Matrix4x4 rotateMat_ = MakeIdentity44();
 	//中心座標
-	WorldTransform worldtransform_;
+	DaiEngine::WorldTransform worldtransform_;
 
 	//攻撃中か
 	bool isAttack_ = false;

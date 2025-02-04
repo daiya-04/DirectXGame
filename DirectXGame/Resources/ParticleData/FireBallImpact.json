@@ -89,6 +89,8 @@
                 "strength": 0.0
             },
             "isLoop": false,
+            "isModel": false,
+            "modelName": "",
             "textureName": "circle_02.png"
         },
         "Smoke": {
@@ -180,6 +182,8 @@
                 "strength": 0.0
             },
             "isLoop": false,
+            "isModel": false,
+            "modelName": "",
             "textureName": "smoke_02.png"
         },
         "fireSpark": {
@@ -191,13 +195,13 @@
                     0.2840253412723541,
                     0.0
                 ],
-                "Count": 300,
+                "Count": 1000,
                 "EmitterType": 2,
                 "Frequency": 0.0,
                 "LifeTime": 1.5,
                 "Radius": 2.0,
                 "Rotate": 0.0,
-                "Scale": 0.05000000074505806,
+                "Scale": 1.0,
                 "Size": [
                     1.0,
                     1.0,
@@ -218,9 +222,9 @@
                     0.0
                 ],
                 "density": [
+                    0.4000000059604645,
                     0.20000000298023224,
-                    0.0,
-                    0.20000000298023224
+                    0.4000000059604645
                 ],
                 "endAlpha": 1.0,
                 "endColor": [
@@ -237,12 +241,12 @@
                 ],
                 "isAlpha": 0,
                 "isColor": 0,
-                "isConstantVelocity": 1,
+                "isConstantVelocity": 0,
                 "isNoise": 1,
                 "isRandom": 1,
                 "isRoring": 0,
                 "isScale": 1,
-                "isTransSpeed": 0,
+                "isTransSpeed": 1,
                 "isTransVelocity": 0,
                 "maxRoringSpeed": [
                     0.0,
@@ -261,17 +265,19 @@
                     0.0,
                     0.0
                 ],
-                "startScale": 0.10000000149011612,
-                "startSpeed": 0.0,
+                "startScale": 0.15000000596046448,
+                "startSpeed": 1.0,
                 "startVelocity": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "strength": 1.5
+                "strength": 2.0
             },
             "isLoop": false,
-            "textureName": "circle.png"
+            "isModel": false,
+            "modelName": "",
+            "textureName": "circle_02.png"
         },
         "ring": {
             "Emitter": {
@@ -362,6 +368,8 @@
                 "strength": 0.0
             },
             "isLoop": false,
+            "isModel": false,
+            "modelName": "",
             "textureName": "ring_01.png"
         }
     }

@@ -8,7 +8,7 @@
 
 #include "BaseGraphicsPipeline.h"
 
-class SpriteGraphicsPipeline : public BaseGraphicsPipeline {
+class SpriteGraphicsPipeline : public DaiEngine::BaseGraphicsPipeline {
 public:
 	/// <summary>
 	/// 初期化

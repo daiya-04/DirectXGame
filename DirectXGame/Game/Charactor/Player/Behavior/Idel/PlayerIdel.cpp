@@ -15,17 +15,17 @@ void PlayerIdel::Init() {
 
 void PlayerIdel::Update() {
 	//Lスティック入力がされたらJogStateへ
-	if (Input::GetInstance()->TiltLStick(Input::Stick::All)) {
+	if (DaiEngine::Input::GetInstance()->TiltLStick(DaiEngine::Input::Stick::All)) {
 		player_->ChangeBehavior("Jog");
 	}
 
 	//攻撃
-	if (Input::GetInstance()->TriggerButton(Input::Button::X)) {
+	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::X)) {
 		player_->ChangeBehavior("Attack");
 	}
 
 	//ダッシュ
-	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::A)) {
 		player_->ChangeBehavior("Dash");
 	}
 

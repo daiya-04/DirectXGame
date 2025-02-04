@@ -8,7 +8,7 @@
 
 #include "BaseComputePipeline.h"
 
-class SkinningComputePipeline : public BaseComputePipeline {
+class SkinningComputePipeline : public DaiEngine::BaseComputePipeline {
 public:
 	/// <summary>
 	/// 初期化

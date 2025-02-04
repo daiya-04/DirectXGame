@@ -13,7 +13,7 @@
 #include "PlayerKnockBack.h"
 #include "ColliderManager.h"
 
-void Player::Init(const std::vector<std::shared_ptr<Model>>& models){
+void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 
 	//アクション設定
 	actionIndex_ = Action::Standing;
@@ -21,16 +21,15 @@ void Player::Init(const std::vector<std::shared_ptr<Model>>& models){
 	//モデル関連の初期化
 	BaseCharactor::Init(models);
 
-	std::shared_ptr<Model> attackModel = ModelManager::LoadOBJ("PlayerBullet");
+	std::shared_ptr<DaiEngine::Model> attackModel = DaiEngine::ModelManager::LoadOBJ("PlayerBullet");
 
 	for (auto& attack : attacks_) {
 		attack = std::make_unique<PlayerMagicBall>();
 		attack->Init(attackModel);
 	}
 
-	collider_ = ColliderManager::CreateOBB();
 	collider_->Init("Player", obj_->worldTransform_, {});
-	collider_->SetCallbackFunc([this](Collider* other) {this->OnCollision(other); });
+	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->ColliderOn();
 
 	//状態の設定
@@ -40,7 +39,7 @@ void Player::Init(const std::vector<std::shared_ptr<Model>>& models){
 	hpBarSize_ = { 400.0f,10.0f };
 
 	//UIの設定
-	hpBar_.reset(Sprite::Create(TextureManager::Load("Player_HP.png"), {440.0f,700.0f}));
+	hpBar_.reset(DaiEngine::Sprite::Create(DaiEngine::TextureManager::Load("Player_HP.png"), {440.0f,700.0f}));
 	hpBar_->SetAnchorpoint({ 0.0f,0.5f });
 	hpBar_->SetSize(hpBarSize_);
 
@@ -74,19 +73,19 @@ void Player::UpdateUI() {
 	hpBar_->SetSize({ hpBarSize_.x * percent,hpBarSize_.y });
 }
 
-void Player::Draw(const Camera& camera){
+void Player::Draw(const DaiEngine::Camera& camera){
 
 	BaseCharactor::Draw(camera);
 
 }
 
-void Player::DrawAttack(const Camera& camera) {
+void Player::DrawAttack(const DaiEngine::Camera& camera) {
 	for (auto& attack : attacks_) {
 		attack->Draw(camera);
 	}
 }
 
-void Player::DrawParticle(const Camera& camera) {
+void Player::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& attack : attacks_) {
 		attack->DrawParticle(camera);
 	}
@@ -96,7 +95,7 @@ void Player::DrawUI() {
 	hpBar_->Draw();
 }
 
-void Player::OnCollision(Collider* other) {
+void Player::OnCollision(DaiEngine::Collider* other) {
 
 	if (actionIndex_ == Action::Accel) {
 		return;

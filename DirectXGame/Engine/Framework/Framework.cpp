@@ -11,79 +11,81 @@
 #include "DXCompiler.h"
 #include "PipelineManager.h"
 
+namespace DaiEngine {
 
-void DSFramework::Init(){
-	
-	WinApp::GetInstance()->CreateGameWindow(L"魔法師の戦い");
+	void DSFramework::Init() {
 
-	
-	DirectXCommon::GetInstance()->Initialize();
-	ImGuiManager::GetInstance()->Initialize();
-
-	DXCompiler::GetInstance()->Init();
-	
-	Input::GetInstance()->Initialize();
-	Audio::GetInstance()->Initialize();
-
-	TextureManager::GetInstance()->Initialize();
-	TextureManager::GetInstance()->LoadAllFile();
-
-	PipelineManager::GetInstance()->Init();
-
-	Line::Init();
-
-	GlobalVariables::GetInstance()->LoadFiles();
-
-	DirectionalLight::GetInstance()->Init();
-
-	SceneManager::GetInstance()->Init();
-
-}
-
-void DSFramework::Update(){
-
-	if (WinApp::GetInstance()->ProcessMessage()) { endRequest_ = true; }
+		WinApp::GetInstance()->CreateGameWindow(L"魔法師の戦い");
 
 
-	ImGuiManager::GetInstance()->Begin();
+		DirectXCommon::GetInstance()->Initialize();
+		ImGuiManager::GetInstance()->Initialize();
 
-	Input::GetInstance()->Update();
-	Audio::GetInstance()->Update();
+		DXCompiler::GetInstance()->Init();
 
-	GlobalVariables::GetInstance()->Update();
+		Input::GetInstance()->Initialize();
+		Audio::GetInstance()->Initialize();
 
-	DirectionalLight::GetInstance()->Update();
+		TextureManager::GetInstance()->Initialize();
+		TextureManager::GetInstance()->LoadAllFile();
 
-	SceneManager::GetInstance()->Update();
+		PipelineManager::GetInstance()->Init();
 
-}
+		Line::Init();
 
-void DSFramework::Finalize(){
+		GlobalVariables::GetInstance()->LoadFiles();
 
-	ImGuiManager::GetInstance()->Finalize();
-	WinApp::GetInstance()->TerminateGameWindow();
+		DirectionalLight::GetInstance()->Init();
 
-}
-
-void DSFramework::Run(){
-
-	//初期化
-	Init();
-
-	//ゲームループ
-	while (true) {
-
-		//更新
-		Update();
-
-		//終了リクエストが来たら抜ける
-		if (IsEndRequest()) { break; }
-
-		//描画
-		Draw();
+		SceneManager::GetInstance()->Init();
 
 	}
 
-	//ゲームの終了
-	Finalize();
+	void DSFramework::Update() {
+
+		if (WinApp::GetInstance()->ProcessMessage()) { endRequest_ = true; }
+
+
+		ImGuiManager::GetInstance()->Begin();
+
+		Input::GetInstance()->Update();
+		Audio::GetInstance()->Update();
+
+		GlobalVariables::GetInstance()->Update();
+
+		DirectionalLight::GetInstance()->Update();
+
+		SceneManager::GetInstance()->Update();
+
+	}
+
+	void DSFramework::Finalize() {
+
+		ImGuiManager::GetInstance()->Finalize();
+		WinApp::GetInstance()->TerminateGameWindow();
+
+	}
+
+	void DSFramework::Run() {
+
+		//初期化
+		Init();
+
+		//ゲームループ
+		while (true) {
+
+			//更新
+			Update();
+
+			//終了リクエストが来たら抜ける
+			if (IsEndRequest()) { break; }
+
+			//描画
+			Draw();
+
+		}
+
+		//ゲームの終了
+		Finalize();
+	}
 }

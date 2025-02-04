@@ -95,11 +95,14 @@ private:
 
 
 public:
+
+	~Icicle();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<Model>& model);
+	void Init(const std::shared_ptr<DaiEngine::Model>& model);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -108,16 +111,16 @@ public:
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const Camera& camera);
+	void Draw(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision(Collider* other);
+	void OnCollision(DaiEngine::Collider* other);
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>
@@ -143,7 +146,7 @@ public:
 	/// コライダー取得
 	/// </summary>
 	/// <returns></returns>
-	SphereCollider* GetCollider() const { return collider_; }
+	DaiEngine::SphereCollider* GetCollider() const { return collider_.get(); }
 	/// <summary>
 	/// 生存しているか
 	/// </summary>
@@ -159,21 +162,21 @@ private:
 	//攻撃先(ターゲット)
 	const Vector3* target_;
 	//オブジェクト
-	std::unique_ptr<Object3d> obj_;
+	std::unique_ptr<DaiEngine::Object3d> obj_;
 	//回転行列
 	Matrix4x4 rotateMat_ = MakeIdentity44();
 
 	///エフェクト
 	//生成時
-	std::map<std::string, std::unique_ptr<GPUParticle>> createEffect_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> createEffect_;
 	//ヒット時
-	std::map<std::string, std::unique_ptr<GPUParticle>> hitEffect_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> hitEffect_;
 	//軌跡
-	std::map<std::string, std::unique_ptr<GPUParticle>> trailEff_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> trailEff_;
 	///
 
 	//コライダー
-	SphereCollider* collider_ = nullptr;
+	std::unique_ptr<DaiEngine::SphereCollider> collider_;
 
 	//速度
 	Vector3 velocity_;

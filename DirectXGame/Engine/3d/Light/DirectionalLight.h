@@ -10,42 +10,43 @@ struct CBufferDataDirectionalLight {
 	float intensity;
 };
 
-class DirectionalLight {
-private:
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+namespace DaiEngine {
+	class DirectionalLight {
+	private:
+		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-public:
+	public:
 
-	static DirectionalLight* GetInstance();
+		static DirectionalLight* GetInstance();
 
-	void Init();
-	void Update();
-	void DebugGUI();
+		void Init();
+		void Update();
+		void DebugGUI();
 
-	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {
-		return cBuffer_->GetGPUVirtualAddress();
-	}
+		D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {
+			return cBuffer_->GetGPUVirtualAddress();
+		}
 
-private:
-	void CreateCBuffer();
-	void Map();
+	private:
+		void CreateCBuffer();
+		void Map();
 
-public:
-	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
-	Vector3 direction_ = { 0.0f,-1.0f,0.0f };
-	float intensity_ = 0.32f;
+	public:
+		Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
+		Vector3 direction_ = { 0.0f,-1.0f,0.0f };
+		float intensity_ = 0.32f;
 
-private:
+	private:
 
-	ComPtr<ID3D12Resource> cBuffer_;
-	CBufferDataDirectionalLight* cMap_;
+		ComPtr<ID3D12Resource> cBuffer_;
+		CBufferDataDirectionalLight* cMap_;
 
-private:
+	private:
 
-	DirectionalLight() = default;
-	~DirectionalLight() = default;
-	DirectionalLight(const DirectionalLight&) = delete;
-	DirectionalLight& operator=(const DirectionalLight&) = delete;
+		DirectionalLight() = default;
+		~DirectionalLight() = default;
+		DirectionalLight(const DirectionalLight&) = delete;
+		DirectionalLight& operator=(const DirectionalLight&) = delete;
 
-};
-
+	};
+}

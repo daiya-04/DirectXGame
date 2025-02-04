@@ -8,7 +8,7 @@
 
 #include "BaseComputePipeline.h"
 
-class ParticleEmitComputePipeline : public BaseComputePipeline {
+class ParticleEmitComputePipeline : public DaiEngine::BaseComputePipeline {
 public:
 	/// <summary>
 	/// 初期化

@@ -3,11 +3,9 @@
 #include <numbers>
 #include "Line.h"
 
-using namespace Shapes;
-
 namespace ShapesDraw {
 
-	void DrawSphere(const Shapes::Sphere& sphere, const Camera& camera, const Vector4& color) {
+	void DrawSphere(const Shapes::Sphere& sphere, const DaiEngine::Camera& camera, const Vector4& color) {
 
 		const uint32_t kSubdivision = 16; //分割数
 		const float kLonEvery = std::numbers::pi_v<float> / kSubdivision; //経度分割1つ分の角度
@@ -26,13 +24,13 @@ namespace ShapesDraw {
 				Vector3 worldB = sphere.center + sphere.radius * b;
 				Vector3 worldC = sphere.center + sphere.radius * c;
 
-				Line::Draw(worldA, worldB, camera, color);
-				Line::Draw(worldA, worldC, camera, color);
+				DaiEngine::Line::Draw(worldA, worldB, camera, color);
+				DaiEngine::Line::Draw(worldA, worldC, camera, color);
 			}
 		}
 	}
 
-	void DrawPlane(const Shapes::Plane& plane, const Camera& camera, const Vector4& color) {
+	void DrawPlane(const Shapes::Plane& plane, const DaiEngine::Camera& camera, const Vector4& color) {
 
 		Vector3 center = plane.distance * plane.normal;
 		Vector3 perpendicular[4];
@@ -47,13 +45,13 @@ namespace ShapesDraw {
 			points[index] = center + extend;
 		}
 
-		Line::Draw(points[0], points[2], camera, color);
-		Line::Draw(points[2], points[1], camera, color);
-		Line::Draw(points[1], points[3], camera, color);
-		Line::Draw(points[3], points[0], camera, color);
+		DaiEngine::Line::Draw(points[0], points[2], camera, color);
+		DaiEngine::Line::Draw(points[2], points[1], camera, color);
+		DaiEngine::Line::Draw(points[1], points[3], camera, color);
+		DaiEngine::Line::Draw(points[3], points[0], camera, color);
 	}
 
-	void DrawAABB(const Shapes::AABB& aabb, const Camera& camera, const Vector4& color) {
+	void DrawAABB(const Shapes::AABB& aabb, const DaiEngine::Camera& camera, const Vector4& color) {
 
 		Vector3 points[8];
 		for (size_t index = 0; index < 8; index++) {
@@ -86,21 +84,21 @@ namespace ShapesDraw {
 		//右下奥
 		points[7].y -= diff.y;
 
-		Line::Draw(points[0], points[1], camera, color);
-		Line::Draw(points[1], points[2], camera, color);
-		Line::Draw(points[2], points[3], camera, color);
-		Line::Draw(points[3], points[0], camera, color);
-		Line::Draw(points[4], points[5], camera, color);
-		Line::Draw(points[5], points[6], camera, color);
-		Line::Draw(points[6], points[7], camera, color);
-		Line::Draw(points[7], points[4], camera, color);
-		Line::Draw(points[0], points[6], camera, color);
-		Line::Draw(points[1], points[7], camera, color);
-		Line::Draw(points[2], points[4], camera, color);
-		Line::Draw(points[3], points[5], camera, color);
+		DaiEngine::Line::Draw(points[0], points[1], camera, color);
+		DaiEngine::Line::Draw(points[1], points[2], camera, color);
+		DaiEngine::Line::Draw(points[2], points[3], camera, color);
+		DaiEngine::Line::Draw(points[3], points[0], camera, color);
+		DaiEngine::Line::Draw(points[4], points[5], camera, color);
+		DaiEngine::Line::Draw(points[5], points[6], camera, color);
+		DaiEngine::Line::Draw(points[6], points[7], camera, color);
+		DaiEngine::Line::Draw(points[7], points[4], camera, color);
+		DaiEngine::Line::Draw(points[0], points[6], camera, color);
+		DaiEngine::Line::Draw(points[1], points[7], camera, color);
+		DaiEngine::Line::Draw(points[2], points[4], camera, color);
+		DaiEngine::Line::Draw(points[3], points[5], camera, color);
 	}
 
-	void DrawOBB(const Shapes::OBB& obb, const Camera& camera, const Vector4& color) {
+	void DrawOBB(const Shapes::OBB& obb, const DaiEngine::Camera& camera, const Vector4& color) {
 
 		Vector3 oriented[3];
 		oriented[0] = obb.size.x * obb.orientation[0].Normalize();
@@ -125,18 +123,18 @@ namespace ShapesDraw {
 		//右下奥
 		points[7] = obb.center + oriented[0] - oriented[1] + oriented[2];
 
-		Line::Draw(points[0], points[1], camera, color);
-		Line::Draw(points[1], points[2], camera, color);
-		Line::Draw(points[2], points[3], camera, color);
-		Line::Draw(points[3], points[0], camera, color);
-		Line::Draw(points[4], points[5], camera, color);
-		Line::Draw(points[5], points[6], camera, color);
-		Line::Draw(points[6], points[7], camera, color);
-		Line::Draw(points[7], points[4], camera, color);
-		Line::Draw(points[0], points[6], camera, color);
-		Line::Draw(points[1], points[7], camera, color);
-		Line::Draw(points[2], points[4], camera, color);
-		Line::Draw(points[3], points[5], camera, color);
+		DaiEngine::Line::Draw(points[0], points[1], camera, color);
+		DaiEngine::Line::Draw(points[1], points[2], camera, color);
+		DaiEngine::Line::Draw(points[2], points[3], camera, color);
+		DaiEngine::Line::Draw(points[3], points[0], camera, color);
+		DaiEngine::Line::Draw(points[4], points[5], camera, color);
+		DaiEngine::Line::Draw(points[5], points[6], camera, color);
+		DaiEngine::Line::Draw(points[6], points[7], camera, color);
+		DaiEngine::Line::Draw(points[7], points[4], camera, color);
+		DaiEngine::Line::Draw(points[0], points[6], camera, color);
+		DaiEngine::Line::Draw(points[1], points[7], camera, color);
+		DaiEngine::Line::Draw(points[2], points[4], camera, color);
+		DaiEngine::Line::Draw(points[3], points[5], camera, color);
 	}
 
 }

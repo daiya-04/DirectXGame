@@ -49,7 +49,7 @@ void ParticleEditor::Update() {
 	}
 }
 
-void ParticleEditor::Draw(const Camera& camera) {
+void ParticleEditor::Draw(const DaiEngine::Camera& camera) {
 	for (auto& [group, particle] : particles_) {
 		particle->Draw(camera);
 	}
@@ -76,7 +76,8 @@ void ParticleEditor::DataSave() {
 		//rootに保存するパラメータの登録
 		particleRoot["isLoop"] = data.isLoop_;
 		particleRoot["textureName"] = data.textureName_;
-		particleRoot["modelName"] = modelName_;
+		particleRoot["isModel"] = data.isModel_;
+		particleRoot["modelName"] = data.modelName_;
 
 		json& emitterRoot = particleRoot["Emitter"];
 		const auto& emitter = data.emitter_;
@@ -216,17 +217,18 @@ void ParticleEditor::LoadDataFile(const std::string& fileName) {
 		billboardComboList_[group] = billboardList_;
 		emitterShapeComboList_[group] = emitterShapeList_;
 
-		particles_[group].reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
+		particles_[group].reset(DaiEngine::GPUParticle::Create(DaiEngine::TextureManager::Load("circle.png"), 10000));
 		auto& data = particles_[group]->particleData_;
 
 		//ファイルのデータを設定していく
 		data.isLoop_ = isLoop_ = particleRoot["isLoop"].get<bool>();
 		data.textureName_ = particleRoot["textureName"].get<std::string>();
 		particles_[group]->SetTextureHandle();
-		if (particleRoot.contains("modelName")) {
-			if (particleRoot["modelName"].get<std::string>() != "") {
-				particles_[group]->SetModel(particleRoot["modelName"].get<std::string>());
-				isModel_ = true;
+		if (particleRoot.contains("isModel")) {
+			data.isModel_ = particleRoot["isModel"].get<bool>();
+			if (data.isModel_) {
+				data.modelName_ = particleRoot["modelName"].get<std::string>();
+				particles_[group]->SetModel();
 			}
 		}
 
@@ -342,7 +344,7 @@ void ParticleEditor::DebugGUI() {
 			MessageBoxA(nullptr, message.c_str(), "ParticleEditor", 0);
 		}
 		else {
-			particles_[addParticelName_].reset(GPUParticle::Create(TextureManager::Load("circle.png"), 10000));
+			particles_[addParticelName_].reset(DaiEngine::GPUParticle::Create(DaiEngine::TextureManager::Load("circle.png"), 10000));
 			particles_[addParticelName_]->particleData_.isLoop_ = isLoop_;
 			billboardComboList_[addParticelName_] = billboardList_;
 			currentBillboardMode_[addParticelName_] = billboardList_[0];
@@ -392,7 +394,7 @@ void ParticleEditor::DebugGUI() {
 				particle->SetTextureHandle();
 			}
 
-			const auto& textures = TextureManager::GetInstance()->GetTextures();
+			const auto& textures = DaiEngine::TextureManager::GetInstance()->GetTextures();
 
 			if (ImGui::TreeNode("Texture")) {
 
@@ -425,21 +427,20 @@ void ParticleEditor::DebugGUI() {
 			
 
 
-			strncpy_s(strBuff, modelName_.c_str(), sizeof(strBuff));
+			strncpy_s(strBuff, data.modelName_.c_str(), sizeof(strBuff));
 			strBuff[sizeof(strBuff) - 1] = '\0';
-			ImGui::Checkbox("isModel", &isModel_);
+			ImGui::Checkbox("isModel", &data.isModel_);
 
-			if (isModel_) {
+			if (data.isModel_) {
 				if (ImGui::InputText("ModelName", strBuff, sizeof(strBuff))) {
-					modelName_ = strBuff;
+					data.modelName_ = strBuff;
 				}
 				if (ImGui::Button("Set")) {
-					particle->SetModel(modelName_);
+					particle->SetModel();
 				}
 			}
 			else {
 				particle->ModelReset();
-				modelName_ = "";
 			}
 
 			int32_t billboardType = static_cast<int32_t>(emitter.billboardType);
@@ -455,7 +456,7 @@ void ParticleEditor::DebugGUI() {
 				ImGui::EndCombo();
 			}
 
-			emitter.billboardType = static_cast<GPUParticle::BillboardType>(billboardType);
+			emitter.billboardType = static_cast<DaiEngine::GPUParticle::BillboardType>(billboardType);
 
 
 			int32_t emitterType = static_cast<int32_t>(emitter.emitterType);
@@ -472,7 +473,7 @@ void ParticleEditor::DebugGUI() {
 			}
 
 			// 選択された形状を反映
-			emitter.emitterType = static_cast<GPUParticle::EmitShape>(emitterType);
+			emitter.emitterType = static_cast<DaiEngine::GPUParticle::EmitShape>(emitterType);
 
 			auto& overlifeTime = data.overLifeTime_;
 

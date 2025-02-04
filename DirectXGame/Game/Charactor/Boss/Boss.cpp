@@ -16,7 +16,7 @@
 
 #include "GroundFlare.h"
 
-void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
+void Boss::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models) {
 
 	//アクション設定
 	actionIndex_ = Action::Standing;
@@ -24,9 +24,8 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	//モデル関連の初期化
 	BaseCharactor::Init(models);
 
-	collider_ = ColliderManager::CreateOBB();
 	collider_->Init("Boss", obj_->worldTransform_, {});
-	collider_->SetCallbackFunc([this](Collider* other) {this->OnCollision(other); });
+	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->ColliderOn();
 
 	///エフェクト初期化
@@ -46,7 +45,7 @@ void Boss::Init(const std::vector<std::shared_ptr<Model>>& models) {
 	hpBarSize_ = { 500.0f,10.0f };
 
 	//UIの設定
-	hpBar_.reset(Sprite::Create(TextureManager::Load("Boss_HP.png"), { 390.0f,40.0f }));
+	hpBar_.reset(DaiEngine::Sprite::Create(DaiEngine::TextureManager::Load("Boss_HP.png"), { 390.0f,40.0f }));
 	hpBar_->SetAnchorpoint({ 0.0f,0.5f });
 	hpBar_->SetSize(hpBarSize_);
 
@@ -81,13 +80,13 @@ void Boss::UpdateUI() {
 	hpBar_->SetSize({ hpBarSize_.x * percent,hpBarSize_.y });
 }
 
-void Boss::Draw(const Camera& camera) {
+void Boss::Draw(const DaiEngine::Camera& camera) {
 
 	BaseCharactor::Draw(camera);
 
 }
 
-void Boss::DrawParticle(const Camera& camera) {
+void Boss::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& [group, particle] : effect_) {
 		particle->Draw(camera);
 	}
@@ -97,7 +96,7 @@ void Boss::DrawUI() {
 	hpBar_->Draw();
 }
 
-void Boss::OnCollision(Collider* other) {
+void Boss::OnCollision(DaiEngine::Collider* other) {
 
 	if (other->GetTag() == "PlayerAttack") {
 		hp_--;

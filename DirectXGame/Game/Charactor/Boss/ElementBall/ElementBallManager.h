@@ -20,7 +20,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<Model>& model);
+	void Init(const std::shared_ptr<DaiEngine::Model>& model);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -29,22 +29,22 @@ public:
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const Camera& camera);
+	void Draw(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// 焼け跡描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawBurnScars(const Camera& camera);
+	void DrawBurnScars(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// 衝突時
 	/// </summary>
 	/// <param name="index">インデックス</param>
-	void OnCollision(size_t index, Collider* other);
+	void OnCollision(size_t index, DaiEngine::Collider* other);
 	/// <summary>
 	/// ターゲットセット
 	/// </summary>
@@ -98,7 +98,7 @@ private:
 	std::array<std::unique_ptr<BurnScar>, kElementBallNum_> burnScareses_;
 
 	//エフェクト
-	std::array<std::map<std::string, std::unique_ptr<GPUParticle>>, kElementBallNum_> fireSetEffs_;
+	std::array<std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>>, kElementBallNum_> fireSetEffs_;
 
 	//攻撃フラグ
 	bool isAttack_ = false;

@@ -114,29 +114,32 @@ private:
 	//攻撃先(ターゲット)
 	const Vector3* target_;
 	//オブジェクト
-	std::unique_ptr<Object3d> obj_;
+	std::unique_ptr<DaiEngine::Object3d> obj_;
 	//アニメーション
-	Animation animation_;
+	DaiEngine::Animation animation_;
 
 	//速度
 	Vector3 velocity_ = {};
 
 	//コライダー
-	SphereCollider* collider_ = nullptr;
+	std::unique_ptr<DaiEngine::SphereCollider> collider_;
 
 	//生存フラグ
 	bool isLife_ = false;
 	bool preIsLife_ = false;
 
 	//エフェクト
-	std::map <std::string, std::unique_ptr<GPUParticle>> effect_;
+	std::map <std::string, std::unique_ptr<DaiEngine::GPUParticle>> effect_;
 
 public:
+
+	~ElementBall();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(std::shared_ptr<Model> model);
+	void Init(std::shared_ptr<DaiEngine::Model> model);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -145,16 +148,16 @@ public:
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const Camera& camera);
+	void Draw(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision(Collider* other);
+	void OnCollision(DaiEngine::Collider* other);
 	/// <summary>
 	/// ターゲットのセット
 	/// </summary>
@@ -181,7 +184,7 @@ public:
 	/// <returns>死んだ瞬間ならtrue、それ以外はfalse</returns>
 	bool DeadFlag() const { return (!isLife_ && preIsLife_); }
 
-	SphereCollider* GetCollider() const { return collider_; }
+	DaiEngine::SphereCollider* GetCollider() { return collider_.get(); }
 	/// <summary>
 	/// 現在のフェーズ取得
 	/// </summary>

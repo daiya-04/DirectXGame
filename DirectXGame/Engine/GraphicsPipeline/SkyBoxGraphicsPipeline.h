@@ -9,7 +9,7 @@
 
 #include "BaseGraphicsPipeline.h"
 
-class SkyBoxGraphicsPipeline : public BaseGraphicsPipeline {
+class SkyBoxGraphicsPipeline : public DaiEngine::BaseGraphicsPipeline {
 public:
 	/// <summary>
 	/// 初期化

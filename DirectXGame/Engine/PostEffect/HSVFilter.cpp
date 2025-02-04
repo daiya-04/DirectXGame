@@ -31,8 +31,8 @@ HSVFilter::HSVFilter() {
 	//テクスチャリソースの設定
 	D3D12_RESOURCE_DESC texDesc{};
 	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	texDesc.Width = WinApp::kClientWidth;
-	texDesc.Height = WinApp::kClientHeight;
+	texDesc.Width = DaiEngine::WinApp::kClientWidth;
+	texDesc.Height = DaiEngine::WinApp::kClientHeight;
 	texDesc.DepthOrArraySize = 1;
 	texDesc.MipLevels = 1;
 	texDesc.SampleDesc.Count = 1;
@@ -48,8 +48,10 @@ HSVFilter::HSVFilter() {
 	clearColorValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	memcpy(clearColorValue.Color, kClearColor_, sizeof(float) * 4);
 
+	DaiEngine::DirectXCommon* dxc = DaiEngine::DirectXCommon::GetInstance();
+
 	//テクスチャバッファの生成
-	hr = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(
+	hr = dxc->GetDevice()->CreateCommittedResource(
 		&srvHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&texDesc,
@@ -59,10 +61,10 @@ HSVFilter::HSVFilter() {
 	);
 	assert(SUCCEEDED(hr));
 
-	srvHandle_.first = DirectXCommon::GetInstance()->GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), DirectXCommon::GetInstance()->GetSrvHeapCount());
-	srvHandle_.second = DirectXCommon::GetInstance()->GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), DirectXCommon::GetInstance()->GetSrvHeapCount());
+	srvHandle_.first = dxc->GetCPUDescriptorHandle(dxc->GetSrvHeap(), dxc->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), dxc->GetSrvHeapCount());
+	srvHandle_.second = dxc->GetGPUDescriptorHandle(dxc->GetSrvHeap(), dxc->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), dxc->GetSrvHeapCount());
 
-	DirectXCommon::GetInstance()->IncrementSrvHeapCount();
+	dxc->IncrementSrvHeapCount();
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
@@ -70,21 +72,21 @@ HSVFilter::HSVFilter() {
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
 
-	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(texBuff_.Get(), &srvDesc, srvHandle_.first);
+	dxc->GetDevice()->CreateShaderResourceView(texBuff_.Get(), &srvDesc, srvHandle_.first);
 
 	//RTVの設定
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 
-	rtvHandleCPU_ = DirectXCommon::GetInstance()->GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetRtvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), DirectXCommon::GetInstance()->GetRtvHeapCount());
-	DirectXCommon::GetInstance()->IncrementRtvHeapCount();
+	rtvHandleCPU_ = dxc->GetCPUDescriptorHandle(dxc->GetRtvHeap(), dxc->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), dxc->GetRtvHeapCount());
+	dxc->IncrementRtvHeapCount();
 
-	DirectXCommon::GetInstance()->GetDevice()->CreateRenderTargetView(texBuff_.Get(), &rtvDesc, rtvHandleCPU_);
+	dxc->GetDevice()->CreateRenderTargetView(texBuff_.Get(), &rtvDesc, rtvHandleCPU_);
 
-	dsvHandleCPU_ = DirectXCommon::GetInstance()->GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetDsvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV), 0);
+	dsvHandleCPU_ = dxc->GetCPUDescriptorHandle(dxc->GetDsvHeap(), dxc->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV), 0);
 	
-	factorBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(HSVFactor));
+	factorBuff_ = CreateBufferResource(dxc->GetDevice(), sizeof(HSVFactor));
 
 	factorBuff_->Map(0, nullptr, reinterpret_cast<void**>(&factorData_));
 	factorData_->hue = 0.0f;
@@ -101,14 +103,16 @@ void HSVFilter::Init() {
 
 void HSVFilter::Draw() {
 
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
+	ID3D12GraphicsCommandList* cmd = DaiEngine::DirectXCommon::GetInstance()->GetCommandList();
 
-	DirectXCommon::GetInstance()->GetCommandList()->SetPipelineState(piplineState_.Get());  //PSOを設定
+	cmd->SetGraphicsRootSignature(rootSignature_.Get());
 
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(0, srvHandle_.second);
-	DirectXCommon::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(1, factorBuff_->GetGPUVirtualAddress());
+	cmd->SetPipelineState(piplineState_.Get());  //PSOを設定
 
-	DirectXCommon::GetInstance()->GetCommandList()->DrawInstanced(3, 1, 0, 0);
+	cmd->SetGraphicsRootDescriptorTable(0, srvHandle_.second);
+	cmd->SetGraphicsRootConstantBufferView(1, factorBuff_->GetGPUVirtualAddress());
+
+	cmd->DrawInstanced(3, 1, 0, 0);
 
 }
 
@@ -143,42 +147,44 @@ void HSVFilter::PreDrawScene() {
 	//遷移後のResourceState
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
-	DirectXCommon::GetInstance()->GetCommandList()->ResourceBarrier(1, &barrier);
+	ID3D12GraphicsCommandList* cmd = DaiEngine::DirectXCommon::GetInstance()->GetCommandList();
+
+	cmd->ResourceBarrier(1, &barrier);
 
 	//レンダーターゲットをセット
-	DirectXCommon::GetInstance()->GetCommandList()->OMSetRenderTargets(1, &rtvHandleCPU_, false, &dsvHandleCPU_);
+	cmd->OMSetRenderTargets(1, &rtvHandleCPU_, false, &dsvHandleCPU_);
 
 	//ビューポート
 	D3D12_VIEWPORT viewport{};
 	//クライアント領域のサイズと一緒にして画面全体に表示
-	viewport.Width = WinApp::kClientWidth;
-	viewport.Height = WinApp::kClientHeight;
+	viewport.Width = DaiEngine::WinApp::kClientWidth;
+	viewport.Height = DaiEngine::WinApp::kClientHeight;
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 
-	DirectXCommon::GetInstance()->GetCommandList()->RSSetViewports(1, &viewport);  //Viewportを設定
+	cmd->RSSetViewports(1, &viewport);  //Viewportを設定
 
 	//シザー矩形
 	D3D12_RECT scissorRect{};
 	//基本的にビューポートと同じ矩形が構成されるようにする
 	scissorRect.left = 0;
-	scissorRect.right = WinApp::kClientWidth;
+	scissorRect.right = DaiEngine::WinApp::kClientWidth;
 	scissorRect.top = 0;
-	scissorRect.bottom = WinApp::kClientHeight;
+	scissorRect.bottom = DaiEngine::WinApp::kClientHeight;
 
-	DirectXCommon::GetInstance()->GetCommandList()->RSSetScissorRects(1, &scissorRect);  //Scissorを設定
+	cmd->RSSetScissorRects(1, &scissorRect);  //Scissorを設定
 
 	//全画面クリア
-	DirectXCommon::GetInstance()->GetCommandList()->ClearRenderTargetView(rtvHandleCPU_, kClearColor_, 0, nullptr);
+	cmd->ClearRenderTargetView(rtvHandleCPU_, kClearColor_, 0, nullptr);
 
 	//描画用のDescriptorHeapの設定
-	ID3D12DescriptorHeap* descriptorHeaps[] = { DirectXCommon::GetInstance()->GetSrvHeap() };
-	DirectXCommon::GetInstance()->GetCommandList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+	ID3D12DescriptorHeap* descriptorHeaps[] = { DaiEngine::DirectXCommon::GetInstance()->GetSrvHeap() };
+	cmd->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	//形状を設定。PSOに設定しているものとはまた別。設置物を設定すると考えておけばいい
-	DirectXCommon::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	cmd->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void HSVFilter::PostDrawScene() {
@@ -191,7 +197,7 @@ void HSVFilter::PostDrawScene() {
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
-	DirectXCommon::GetInstance()->GetCommandList()->ResourceBarrier(1, &barrier);
+	DaiEngine::DirectXCommon::GetInstance()->GetCommandList()->ResourceBarrier(1, &barrier);
 
 }
 
@@ -247,7 +253,7 @@ void HSVFilter::CreateGraphicsPipelineState() {
 
 	//バイナリを元に生成
 
-	hr = DirectXCommon::GetInstance()->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
+	hr = DaiEngine::DirectXCommon::GetInstance()->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
 	assert(SUCCEEDED(hr));
 
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
@@ -279,10 +285,10 @@ void HSVFilter::CreateGraphicsPipelineState() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	//Shaderをコンパイルする
-	ComPtr<IDxcBlob> verterShaderBlob = DXCompiler::GetInstance()->ShaderCompile(L"PostEffect.VS.hlsl", L"vs_6_0");
+	ComPtr<IDxcBlob> verterShaderBlob = DaiEngine::DXCompiler::GetInstance()->ShaderCompile(L"PostEffect.VS.hlsl", L"vs_6_0");
 	assert(verterShaderBlob != nullptr);
 
-	ComPtr<IDxcBlob> pixelShaderBlob = DXCompiler::GetInstance()->ShaderCompile(L"HSVFilter.PS.hlsl", L"ps_6_0");
+	ComPtr<IDxcBlob> pixelShaderBlob = DaiEngine::DXCompiler::GetInstance()->ShaderCompile(L"HSVFilter.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	//DepthStencilStateの設定
@@ -316,7 +322,7 @@ void HSVFilter::CreateGraphicsPipelineState() {
 
 	//実際に生成
 
-	hr = DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&piplineState_));
+	hr = DaiEngine::DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&piplineState_));
 	assert(SUCCEEDED(hr));
 
 }

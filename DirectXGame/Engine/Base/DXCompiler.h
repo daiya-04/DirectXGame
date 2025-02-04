@@ -4,33 +4,33 @@
 #include <wrl.h>
 #include <string>
 
+namespace DaiEngine {
+	class DXCompiler {
+	private:
+		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-class DXCompiler {
-private:
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	public:
 
-public:
+		static DXCompiler* GetInstance();
 
-	static DXCompiler* GetInstance();
+		void Init();
+		//シェーダーのコンパイル
+		ComPtr<IDxcBlob> ShaderCompile(const std::wstring& fileName, const wchar_t* profile);
 
-	void Init();
-	//シェーダーのコンパイル
-	ComPtr<IDxcBlob> ShaderCompile(const std::wstring& fileName, const wchar_t* profile);
+	private:
 
-private:
+		ComPtr<IDxcUtils> dxcUtils_;
+		ComPtr<IDxcCompiler3> dxcCompiler_;
+		ComPtr<IDxcIncludeHandler> includeHandler_;
 
-	ComPtr<IDxcUtils> dxcUtils_;
-	ComPtr<IDxcCompiler3> dxcCompiler_;
-	ComPtr<IDxcIncludeHandler> includeHandler_;
+		const std::wstring kDirectoryPath_ = L"Resources/shaders/";
 
-	const std::wstring kDirectoryPath_ = L"Resources/shaders/";
+	private:
 
-private:
+		DXCompiler() = default;
+		~DXCompiler() = default;
+		DXCompiler(const DXCompiler&) = delete;
+		DXCompiler& operator=(const DXCompiler&) = delete;
 
-	DXCompiler() = default;
-	~DXCompiler() = default;
-	DXCompiler(const DXCompiler&) = delete;
-	DXCompiler& operator=(const DXCompiler&) = delete;
-
-};
-
+	};
+}

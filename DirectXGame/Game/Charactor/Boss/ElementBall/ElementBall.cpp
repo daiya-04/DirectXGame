@@ -7,13 +7,18 @@
 #include "ParticleManager.h"
 #include "ColliderManager.h"
 
-void ElementBall::Init(std::shared_ptr<Model> model) {
+ElementBall::~ElementBall() {
+	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
+}
 
-	obj_.reset(Object3d::Create(model));
-	animation_ = AnimationManager::Load(obj_->GetModel()->name_);
+void ElementBall::Init(std::shared_ptr<DaiEngine::Model> model) {
 
-	collider_ = ColliderManager::CreateSphere();
+	obj_.reset(DaiEngine::Object3d::Create(model));
+	animation_ = DaiEngine::AnimationManager::Load(obj_->GetModel()->name_);
+
+	collider_ = std::make_unique<DaiEngine::SphereCollider>();
 	collider_->Init("BossAttack", obj_->worldTransform_, 1.3f);
+	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 	//エフェクト設定
 	effect_ = ParticleManager::Load("FireBall");
@@ -58,7 +63,7 @@ void ElementBall::Update() {
 	collider_->Update();
 }
 
-void ElementBall::Draw([[maybe_unused]]  const Camera& camera) {
+void ElementBall::Draw([[maybe_unused]]  const DaiEngine::Camera& camera) {
 
 #ifdef _DEBUG
 	if (isLife_) {
@@ -70,13 +75,13 @@ void ElementBall::Draw([[maybe_unused]]  const Camera& camera) {
 
 }
 
-void ElementBall::DrawParticle(const Camera& camera) {
+void ElementBall::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& [name, particle] : effect_) {
 		particle->Draw(camera);
 	}
 }
 
-void ElementBall::OnCollision([[maybe_unused]] Collider* other) {
+void ElementBall::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
 	isLife_ = false;
 	phaseRequest_ = Phase::kRoot;
 	collider_->ColliderOff();

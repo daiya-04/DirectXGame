@@ -9,7 +9,7 @@
 
 #include "BaseGraphicsPipeline.h"
 
-class SkinningGraphicsPipeline : public BaseGraphicsPipeline {
+class SkinningGraphicsPipeline : public DaiEngine::BaseGraphicsPipeline {
 public:
 
 	/// <summary>

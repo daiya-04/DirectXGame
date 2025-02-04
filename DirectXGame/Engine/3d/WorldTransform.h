@@ -9,40 +9,41 @@ struct CBufferDataWorldTransform {
 	Matrix4x4 WorldInverseTranspose;
 };
 
-class WorldTransform{
-public:
+namespace DaiEngine {
+	class WorldTransform {
+	public:
 
-	Vector3 scale_ = { 1.0f,1.0f,1.0f };
-	
-	Vector3 rotation_ = {};
+		Vector3 scale_ = { 1.0f,1.0f,1.0f };
 
-	Vector3 translation_ = {};
+		Vector3 rotation_ = {};
 
-	Matrix4x4 matWorld_ = MakeIdentity44();
-	Matrix4x4 WorldInverseTransposeMat_ = MakeIdentity44();
+		Vector3 translation_ = {};
 
-	const WorldTransform* parent_ = nullptr;
+		Matrix4x4 matWorld_ = MakeIdentity44();
+		Matrix4x4 WorldInverseTransposeMat_ = MakeIdentity44();
 
-public:
+		const WorldTransform* parent_ = nullptr;
 
-	void Init();
-	void UpdateMatrix();
-	void UpdateMatrixRotate(const Matrix4x4& rotateMat);
-	void Map();
+	public:
 
-	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {
-		return cBuffer_->GetGPUVirtualAddress();
-	}
+		void Init();
+		void UpdateMatrix();
+		void UpdateMatrixRotate(const Matrix4x4& rotateMat);
+		void Map();
 
-private:
+		D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {
+			return cBuffer_->GetGPUVirtualAddress();
+		}
 
-	
-	void CreateCBuffer();
+	private:
 
-private:
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> cBuffer_;
-	CBufferDataWorldTransform* cMap_ = nullptr;
+		void CreateCBuffer();
 
-};
+	private:
 
+		Microsoft::WRL::ComPtr<ID3D12Resource> cBuffer_;
+		CBufferDataWorldTransform* cMap_ = nullptr;
+
+	};
+}

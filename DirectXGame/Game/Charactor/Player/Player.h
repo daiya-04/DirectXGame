@@ -63,7 +63,7 @@ private:
 	std::unique_ptr<IPlayerBehavior> behaviorRequest_;
 
 	//ターゲット(ボス)
-	const WorldTransform* target_ = nullptr;
+	const DaiEngine::WorldTransform* target_ = nullptr;
 	//最大HP
 	int32_t maxHp_ = 15;
 	//攻撃の射程
@@ -91,11 +91,13 @@ public:
 	/// </summary>
 	Player(){}
 
+	~Player() override {}
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="models">モデルのベクター配列</param>
-	void Init(const std::vector<std::shared_ptr<Model>>& models) override;
+	void Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models) override;
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -108,11 +110,11 @@ public:
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const Camera& camera) override;
+	void Draw(const DaiEngine::Camera& camera) override;
 
-	void DrawAttack(const Camera& camera);
+	void DrawAttack(const DaiEngine::Camera& camera);
 
-	void DrawParticle(const Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// UI描画
 	/// </summary>
@@ -120,7 +122,7 @@ public:
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision(Collider* other) override;
+	void OnCollision(DaiEngine::Collider* other) override;
 	/// <summary>
 	/// 行動の切り替え
 	/// </summary>
@@ -135,8 +137,8 @@ public:
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
 	FollowCamera* GetFollowCamera() { return followCamera_; }
 	//
-	void SetTerget(const WorldTransform* target) { target_ = target; }
-	const WorldTransform* GetTarget() { return target_; }
+	void SetTerget(const DaiEngine::WorldTransform* target) { target_ = target; }
+	const DaiEngine::WorldTransform* GetTarget() { return target_; }
 	/// <summary>
 	/// 死亡アニメーションの終了
 	/// </summary>

@@ -14,51 +14,51 @@
 #include "ModelManager.h"
 #include "Animation.h"
 
+namespace DaiEngine {
+	class Object3d {
+	private:
+		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-class Object3d{
-private:
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	public: //静的メンバ関数
+		//モデルの生成
+		static Object3d* Create(std::shared_ptr<Model> model);
+		//描画前処理
+		static void preDraw();
+		//描画後処理
+		static void postDraw();
 
-public: //静的メンバ関数
-	//モデルの生成
-	static Object3d* Create(std::shared_ptr<Model> model);
-	//描画前処理
-	static void preDraw();
-	//描画後処理
-	static void postDraw();
+		static void SetPointLight(PointLight* pointLight) { pointLight_ = pointLight; }
 
-	static void SetPointLight(PointLight* pointLight) { pointLight_ = pointLight; }
+		static void SetSpotLight(SpotLight* spotLight) { spotLight_ = spotLight; }
 
-	static void SetSpotLight(SpotLight* spotLight) { spotLight_ = spotLight; }
+	public:
 
-public:
+		static PointLight* pointLight_;
+		static SpotLight* spotLight_;
 
-	static PointLight* pointLight_;
-	static SpotLight* spotLight_;
-	
-private: //メンバ変数
+	private: //メンバ変数
 
-	std::shared_ptr<Model> model_;
+		std::shared_ptr<Model> model_;
 
-public:
+	public:
 
-	WorldTransform worldTransform_;
+		WorldTransform worldTransform_;
 
-public: //メンバ関数
+	public: //メンバ関数
 
-	//初期化
-	void Initialize(std::shared_ptr<Model> model);
-	//更新
-	void Update();
-	//描画
-	void Draw(const Camera& camera);
+		//初期化
+		void Initialize(std::shared_ptr<Model> model);
+		//更新
+		void Update();
+		//描画
+		void Draw(const Camera& camera);
 
-	void SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
-	
-	void SetModelHandle(std::shared_ptr<Model> model) { model_ = model; }
+		void SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
 
-	Vector3 GetWorldPos() const;
-	std::shared_ptr<Model> GetModel() const { return model_; }
+		void SetModelHandle(std::shared_ptr<Model> model) { model_ = model; }
 
-};
+		Vector3 GetWorldPos() const;
+		std::shared_ptr<Model> GetModel() const { return model_; }
 
+	};
+}

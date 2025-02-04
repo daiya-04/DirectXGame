@@ -15,7 +15,7 @@ public:
 
 	void Update();
 
-	void Draw(const Camera& camera);
+	void Draw(const DaiEngine::Camera& camera);
 
 private:
 	//データファイル読み込み
@@ -26,16 +26,13 @@ private:
 
 private:
 
-	std::map<std::string, std::unique_ptr<GPUParticle>> particles_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> particles_;
 
 	bool isLoop_ = true;
 
 	std::string saveFileName_;
 	std::string addParticelName_;
 	const std::string kDirectoryPath_ = "Resources/ParticleData/";
-
-	std::string modelName_;
-	bool isModel_ = false;
 
 	std::vector<std::string> billboardList_;
 	std::vector<std::string> emitterShapeList_;

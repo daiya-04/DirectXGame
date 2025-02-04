@@ -17,40 +17,42 @@ struct CBufferDataSpotLight {
 	float padding[2];
 };
 
-class SpotLight{
-private:
-	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+namespace DaiEngine {
+	class SpotLight {
+	private:
+		template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-public:
+	public:
 
-	void Init();
-	void Update();
+		void Init();
+		void Update();
 
-	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() {
-		return cBuffer_->GetGPUVirtualAddress();
-	}
+		D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() {
+			return cBuffer_->GetGPUVirtualAddress();
+		}
 
-private:
+	private:
 
-	void CreateCBuffer();
-	void Map();
+		void CreateCBuffer();
+		void Map();
 
-public:
+	public:
 
-	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
-	Vector3 position_ = {};
-	float intensity_ = 0.0f;
-	Vector3 direction_ = {1.0f,0.0f,0.0f};
-	float distance_ = 7.0f;
-	float decay_ = 1.0f;
-	float cosAngle_ = std::cosf(std::numbers::pi_v<float> / 3.0f);
-	float cosFalloffStart_ = 1.0f;
+		Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
+		Vector3 position_ = {};
+		float intensity_ = 0.0f;
+		Vector3 direction_ = { 1.0f,0.0f,0.0f };
+		float distance_ = 7.0f;
+		float decay_ = 1.0f;
+		float cosAngle_ = std::cosf(std::numbers::pi_v<float> / 3.0f);
+		float cosFalloffStart_ = 1.0f;
 
-private:
+	private:
 
-	ComPtr<ID3D12Resource> cBuffer_;
-	CBufferDataSpotLight* cMap_ = nullptr;
+		ComPtr<ID3D12Resource> cBuffer_;
+		CBufferDataSpotLight* cMap_ = nullptr;
 
 
-};
+	};
 
+}

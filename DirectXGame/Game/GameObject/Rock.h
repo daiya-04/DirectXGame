@@ -20,7 +20,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<Model>& model);
+	void Init(const std::shared_ptr<DaiEngine::Model>& model);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -29,7 +29,7 @@ public:
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const Camera& camera);
+	void Draw(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// データのセット
 	/// </summary>
@@ -38,7 +38,7 @@ public:
 
 private:
 	//オブジェクト
-	std::unique_ptr<Object3d> obj_;
+	std::unique_ptr<DaiEngine::Object3d> obj_;
 
 };
 

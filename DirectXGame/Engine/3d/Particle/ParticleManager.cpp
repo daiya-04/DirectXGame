@@ -14,11 +14,11 @@ ParticleManager* ParticleManager::GetInstance() {
 	return &instance;
 }
 
-std::map<std::string, std::unique_ptr<GPUParticle>> ParticleManager::Load(const std::string& fileName) {
+std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> ParticleManager::Load(const std::string& fileName) {
 	return ParticleManager::GetInstance()->LoadInternal(fileName);
 }
 
-std::map<std::string, std::unique_ptr<GPUParticle>> ParticleManager::LoadInternal(const std::string& fileName) {
+std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> ParticleManager::LoadInternal(const std::string& fileName) {
 
 	//既に読み込んでいたらリターン
 	/*if (particleDatas_.find(fileName) != particleDatas_.end()) {
@@ -30,7 +30,7 @@ std::map<std::string, std::unique_ptr<GPUParticle>> ParticleManager::LoadInterna
 	//ファイルの拡張子
 	const std::string kExtension = ".json";
 
-	std::map<std::string, std::unique_ptr<GPUParticle>> outputData;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> outputData;
 
 	//フルパスの取得
 	const std::string fullPath = kDirectoryPath + fileName + kExtension;
@@ -63,18 +63,24 @@ std::map<std::string, std::unique_ptr<GPUParticle>> ParticleManager::LoadInterna
 	datas_[fileName];
 
 	for (const auto& [group, particleRoot] : particles.items()) {
-		std::unique_ptr<GPUParticle> setData;
+		std::unique_ptr<DaiEngine::GPUParticle> setData;
 
 		auto& data = datas_[fileName].particle[group];
 
 		//データ設定
 		data.isLoop_ = particleRoot["isLoop"].get<bool>();
 		data.textureName_ = particleRoot["textureName"].get<std::string>();
+		if (particleRoot.contains("isModel")) {
+			data.isModel_ = particleRoot["isModel"].get<bool>();
+			if (data.isModel_) {
+				data.modelName_ = particleRoot["modelName"].get<std::string>();
+			}
+		}
 
 		if (data.isLoop_) {
-			setData.reset(GPUParticle::Create(TextureManager::Load(data.textureName_), 10000));
+			setData.reset(DaiEngine::GPUParticle::Create(DaiEngine::TextureManager::Load(data.textureName_), 10000));
 		}else {
-			setData.reset(GPUParticle::Create(TextureManager::Load(data.textureName_), 1024));
+			setData.reset(DaiEngine::GPUParticle::Create(DaiEngine::TextureManager::Load(data.textureName_), 1024));
 		}
 
 		auto& emitterData = data.emitter_;
@@ -138,6 +144,9 @@ std::map<std::string, std::unique_ptr<GPUParticle>> ParticleManager::LoadInterna
 			json density = overLifeTimeRoot["density"];
 			overLifeTimeData.density = Vector3(static_cast<float>(density[0]), static_cast<float>(density[1]), static_cast<float>(density[2]));
 			overLifeTimeData.strength = overLifeTimeRoot["strength"].get<float>();
+			if (overLifeTimeRoot.contains("isRandom")) {
+				overLifeTimeData.isRandom = overLifeTimeRoot["isRandom"].get<uint32_t>();
+			}
 		}
 
 		setData->SetParticleData(data);

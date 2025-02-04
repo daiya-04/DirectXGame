@@ -27,11 +27,13 @@
 //キャラクターの基底クラス
 class BaseCharactor {
 public:
+
+	virtual ~BaseCharactor();
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="models">モデルのベクター配列</param>
-	virtual void Init(const std::vector<std::shared_ptr<Model>>& models);
+	virtual void Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -51,13 +53,13 @@ public:
 	/// モデル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	virtual void Draw(const Camera& camera);
+	virtual void Draw(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// UI描画
 	/// </summary>
 	virtual void DrawUI();
 
-	virtual void OnCollision([[maybe_unused]] Collider* other) {};
+	virtual void OnCollision([[maybe_unused]] DaiEngine::Collider* other) {};
 
 	/// <summary>
 	/// データ設定
@@ -80,7 +82,7 @@ public:
 	/// ワールドトランスフォーム取得
 	/// </summary>
 	/// <returns>オブジェクトのワールドトランスフォーム</returns>
-	const WorldTransform& GetWorldTransform() { return obj_->worldTransform_; }
+	const DaiEngine::WorldTransform& GetWorldTransform() { return obj_->worldTransform_; }
 	/// <summary>
 	/// アニメーションの設定
 	/// </summary>
@@ -99,7 +101,7 @@ public:
 	/// obj_の取得
 	/// </summary>
 	/// <returns></returns>
-	SkinningObject* GetObj() { return obj_.get(); }
+	DaiEngine::SkinningObject* GetObj() { return obj_.get(); }
 	/// <summary>
 	/// キャラがディゾルブで消えていく
 	/// </summary>
@@ -108,31 +110,31 @@ public:
 	/// 現在のアニメーションの取得
 	/// </summary>
 	/// <returns></returns>
-	Animation& GetNowAnimation() { return animations_[actionIndex_]; }
+	DaiEngine::Animation& GetNowAnimation() { return animations_[actionIndex_]; }
 	const size_t GetActionIndex() const { return actionIndex_; }
 
-	Skeleton& GetNowSkelton() { return skeletons_[actionIndex_]; }
+	DaiEngine::Skeleton& GetNowSkelton() { return skeletons_[actionIndex_]; }
 
-	Collider* GetCollider() { return collider_; }
+	DaiEngine::Collider* GetCollider() { return collider_.get(); }
 
 protected:
 
 	///スキニングアニメーションに必要なもの
 	//スキニングオブジェクト
-	std::unique_ptr<SkinningObject> obj_;
+	std::unique_ptr<DaiEngine::SkinningObject> obj_;
 	//スキニングアニメーションデータ
-	std::vector<std::shared_ptr<Model>> animationModels_;
+	std::vector<std::shared_ptr<DaiEngine::Model>> animationModels_;
 	//アニメーション再生
-	std::vector<Animation> animations_;
+	std::vector<DaiEngine::Animation> animations_;
 	//スケルトン
-	std::vector<Skeleton> skeletons_;
+	std::vector<DaiEngine::Skeleton> skeletons_;
 	//スキンクラスター
-	std::vector<SkinCluster> skinClusters_;
+	std::vector<DaiEngine::SkinCluster> skinClusters_;
 
 	//アクションインデックス(今なんのアニメーションか)
 	size_t actionIndex_ = 0;
 	//コライダー
-	OBBCollider* collider_ = nullptr;
+	std::unique_ptr<DaiEngine::OBBCollider> collider_;
 	Vector3 centerPos_ = {};
 	//回転行列
 	Matrix4x4 rotateMat_;
@@ -142,7 +144,7 @@ protected:
 	//HP
 	int32_t hp_;
 	//HP用UI
-	std::unique_ptr<Sprite> hpBar_;
+	std::unique_ptr<DaiEngine::Sprite> hpBar_;
 	//HP用UIサイズ
 	Vector2 hpBarSize_ = {};
 
