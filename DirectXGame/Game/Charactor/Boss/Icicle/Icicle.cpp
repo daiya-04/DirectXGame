@@ -72,18 +72,18 @@ void Icicle::Update() {
 }
 
 void Icicle::Draw(const DaiEngine::Camera& camera) {
-	obj_->Draw(camera);
+	obj_->Draw(camera, DaiEngine::BlendMode::kAdd);
 }
 
 void Icicle::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& [group, particle] : createEffect_) {
-		particle->Draw(camera, true);
+		particle->Draw(camera, DaiEngine::BlendMode::kScreen);
 	}
 	for (auto& [group, particle] : hitEffect_) {
 		particle->Draw(camera);
 	}
 	for (auto& [group, particle] : trailEff_) {
-		particle->Draw(camera, true);
+		particle->Draw(camera, DaiEngine::BlendMode::kScreen);
 	}
 
 }

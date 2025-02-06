@@ -58,15 +58,11 @@ namespace DaiEngine {
 	}
 
 
-	void PipelineManager::preDraw(const std::string& pipelineType) {
-		graphicsPipelines_[pipelineType]->preDraw();
+	void PipelineManager::preDraw(const std::string& pipelineType, BlendMode blendMode) {
+		graphicsPipelines_[pipelineType]->preDraw(blendMode);
 	}
 
 	void PipelineManager::preDispatch(const std::string& pipelineType) {
 		computePipelines_[pipelineType]->preDispatch();
-	}
-
-	void PipelineManager::preDrawScreen() {
-		graphicsPipelines_["GPUParticle"]->preDrawScreen();
 	}
 }

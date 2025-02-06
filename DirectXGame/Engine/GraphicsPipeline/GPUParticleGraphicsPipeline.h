@@ -18,11 +18,7 @@ public:
 	/// <summary>
 	/// 描画前
 	/// </summary>
-	void preDraw() override;
-	/// <summary>
-	/// スクリーンブレンド用パイプラインステート生成
-	/// </summary>
-	void screenPSCreate();
+	void preDraw(DaiEngine::BlendMode blendMode = DaiEngine::BlendMode::kAdd) override;
 
 };
 

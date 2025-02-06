@@ -13,6 +13,7 @@
 #include "SpotLight.h"
 #include "ModelManager.h"
 #include "Animation.h"
+#include "PipelineManager.h"
 
 namespace DaiEngine {
 	class Object3d {
@@ -51,7 +52,7 @@ namespace DaiEngine {
 		//更新
 		void Update();
 		//描画
-		void Draw(const Camera& camera);
+		void Draw(const Camera& camera, BlendMode blendMode = BlendMode::kAlpha);
 
 		void SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
 

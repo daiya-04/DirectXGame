@@ -5,7 +5,6 @@
 #include "Log.h"
 #include "DirectionalLight.h"
 #include "DirectXCommon.h"
-#include "PipelineManager.h"
 #include "RootParameters.h"
 
 using namespace Microsoft::WRL;
@@ -52,7 +51,9 @@ namespace DaiEngine {
 
 	}
 
-	void Object3d::Draw(const Camera& camera) {
+	void Object3d::Draw(const Camera& camera, BlendMode blendMode) {
+
+		PipelineManager::GetInstance()->preDraw("Object3d", blendMode);
 
 		worldTransform_.Map();
 
