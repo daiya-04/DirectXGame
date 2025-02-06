@@ -77,26 +77,6 @@ public:
 	};
 
 private:
-	//登場に必要なパラメータ
-	struct WorkAppear{
-		//開始位置
-		Vector3 startPos_ = { 0.0f,-15.0f,50.0f };
-		//終了位置
-		Vector3 endPos_ = { 0.0f, 0.0f,50.0f };
-		//時間
-		float param_ = 0.0f;
-		//スピード
-		float speed_ = 0.005f;
-	};
-	//攻撃に必要なパラメータ
-	struct WorkAttack {
-		//攻撃間隔
-		uint32_t coolTime_ = 60 * 3;
-		//時間
-		uint32_t param_ = 0;
-	};
-
-private:
 
 	std::unique_ptr<IBossBehavior> behavior_;
 	std::unique_ptr<IBossBehavior> behaviorRequest_;
@@ -111,10 +91,6 @@ private:
 	bool isFinishDeadMotion_ = false;
 	//攻撃のターゲット(プレイヤー)
 	const DaiEngine::WorldTransform* target_ = nullptr;
-	//登場用のパラメータ
-	WorkAppear workAppear_;
-	//攻撃用のパラメータ
-	WorkAttack workAttack_;
 
 	/// 攻撃の各種マネージャ
 	//火の玉

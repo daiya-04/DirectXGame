@@ -63,7 +63,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)externals\assimp\include;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\BaseScene;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\DebugText;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;$(ProjectDir)Engine\3d\Light;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\3d\Animation;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Collision\Collider;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Loader;$(ProjectDir)Engine\Easing;$(ProjectDir)Engine\GraphicsPipeline;$(ProjectDir)Engine\ComputePipeline;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\Line;$(ProjectDir)Game\;$(ProjectDir)Game\Effects;$(ProjectDir)Game\Scene;$(ProjectDir)Game\GameObject;$(ProjectDir)Game\Charactor;$(ProjectDir)Game\Charactor\Player;$(ProjectDir)Game\Charactor\Player\Behavior;$(ProjectDir)Game\Charactor\Player\Behavior\Attack;$(ProjectDir)Game\Charactor\Player\Behavior\Dash;$(ProjectDir)Game\Charactor\Player\Behavior\Dead;$(ProjectDir)Game\Charactor\Player\Behavior\Idel;$(ProjectDir)Game\Charactor\Player\Behavior\Jog;$(ProjectDir)Game\Charactor\Player\Behavior\KnockBack;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\ElementBall;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;$(ProjectDir)Game\Charactor\Boss\Behavior;$(ProjectDir)Game\Charactor\Boss\Behavior\Appear;$(ProjectDir)Game\Charactor\Boss\Behavior\Attack;$(ProjectDir)Game\Charactor\Boss\Behavior\Dead;$(ProjectDir)Game\Charactor\Boss\Behavior\Idel;$(ProjectDir)Game\Charactor\Player\Behavior;$(ProjectDir)Game\Charactor\Player\Behavior\KnockBack;$(ProjectDir)Game\Charactor\Player\Behavior\Attack;$(ProjectDir)Game\Charactor\Player\Behavior\Idel;$(ProjectDir)Game\Charactor\Player\Behavior\Dash;$(ProjectDir)Game\Charactor\Player\Behavior\Jog;$(ProjectDir)Game\Charactor\Player\Behavior\Dead;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;$(ProjectDir)Game\Charactor\Boss\ElementBall;$(ProjectDir)Game\Charactor\Boss\Behavior;$(ProjectDir)Game\Charactor\Boss\Behavior\Idel;$(ProjectDir)Game\Charactor\Boss\Behavior\Attack;$(ProjectDir)Game\Charactor\Boss\Behavior\Dead;$(ProjectDir)Game\Charactor\Boss\Behavior\Appear;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)externals\assimp\include;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\BaseScene;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\DebugText;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;$(ProjectDir)Engine\3d\Light;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\3d\Animation;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Collision\Collider;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Loader;$(ProjectDir)Engine\Easing;$(ProjectDir)Engine\GraphicsPipeline;$(ProjectDir)Engine\ComputePipeline;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\Line;$(ProjectDir)Game\;$(ProjectDir)Game\Effects;$(ProjectDir)Game\Scene;$(ProjectDir)Game\Scene\DebugTestScene;$(ProjectDir)Game\Scene\GameScene;$(ProjectDir)Game\Scene\TitleScene;$(ProjectDir)Game\GameObject;$(ProjectDir)Game\Charactor;$(ProjectDir)Game\Charactor\Player;$(ProjectDir)Game\Charactor\Player\Behavior;$(ProjectDir)Game\Charactor\Player\Behavior\Attack;$(ProjectDir)Game\Charactor\Player\Behavior\Dash;$(ProjectDir)Game\Charactor\Player\Behavior\Dead;$(ProjectDir)Game\Charactor\Player\Behavior\Idel;$(ProjectDir)Game\Charactor\Player\Behavior\Jog;$(ProjectDir)Game\Charactor\Player\Behavior\KnockBack;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\ElementBall;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;$(ProjectDir)Game\Charactor\Boss\Behavior;$(ProjectDir)Game\Charactor\Boss\Behavior\Appear;$(ProjectDir)Game\Charactor\Boss\Behavior\Attack;$(ProjectDir)Game\Charactor\Boss\Behavior\Dead;$(ProjectDir)Game\Charactor\Boss\Behavior\Idel;$(ProjectDir)Game\Charactor\Player\Behavior;$(ProjectDir)Game\Charactor\Player\Behavior\KnockBack;$(ProjectDir)Game\Charactor\Player\Behavior\Attack;$(ProjectDir)Game\Charactor\Player\Behavior\Idel;$(ProjectDir)Game\Charactor\Player\Behavior\Dash;$(ProjectDir)Game\Charactor\Player\Behavior\Jog;$(ProjectDir)Game\Charactor\Player\Behavior\Dead;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;$(ProjectDir)Game\Charactor\Boss\ElementBall;$(ProjectDir)Game\Charactor\Boss\Behavior;$(ProjectDir)Game\Charactor\Boss\Behavior\Idel;$(ProjectDir)Game\Charactor\Boss\Behavior\Attack;$(ProjectDir)Game\Charactor\Boss\Behavior\Dead;$(ProjectDir)Game\Charactor\Boss\Behavior\Appear;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -91,7 +91,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)externals\assimp\include;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\BaseScene;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\DebugText;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;$(ProjectDir)Engine\3d\Light;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\3d\Animation;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Collision\Collider;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Loader;$(ProjectDir)Engine\Easing;$(ProjectDir)Engine\GraphicsPipeline;$(ProjectDir)Engine\ComputePipeline;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\Line;$(ProjectDir)Game\;$(ProjectDir)Game\Effects;$(ProjectDir)Game\Scene;$(ProjectDir)Game\GameObject;$(ProjectDir)Game\Charactor;$(ProjectDir)Game\Charactor\Player;$(ProjectDir)Game\Charactor\Player\Behavior;$(ProjectDir)Game\Charactor\Player\Behavior\Attack;$(ProjectDir)Game\Charactor\Player\Behavior\Dash;$(ProjectDir)Game\Charactor\Player\Behavior\Dead;$(ProjectDir)Game\Charactor\Player\Behavior\Idel;$(ProjectDir)Game\Charactor\Player\Behavior\Jog;$(ProjectDir)Game\Charactor\Player\Behavior\KnockBack;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\ElementBall;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;$(ProjectDir)Game\Charactor\Boss\Behavior;$(ProjectDir)Game\Charactor\Boss\Behavior\Appear;$(ProjectDir)Game\Charactor\Boss\Behavior\Attack;$(ProjectDir)Game\Charactor\Boss\Behavior\Dead;$(ProjectDir)Game\Charactor\Boss\Behavior\Idel;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;$(ProjectDir)Game\Charactor\Boss\ElementBall;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)externals\assimp\include;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\BaseScene;$(ProjectDir)Engine\2d;$(ProjectDir)Engine\3d;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\DebugText;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\3d\Particle;$(ProjectDir)Engine\3d\Light;$(ProjectDir)Engine\3d\Model;$(ProjectDir)Engine\3d\Animation;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Collision\Collider;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Loader;$(ProjectDir)Engine\Easing;$(ProjectDir)Engine\GraphicsPipeline;$(ProjectDir)Engine\ComputePipeline;$(ProjectDir)Engine\PostEffect;$(ProjectDir)Engine\Line;$(ProjectDir)Game\;$(ProjectDir)Game\Effects;$(ProjectDir)Game\Scene;$(ProjectDir)Game\Scene\DebugTestScene;$(ProjectDir)Game\Scene\GameScene;$(ProjectDir)Game\Scene\TitleScene;$(ProjectDir)Game\GameObject;$(ProjectDir)Game\Charactor;$(ProjectDir)Game\Charactor\Player;$(ProjectDir)Game\Charactor\Player\Behavior;$(ProjectDir)Game\Charactor\Player\Behavior\Attack;$(ProjectDir)Game\Charactor\Player\Behavior\Dash;$(ProjectDir)Game\Charactor\Player\Behavior\Dead;$(ProjectDir)Game\Charactor\Player\Behavior\Idel;$(ProjectDir)Game\Charactor\Player\Behavior\Jog;$(ProjectDir)Game\Charactor\Player\Behavior\KnockBack;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\ElementBall;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;$(ProjectDir)Game\Charactor\Boss\Behavior;$(ProjectDir)Game\Charactor\Boss\Behavior\Appear;$(ProjectDir)Game\Charactor\Boss\Behavior\Attack;$(ProjectDir)Game\Charactor\Boss\Behavior\Dead;$(ProjectDir)Game\Charactor\Boss\Behavior\Idel;$(ProjectDir)Game\Charactor\Boss;$(ProjectDir)Game\Charactor\Boss\Icicle;$(ProjectDir)Game\Charactor\Boss\PlasmaShot;$(ProjectDir)Game\Charactor\Boss\ElementBall;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -124,7 +124,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3d\Animation\AnimationManager.cpp" />
     <ClCompile Include="Game\Effects\BurnScar.cpp" />
     <ClCompile Include="Engine\PostEffect\Dissolve.cpp" />
-    <ClCompile Include="Game\Scene\DebugTestScene.cpp" />
+    <ClCompile Include="Game\Scene\DebugTestScene\DebugTestScene.cpp" />
     <ClCompile Include="Engine\3d\Animation\Animation.cpp" />
     <ClCompile Include="Engine\3d\Light\PointLight.cpp" />
     <ClCompile Include="Game\Charactor\Boss\Boss.cpp" />
@@ -138,7 +138,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Input\Input.cpp" />
     <ClCompile Include="Engine\Framework\Framework.cpp" />
     <ClCompile Include="Game\Charactor\Player\FollowCamera.cpp" />
-    <ClCompile Include="Game\Scene\GameScene.cpp" />
+    <ClCompile Include="Game\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="Engine\Collision\Hit.cpp" />
     <ClCompile Include="Engine\DebugText\GlobalVariables.cpp" />
     <ClCompile Include="Engine\Loader\LevelLoader.cpp" />
@@ -176,7 +176,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Charactor\Boss\PlasmaShot\PlasmaShot.cpp" />
     <ClCompile Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.cpp" />
     <ClCompile Include="Game\GameObject\Rock.cpp" />
-    <ClCompile Include="Game\Scene\TitleScene.cpp" />
+    <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Engine\3d\Particle\ParticleManager.cpp" />
     <ClCompile Include="Engine\3d\Particle\ParticleEditor.cpp" />
     <ClCompile Include="Engine\GraphicsPipeline\SpriteGraphicsPipeline.cpp" />
@@ -215,7 +215,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\Animation\AnimationManager.h" />
     <ClInclude Include="Game\Effects\BurnScar.h" />
     <ClInclude Include="Engine\PostEffect\Dissolve.h" />
-    <ClInclude Include="Game\Scene\DebugTestScene.h" />
+    <ClInclude Include="Game\Scene\DebugTestScene\DebugTestScene.h" />
     <ClInclude Include="Engine\Collision\CollisionShapes.h" />
     <ClInclude Include="Engine\3d\Animation\Animation.h" />
     <ClInclude Include="Game\Charactor\Boss\Boss.h" />
@@ -245,7 +245,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3d\WorldTransform.h" />
     <ClInclude Include="Engine\Framework\Framework.h" />
     <ClInclude Include="Game\Charactor\Player\FollowCamera.h" />
-    <ClInclude Include="Game\Scene\GameScene.h" />
+    <ClInclude Include="Game\Scene\GameScene\GameScene.h" />
     <ClInclude Include="Game\MyGame.h" />
     <ClInclude Include="Engine\BaseScene\IScene.h" />
     <ClInclude Include="Game\Scene\SceneFactory.h" />
@@ -273,7 +273,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Charactor\Boss\PlasmaShot\PlasmaShot.h" />
     <ClInclude Include="Game\Charactor\Boss\PlasmaShot\PlasmaShotManager.h" />
     <ClInclude Include="Game\GameObject\Rock.h" />
-    <ClInclude Include="Game\Scene\TitleScene.h" />
+    <ClInclude Include="Game\Scene\TitleScene\TitleScene.h" />
     <ClInclude Include="Game\Effects\IceScar.h" />
     <ClInclude Include="Engine\3d\Particle\ParticleManager.h" />
     <ClInclude Include="Engine\3d\Particle\ParticleEditor.h" />

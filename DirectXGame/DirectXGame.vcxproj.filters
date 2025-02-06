@@ -140,6 +140,15 @@
     <Filter Include="Engine\Collision\Collider">
       <UniqueIdentifier>{190b78bf-70cd-41d5-800d-dbda524a7239}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Scene\GameScene">
+      <UniqueIdentifier>{2e349f66-a986-4ff4-ae54-8325f5f56e44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene\DebugTestScene">
+      <UniqueIdentifier>{1d48f746-b6c5-48a0-acc2-0a69c9fbc1af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene\TitleScene">
+      <UniqueIdentifier>{0e431317-84ed-467f-bf9d-6ab0225ef911}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -173,9 +182,6 @@
     <ClCompile Include="Game\MyGame.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\GameScene.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Scene\SceneFactory.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
@@ -206,14 +212,8 @@
     <ClCompile Include="Engine\Loader\LevelLoader.cpp">
       <Filter>Engine\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\TitleScene.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Easing\Easing.cpp">
       <Filter>Engine\Easing</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Scene\DebugTestScene.cpp">
-      <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3d\SkinningObject.cpp">
       <Filter>Engine\3d</Filter>
@@ -407,6 +407,15 @@
     <ClCompile Include="Engine\Collision\Collider\Collider.cpp">
       <Filter>Engine\Collision\Collider</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Scene\DebugTestScene\DebugTestScene.cpp">
+      <Filter>Game\Scene\DebugTestScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\GameScene\GameScene.cpp">
+      <Filter>Game\Scene\GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp">
+      <Filter>Game\Scene\TitleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -457,9 +466,6 @@
     <ClInclude Include="Game\MyGame.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\GameScene.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Scene\SceneFactory.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
@@ -499,17 +505,11 @@
     <ClInclude Include="Engine\Loader\LevelLoader.h">
       <Filter>Engine\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\TitleScene.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Easing\Easing.h">
       <Filter>Engine\Easing</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Collision\CollisionShapes.h">
       <Filter>Engine\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Scene\DebugTestScene.h">
-      <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3d\SkinningObject.h">
       <Filter>Engine\3d</Filter>
@@ -708,6 +708,15 @@
     </ClInclude>
     <ClInclude Include="Engine\Collision\Collider\Collider.h">
       <Filter>Engine\Collision\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\DebugTestScene\DebugTestScene.h">
+      <Filter>Game\Scene\DebugTestScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\GameScene\GameScene.h">
+      <Filter>Game\Scene\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\TitleScene\TitleScene.h">
+      <Filter>Game\Scene\TitleScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
