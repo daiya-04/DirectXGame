@@ -40,11 +40,6 @@ public:
 	/// <param name="camera">カメラ</param>
 	void DrawScar(const DaiEngine::Camera& camera);
 	/// <summary>
-	/// 衝突時
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	void OnCollision(size_t index, DaiEngine::Collider* other);
-	/// <summary>
 	/// ターゲットセット
 	/// </summary>
 	/// <param name="target">ターゲットの中心座標</param>

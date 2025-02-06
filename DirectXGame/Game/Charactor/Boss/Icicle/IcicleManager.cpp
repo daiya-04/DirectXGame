@@ -6,14 +6,14 @@
 
 void IcicleManager::Init(const std::shared_ptr<DaiEngine::Model>& model) {
 
+	for (auto& iceScar : iceScars_) {
+		iceScar.reset(IceScar::Create(DaiEngine::TextureManager::Load("ScarBase.png")));
+	}
+
 	for (size_t index = 0; index < icicles_.size(); index++) {
 		icicles_[index] = std::make_unique<Icicle>();
 		icicles_[index]->Init(model);
-		icicles_[index]->GetCollider()->SetCallbackFunc([this, number = index](DaiEngine::Collider* other) {this->OnCollision(number, other); });
-	}
-
-	for (auto& iceScar : iceScars_) {
-		iceScar.reset(IceScar::Create(DaiEngine::TextureManager::Load("ScarBase.png")));
+		icicles_[index]->SetIceScar(iceScars_[index].get());
 	}
 	
 	isAttack_ = false;
@@ -24,12 +24,8 @@ void IcicleManager::Init(const std::shared_ptr<DaiEngine::Model>& model) {
 void IcicleManager::Update() {
 	preIsAttack_ = isAttack_;
 	//攻撃が当たるか地面に着いたら
-	for (uint32_t index = 0; index < kIcicleNum_; index++) {
-		/*if (icicles_[index]->DeadFlag()) {
-			OnCollision(index);
-		}*/
-
-		icicles_[index]->Update();
+	for (auto& icicle : icicles_) {
+		icicle->Update();
 	}
 
 	for (auto& iceScar : iceScars_) {
@@ -50,16 +46,6 @@ void IcicleManager::Draw(const DaiEngine::Camera& camera) {
 	}
 }
 
-void IcicleManager::OnCollision(size_t index, DaiEngine::Collider* other) {
-
-	if (other->GetTag() == "Player" || other->GetTag() == "Ground") {
-		icicles_[index]->OnCollision(other);
-		iceScars_[index]->EffectStart(icicles_[index]->GetWorldPos());
-		iceScars_[index]->HeightAdjustment(0.0001f + (0.0001f * (float)index));
-	}
-	
-}
-
 void IcicleManager::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& icicle : icicles_) {
 		icicle->DrawParticle(camera);
@@ -67,6 +53,13 @@ void IcicleManager::DrawParticle(const DaiEngine::Camera& camera) {
 }
 
 void IcicleManager::DrawScar(const DaiEngine::Camera& camera) {
+
+	//高さが低い順にソート
+	std::sort(iceScars_.begin(), iceScars_.end(), [](const std::unique_ptr<IceScar>& scarA, const std::unique_ptr<IceScar>& scarB) {
+		return scarA->GetPosition().y < scarB->GetPosition().y;
+		}
+	);
+
 	for (auto& iceScar : iceScars_) {
 		iceScar->Draw(camera);
 	}

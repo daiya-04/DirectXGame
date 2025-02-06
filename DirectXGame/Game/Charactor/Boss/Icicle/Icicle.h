@@ -17,6 +17,7 @@
 #include "CollisionShapes.h"
 #include "GPUParticle.h"
 #include "SphereCollider.h"
+#include "IceScar.h"
 
 #include <memory>
 #include <string>
@@ -158,13 +159,20 @@ public:
 	/// <returns>消えた瞬間true、それ以外はfalse</returns>
 	bool DeadFlag() const { return (!isLife_ && preIsLife_); }
 
+	void SetIceScar(IceScar* iceScar) { iceScar_ = iceScar; }
+
 private:
+	//跡の高さ調整用
+	static size_t heightAdjustmentIndex;
+
 	//攻撃先(ターゲット)
 	const Vector3* target_;
 	//オブジェクト
 	std::unique_ptr<DaiEngine::Object3d> obj_;
 	//回転行列
 	Matrix4x4 rotateMat_ = MakeIdentity44();
+	//氷の跡
+	IceScar* iceScar_ = nullptr;
 
 	///エフェクト
 	//生成時
