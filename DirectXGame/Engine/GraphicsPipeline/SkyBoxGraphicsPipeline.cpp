@@ -81,22 +81,6 @@ void SkyBoxGraphicsPipeline::Init() {
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 
-	//BlendStateの設定
-	D3D12_BLEND_DESC blendDesc{};
-	//すべての色要素を書き込む
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-
-	//ここをいじるといろいろなブレンドモードを設定できる
-	//ノーマルブレンド
-	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-	//α値のブレンド設定で基本的に使わないからいじらない
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-
 	//RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	//裏面（時計回り）を表示しない
@@ -120,33 +104,38 @@ void SkyBoxGraphicsPipeline::Init() {
 	//比較関数はLessEqual。つまり、近ければ描画される
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
-	//POSを生成する
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc{};
-	pipelineStateDesc.pRootSignature = rootSignature_.Get(); //RootSignature
-	pipelineStateDesc.InputLayout = inputLayoutDesc;  //InputLayout
-	pipelineStateDesc.VS = { verterShaderBlob->GetBufferPointer(),verterShaderBlob->GetBufferSize() };//VerterShader
-	pipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),pixelShaderBlob->GetBufferSize() };//pixelShader
-	pipelineStateDesc.BlendState = blendDesc; //blendState
-	pipelineStateDesc.RasterizerState = rasterizerDesc;//RasterizerState
-	//書き込むRTVの情報
-	pipelineStateDesc.NumRenderTargets = 1;
-	pipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	//利用するトポロジ（形状）のタイプ。三角形
-	pipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	//どのように画面に色を打ち込むかの設定
-	pipelineStateDesc.SampleDesc.Count = 1;
-	pipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	//DepthStencilの設定
-	pipelineStateDesc.DepthStencilState = depthStencilDesc;
-	pipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	for (size_t index = 0; index < static_cast<size_t>(DaiEngine::BlendMode::BlendModeNum); index++) {
 
-	//実際に生成
+		D3D12_BLEND_DESC blendDesc = GetBlendDisc(static_cast<DaiEngine::BlendMode>(index));
 
-	hr = device_->CreateGraphicsPipelineState(&pipelineStateDesc, IID_PPV_ARGS(&pipelineState_));
-	assert(SUCCEEDED(hr));
+		//POSを生成する
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc{};
+		pipelineStateDesc.pRootSignature = rootSignature_.Get(); //RootSignature
+		pipelineStateDesc.InputLayout = inputLayoutDesc;  //InputLayout
+		pipelineStateDesc.VS = { verterShaderBlob->GetBufferPointer(),verterShaderBlob->GetBufferSize() };//VerterShader
+		pipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),pixelShaderBlob->GetBufferSize() };//pixelShader
+		pipelineStateDesc.BlendState = blendDesc; //blendState
+		pipelineStateDesc.RasterizerState = rasterizerDesc;//RasterizerState
+		//書き込むRTVの情報
+		pipelineStateDesc.NumRenderTargets = 1;
+		pipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		//利用するトポロジ（形状）のタイプ。三角形
+		pipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		//どのように画面に色を打ち込むかの設定
+		pipelineStateDesc.SampleDesc.Count = 1;
+		pipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+		//DepthStencilの設定
+		pipelineStateDesc.DepthStencilState = depthStencilDesc;
+		pipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+		//実際に生成
+
+		hr = device_->CreateGraphicsPipelineState(&pipelineStateDesc, IID_PPV_ARGS(&pipelineState_[index]));
+		assert(SUCCEEDED(hr));
+	}
 
 }
 
-void SkyBoxGraphicsPipeline::preDraw() {
-	BaseGraphicsPipeline::preDraw();
+void SkyBoxGraphicsPipeline::preDraw(DaiEngine::BlendMode blendMode) {
+	BaseGraphicsPipeline::preDraw(blendMode);
 }

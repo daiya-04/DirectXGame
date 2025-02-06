@@ -41,7 +41,7 @@ namespace DaiEngine {
 	}
 
 	void Line::preDraw() {
-		PipelineManager::GetInstance()->preDraw("Line");
+		PipelineManager::GetInstance()->preDraw("Line", BlendMode::kAlpha);
 	}
 
 	void Line::AllDraw() {

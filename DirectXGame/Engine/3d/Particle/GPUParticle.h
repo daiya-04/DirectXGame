@@ -9,6 +9,7 @@
 #include "ModelManager.h"
 #include "Camera.h"
 #include "Log.h"
+#include "PipelineManager.h"
 #include <string>
 #include <memory>
 
@@ -200,7 +201,7 @@ namespace DaiEngine {
 
 		void Update();
 
-		void Draw(const Camera& camera, bool isScreen = false);
+		void Draw(const Camera& camera, BlendMode blendMode = BlendMode::kAdd);
 
 		void SetParticleData(const ParticleData& particleData);
 

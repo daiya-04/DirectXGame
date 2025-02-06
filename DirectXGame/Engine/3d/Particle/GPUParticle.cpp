@@ -3,7 +3,6 @@
 #include <cassert>
 #include "TextureManager.h"
 #include "DirectXCommon.h"
-#include "PipelineManager.h"
 #include "RootParameters.h"
 
 using namespace Microsoft::WRL;
@@ -82,14 +81,9 @@ namespace DaiEngine {
 
 	}
 
-	void GPUParticle::Draw(const Camera& camera, bool isScreen) {
+	void GPUParticle::Draw(const Camera& camera, BlendMode blendMode) {
 
-		if (isScreen) {
-			PipelineManager::GetInstance()->preDrawScreen();
-		}
-		else {
-			PipelineManager::GetInstance()->preDraw("GPUParticle");
-		}
+		PipelineManager::GetInstance()->preDraw("GPUParticle", blendMode);
 
 		perViewData_->viewProjectionMat_ = camera.GetMatView() * camera.GetMatProj();
 		perViewData_->billboardMat_ = camera.GetBillBoadMatrix();

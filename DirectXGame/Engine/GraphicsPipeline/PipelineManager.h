@@ -29,16 +29,12 @@ namespace DaiEngine {
 		/// 描画前
 		/// </summary>
 		/// <param name="pipelineType"></param>
-		void preDraw(const std::string& pipelineType);
+		void preDraw(const std::string& pipelineType, BlendMode blendMode = BlendMode::kAlpha);
 		/// <summary>
 		/// ディスパッチ起動前
 		/// </summary>
 		/// <param name="pipelineType"></param>
 		void preDispatch(const std::string& pipelineType);
-		/// <summary>
-		/// スクリーンブレンド描画前(苦し紛れ)
-		/// </summary>
-		void preDrawScreen();
 
 	private:
 		//グラフィックスパイプラインまとめ

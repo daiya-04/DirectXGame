@@ -19,7 +19,7 @@ namespace DaiEngine {
 
 	void Particle::preDraw() {
 
-		PipelineManager::GetInstance()->preDraw("Particle");
+		PipelineManager::GetInstance()->preDraw("Particle", DaiEngine::BlendMode::kAdd);
 
 	}
 

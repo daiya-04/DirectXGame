@@ -18,7 +18,7 @@ public:
 	/// <summary>
 	/// 描画前
 	/// </summary>
-	void preDraw() override;
+	void preDraw(DaiEngine::BlendMode blendMode = DaiEngine::BlendMode::kAlpha) override;
 
 };
 
