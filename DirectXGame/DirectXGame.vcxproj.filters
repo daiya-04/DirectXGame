@@ -149,22 +149,22 @@
     <Filter Include="Game\Scene\TitleScene">
       <UniqueIdentifier>{0e431317-84ed-467f-bf9d-6ab0225ef911}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Scene\GameScene\SceneState">
+    <Filter Include="Game\Scene\GameScene\State">
       <UniqueIdentifier>{9365be3e-7056-46d6-ac80-880d7cd35208}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Scene\GameScene\SceneState\Battle">
+    <Filter Include="Game\Scene\GameScene\State\Battle">
       <UniqueIdentifier>{8faf1a20-79c0-46b4-8686-fd73fa88a914}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Scene\GameScene\SceneState\BossDead">
-      <UniqueIdentifier>{e1485c61-85b4-4262-adcf-d40cda0923df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Scene\GameScene\SceneState\PlayerDead">
+    <Filter Include="Game\Scene\GameScene\State\PlayerDead">
       <UniqueIdentifier>{b2a317c0-b332-48bf-9949-490d31566686}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Scene\GameScene\SceneState\Clear">
+    <Filter Include="Game\Scene\GameScene\State\BossDead">
+      <UniqueIdentifier>{e1485c61-85b4-4262-adcf-d40cda0923df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene\GameScene\State\Clear">
       <UniqueIdentifier>{6815b269-13c4-43a3-b17b-b877f460a784}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Scene\GameScene\SceneState\GameOver">
+    <Filter Include="Game\Scene\GameScene\State\GameOver">
       <UniqueIdentifier>{359e451b-ef74-4481-a50b-af22b62f39eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -434,20 +434,20 @@
     <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp">
       <Filter>Game\Scene\TitleScene</Filter>
     </ClCompile>
-    <ClCompile Include="BattleState.cpp">
-      <Filter>Game\Scene\GameScene\SceneState\Battle</Filter>
+    <ClCompile Include="Game\Scene\GameScene\State\Battle\BattleState.cpp">
+      <Filter>Game\Scene\GameScene\State\Battle</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerDeadState.cpp">
-      <Filter>Game\Scene\GameScene\SceneState\PlayerDead</Filter>
+    <ClCompile Include="Game\Scene\GameScene\State\PlayerDead\PlayerDeadState.cpp">
+      <Filter>Game\Scene\GameScene\State\PlayerDead</Filter>
     </ClCompile>
-    <ClCompile Include="BossDeadState.cpp">
-      <Filter>Game\Scene\GameScene\SceneState\BossDead</Filter>
+    <ClCompile Include="Game\Scene\GameScene\State\BossDead\BossDeadState.cpp">
+      <Filter>Game\Scene\GameScene\State\BossDead</Filter>
     </ClCompile>
-    <ClCompile Include="ClearState.cpp">
-      <Filter>Game\Scene\GameScene\SceneState\Clear</Filter>
+    <ClCompile Include="Game\Scene\GameScene\State\Clear\ClearState.cpp">
+      <Filter>Game\Scene\GameScene\State\Clear</Filter>
     </ClCompile>
-    <ClCompile Include="GameOverState.cpp">
-      <Filter>Game\Scene\GameScene\SceneState\GameOver</Filter>
+    <ClCompile Include="Game\Scene\GameScene\State\GameOver\GameOverState.cpp">
+      <Filter>Game\Scene\GameScene\State\GameOver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -751,23 +751,23 @@
     <ClInclude Include="Game\Scene\TitleScene\TitleScene.h">
       <Filter>Game\Scene\TitleScene</Filter>
     </ClInclude>
-    <ClInclude Include="ISceneState.h">
-      <Filter>Game\Scene\GameScene\SceneState</Filter>
+    <ClInclude Include="Game\Scene\GameScene\State\ISceneState.h">
+      <Filter>Game\Scene\GameScene\State</Filter>
     </ClInclude>
-    <ClInclude Include="BattleState.h">
-      <Filter>Game\Scene\GameScene\SceneState\Battle</Filter>
+    <ClInclude Include="Game\Scene\GameScene\State\Battle\BattleState.h">
+      <Filter>Game\Scene\GameScene\State\Battle</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerDeadState.h">
-      <Filter>Game\Scene\GameScene\SceneState\PlayerDead</Filter>
+    <ClInclude Include="Game\Scene\GameScene\State\PlayerDead\PlayerDeadState.h">
+      <Filter>Game\Scene\GameScene\State\PlayerDead</Filter>
     </ClInclude>
-    <ClInclude Include="BossDeadState.h">
-      <Filter>Game\Scene\GameScene\SceneState\BossDead</Filter>
+    <ClInclude Include="Game\Scene\GameScene\State\BossDead\BossDeadState.h">
+      <Filter>Game\Scene\GameScene\State\BossDead</Filter>
     </ClInclude>
-    <ClInclude Include="ClearState.h">
-      <Filter>Game\Scene\GameScene\SceneState\Clear</Filter>
+    <ClInclude Include="Game\Scene\GameScene\State\Clear\ClearState.h">
+      <Filter>Game\Scene\GameScene\State\Clear</Filter>
     </ClInclude>
-    <ClInclude Include="GameOverState.h">
-      <Filter>Game\Scene\GameScene\SceneState\GameOver</Filter>
+    <ClInclude Include="Game\Scene\GameScene\State\GameOver\GameOverState.h">
+      <Filter>Game\Scene\GameScene\State\GameOver</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
