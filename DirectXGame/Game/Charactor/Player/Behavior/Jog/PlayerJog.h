@@ -5,7 +5,7 @@ public:
 
 	PlayerJog(Player* player) : player_(player) {}
 
-	~PlayerJog() override {}
+	~PlayerJog() override = default;
 
 	void Init() override;
 

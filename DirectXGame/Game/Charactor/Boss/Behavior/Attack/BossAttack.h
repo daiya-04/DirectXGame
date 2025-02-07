@@ -11,7 +11,7 @@ public:
 
 	BossAttack(Boss* boss);
 
-	~BossAttack() override {}
+	~BossAttack() override = default;
 
 	void Init() override;
 

@@ -7,7 +7,7 @@ public:
 
 	PlayerIdel(Player* player) : player_(player) {}
 
-	~PlayerIdel() override {}
+	~PlayerIdel() override = default;
 
 	void Init() override;
 

@@ -7,7 +7,7 @@ public:
 
 	PlayerDash(Player* player) : player_(player) {}
 
-	~PlayerDash() override {}
+	~PlayerDash() override = default;
 
 	void Init() override;
 

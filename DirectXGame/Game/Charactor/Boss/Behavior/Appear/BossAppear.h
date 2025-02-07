@@ -8,7 +8,7 @@ public:
 
 	BossAppear(Boss* boss) : boss_(boss) {}
 
-	~BossAppear() override {}
+	~BossAppear() override = default;
 
 	void Init() override;
 

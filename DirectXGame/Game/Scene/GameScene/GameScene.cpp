@@ -12,6 +12,11 @@
 #include <random>
 #include <algorithm>
 #include "ColliderManager.h"
+#include "BattleState.h"
+#include "PlayerDeadState.h"
+#include "BossDeadState.h"
+#include "ClearState.h"
+#include "GameOverState.h"
 
 GameScene::GameScene() {
 	
@@ -167,15 +172,17 @@ void GameScene::Init(){
 
 	AButton_.reset(DaiEngine::Sprite::Create(AButtonTex, { 1200.0f,170.0f }));
 
-	char_Attack_.reset(DaiEngine::Sprite::Create(char_AttackTex, {1080.0f,70.0f}));
+	charAttack_.reset(DaiEngine::Sprite::Create(char_AttackTex, {1080.0f,70.0f}));
 
-	char_Dash_.reset(DaiEngine::Sprite::Create(char_DashTex, { 1080.0f,170.0f }));
+	charDash_.reset(DaiEngine::Sprite::Create(char_DashTex, { 1080.0f,170.0f }));
 
 	gameOver_.reset(DaiEngine::Sprite::Create(gameOverTex, { 670.0f,200.0f }));
 
 	finish_.reset(DaiEngine::Sprite::Create(finishTex, { 670.0f,200.0f }));
 
 	///
+
+	ChangeState(SceneEvent::Battle);
 
 }
 
@@ -195,33 +202,13 @@ void GameScene::Update() {
 
 	if (isGameStop_) { return; }
 
-	if (player_->IsDead() && sceneEvent_ == SceneEvent::Battle) {
-		eventRequest_ = SceneEvent::PlayerDead;
-	}
-
-	if (boss_->IsDead() && sceneEvent_ == SceneEvent::Battle) {
-		eventRequest_ = SceneEvent::BossDead;
-	}
-
-	if (eventRequest_) {
-
-		sceneEvent_ = eventRequest_.value();
-		//シーンイベント初期化
-		scenEventInitTable_[sceneEvent_]();
-
-		eventRequest_ = std::nullopt;
-	}
-
-	//シーンイベント更新
-	sceneEventUpdateTable_[sceneEvent_]();
-
-	
-
 	for (auto& rock : rocks_) {
 		rock->Update();
 	}
-	
 	ground_->Update();
+
+	//シーンイベント更新
+	state_->Update();
 
 	//ライト更新
 	pointLight_.Update();
@@ -254,24 +241,7 @@ void GameScene::DrawParticle(){
 }
 
 void GameScene::DrawUI(){
-
-	if (sceneEvent_ == SceneEvent::Battle) {
-		XButton_->Draw();
-		AButton_->Draw();
-		char_Attack_->Draw();
-		char_Dash_->Draw();
-		player_->DrawUI();
-		boss_->DrawUI();
-	}
-	if (sceneEvent_ == SceneEvent::GameOver) {
-		gameOver_->Draw();
-	}
-	if (sceneEvent_ == SceneEvent::Clear) {
-		finish_->Draw();
-	}
-
-
-	
+	state_->DrawUI();
 }
 
 void GameScene::DrawPostEffect() {
@@ -281,10 +251,10 @@ void GameScene::DrawPostEffect() {
 	outLine_->PreDrawScene(DaiEngine::DirectXCommon::GetInstance()->GetCommandList());
 
 	DaiEngine::SkinningObject::preDraw();
-	if (sceneEvent_ != SceneEvent::Clear) {
+	if (nowSceneEvent_ != SceneEvent::Clear) {
 		boss_->Draw(camera_);
 	}
-	if (sceneEvent_ != SceneEvent::GameOver) {
+	if (nowSceneEvent_ != SceneEvent::GameOver) {
 		player_->Draw(camera_);
 	}
 
@@ -300,11 +270,11 @@ void GameScene::DrawPostEffect() {
 	
 	ground_->Draw(camera_);
 	
-	if (sceneEvent_ == SceneEvent::Battle || sceneEvent_ == SceneEvent::Clear) {
+	if (nowSceneEvent_ == SceneEvent::Battle || nowSceneEvent_ == SceneEvent::Clear) {
 		player_->DrawAttack(camera_);
 	}
 	
-	if (sceneEvent_ == SceneEvent::Battle) {
+	if (nowSceneEvent_ == SceneEvent::Battle) {
 		icicle_->Draw(camera_);
 		plasmaShot_->Draw(camera_);
 
@@ -329,13 +299,13 @@ void GameScene::DrawPostEffect() {
 
 	boss_->DrawParticle(camera_);
 
-	if (sceneEvent_ == SceneEvent::Battle || sceneEvent_ == SceneEvent::Clear) {
+	if (nowSceneEvent_ == SceneEvent::Battle || nowSceneEvent_ == SceneEvent::Clear) {
 		player_->DrawParticle(camera_);
 	}
 	
 	
 	
-	if (sceneEvent_ == SceneEvent::Battle) {
+	if (nowSceneEvent_ == SceneEvent::Battle) {
 		groundFlare_->DrawParticle(camera_);
 		icicle_->DrawParticle(camera_);
 		plasmaShot_->DrawParticle(camera_);
@@ -361,125 +331,22 @@ void GameScene::DrawRenderTexture() {
 	hsvFilter_->Draw();
 }
 
-void GameScene::BattleInit() {
+void GameScene::ChangeState(const SceneEvent& stateName) {
 
+	const std::map<SceneEvent, std::function<std::unique_ptr<ISceneState>()>> stateTable{
+		{SceneEvent::Battle, [this]() {return std::make_unique<BattleState>(this); }},
+		{SceneEvent::PlayerDead, [this]() {return std::make_unique<PlayerDeadState>(this); }},
+		{SceneEvent::BossDead, [this]() {return std::make_unique<BossDeadState>(this); }},
+		{SceneEvent::Clear, [this]() {return std::make_unique<ClearState>(this); }},
+		{SceneEvent::GameOver, [this]() {return std::make_unique<GameOverState>(this); }},
+	};
 
-
-}
-
-void GameScene::BattleUpdate() {
-	
-	for (auto& charactor : charactors_) {
-		charactor->Update();
+	auto nextState = stateTable.find(stateName);
+	if (nextState != stateTable.end()) {
+		nowSceneEvent_ = nextState->first;
+		state_ = nextState->second();
+		state_->Init();
 	}
-	
-	followCamera_->Update();
-
-	groundFlare_->Update();
-	icicle_->Update();
-	plasmaShot_->Update();
-	elementBall_->Update();
-
-	///衝突判定
-
-	DaiEngine::ColliderManager::GetInstance()->CheckAllCollision();
-
-	///
-
-	camera_.SetMatView(followCamera_->GetCamera().GetMatView());
-
-}
-
-void GameScene::PlayerDeadInit() {
-
-	workPlayerDead_.count_ = 0;
-
-	workPlayerDead_.cameraPos_ = player_->GetCenterPos() + workPlayerDead_.offset_;
-	camera_.translation_ = workPlayerDead_.cameraPos_;
-	camera_.rotation_ = workPlayerDead_.cameraRotate_;
-
-	camera_.UpdateViewMatrix();
-
-}
-
-void GameScene::PlayerDeadUpdate() {
-	
-	player_->Update();
-
-	//死亡アニメーションが終わったらゲームオーバー演出
-	if (player_->IsFinishDeadMotion()) {
-		if (++workPlayerDead_.count_ >= workPlayerDead_.interval_) {
-			eventRequest_ = SceneEvent::GameOver;
-		}
-	}
-	
-}
-
-void GameScene::BossDeadInit() {
-
-	workBossDead_.count_ = 0;
-
-	workBossDead_.cameraPos_ = boss_->GetCenterPos() + workBossDead_.offset_;
-	camera_.translation_ = workBossDead_.cameraPos_;
-	camera_.rotation_ = workBossDead_.cameraRotate_;
-
-	camera_.UpdateViewMatrix();
-
-}
-
-void GameScene::BossDeadUpdate() {
-
-	boss_->Update();
-
-	//死亡アニメーションが終わったらクリア
-	if (boss_->IsFinishDeadMotion()) {
-		if (++workBossDead_.count_ >= workBossDead_.interval_) {
-			eventRequest_ = SceneEvent::Clear;
-		}
-	}
-
-}
-
-void GameScene::ClearInit() {
-	alpha_ = 0.0f;
-}
-
-void GameScene::ClearUpdate() {
-	//一定時間たったらタイトルへ
-	if (--finishCount_ <= 0) {
-		DaiEngine::SceneManager::GetInstance()->ChangeScene("Title");
-	}
-
-	player_->Update();
-	followCamera_->Update();
-
-	camera_.SetMatView(followCamera_->GetCamera().GetMatView());
-
-}
-
-void GameScene::GameOverInit() {
-
-	postEffect_->SetGrayScaleEffect(true);
-	alpha_ = 0.0f;
-
-}
-
-void GameScene::GameOverUpdate() {
-	
-	alpha_ += 0.01f;
-	alpha_ = std::min(alpha_, 1.0f);
-
-	if (alpha_ >= 1.0f) {
-		finishCount_--;
-	}
-
-	//一定時間たったらタイトルへ
-	if (finishCount_ <= 0) {
-		DaiEngine::SceneManager::GetInstance()->ChangeScene("Title");
-	}
-
-
-	gameOver_->SetColor({ 1.0f,1.0f,1.0f,alpha_ });
 
 }
 
