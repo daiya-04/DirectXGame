@@ -122,6 +122,11 @@ public:
 	/// <param name="height">高さ</param>
 	void HeightAdjustment(float height);
 	/// <summary>
+	/// 位置座標の取得
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetPosition() { return position_; }
+	/// <summary>
 	/// 演出中かどうか
 	/// </summary>
 	/// <returns>演出中はtrue、それ以外はfalse</returns>

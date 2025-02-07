@@ -9,7 +9,7 @@ namespace DaiEngine {
 	class SceneManager final {
 	private:
 
-		std::unique_ptr<AbstractSceneFactory> sceneFactory_;
+		AbstractSceneFactory* sceneFactory_ = nullptr;
 
 		std::unique_ptr<IScene> scene_;
 		std::unique_ptr<IScene> nextScene_;
@@ -33,6 +33,8 @@ namespace DaiEngine {
 		/// </summary>
 		/// <param name="sceneName">シーンの名前</param>
 		void ChangeScene(const std::string& sceneName);
+
+		void SetSceneFactory(AbstractSceneFactory* sceneFactory) { sceneFactory_ = sceneFactory; }
 
 	private:
 

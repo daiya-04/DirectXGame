@@ -5,6 +5,8 @@
 #include "ParticleManager.h"
 #include "ColliderManager.h"
 
+size_t Icicle::heightAdjustmentIndex = 1;
+
 Icicle::~Icicle() {
 	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
 }
@@ -15,6 +17,7 @@ void Icicle::Init(const std::shared_ptr<DaiEngine::Model>& model) {
 
 	collider_ = std::make_unique<DaiEngine::SphereCollider>();
 	collider_->Init("BossAttack", obj_->worldTransform_, 1.0f);
+	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) { this->OnCollision(other); });
 	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 
@@ -89,20 +92,27 @@ void Icicle::DrawParticle(const DaiEngine::Camera& camera) {
 }
 
 void Icicle::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
-	phaseRequest_ = Phase::kRoot;
-	isLife_ = false;
 
-	//ヒットエフェクト開始
-	for (auto& [group, particle] : trailEff_) {
-		particle->particleData_.isLoop_ = false;
+	if (other->GetTag() == "Player" || other->GetTag() == "Ground") {
+		phaseRequest_ = Phase::kRoot;
+		isLife_ = false;
+
+		//ヒットエフェクト開始
+		for (auto& [group, particle] : trailEff_) {
+			particle->particleData_.isLoop_ = false;
+		}
+
+		for (auto& [group, particle] : hitEffect_) {
+			particle->Emit();
+			particle->particleData_.emitter_.translate = obj_->GetWorldPos();
+		}
+
+		collider_->ColliderOff();
+
+		iceScar_->EffectStart(GetWorldPos());
+		iceScar_->HeightAdjustment(0.0001f * heightAdjustmentIndex);
+		heightAdjustmentIndex = (heightAdjustmentIndex % 4) + 1;
 	}
-
-	for (auto& [group, particle] : hitEffect_) {
-		particle->Emit();
-		particle->particleData_.emitter_.translate = obj_->GetWorldPos();
-	}
-
-	collider_->ColliderOff();
 
 }
 

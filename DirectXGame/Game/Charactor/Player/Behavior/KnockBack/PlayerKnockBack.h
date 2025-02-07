@@ -7,7 +7,7 @@ public:
 
 	PlayerKnockBack(Player* player) : player_(player) {}
 
-	~PlayerKnockBack() override {}
+	~PlayerKnockBack() override = default;
 
 	void Init() override;
 

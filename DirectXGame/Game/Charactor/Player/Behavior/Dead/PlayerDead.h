@@ -6,7 +6,7 @@ public:
 
 	PlayerDead(Player* player) : player_(player) {}
 	
-	~PlayerDead() override {}
+	~PlayerDead() override = default;
 
 	void Init() override;
 

@@ -6,7 +6,7 @@ public:
 
 	BossIdel(Boss* boss) : boss_(boss) {}
 
-	~BossIdel() override {}
+	~BossIdel() override = default;
 
 	void Init() override;
 

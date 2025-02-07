@@ -17,7 +17,7 @@ namespace DaiEngine {
 
 	void SceneManager::Init() {
 
-		sceneFactory_ = std::make_unique<SceneFactory>();
+		assert(sceneFactory_);
 
 		fadeTex_ = TextureManager::Load("white.png");
 

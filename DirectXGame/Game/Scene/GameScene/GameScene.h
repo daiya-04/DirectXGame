@@ -42,6 +42,7 @@
 #include "IcicleManager.h"
 #include "PlasmaShotManager.h"
 #include "Rock.h"
+#include "ISceneState.h"
 
 //ゲームシーンクラス
 class GameScene : public DaiEngine::IScene {
@@ -95,6 +96,30 @@ public:
 	/// </summary>
 	GameScene();
 
+public:
+
+	enum class CharactorType {
+		kPlayer,
+		kBoss,
+	};
+
+
+	//シーンイベント
+	enum class SceneEvent {
+		//バトル
+		Battle,
+		//プレイヤー死亡
+		PlayerDead,
+		//ボス死亡
+		BossDead,
+		//クリア
+		Clear,
+		//ゲームオーバー
+		GameOver,
+	};
+
+	SceneEvent nowSceneEvent_ = SceneEvent::Battle;
+
 private:
 	//カメラ
 	DaiEngine::Camera camera_;
@@ -125,9 +150,9 @@ private:
 	//Aボタン
 	std::unique_ptr<DaiEngine::Sprite> AButton_;
 	//攻撃文字
-	std::unique_ptr<DaiEngine::Sprite> char_Attack_;
+	std::unique_ptr<DaiEngine::Sprite> charAttack_;
 	//走る文字
-	std::unique_ptr<DaiEngine::Sprite> char_Dash_;
+	std::unique_ptr<DaiEngine::Sprite> charDash_;
 	//ゲームオーバー文字
 	std::unique_ptr<DaiEngine::Sprite> gameOver_;
 	//終了文字
@@ -163,123 +188,35 @@ private:
 	//スカイボックス
 	std::unique_ptr<DaiEngine::SkyBox> skyBox_;
 
-private:
+	std::unique_ptr<ISceneState> state_;
 
-	enum class CharactorType {
-		kPlayer,
-		kBoss,
-	};
+public:
 
+	void ChangeState(const SceneEvent& stateName);
 
-	//シーンイベント
-	enum class SceneEvent {
-		//バトル
-		Battle,
-		//プレイヤー死亡
-		PlayerDead,
-		//ボス死亡
-		BossDead,
-		//クリア
-		Clear,
-		//ゲームオーバー
-		GameOver,
-	};
+	DaiEngine::Camera& GetCamera() { return camera_; }
 
-private:
-	/// <summary>
-	/// バトル初期化
-	/// </summary>
-	void BattleInit();
-	/// <summary>
-	/// バトル更新
-	/// </summary>
-	void BattleUpdate();
-	/// <summary>
-	/// プレイヤー死亡初期化
-	/// </summary>
-	void PlayerDeadInit();
-	/// <summary>
-	/// プレイヤー死亡更新
-	/// </summary>
-	void PlayerDeadUpdate();
-	/// <summary>
-	/// ボス死亡初期化
-	/// </summary>
-	void BossDeadInit();
-	/// <summary>
-	/// ボス死亡更新
-	/// </summary>
-	void BossDeadUpdate();
-	/// <summary>
-	/// クリア初期化
-	/// </summary>
-	void ClearInit();
-	/// <summary>
-	/// クリア更新
-	/// </summary>
-	void ClearUpdate();
-	/// <summary>
-	/// ゲームオーバー初期化
-	/// </summary>
-	void GameOverInit();
-	/// <summary>
-	/// ゲームオーバー更新
-	/// </summary>
-	void GameOverUpdate();
+	//キャラクター取得
+	std::array<std::unique_ptr<BaseCharactor>, 2>& GetCharactors() { return charactors_; }
+	Player* GetPlayer() { return dynamic_cast<Player*>(charactors_[static_cast<size_t>(CharactorType::kPlayer)].get()); }
+	Boss* GetBoss() { return dynamic_cast<Boss*>(charactors_[static_cast<size_t>(CharactorType::kBoss)].get()); }
 
-private:
-	//現在のシーンイベント
-	SceneEvent sceneEvent_ = SceneEvent::Battle;
-	//次のシーンイベントのリクエスト
-	std::optional<SceneEvent> eventRequest_ = SceneEvent::Battle;
-	//シーンイベント初期化テーブル
-	std::map<SceneEvent, std::function<void()>> scenEventInitTable_{
-		{SceneEvent::Battle,[this]() {BattleInit(); }},
-		{SceneEvent::PlayerDead,[this]() {PlayerDeadInit(); }},
-		{SceneEvent::BossDead,[this]() {BossDeadInit(); }},
-		{SceneEvent::Clear,[this]() { ClearInit(); }},
-		{SceneEvent::GameOver,[this]() {GameOverInit(); }},
-	};
-	//シーンイベント更新テーブル
-	std::map<SceneEvent, std::function<void()>> sceneEventUpdateTable_{
-		{SceneEvent::Battle,[this]() {BattleUpdate(); }},
-		{SceneEvent::PlayerDead,[this]() {PlayerDeadUpdate(); }},
-		{SceneEvent::BossDead,[this]() {BossDeadUpdate(); }},
-		{SceneEvent::Clear,[this]() {ClearUpdate(); }},
-		{SceneEvent::GameOver,[this]() {GameOverUpdate(); }},
-	};
+	///攻撃各種取得
+	GroundFlare* GetGroundFlare() { return groundFlare_.get(); }
+	ElementBallManager* GetElementBall() { return elementBall_.get(); }
+	PlasmaShotManager* GetPlasmaShot() { return plasmaShot_.get(); }
+	IcicleManager* GetIcicle() { return icicle_.get(); }
 
-private:
-	//ボス死亡シーンに必要なパラメータ
-	struct WorkBossDead {
-		//死亡アニメーションが終わってからの間の時間
-		int32_t interval_ = 30;
-		//死亡アニメーションが終わってからの時間
-		int32_t count_ = 0;
-		//カメラの位置
-		Vector3 cameraPos_ = {};
-		//カメラの回転角
-		Vector3 cameraRotate_ = { 0.2f,0.34f,0.0f };
-		//ターゲットからのオフセット
-		Vector3 offset_ = { -3.0f,2.0f,-8.0f };
-	};
-	//プレイヤー死亡シーンに必要なパラメータ
-	struct WorkPlayerDead {
-		//死亡アニメーションが終わってからの間
-		int32_t interval_ = 30;
-		//死亡アニメーションが終わってからの時間
-		int32_t count_ = 0;
-		//カメラの位置
-		Vector3 cameraPos_ = {};
-		//カメラの回転角
-		Vector3 cameraRotate_ = { -0.14f,-2.9f,0.0f };
-		//ターゲットからのオフセット
-		Vector3 offset_ = { 1.5f, -0.5f, 6.0f };
-	};
-	//ボス死亡イベントのパラメータ
-	WorkBossDead workBossDead_;
-	//プレイヤー死亡イベントのパラメータ
-	WorkPlayerDead workPlayerDead_;
+	//追従カメラ取得
+	FollowCamera* GetFollowCamera() { return followCamera_.get(); }
+
+	///UI各種取得
+	DaiEngine::Sprite* GetXButtonUI() { return XButton_.get(); }
+	DaiEngine::Sprite* GetAButtonUI() { return AButton_.get(); }
+	DaiEngine::Sprite* GetCharAttackUI() { return charAttack_.get(); }
+	DaiEngine::Sprite* GetCharDashUI() { return charDash_.get(); }
+	DaiEngine::Sprite* GetFinishUI() { return finish_.get(); }
+	DaiEngine::Sprite* GetGameOverUI() { return gameOver_.get(); }
 
 };
 

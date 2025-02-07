@@ -7,6 +7,7 @@
 ///---------------------------------------------------------------------------------------------
 
 #include "Framework.h"
+#include "AbstractSceneFactory.h"
 #include <memory>
 #include "PostEffect.h"
 
@@ -29,6 +30,10 @@ public:
 	/// 解放
 	/// </summary>
 	void Finalize()override;
+
+private:
+
+	std::unique_ptr<DaiEngine::AbstractSceneFactory> sceneFactory_;
 
 };
 

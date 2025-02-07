@@ -9,12 +9,10 @@ class Boss;
 class IBossBehavior {
 public:
 
-	virtual ~IBossBehavior() = 0;
+	virtual ~IBossBehavior() = default;
 
 	virtual void Init() = 0;
 
 	virtual void Update() = 0;
 
 };
-
-inline IBossBehavior::~IBossBehavior() {}

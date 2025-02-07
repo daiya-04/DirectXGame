@@ -9,12 +9,10 @@ class Player;
 class IPlayerBehavior {
 public:
 
-	virtual ~IPlayerBehavior() = 0;
+	virtual ~IPlayerBehavior() = default;
 
 	virtual void Init() = 0;
 
 	virtual void Update() = 0;
 
 };
-
-inline IPlayerBehavior::~IPlayerBehavior() {}

@@ -6,7 +6,7 @@ public:
 
 	BossDead(Boss* boss) : boss_(boss) {}
 
-	~BossDead() override {}
+	~BossDead() override = default;
 
 	void Init() override;
 

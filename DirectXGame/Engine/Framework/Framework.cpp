@@ -37,8 +37,6 @@ namespace DaiEngine {
 
 		DirectionalLight::GetInstance()->Init();
 
-		SceneManager::GetInstance()->Init();
-
 	}
 
 	void DSFramework::Update() {

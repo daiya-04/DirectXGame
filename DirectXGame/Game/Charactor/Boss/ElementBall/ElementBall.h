@@ -13,6 +13,7 @@
 #include "CollisionShapes.h"
 #include "GPUParticle.h"
 #include "SphereCollider.h"
+#include "BurnScar.h"
 
 #include <memory>
 #include <optional>
@@ -110,6 +111,8 @@ private:
 	WorkShot workShot_;
 
 private:
+	//跡の高さ調整用
+	static size_t heightAdjustmentIndex;
 
 	//攻撃先(ターゲット)
 	const Vector3* target_;
@@ -130,6 +133,9 @@ private:
 
 	//エフェクト
 	std::map <std::string, std::unique_ptr<DaiEngine::GPUParticle>> effect_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> setEff_;
+	//焼け跡
+	BurnScar* burnScar_ = nullptr;
 
 public:
 
@@ -195,6 +201,8 @@ public:
 	/// </summary>
 	/// <returns>ワールド座標</returns>
 	const Vector3 GetWorldPos() const { return obj_->GetWorldPos(); }
+	
+	void SetBurnScar(BurnScar* burnScar) { burnScar_ = burnScar; }
 
 };
 

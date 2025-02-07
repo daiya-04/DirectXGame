@@ -7,6 +7,8 @@
 #include "ParticleManager.h"
 #include "ColliderManager.h"
 
+size_t ElementBall::heightAdjustmentIndex = 1;
+
 ElementBall::~ElementBall() {
 	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
 }
@@ -18,12 +20,18 @@ void ElementBall::Init(std::shared_ptr<DaiEngine::Model> model) {
 
 	collider_ = std::make_unique<DaiEngine::SphereCollider>();
 	collider_->Init("BossAttack", obj_->worldTransform_, 1.3f);
+	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) { this->OnCollision(other); });
 	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 	//エフェクト設定
 	effect_ = ParticleManager::Load("FireBall");
+	setEff_ = ParticleManager::Load("FireBallSet");
 
 	for (auto& [name, particle] : effect_) {
+		particle->particleData_.isLoop_ = false;
+	}
+
+	for (auto& [name, particle] : setEff_) {
 		particle->particleData_.isLoop_ = false;
 	}
 
@@ -59,6 +67,9 @@ void ElementBall::Update() {
 		particle->particleData_.emitter_.translate = GetWorldPos();
 		particle->Update();
 	}
+	for (auto& [name, particle] : setEff_) {
+		particle->Update();
+	}
 
 	collider_->Update();
 }
@@ -79,12 +90,23 @@ void ElementBall::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& [name, particle] : effect_) {
 		particle->Draw(camera);
 	}
+	for (auto& [name, particle] : setEff_) {
+		particle->Draw(camera);
+	}
 }
 
 void ElementBall::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
-	isLife_ = false;
-	phaseRequest_ = Phase::kRoot;
-	collider_->ColliderOff();
+
+	if (other->GetTag() == "Player" || other->GetTag() == "Ground") {
+		isLife_ = false;
+		phaseRequest_ = Phase::kRoot;
+		collider_->ColliderOff();
+
+		burnScar_->EffectStart(GetWorldPos());
+		burnScar_->HeightAdjustment(0.0001f * heightAdjustmentIndex);
+		heightAdjustmentIndex = (heightAdjustmentIndex % 4) + 1;
+	}
+	
 }
 
 void ElementBall::AttackStart() {
@@ -94,6 +116,9 @@ void ElementBall::AttackStart() {
 	isLife_ = true;
 
 	for (auto& [name, particle] : effect_) {
+		particle->particleData_.isLoop_ = true;
+	}
+	for (auto& [name, particle] : setEff_) {
 		particle->particleData_.isLoop_ = true;
 	}
 
@@ -107,6 +132,10 @@ void ElementBall::SetAttackData(const Vector3& startPos, uint32_t interval) {
 	workCharge_.coolTime_ = kFramePerSecond * interval;
 	for (auto& [name, particle] : effect_) {
 		particle->particleData_.emitter_.translate = startPos;
+	}
+	for (auto& [name, particle] : setEff_) {
+		particle->particleData_.emitter_.translate = startPos;
+		particle->particleData_.emitter_.translate.y = 0.01f;
 	}
 
 }
@@ -128,7 +157,6 @@ void ElementBall::RootUpdate() {
 }
 
 void ElementBall::SetInit() {
-
 	
 	animation_.Start(false);
 
@@ -143,6 +171,10 @@ void ElementBall::SetUpdate() {
 		obj_->worldTransform_.translation_.x = obj_->worldTransform_.matWorld_.m[3][0];
 		obj_->worldTransform_.translation_.y = obj_->worldTransform_.matWorld_.m[3][1];
 		obj_->worldTransform_.translation_.z = obj_->worldTransform_.matWorld_.m[3][2];
+
+		for (auto& [name, particle] : setEff_) {
+			particle->particleData_.isLoop_ = false;
+		}
 	}
 
 }

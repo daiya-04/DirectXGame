@@ -8,7 +8,7 @@ public:
 
 	PlayerAttack(Player* player) : player_(player) {}
 
-	~PlayerAttack() override {}
+	~PlayerAttack() override = default;
 
 	void Init() override;
 

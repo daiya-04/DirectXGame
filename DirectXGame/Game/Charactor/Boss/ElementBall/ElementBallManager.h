@@ -8,7 +8,6 @@
 #include "ElementBall.h"
 #include "BurnScar.h"
 #include "ModelManager.h"
-#include "GPUParticle.h"
 #include <Camera.h>
 
 #include <array>
@@ -40,11 +39,6 @@ public:
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	void DrawBurnScars(const DaiEngine::Camera& camera);
-	/// <summary>
-	/// 衝突時
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	void OnCollision(size_t index, DaiEngine::Collider* other);
 	/// <summary>
 	/// ターゲットセット
 	/// </summary>
@@ -92,13 +86,10 @@ public:
 private:
 	//玉の総数
 	static const uint32_t kElementBallNum_ = 4;
-	//陽の単の配列
+	//火の弾の配列
 	std::array<std::unique_ptr<ElementBall>, kElementBallNum_> elementBalls_;
 	//焼け跡の配列
 	std::array<std::unique_ptr<BurnScar>, kElementBallNum_> burnScareses_;
-
-	//エフェクト
-	std::array<std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>>, kElementBallNum_> fireSetEffs_;
 
 	//攻撃フラグ
 	bool isAttack_ = false;
