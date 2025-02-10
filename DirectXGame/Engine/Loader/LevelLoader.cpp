@@ -62,16 +62,23 @@ LevelData* LevelLoader::LoadFile(const std::string& filename) {
 
 void LevelLoader::ObjectScan(nlohmann::json& object, LevelData* levelData) {
 
+	if (object["disabled"].contains("disabled")) {
+		bool disabled = object["disabled"].get<bool>();
+		if (disabled) {
+			return;
+		}
+	}
+
 	assert(object.contains("type"));
 	//種別を取得
 	std::string type = object["type"].get<std::string>();
 
+	//要素追加
+	levelData->objectDatas_.emplace_back(LevelData::ObjectData{});
+	LevelData::ObjectData& objectData = levelData->objectDatas_.back();
+
 	//MESH
 	if (type.compare("MESH") == 0 || type.compare("ARMATURE") == 0) {
-
-		//要素追加
-		levelData->objectDatas_.emplace_back(LevelData::ObjectData{});
-		LevelData::ObjectData& objectData = levelData->objectDatas_.back();
 
 		if (object.contains("file_name")) {
 			//ファイル名
@@ -107,8 +114,40 @@ void LevelLoader::ObjectScan(nlohmann::json& object, LevelData* levelData) {
 			objectData.colliderSize.y = static_cast<float>(collider["size"][2]) * objectData.scaling.y;
 			objectData.colliderSize.z = static_cast<float>(collider["size"][1]) * objectData.scaling.z;
 		}
+	}
+	else if (type.compare("PlayerSpawn") == 0) {
+		auto& player = objectData.players.emplace_back(LevelData::PlayerSpawnData{});
 
-		
+		nlohmann::json& transform = object["transform"];
+		//平行移動
+		player.translation.x = static_cast<float>(transform["translation"][0]);
+		player.translation.y = static_cast<float>(transform["translation"][2]);
+		player.translation.z = -static_cast<float>(transform["translation"][1]);
+
+		//回転角
+		player.rotation.x = (-static_cast<float>(transform["rotation"][0]) / 180.0f) * std::numbers::pi_v<float>;
+		player.rotation.y = (-static_cast<float>(transform["rotation"][2]) / 180.0f) * std::numbers::pi_v<float>;
+		player.rotation.z = (-static_cast<float>(transform["rotation"][1]) / 180.0f) * std::numbers::pi_v<float>;
+
+	}
+	else if (type.compare("EnemySpawn") == 0) {
+		auto& enemy = objectData.enemies.emplace_back(LevelData::EnemySpawnData{});
+
+		if (object.contains("file_name")) {
+			//ファイル名
+			enemy.filename = object["file_name"];
+		}
+
+		nlohmann::json& transform = object["transform"];
+		//平行移動
+		enemy.translation.x = static_cast<float>(transform["translation"][0]);
+		enemy.translation.y = static_cast<float>(transform["translation"][2]);
+		enemy.translation.z = -static_cast<float>(transform["translation"][1]);
+
+		//回転角
+		enemy.rotation.x = (-static_cast<float>(transform["rotation"][0]) / 180.0f) * std::numbers::pi_v<float>;
+		enemy.rotation.y = (-static_cast<float>(transform["rotation"][2]) / 180.0f) * std::numbers::pi_v<float>;
+		enemy.rotation.z = (-static_cast<float>(transform["rotation"][1]) / 180.0f) * std::numbers::pi_v<float>;
 	}
 
 }

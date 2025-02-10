@@ -16,6 +16,18 @@
 //レベルデータクラス
 class LevelData {
 public:
+	//自キャラ生成データ
+	struct PlayerSpawnData {
+		Vector3 translation;
+		Vector3 rotation;
+	};
+
+	struct EnemySpawnData {
+		std::string filename;
+		Vector3 translation;
+		Vector3 rotation;
+	};
+
 	//オブジェクトのデータ
 	struct ObjectData {
 		//オブジェクト名
@@ -34,6 +46,10 @@ public:
 		Vector3 colliderSize;
 		//子
 		std::vector<ObjectData> children;
+		//自キャラ配列
+		std::vector<PlayerSpawnData> players;
+		//敵キャラ配列
+		std::vector<EnemySpawnData> enemies;
 
 	};
 
