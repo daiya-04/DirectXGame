@@ -77,16 +77,20 @@ void PlayerMagicBall::DrawParticle(const DaiEngine::Camera& camera) {
 void PlayerMagicBall::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
 
 	if (other->GetTag() == "Boss") {
-		isLife_ = false;
-		phaseRequest_ = Phase::kRoot;
-
-		for (auto& [group, particle] : endEff_) {
-			particle->Emit();
-			particle->particleData_.emitter_.translate = obj_->GetWorldPos();
-		}
-
-		collider_->ColliderOff();
+		Dead();
 	}
+}
+
+void PlayerMagicBall::Dead() {
+	isLife_ = false;
+	phaseRequest_ = Phase::kRoot;
+
+	for (auto& [group, particle] : endEff_) {
+		particle->Emit();
+		particle->particleData_.emitter_.translate = obj_->GetWorldPos();
+	}
+
+	collider_->ColliderOff();
 }
 
 void PlayerMagicBall::StartAttack(const Vector3& startPos, const Vector3& direction) {
@@ -128,6 +132,6 @@ void PlayerMagicBall::ShotUpdate() {
 
 	//射程外で消える
 	if ((GetWorldPos() - startPos_).Length() >= firingRange_) {
-		OnCollision(nullptr);
+		Dead();
 	}
 }

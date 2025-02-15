@@ -18,8 +18,7 @@ private:
 
 	Player* player_ = nullptr;
 
-	//攻撃アニメーションのスピード
-	float attackAnimeSpeed_ = 1.0f / 30.0f;
+	
 	//攻撃中の現在の時間
 	uint32_t count_ = 0;
 	//現在のコンボ数(何段目か)
@@ -42,6 +41,8 @@ private:
 		uint32_t attackTime_;
 		//攻撃後の硬直時間
 		uint32_t recoveryTime_;
+		//アニメーションスピード
+		float attackAnimeSpeed_;
 	};
 
 	enum class ComboPhase {

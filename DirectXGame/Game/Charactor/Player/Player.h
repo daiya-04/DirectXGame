@@ -10,6 +10,7 @@
 #include "BaseCharactor.h"
 #include "IPlayerBehavior.h"
 #include "PlayerMagicBall.h"
+#include "GroundBurst.h"
 
 #include <memory>
 #include <list>
@@ -44,8 +45,12 @@ public:
 		Standing,
 		//ジョギング
 		Jogging,
-		//攻撃
-		Attack,
+		//攻撃1
+		AttackCombo1,
+		//攻撃2
+		AttackCombo2,
+		//攻撃3
+		AttackCombo3,
 		//死亡
 		Dead,
 		//加速
@@ -67,7 +72,7 @@ private:
 	//最大HP
 	int32_t maxHp_ = 5;
 	//攻撃の射程
-	float attackRange_ = 20.0f;
+	float attackRange_ = 15.0f;
 
 	//攻撃アニメーションのスピード
 	float attackAnimeSpeed_ = 1.0f / 30.0f;
@@ -84,6 +89,9 @@ private:
 	
 	std::array<std::unique_ptr<PlayerMagicBall>, 10> attacks_;
 	uint32_t shotIndex = 0;
+
+	std::array<std::unique_ptr<GroundBurst>, 5> groundBursts_;
+	uint32_t attackIndex_ = 0;
 
 public:
 	/// <summary>
@@ -132,6 +140,10 @@ public:
 	/// 攻撃の発射
 	/// </summary>
 	void ShotMagicBall();
+	/// <summary>
+	/// 攻撃の発射2
+	/// </summary>
+	void AttackGroundBurst();
 
 	//カメラの取得と設定
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }

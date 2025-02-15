@@ -28,6 +28,11 @@ void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 		attack->Init(attackModel);
 	}
 
+	for (auto& groundBurst : groundBursts_) {
+		groundBurst = std::make_unique<GroundBurst>();
+		groundBurst->Init();
+	}
+
 	collider_->Init("Player", obj_->worldTransform_, {});
 	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->ColliderOn();
@@ -62,6 +67,9 @@ void Player::Update(){
 	for (auto& attack : attacks_) {
 		attack->Update();
 	}
+	for (auto& groundBurst : groundBursts_) {
+		groundBurst->Update();
+	}
 
 	BaseCharactor::Update();
 }
@@ -88,6 +96,9 @@ void Player::DrawAttack(const DaiEngine::Camera& camera) {
 void Player::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& attack : attacks_) {
 		attack->DrawParticle(camera);
+	}
+	for (auto& groundBurst : groundBursts_) {
+		groundBurst->DrawParticle(camera);
 	}
 }
 
@@ -141,6 +152,7 @@ void Player::ChangeBehavior(const std::string& behaviorName) {
 }
 
 void Player::ShotMagicBall() {
+
 	//攻撃を発射する方向の計算
 	Vector3 direction = { 0.0f,0.0f,1.0f };
 	direction = TransformNormal(direction, rotateMat_);
@@ -155,4 +167,31 @@ void Player::ShotMagicBall() {
 	shotIndex = shotIndex % 10;
 
 	///
+}
+
+void Player::AttackGroundBurst() {
+
+	
+
+	Vector3 playerPos = obj_->GetWorldPos();
+	playerPos.y = 0.0f;
+	Vector3 targetPos = target_->GetWorldPos();
+	targetPos.y = 0.0f;
+
+	float distance = (targetPos - playerPos).Length();
+
+	if (distance <= attackRange_) {
+		groundBursts_[attackIndex_]->AttackStart(target_->GetWorldPos());
+	}
+	else {
+		//攻撃を発射する方向の計算
+		Vector3 offset = { 0.0f,0.0f, 5.0f };
+		offset = TransformNormal(offset, rotateMat_);
+
+		groundBursts_[attackIndex_]->AttackStart(GetCenterPos() + offset);
+	}
+
+	attackIndex_++;
+	attackIndex_ = attackIndex_ % 5;
+
 }

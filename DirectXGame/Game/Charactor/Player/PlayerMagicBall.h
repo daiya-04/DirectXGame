@@ -110,6 +110,10 @@ public:
 	Vector3 GetWorldPos() const;
 
 private:
+
+	void Dead();
+
+private:
 	//オブジェクト
 	std::unique_ptr<DaiEngine::Object3d> obj_;
 	//衝突判定用

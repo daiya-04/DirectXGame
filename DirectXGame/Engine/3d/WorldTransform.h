@@ -31,6 +31,8 @@ namespace DaiEngine {
 		void UpdateMatrixRotate(const Matrix4x4& rotateMat);
 		void Map();
 
+		Vector3 GetWorldPos() const;
+
 		D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const {
 			return cBuffer_->GetGPUVirtualAddress();
 		}
