@@ -86,7 +86,7 @@ void GroundBurst::AttackStart(const Vector3& attackPos) {
 	collider_->ColliderOn();
 
 	worldTransform_.translation_ = attackPos;
-	worldTransform_.translation_.y = 0.0f;
+	worldTransform_.translation_.y = 0.01f;
 
 	worldTransform_.UpdateMatrixRotate(rotateMat_);
 }

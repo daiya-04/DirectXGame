@@ -171,8 +171,6 @@ void Player::ShotMagicBall() {
 
 void Player::AttackGroundBurst() {
 
-	
-
 	Vector3 playerPos = obj_->GetWorldPos();
 	playerPos.y = 0.0f;
 	Vector3 targetPos = target_->GetWorldPos();
@@ -185,7 +183,7 @@ void Player::AttackGroundBurst() {
 	}
 	else {
 		//攻撃を発射する方向の計算
-		Vector3 offset = { 0.0f,0.0f, 5.0f };
+		Vector3 offset = { 0.0f,0.0f, 7.0f };
 		offset = TransformNormal(offset, rotateMat_);
 
 		groundBursts_[attackIndex_]->AttackStart(GetCenterPos() + offset);

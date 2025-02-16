@@ -15,6 +15,8 @@ void PlayerKnockBack::Init() {
 
 	knockBackDict_ = -player_->GetKnockBackBaseDict().Normalize();
 
+	timer_ = 0;
+
 }
 
 void PlayerKnockBack::Update() {
@@ -27,6 +29,13 @@ void PlayerKnockBack::Update() {
 			player_->ChangeBehavior("Idel");
 		}
 	}
+
+	if (++timer_ >= dashCoolTime_) {
+		if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::A)) {
+			player_->ChangeBehavior("Dash");
+		}
+	}
+	
 
 	backSpeed_ += absAccel_;
 	backSpeed_ = std::clamp(backSpeed_, 0.0f, maxSpeed_);

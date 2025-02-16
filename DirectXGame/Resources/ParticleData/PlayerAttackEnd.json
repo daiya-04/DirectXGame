@@ -1,5 +1,98 @@
 {
     "PlayerAttackEnd": {
+        "impact": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    0.09991351515054703,
+                    0.8778495192527771,
+                    0.9264705777168274,
+                    1.0
+                ],
+                "Count": 2,
+                "EmitterType": 1,
+                "Frequency": 0.01666666753590107,
+                "LifeTime": 0.20000000298023224,
+                "Radius": 0.0010000000474974513,
+                "Rotate": 360.0,
+                "Scale": 0.10000000149011612,
+                "Size": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Speed": 0.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 3.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 0,
+                "isColor": 0,
+                "isConstantVelocity": 0,
+                "isNoise": 0,
+                "isRandom": 0,
+                "isRoring": 0,
+                "isScale": 1,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 1.0,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 0.5,
+                "startSpeed": 0.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": false,
+            "isModel": false,
+            "modelName": "",
+            "textureName": "tex_eff_hit04.png"
+        },
         "particle1": {
             "Emitter": {
                 "BillboardType": 0,
@@ -9,7 +102,7 @@
                     0.9460784196853638,
                     0.0
                 ],
-                "Count": 500,
+                "Count": 2000,
                 "EmitterType": 1,
                 "Frequency": 0.01600000075995922,
                 "LifeTime": 0.800000011920929,
@@ -89,7 +182,102 @@
                 "strength": 0.0
             },
             "isLoop": false,
-            "textureName": "circle.png"
+            "isModel": false,
+            "modelName": "",
+            "textureName": "corona_03.png"
+        },
+        "smoke": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    0.025567088276147842,
+                    0.025567088276147842,
+                    0.6519607901573181,
+                    1.0
+                ],
+                "Count": 5,
+                "EmitterType": 1,
+                "Frequency": 0.01666666753590107,
+                "LifeTime": 0.5,
+                "Radius": 0.0010000000474974513,
+                "Rotate": 0.0,
+                "Scale": 3.0,
+                "Size": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Speed": 0.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 0.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 0,
+                "isConstantVelocity": 0,
+                "isNoise": 0,
+                "isRandom": 0,
+                "isRoring": 0,
+                "isScale": 0,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 1.0,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 0.0,
+                "startSpeed": 0.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": false,
+            "isModel": false,
+            "modelName": "",
+            "textureName": "corona.png"
         }
     }
 }

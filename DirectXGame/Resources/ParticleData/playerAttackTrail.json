@@ -1,19 +1,112 @@
 {
     "playerAttackTrail": {
+        "core": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    0.030108623206615448,
+                    0.055030692368745804,
+                    0.8774510025978088,
+                    1.0
+                ],
+                "Count": 100,
+                "EmitterType": 1,
+                "Frequency": 0.01666666753590107,
+                "LifeTime": 0.699999988079071,
+                "Radius": 0.30000001192092896,
+                "Rotate": 0.0,
+                "Scale": 0.10000000149011612,
+                "Size": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Speed": -0.30000001192092896,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 0.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 0,
+                "isConstantVelocity": 0,
+                "isNoise": 0,
+                "isRandom": 0,
+                "isRoring": 0,
+                "isScale": 1,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 1.0,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 0.20000000298023224,
+                "startSpeed": 0.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": true,
+            "isModel": false,
+            "modelName": "",
+            "textureName": "corona.png"
+        },
         "particle1": {
             "Emitter": {
                 "BillboardType": 0,
                 "Color": [
-                    0.0697808712720871,
-                    0.10373842716217041,
-                    0.6470588445663452,
+                    0.014129185117781162,
+                    0.03751980513334274,
+                    0.4117646813392639,
                     0.0
                 ],
-                "Count": 50,
+                "Count": 10,
                 "EmitterType": 1,
                 "Frequency": 0.01600000075995922,
                 "LifeTime": 0.5,
-                "Radius": 0.25,
+                "Radius": 0.5,
                 "Rotate": 0.0,
                 "Scale": 0.05000000074505806,
                 "Size": [
@@ -21,7 +114,7 @@
                     1.0,
                     1.0
                 ],
-                "Speed": 0.0,
+                "Speed": 0.30000001192092896,
                 "Translate": [
                     0.0,
                     0.0,
@@ -89,7 +182,102 @@
                 "strength": 0.10000000149011612
             },
             "isLoop": true,
-            "textureName": "circle.png"
+            "isModel": false,
+            "modelName": "",
+            "textureName": "corona.png"
+        },
+        "smoke": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    0.028114214539527893,
+                    0.028114214539527893,
+                    0.9558823704719543,
+                    1.0
+                ],
+                "Count": 2,
+                "EmitterType": 1,
+                "Frequency": 0.01666666753590107,
+                "LifeTime": 0.800000011920929,
+                "Radius": 0.10000000149011612,
+                "Rotate": 360.0,
+                "Scale": 1.0,
+                "Size": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Speed": 0.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 0.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 0,
+                "isConstantVelocity": 0,
+                "isNoise": 0,
+                "isRandom": 0,
+                "isRoring": 0,
+                "isScale": 1,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 0.4410000145435333,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 1.5,
+                "startSpeed": 0.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": true,
+            "isModel": false,
+            "modelName": "",
+            "textureName": "corona_02.png"
         }
     }
 }

@@ -60,9 +60,9 @@ void PlayerMagicBall::Update() {
 
 }
 
-void PlayerMagicBall::Draw(const DaiEngine::Camera& camera) {
+void PlayerMagicBall::Draw([[maybe_unused]] const DaiEngine::Camera& camera) {
 	if (phase_ == Phase::kRoot) { return; }
-	obj_->Draw(camera);
+	//obj_->Draw(camera);
 }
 
 void PlayerMagicBall::DrawParticle(const DaiEngine::Camera& camera) {

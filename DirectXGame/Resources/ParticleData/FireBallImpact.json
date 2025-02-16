@@ -277,7 +277,7 @@
             "isLoop": false,
             "isModel": false,
             "modelName": "",
-            "textureName": "circle_02.png"
+            "textureName": "corona.png"
         },
         "ring": {
             "Emitter": {
@@ -291,9 +291,9 @@
                 "Count": 20,
                 "EmitterType": 5,
                 "Frequency": 0.0,
-                "LifeTime": 0.15000000596046448,
+                "LifeTime": 0.30000001192092896,
                 "Radius": 0.0010000000474974513,
-                "Rotate": 0.0,
+                "Rotate": 360.0,
                 "Scale": 1.0,
                 "Size": [
                     0.0,
@@ -370,7 +370,7 @@
             "isLoop": false,
             "isModel": false,
             "modelName": "",
-            "textureName": "ring_01.png"
+            "textureName": "tex_eff_hit04.png"
         }
     }
 }

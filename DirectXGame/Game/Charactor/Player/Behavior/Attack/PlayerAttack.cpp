@@ -8,7 +8,7 @@ const std::array<PlayerAttack::ComboAttack, PlayerAttack::comboNum_> PlayerAttac
 	{
 		{0, 20, 5, 1.0f / 60.0f},
 		{0, 20, 5, 1.0f / 60.0f},
-		{20, 10, 5, 1.0f / 30.0f},
+		{15, 10, 5, 1.0f / 30.0f},
 	}
 };
 

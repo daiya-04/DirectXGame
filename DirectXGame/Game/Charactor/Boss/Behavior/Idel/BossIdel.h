@@ -18,7 +18,7 @@ private:
 
 	int32_t counter_ = 0;
 	//攻撃の間隔
-	int32_t coolTime_ = 60 * 3;
+	int32_t coolTime_ = 60 * 2;
 
 };
 
