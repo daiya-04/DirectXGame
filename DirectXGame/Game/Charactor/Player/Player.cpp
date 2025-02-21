@@ -126,6 +126,15 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 		ChangeBehavior("KnockBack");
 	}
 
+	//ターゲットとの距離
+	float distance = (target_->GetWorldPos().GetXZ() - GetCenterPos().GetXZ()).Length();
+	//射程内に入ったらズーム
+	if (distance <= attackRange_) {
+		followCamera_->SetZoom(true);
+	}else {
+		followCamera_->SetZoom(false);
+	}
+
 	//HPが0になったら...
 	if (hp_ <= 0) {
 		isDead_ = true;

@@ -72,7 +72,7 @@ private:
 	//最大HP
 	int32_t maxHp_ = 15;
 	//攻撃の射程
-	float attackRange_ = 15.0f;
+	float attackRange_ = 20.0f;
 
 	//攻撃アニメーションのスピード
 	float attackAnimeSpeed_ = 1.0f / 30.0f;
@@ -167,6 +167,8 @@ public:
 	uint32_t GetHP() const { return hp_; }
 
 	Vector3 GetKnockBackBaseDict() { return knockBackBaseDict_; }
+
+	float GetAttackRange() { return attackRange_; }
 
 };
 

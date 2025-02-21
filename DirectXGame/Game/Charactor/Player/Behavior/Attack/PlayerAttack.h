@@ -30,9 +30,6 @@ private:
 	//攻撃の速さ
 	float speed_ = 0.0f;
 
-	//攻撃の射程
-	float attackRange_ = 20.0f;
-
 	//コンボに必要なパラメータ
 	struct ComboAttack {
 		//チャージの時間

@@ -48,6 +48,11 @@ namespace DaiEngine {
 		/// </summary>
 		void UpdateViewMatrix();
 		/// <summary>
+		/// 回転行列を使ったビュー行列
+		/// </summary>
+		/// <param name="rotateMat"></param>
+		void UpdateViewMatrixRotate(const Matrix4x4& rotateMat);
+		/// <summary>
 		/// プロジェクション行列更新
 		/// </summary>
 		void UpdateProjectionMatrix();

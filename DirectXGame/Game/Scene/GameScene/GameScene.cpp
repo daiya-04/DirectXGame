@@ -168,6 +168,11 @@ void GameScene::Init(){
 	camera_.SetMatView(followCamera_->GetCamera().GetMatView());
 	camera_.UpdateCameraPos();
 
+	//ロックオン
+	lockOn_ = std::make_unique<LockOn>();
+	lockOn_->Init();
+	followCamera_->SetLockOn(lockOn_.get());
+
 	//UI
 	
 	XButton_.reset(DaiEngine::Sprite::Create(XButtonTex, {1200.0f,70.0f}));
@@ -333,7 +338,7 @@ void GameScene::DrawRenderTexture() {
 	hsvFilter_->Draw();
 }
 
-void GameScene::ChangeState(const SceneEvent& stateName) {
+void GameScene::ChangeState(SceneEvent stateName) {
 
 	const std::map<SceneEvent, std::function<std::unique_ptr<ISceneState>()>> stateTable{
 		{SceneEvent::Battle, [this]() {return std::make_unique<BattleState>(this); }},

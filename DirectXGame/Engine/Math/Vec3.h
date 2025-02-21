@@ -21,6 +21,11 @@ public:
 	inline Vector3(){}
 	inline Vector3(float x, float y, float z) : x(x), y(y), z(z) {}
 	inline Vector3(const Vector3& vector) : x(vector.x), y(vector.y), z(vector.z) {}
+
+	inline Vector3 GetXY() const { return { x,y,0.0f }; }
+	inline Vector3 GetXZ() const { return { x,0.0f,z }; }
+	inline Vector3 GETYZ() const { return { 0.0f,y,z }; }
+
 	//マイナス
 	inline Vector3 operator-() const { return{ -x,-y,-z }; }
 
@@ -103,6 +108,19 @@ public:
 	friend inline Vector3 Lerp(float t, const Vector3& start, const Vector3& end) {
 		t = std::clamp(t, 0.0f, 1.0f);
 		return { (1.0f - t) * start + t * end };
+	}
+	//球面線形補間
+	friend inline Vector3 SLerp(float t, const Vector3& start, const Vector3& end) {
+		//二つのベクトルの角度
+		float angle = std::acosf(Dot(start, end));
+		//sinθ
+		float sinTh = std::sinf(angle);
+
+		//補間係数
+		float st = std::sinf(angle * (1 - t));
+		float et = std::sinf(angle * t);
+
+		return { (st * start + et * end) / sinTh };
 	}
 	//射影ベクトル
 	friend inline Vector3 Project(const Vector3& v1, const Vector3& v2) {

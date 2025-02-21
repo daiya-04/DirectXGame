@@ -132,7 +132,7 @@ private:
 	Vector3 startPos_{};
 
 	//射程
-	float firingRange_ = 15.0f;
+	float firingRange_ = 20.0f;
 
 };
 
