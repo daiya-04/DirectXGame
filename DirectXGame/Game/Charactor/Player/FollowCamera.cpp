@@ -56,7 +56,6 @@ void FollowCamera::Update(){
 
 		delayParam_ = std::clamp(delayParam_, 0.0f, 1.0f);
 
-		T = Easing::easeInSine(delayParam_);
 		uint32_t dampingRate = baseDampingRate_;
 		if (isZoom_) {
 			dampingRate = zoomDampingRate_;
@@ -87,7 +86,6 @@ void FollowCamera::Update(){
 
 			delayParam_ = std::clamp(delayParam_, 0.0f, 1.0f);
 
-			float T = Easing::easeInSine(delayParam_);
 			uint32_t dampingRate = baseDampingRate_;
 			if (isZoom_) {
 				dampingRate = zoomDampingRate_;
