@@ -6,9 +6,9 @@
 
 const std::array<PlayerAttack::ComboAttack, PlayerAttack::comboNum_> PlayerAttack::kComboAttacks_ = {
 	{
-		{30,20,5},
-		{30,20,5},
-		{30,20,10}
+		{0, 20, 5, 1.0f / 60.0f},
+		{0, 20, 5, 1.0f / 60.0f},
+		{15, 10, 5, 1.0f / 30.0f},
 	}
 };
 
@@ -16,16 +16,29 @@ void PlayerAttack::Init() {
 
 	assert(player_);
 
-	player_->SetAnimation(Player::Action::Attack, false);
+	switch (comboIndex_) {
+		case static_cast<uint32_t>(ComboIndex::First):
+			player_->SetAnimation(Player::Action::AttackCombo1, false);
+			break;
+		case static_cast<uint32_t>(ComboIndex::Second):
+			player_->SetAnimation(Player::Action::AttackCombo2, false);
+			break;
+		case static_cast<uint32_t>(ComboIndex::Third):
+			player_->SetAnimation(Player::Action::AttackCombo3, false);
+			break;
+	}
+	
 	player_->GetNowAnimation().TimeReset();
-	player_->GetNowAnimation().SetAnimationSpeed(attackAnimeSpeed_);
+	player_->GetNowAnimation().SetAnimationSpeed(kComboAttacks_[comboIndex_].attackAnimeSpeed_);
 	player_->GetNowSkelton().Update();
+
+	count_ = 0;
 
 	if (player_->GetTarget()) {
 		//攻撃の発射方向計算
 		Vector3 direction = player_->GetTarget()->translation_ - player_->GetObj()->worldTransform_.translation_;
 		//射程内ならターゲット方向に向く
-		if (direction.Length() <= attackRange_) {
+		if (direction.Length() <= player_->GetAttackRange()) {
 			player_->SetDirection(direction);
 		}
 	}
@@ -66,6 +79,7 @@ void PlayerAttack::Update() {
 			comboIndex_ = std::clamp(comboIndex_, static_cast<uint32_t>(ComboIndex::First), static_cast<uint32_t>(ComboIndex::Third));
 
 			Init();
+			return;
 		}
 		else {
 			//続かないなら...
@@ -82,7 +96,12 @@ void PlayerAttack::Update() {
 	}
 
 	if (count_ == kComboAttacks_[comboIndex_].chargeTime_) {
-		player_->ShotMagicBall();
+		if (comboIndex_ == static_cast<uint32_t>(ComboIndex::Third)) {
+			player_->AttackGroundBurst();
+		}
+		else {
+			player_->ShotMagicBall();
+		}
 	}
 
 

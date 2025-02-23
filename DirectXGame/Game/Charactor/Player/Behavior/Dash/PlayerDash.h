@@ -22,7 +22,7 @@ private:
 	//ダッシュの方向
 	Vector3 dashDirection_ = {};
 	//ダッシュの時間
-	uint32_t dashTime_ = 10;
+	uint32_t dashTime_ = 15;
 	//加速量(スカラー)
 	float absAccel_ = 0.1f;
 	//ダッシュの速さ

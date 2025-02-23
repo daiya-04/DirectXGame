@@ -16,8 +16,7 @@ void PlayerDash::Init() {
 	}else {
 		dashDirection_ = player_->GetDirection();
 	}
-	player_->GetFollowCamera()->Reset();
-
+	player_->GetFollowCamera()->SetDashFlag(true);
 	player_->GetCollider()->ColliderOff();
 	
 
@@ -38,6 +37,7 @@ void PlayerDash::Update() {
 			player_->ChangeBehavior("Idel");
 		}
 		player_->GetCollider()->ColliderOn();
+		player_->GetFollowCamera()->SetDashFlag(false);
 	}
 
 }

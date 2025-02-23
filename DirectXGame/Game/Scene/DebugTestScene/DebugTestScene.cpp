@@ -28,7 +28,7 @@ void DebugTestScene::Init() {
 
 	humanModel_ = DaiEngine::ModelManager::LoadGLTF("Skin");
 	standingModel_ = DaiEngine::ModelManager::LoadGLTF("Standing");
-	sneakModel_ = DaiEngine::ModelManager::LoadGLTF("BossDead");
+	sneakModel_ = DaiEngine::ModelManager::LoadGLTF("Running");
 	model_ = DaiEngine::ModelManager::LoadOBJ("Rock");
 
 	skyBoxTex_ = DaiEngine::TextureManager::Load("skyBox.dds");
@@ -91,13 +91,15 @@ void DebugTestScene::Update() {
 		animation_ = DaiEngine::AnimationManager::Load(sneakModel_->name_);
 		skeleton_ = DaiEngine::Skeleton::Create(sneakModel_->rootNode_);
 		skinCluster_.Create(skeleton_, sneakModel_);
+		animation_.Start();
 		animation_.SetAnimationSpeed(1.0f / 30.0f);
 	}
 	else if(DaiEngine::Input::GetInstance()->ReleaseKey(DIK_SPACE)){
-		//human_->SetModelHandle(humanModel_);
+		human_->SetModelHandle(humanModel_);
 		animation_ = DaiEngine::AnimationManager::Load(standingModel_->name_);
 		skeleton_ = DaiEngine::Skeleton::Create(standingModel_->rootNode_);
 		skinCluster_.Create(skeleton_, standingModel_);
+		animation_.Start();
 		animation_.SetAnimationSpeed(1.0f / 60.0f);
 	}
 
@@ -169,7 +171,7 @@ void DebugTestScene::DrawParticle() {
 	DaiEngine::GPUParticle::preDraw();
 
 	for (auto& [group, particle] : effect_) {
-		particle->Draw(camera_);
+		//particle->Draw(camera_);
 	}
 	
 	ParticleEditor::GetInstance()->Draw(camera_);

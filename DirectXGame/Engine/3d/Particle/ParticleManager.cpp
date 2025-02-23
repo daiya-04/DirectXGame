@@ -77,11 +77,13 @@ std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> ParticleManager::
 			}
 		}
 
-		if (data.isLoop_) {
+		/*if (data.isLoop_) {
 			setData.reset(DaiEngine::GPUParticle::Create(DaiEngine::TextureManager::Load(data.textureName_), 10000));
 		}else {
 			setData.reset(DaiEngine::GPUParticle::Create(DaiEngine::TextureManager::Load(data.textureName_), 1024));
-		}
+		}*/
+
+		setData.reset(DaiEngine::GPUParticle::Create(DaiEngine::TextureManager::Load(data.textureName_), 10000));
 
 		auto& emitterData = data.emitter_;
 		const json& emitterRoot = particleRoot["Emitter"];

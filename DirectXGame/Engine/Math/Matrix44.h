@@ -342,3 +342,14 @@ public:
 
 		return result;
 	}
+
+	inline Matrix4x4 GetRotateYMatrix(const Matrix4x4& matrix) {
+		Matrix4x4 rotateYMatrix = MakeIdentity44();
+
+		rotateYMatrix.m[0][0] = matrix.m[0][0];
+		rotateYMatrix.m[0][2] = matrix.m[0][2];
+		rotateYMatrix.m[2][0] = matrix.m[2][0];
+		rotateYMatrix.m[2][2] = matrix.m[2][2];
+
+		return rotateYMatrix;
+	}

@@ -49,6 +49,8 @@ void GameScene::Init(){
 	std::shared_ptr<DaiEngine::Model> playerStandingModel = DaiEngine::ModelManager::LoadGLTF("Standing");
 	std::shared_ptr<DaiEngine::Model> playerRunningModel = DaiEngine::ModelManager::LoadGLTF("Running");
 	std::shared_ptr<DaiEngine::Model> playerAttackModel = DaiEngine::ModelManager::LoadGLTF("PlayerAttack");
+	std::shared_ptr<DaiEngine::Model> playerAttackC2Model = DaiEngine::ModelManager::LoadGLTF("PlayerAttackC2");
+	std::shared_ptr<DaiEngine::Model> playerAttackC3Model = DaiEngine::ModelManager::LoadGLTF("PlayerAttackC3");
 	std::shared_ptr<DaiEngine::Model> playerDeadModel = DaiEngine::ModelManager::LoadGLTF("PlayerDead");
 	std::shared_ptr<DaiEngine::Model> playerAccelModel = DaiEngine::ModelManager::LoadGLTF("Accel");
 	std::shared_ptr<DaiEngine::Model> playerKnockBackModel = DaiEngine::ModelManager::LoadGLTF("KnockBack");
@@ -102,7 +104,7 @@ void GameScene::Init(){
 
 	//プレイヤー
 	player_ = dynamic_cast<Player*>(charactors_[static_cast<size_t>(CharactorType::kPlayer)].get());
-	player_->Init({ playerStandingModel,playerRunningModel,playerAttackModel,playerDeadModel,playerAccelModel,playerKnockBackModel });
+	player_->Init({ playerStandingModel, playerRunningModel, playerAttackModel, playerAttackC2Model, playerAttackC3Model, playerDeadModel, playerAccelModel, playerKnockBackModel });
 
 
 	//ボス
@@ -165,6 +167,11 @@ void GameScene::Init(){
 	player_->SetFollowCamera(followCamera_.get());
 	camera_.SetMatView(followCamera_->GetCamera().GetMatView());
 	camera_.UpdateCameraPos();
+
+	//ロックオン
+	lockOn_ = std::make_unique<LockOn>();
+	lockOn_->Init();
+	followCamera_->SetLockOn(lockOn_.get());
 
 	//UI
 	
@@ -331,7 +338,7 @@ void GameScene::DrawRenderTexture() {
 	hsvFilter_->Draw();
 }
 
-void GameScene::ChangeState(const SceneEvent& stateName) {
+void GameScene::ChangeState(SceneEvent stateName) {
 
 	const std::map<SceneEvent, std::function<std::unique_ptr<ISceneState>()>> stateTable{
 		{SceneEvent::Battle, [this]() {return std::make_unique<BattleState>(this); }},

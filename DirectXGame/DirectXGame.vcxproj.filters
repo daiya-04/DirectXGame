@@ -449,6 +449,12 @@
     <ClCompile Include="Game\Scene\GameScene\State\GameOver\GameOverState.cpp">
       <Filter>Game\Scene\GameScene\State\GameOver</Filter>
     </ClCompile>
+    <ClCompile Include="GroundBurst.cpp">
+      <Filter>Game\Charactor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Player\LockOn.cpp">
+      <Filter>Game\Charactor\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -768,6 +774,12 @@
     </ClInclude>
     <ClInclude Include="Game\Scene\GameScene\State\GameOver\GameOverState.h">
       <Filter>Game\Scene\GameScene\State\GameOver</Filter>
+    </ClInclude>
+    <ClInclude Include="GroundBurst.h">
+      <Filter>Game\Charactor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Player\LockOn.h">
+      <Filter>Game\Charactor\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

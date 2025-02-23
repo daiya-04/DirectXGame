@@ -1,0 +1,283 @@
+{
+    "GroundBurst": {
+        "impact": {
+            "Emitter": {
+                "BillboardType": 1,
+                "Color": [
+                    0.173490971326828,
+                    0.9313725233078003,
+                    0.686175525188446,
+                    1.0
+                ],
+                "Count": 10,
+                "EmitterType": 5,
+                "Frequency": 0.01666666753590107,
+                "LifeTime": 0.30000001192092896,
+                "Radius": 0.0010000000474974513,
+                "Rotate": 360.0,
+                "Scale": 0.10000000149011612,
+                "Size": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Speed": 0.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 3.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 0,
+                "isConstantVelocity": 0,
+                "isNoise": 0,
+                "isRandom": 0,
+                "isRoring": 0,
+                "isScale": 1,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 1.0,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 1.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 0.20000000298023224,
+                "startSpeed": 0.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": false,
+            "isModel": false,
+            "modelName": "",
+            "textureName": "tex_eff_hit04.png"
+        },
+        "particle1": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    0.16231738030910492,
+                    0.6003015637397766,
+                    0.9460784196853638,
+                    0.0
+                ],
+                "Count": 2000,
+                "EmitterType": 5,
+                "Frequency": 0.01600000075995922,
+                "LifeTime": 1.5,
+                "Radius": 0.10000000149011612,
+                "Rotate": 0.0,
+                "Scale": 0.10000000149011612,
+                "Size": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Speed": 3.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.30000001192092896,
+                "Velocity": [
+                    0.0,
+                    15.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 0.0,
+                "endSpeed": 4.0,
+                "endVelocity": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 0,
+                "isConstantVelocity": 1,
+                "isNoise": 0,
+                "isRandom": 0,
+                "isRoring": 0,
+                "isScale": 1,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 1.0,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 0.20000000298023224,
+                "startSpeed": 2.0,
+                "startVelocity": [
+                    0.0,
+                    5.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": false,
+            "isModel": false,
+            "modelName": "",
+            "textureName": "corona.png"
+        },
+        "smoke": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    0.052792180329561234,
+                    0.7828054428100586,
+                    0.8284313678741455,
+                    1.0
+                ],
+                "Count": 30,
+                "EmitterType": 5,
+                "Frequency": 0.01666666753590107,
+                "LifeTime": 0.4000000059604645,
+                "Radius": 0.30000001192092896,
+                "Rotate": 360.0,
+                "Scale": 0.699999988079071,
+                "Size": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Speed": 0.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.029999999329447746,
+                "Velocity": [
+                    0.0,
+                    13.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 0.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 0,
+                "isConstantVelocity": 1,
+                "isNoise": 0,
+                "isRandom": 0,
+                "isRoring": 0,
+                "isScale": 0,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 0.47699999809265137,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 0.0,
+                "startSpeed": 0.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": false,
+            "isModel": false,
+            "modelName": "",
+            "textureName": "smoke_02.png"
+        }
+    }
+}

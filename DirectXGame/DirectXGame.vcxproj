@@ -155,6 +155,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Charactor\Boss\Icicle\IcicleManager.cpp" />
     <ClCompile Include="Game\Effects\IceScar.cpp" />
     <ClCompile Include="Engine\GraphicsPipeline\LineGraphicsPipeline.cpp" />
+    <ClCompile Include="GroundBurst.cpp" />
+    <ClCompile Include="Game\Charactor\Player\LockOn.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\3d\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\3d\Object3d.cpp" />
@@ -312,6 +314,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Collision\Collider\SphereCollider.h" />
     <ClInclude Include="Game\Scene\GameScene\State\ISceneState.h" />
     <ClInclude Include="Game\Scene\GameScene\State\PlayerDead\PlayerDeadState.h" />
+    <ClInclude Include="GroundBurst.h" />
+    <ClInclude Include="Game\Charactor\Player\LockOn.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

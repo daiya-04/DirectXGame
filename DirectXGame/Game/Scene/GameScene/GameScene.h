@@ -34,6 +34,7 @@
 #include "Player.h"
 #include "Boss.h"
 #include "FollowCamera.h"
+#include "LockOn.h"
 #include "ElementBallManager.h"
 #include "PlayerMagicBall.h"
 #include "BurnScar.h"
@@ -139,6 +140,8 @@ private:
 	std::vector<std::unique_ptr<Rock>> rocks_;
 	//追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
+	//
+	std::unique_ptr<LockOn> lockOn_;
 	//戦闘が終了してからタイトルに戻るまでの時間
 	uint32_t finishTime_ = 60 * 3;
 	//ゲーム終了カウンター
@@ -192,7 +195,7 @@ private:
 
 public:
 
-	void ChangeState(const SceneEvent& stateName);
+	void ChangeState(SceneEvent stateName);
 
 	DaiEngine::Camera& GetCamera() { return camera_; }
 
@@ -200,6 +203,7 @@ public:
 	std::array<std::unique_ptr<BaseCharactor>, 2>& GetCharactors() { return charactors_; }
 	Player* GetPlayer() { return dynamic_cast<Player*>(charactors_[static_cast<size_t>(CharactorType::kPlayer)].get()); }
 	Boss* GetBoss() { return dynamic_cast<Boss*>(charactors_[static_cast<size_t>(CharactorType::kBoss)].get()); }
+	LockOn* GetLockOn() { return lockOn_.get(); }
 
 	///攻撃各種取得
 	GroundFlare* GetGroundFlare() { return groundFlare_.get(); }

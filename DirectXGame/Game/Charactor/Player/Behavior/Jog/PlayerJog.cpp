@@ -37,7 +37,7 @@ void PlayerJog::Update() {
 	move = DaiEngine::Input::GetInstance()->GetMoveXZ();
 	move = (move / SHRT_MAX) * speed_;
 
-	move = TransformNormal(move, MakeRotateYMatrix(player_->GetFollowCamera()->GetCamera().rotation_.y));
+	move = TransformNormal(move, GetRotateYMatrix(player_->GetFollowCamera()->GetRotateMat()));
 
 	player_->GetObj()->worldTransform_.translation_ += move;
 	player_->GetObj()->worldTransform_.translation_.y = 0.0f;

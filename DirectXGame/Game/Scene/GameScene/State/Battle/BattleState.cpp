@@ -6,16 +6,21 @@
 
 void BattleState::Init() {
 	assert(gameScene_);
+
+	gameScene_->GetLockOn()->SetTarget(gameScene_->GetBoss());
+
 }
 
 void BattleState::Update() {
 
 	if (gameScene_->GetPlayer()->IsDead()) {
 		gameScene_->ChangeState(GameScene::SceneEvent::PlayerDead);
+		gameScene_->GetLockOn()->LockOff();
 		return;
 	}
 	if (gameScene_->GetBoss()->IsDead()) {
 		gameScene_->ChangeState(GameScene::SceneEvent::BossDead);
+		gameScene_->GetLockOn()->LockOff();
 		return;
 	}
 

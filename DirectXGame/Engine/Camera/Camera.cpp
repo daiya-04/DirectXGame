@@ -51,6 +51,17 @@ namespace DaiEngine {
 		UpdateCameraPos();
 	}
 
+	void Camera::UpdateViewMatrixRotate(const Matrix4x4& rotateMat) {
+
+		Matrix4x4 T = MakeTranslateMatrix(translation_);
+		Matrix4x4 S = MakeIdentity44();
+
+		matView_ = (S * rotateMat * T).Inverse();
+		cMap_->matView = matView_;
+		UpdateCameraPos();
+
+	}
+
 	void Camera::UpdateProjectionMatrix() {
 		matProjection_ = MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
 		cMap_->matProjection = matProjection_;
