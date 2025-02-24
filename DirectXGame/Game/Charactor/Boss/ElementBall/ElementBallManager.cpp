@@ -47,14 +47,6 @@ void ElementBallManager::Update() {
 
 }
 
-void ElementBallManager::Draw(const DaiEngine::Camera& camera) {
-
-	for (auto& elementBall : elementBalls_) {
-		elementBall->Draw(camera);
-	}
-
-}
-
 void ElementBallManager::DrawParticle(const DaiEngine::Camera& camera) {
 
 	for (auto& elementBall : elementBalls_) {

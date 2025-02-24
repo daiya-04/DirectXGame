@@ -9,7 +9,7 @@
 #include "FollowCamera.h"
 #include "BaseCharactor.h"
 #include "IPlayerBehavior.h"
-#include "PlayerMagicBall.h"
+#include "MagicBall.h"
 #include "GroundBurst.h"
 
 #include <memory>
@@ -87,7 +87,7 @@ private:
 	//死亡演出(アニメーション)が終わったか
 	bool isFinishDeadMotion_ = false;
 	
-	std::array<std::unique_ptr<PlayerMagicBall>, 10> attacks_;
+	std::array<std::unique_ptr<MagicBall>, 10> attacks_;
 	uint32_t shotIndex = 0;
 
 	std::array<std::unique_ptr<GroundBurst>, 5> groundBursts_;

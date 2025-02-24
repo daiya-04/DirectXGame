@@ -16,24 +16,26 @@ void FollowCamera::Init(){
 void FollowCamera::Update(){
 
 	Matrix4x4 subRMat = MakeIdentity44();
+	Vector3 offset = {};
 
 	if (lockOn_->ExistTarget()) {
-
+		//ロックオン先の座標
 		Vector3 lockOnPos = lockOn_->GetTargetPos();
-
+		//ロックオン対象と追従対象の差分
 		Vector3 sub = lockOnPos - target_->translation_;
-
-		halfPos_ = target_->translation_ + (sub.GetXZ() / 2.0f);
 
 		rotateMat_ = DirectionToDirection(Vector3(0.0f, 0.0f, 1.0f), sub.GetXZ());
 
-		Vector3 offset = baseOffset_;
 		if (isZoom_) {
 			zoomParam_ += zoomSpeed_;
+			//ロックオン対象と追従対象の間の半分の座標
+			halfPos_ = target_->translation_ + (sub.GetXZ() / 2.0f);
 
+			//ロックオン対象とカメラの差分
 			Vector3 ltoc = lockOnPos - camera_.translation_;
+			//間の半分の座標とカメラの差分
 			Vector3 htoc = halfPos_ - camera_.translation_;
-
+			//間の半分の座標を見るための回転行列の作成
 			subRMat = DirectionToDirection(ltoc.GetXZ(), htoc.GetXZ());
 		}
 		else {
@@ -51,23 +53,9 @@ void FollowCamera::Update(){
 
 		offset = TransformNormal(offset, rotateMatrix);
 
-		//ダッシュしたときにカメラを遅延させる
-		delayParam_ += 1.0f / static_cast<float>(delayTime_);
-
-		delayParam_ = std::clamp(delayParam_, 0.0f, 1.0f);
-
-		uint32_t dampingRate = baseDampingRate_;
-		if (isZoom_) {
-			dampingRate = zoomDampingRate_;
-		}else if (isDash_) {
-			dampingRate = dashDampingRate_;
-		}
-		//補間
-		interTarget_ = Lerp(deltaTime_ * static_cast<float>(dampingRate), interTarget_, target_->translation_);
-
+		CalcInterTarget();
 
 		camera_.translation_ = interTarget_ + offset;
-
 		
 	}
 	else {
@@ -81,41 +69,15 @@ void FollowCamera::Update(){
 		rotation_.x = max(rotation_.x, -rotateMin * std::numbers::pi_v<float> / 180.0f);
 
 		if (target_) {
-			//ダッシュしたときにカメラを遅延させる
-			delayParam_ += 1.0f / static_cast<float>(delayTime_);
+			CalcInterTarget();
 
-			delayParam_ = std::clamp(delayParam_, 0.0f, 1.0f);
-
-			uint32_t dampingRate = baseDampingRate_;
-			if (isZoom_) {
-				dampingRate = zoomDampingRate_;
-			}
-			else if (isDash_) {
-				dampingRate = dashDampingRate_;
-			}
-			//補間
-			interTarget_ = Lerp(deltaTime_ * static_cast<float>(dampingRate), interTarget_, target_->translation_);
-
-			Vector3 offset = OffsetCalc();
-
-
-			camera_.translation_ = interTarget_ + offset;
+			offset = OffsetCalc();
 		}
 	}
 
-	camera_.UpdateViewMatrixRotate(rotateMat_ * subRMat);
-}
-
-void FollowCamera::Reset() {
-
-	if (target_) {
-		interTarget_ = target_->translation_;
-	}
-
-	Vector3 offset = OffsetCalc();
 	camera_.translation_ = interTarget_ + offset;
-	delayParam_ = 0.0f;
 
+	camera_.UpdateViewMatrixRotate(rotateMat_ * subRMat);
 }
 
 Vector3 FollowCamera::OffsetCalc() {
@@ -131,6 +93,18 @@ Vector3 FollowCamera::OffsetCalc() {
 	return offset;
 }
 
+void FollowCamera::CalcInterTarget() {
+	uint32_t dampingRate = baseDampingRate_;
+	if (isZoom_) {
+		dampingRate = zoomDampingRate_;
+	}
+	else if (isDash_) {
+		dampingRate = dashDampingRate_;
+	}
+	//補間
+	interTarget_ = Lerp(deltaTime_ * static_cast<float>(dampingRate), interTarget_, target_->translation_);
+}
+
 void FollowCamera::SetTarget(const DaiEngine::WorldTransform* target) {
 	target_ = target;
 	//オフセット計算
@@ -138,28 +112,4 @@ void FollowCamera::SetTarget(const DaiEngine::WorldTransform* target) {
 	camera_.translation_ = target_->translation_ + offset;
 	//行列更新
 	camera_.UpdateViewMatrix();
-}
-
-void FollowCamera::NormalInit() {
-
-
-
-}
-
-void FollowCamera::NormalUpdate() {
-
-	
-
-}
-
-void FollowCamera::AttackInit() {
-
-	workAttack_.param_ = 0.0f;
-
-}
-
-void FollowCamera::AttackUpdate() {
-
-	
-
 }

@@ -6,25 +6,21 @@
 // 
 ///---------------------------------------------------------------------------------------------
 
-#include "ModelManager.h"
-#include "Vec3.h"
+#include "BaseAttack.h"
 #include "Vec2.h"
 #include "Matrix44.h"
 #include "WorldTransform.h"
-#include "Camera.h"
-#include "Object3d.h"
 #include "CollisionShapes.h"
 #include "GPUParticle.h"
 #include "SphereCollider.h"
 
-#include <memory>
 #include <string>
 #include <optional>
 #include <functional>
 #include <map>
 
 //電気玉クラス
-class PlasmaShot{
+class PlasmaShot : public BaseAttack {
 public:
 	//フェーズ
 	enum class Phase {
@@ -101,34 +97,31 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<DaiEngine::Model>& model);
+	void Init(const std::shared_ptr<DaiEngine::Model>& model) override;
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
-	/// <summary>
-	/// 描画
-	/// </summary>
-	/// <param name="camera">カメラ</param>
+	void Update() override;
+
 	void Draw(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const DaiEngine::Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision(DaiEngine::Collider* other);
+	void OnCollision(DaiEngine::Collider* other) override;
+	/// <summary>
+	/// ターゲットセット
+	/// </summary>
+	/// <param name="target"></param>
+	void SetTarget(const Vector3* target) { target_ = target; }
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>
 	void AttackStart();
-	/// <summary>
-	/// ターゲットセット
-	/// </summary>
-	/// <param name="target">ターゲット</param>
-	void SetTarget(const Vector3* target) { target_ = target; }
 	/// <summary>
 	/// 攻撃に必要なデータの設定
 	/// </summary>
@@ -141,11 +134,6 @@ public:
 	/// <returns></returns>
 	DaiEngine::SphereCollider* GetCollider() const { return collider_.get(); }
 	/// <summary>
-	/// ワールド座標取得
-	/// </summary>
-	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos() const { return obj_->GetWorldPos(); }
-	/// <summary>
 	/// 存在しているか
 	/// </summary>
 	/// <returns>生存していたらtrue、それ以外false</returns>
@@ -153,10 +141,10 @@ public:
 
 
 private:
-	//攻撃先(ターゲット)
-	const Vector3* target_;
 	//ターゲットがいる方向
 	Vector3 targetDict_ = { 0.0f,0.0f,1.0f };
+	//攻撃先（ターゲット）
+	const Vector3* target_ = nullptr;
 	//オブジェクト
 	std::unique_ptr<DaiEngine::Object3d> obj_;
 	///エフェクト

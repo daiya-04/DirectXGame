@@ -167,6 +167,12 @@
     <Filter Include="Game\Scene\GameScene\State\GameOver">
       <UniqueIdentifier>{359e451b-ef74-4481-a50b-af22b62f39eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Charactor\Player\MagicBall">
+      <UniqueIdentifier>{9748132f-0bfb-4c26-9b0e-46b28608e2e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Boss\GroundFlare">
+      <UniqueIdentifier>{960db93f-bd31-41f8-8feb-0b089be92cca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -280,12 +286,6 @@
     </ClCompile>
     <ClCompile Include="Game\Charactor\Player\Player.cpp">
       <Filter>Game\Charactor\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Charactor\Player\PlayerMagicBall.cpp">
-      <Filter>Game\Charactor\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Charactor\Boss\GroundFlare.cpp">
-      <Filter>Game\Charactor\Boss</Filter>
     </ClCompile>
     <ClCompile Include="Game\Charactor\Boss\Icicle\Icicle.cpp">
       <Filter>Game\Charactor\Boss\Icicle</Filter>
@@ -455,6 +455,18 @@
     <ClCompile Include="Game\Charactor\Player\LockOn.cpp">
       <Filter>Game\Charactor\Player</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Charactor\Player\MagicBall.cpp">
+      <Filter>Game\Charactor\Player\MagicBall</Filter>
+    </ClCompile>
+    <ClCompile Include="MagicBallManager.cpp">
+      <Filter>Game\Charactor\Player\MagicBall</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\GroundFlare\GroundFlare.cpp">
+      <Filter>Game\Charactor\Boss\GroundFlare</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\GroundFlare\GroundFlareManager.cpp">
+      <Filter>Game\Charactor\Boss\GroundFlare</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -594,12 +606,6 @@
     </ClInclude>
     <ClInclude Include="Game\Charactor\Player\Player.h">
       <Filter>Game\Charactor\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Charactor\Player\PlayerMagicBall.h">
-      <Filter>Game\Charactor\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Charactor\Boss\GroundFlare.h">
-      <Filter>Game\Charactor\Boss</Filter>
     </ClInclude>
     <ClInclude Include="Game\Charactor\Boss\Icicle\Icicle.h">
       <Filter>Game\Charactor\Boss\Icicle</Filter>
@@ -780,6 +786,21 @@
     </ClInclude>
     <ClInclude Include="Game\Charactor\Player\LockOn.h">
       <Filter>Game\Charactor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Player\MagicBall.h">
+      <Filter>Game\Charactor\Player\MagicBall</Filter>
+    </ClInclude>
+    <ClInclude Include="MagicBallManager.h">
+      <Filter>Game\Charactor\Player\MagicBall</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\GroundFlare\GroundFlare.h">
+      <Filter>Game\Charactor\Boss\GroundFlare</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\GroundFlare\GroundFlareManager.h">
+      <Filter>Game\Charactor\Boss\GroundFlare</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\BaseAttack.h">
+      <Filter>Game\Charactor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

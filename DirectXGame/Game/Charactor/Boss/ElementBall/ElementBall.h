@@ -6,22 +6,19 @@
 // 
 ///---------------------------------------------------------------------------------------------
 
+#include "BaseAttack.h"
 #include "WorldTransform.h"
-#include "Camera.h"
-#include "Object3d.h"
-#include "Vec3.h"
 #include "CollisionShapes.h"
 #include "GPUParticle.h"
 #include "SphereCollider.h"
 #include "BurnScar.h"
 
-#include <memory>
 #include <optional>
 #include <functional>
 #include <map>
 
 //火の玉攻撃クラス
-class ElementBall {
+class ElementBall : public BaseAttack {
 public:
 	//フェーズ
 	enum class Phase {
@@ -113,10 +110,9 @@ private:
 private:
 	//跡の高さ調整用
 	static size_t heightAdjustmentIndex;
-
-	//攻撃先(ターゲット)
-	const Vector3* target_;
-	//オブジェクト
+	//攻撃先（ターゲット）
+	const Vector3* target_ = nullptr;
+	//
 	std::unique_ptr<DaiEngine::Object3d> obj_;
 	//アニメーション
 	DaiEngine::Animation animation_;
@@ -145,29 +141,24 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(std::shared_ptr<DaiEngine::Model> model);
+	void Init(const std::shared_ptr<DaiEngine::Model>& model) override;
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
-	/// <summary>
-	/// 描画
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void Draw(const DaiEngine::Camera& camera);
+	void Update() override;
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const DaiEngine::Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision(DaiEngine::Collider* other);
+	void OnCollision(DaiEngine::Collider* other) override;
 	/// <summary>
-	/// ターゲットのセット
+	/// ターゲットセット
 	/// </summary>
-	/// <param name="target">ターゲット</param>
+	/// <param name="target"></param>
 	void SetTarget(const Vector3* target) { target_ = target; }
 	/// <summary>
 	/// 攻撃開始
@@ -196,13 +187,12 @@ public:
 	/// </summary>
 	/// <returns>フェーズ</returns>
 	Phase GetPhase() const { return phase_; }
-	/// <summary>
-	/// ワールド座標取得
-	/// </summary>
-	/// <returns>ワールド座標</returns>
-	const Vector3 GetWorldPos() const { return obj_->GetWorldPos(); }
 	
 	void SetBurnScar(BurnScar* burnScar) { burnScar_ = burnScar; }
+
+private:
+
+	void Dead();
 
 };
 

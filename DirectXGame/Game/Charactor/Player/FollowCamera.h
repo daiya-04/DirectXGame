@@ -9,46 +9,12 @@
 #include "Camera.h"
 #include "WorldTransform.h"
 #include "Vec3.h"
-#include <optional>
-#include <map>
-#include <functional>
 
 //前方宣言
 class LockOn;
 
 //追従カメラクラス
 class FollowCamera{
-public:
-
-	enum class Mode {
-		kNormal,
-		kAttack,
-	};
-
-private:
-
-	Mode mode_ = Mode::kNormal;
-	std::optional<Mode> modeRequest_ = Mode::kAttack;
-
-	std::map<Mode, std::function<void()>> modeInitTable_{
-		{Mode::kNormal, [this]() { NormalInit(); }},
-		{Mode::kAttack, [this]() { AttackInit(); }},
-	};
-
-	std::map<Mode, std::function<void()>> modeUpdateTable_{
-		{Mode::kNormal, [this]() { NormalUpdate(); }},
-		{Mode::kAttack, [this]() { AttackUpdate(); }},
-	};
-
-private:
-
-	void NormalInit();
-	void NormalUpdate();
-
-	void AttackInit();
-	void AttackUpdate();
-
-
 private:
 	//カメラ
 	DaiEngine::Camera camera_;
@@ -60,18 +26,15 @@ private:
 	//追従対象の残像座標
 	Vector3 interTarget_{};
 
-	//遅延中の時間
-	float delayParam_ = 0.0f;
-	//遅延する時間
-	uint32_t delayTime_ = 30;
-	uint32_t dashDelayTime_ = 10;
-
 	float deltaTime_ = 1.0f / 60.0f;
 
+	//通常の減衰率
 	uint32_t baseDampingRate_ = 8;
+	//ダッシュ時の減衰率
 	uint32_t dashDampingRate_ = 2;
+	//ズーム時の減衰率
 	uint32_t zoomDampingRate_ = 15;
-
+	//ダッシュ用フラグ
 	bool isDash_ = false;
 
 	Vector3 rotation_ = {};
@@ -88,18 +51,6 @@ private:
 	float zoomParam_ = 0.0f;
 	float zoomSpeed_ = 1.0f / 20.0f;
 
-
-	struct WorkAttack {
-		Vector3 startPos_;
-		Vector3 endPos_;
-		Vector3 startRotate_;
-		Vector3 endRotate_;
-		float param_;
-		float speed_;
-	};
-
-	WorkAttack workAttack_{};
-
 public:
 	/// <summary>
 	/// 初期化
@@ -110,14 +61,14 @@ public:
 	/// </summary>
 	void Update();
 	/// <summary>
-	/// リセット
-	/// </summary>
-	void Reset();
-	/// <summary>
 	/// オフセット計算
 	/// </summary>
 	/// <returns>オフセットベクトル</returns>
 	Vector3 OffsetCalc();
+	/// <summary>
+	/// 残像の計算
+	/// </summary>
+	void CalcInterTarget();
 	/// <summary>
 	/// ターゲットセット
 	/// </summary>
@@ -129,15 +80,10 @@ public:
 	/// <param name="lockOn"></param>
 	void SetLockOn(const LockOn* lockOn) { lockOn_ = lockOn; }
 	/// <summary>
-	/// カメラのモード変更
-	/// </summary>
-	/// <param name="mode"></param>
-	void ModeChange(Mode mode) { modeRequest_ = mode; }
-	/// <summary>
 	/// ズームの設定
 	/// </summary>
 	/// <param name="isAttack"></param>
-	void SetZoom(bool isZoom) { isZoom_ = isZoom; }
+	void SetZoomFlag(bool isZoom) { isZoom_ = isZoom; }
 	/// <summary>
 	/// ダッシュの設定
 	/// </summary>

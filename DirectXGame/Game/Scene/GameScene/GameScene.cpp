@@ -141,9 +141,9 @@ void GameScene::Init(){
 	boss_->SetElementBall(elementBall_.get());
 
 	//地面から火が出るやつ
-	groundFlare_ = std::make_unique<GroundFlare>();
+	groundFlare_ = std::make_unique<GroundFlareManager>();
 	groundFlare_->Init(warningZoneModel);
-	groundFlare_->SetTerget(&player_->GetCenterPos());
+	groundFlare_->SetTarget(&player_->GetCenterPos());
 	boss_->SetGroudFlare(groundFlare_.get());
 
 	//つらら飛ばすやつ
@@ -286,7 +286,6 @@ void GameScene::DrawPostEffect() {
 		plasmaShot_->Draw(camera_);
 
 		groundFlare_->Draw(camera_);
-		elementBall_->Draw(camera_);
 	}
 	
 

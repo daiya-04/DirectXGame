@@ -13,7 +13,7 @@ ElementBall::~ElementBall() {
 	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
 }
 
-void ElementBall::Init(std::shared_ptr<DaiEngine::Model> model) {
+void ElementBall::Init(const std::shared_ptr<DaiEngine::Model>& model) {
 
 	obj_.reset(DaiEngine::Object3d::Create(model));
 	animation_ = DaiEngine::AnimationManager::Load(obj_->GetModel()->name_);
@@ -64,7 +64,7 @@ void ElementBall::Update() {
 	}
 
 	for (auto& [name, particle] : effect_) {
-		particle->particleData_.emitter_.translate = GetWorldPos();
+		particle->particleData_.emitter_.translate = obj_->GetWorldPos();
 		particle->Update();
 	}
 	for (auto& [name, particle] : setEff_) {
@@ -72,18 +72,6 @@ void ElementBall::Update() {
 	}
 
 	collider_->Update();
-}
-
-void ElementBall::Draw([[maybe_unused]]  const DaiEngine::Camera& camera) {
-
-#ifdef _DEBUG
-	if (isLife_) {
-		//ShapesDraw::DrawSphere(collider_, camera);
-	}
-#endif // _DEBUG
-
-	//obj_->Draw(camera);
-
 }
 
 void ElementBall::DrawParticle(const DaiEngine::Camera& camera) {
@@ -96,17 +84,19 @@ void ElementBall::DrawParticle(const DaiEngine::Camera& camera) {
 }
 
 void ElementBall::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
-
 	if (other->GetTag() == "Player" || other->GetTag() == "Ground") {
-		isLife_ = false;
-		phaseRequest_ = Phase::kRoot;
-		collider_->ColliderOff();
-
-		burnScar_->EffectStart(GetWorldPos());
-		burnScar_->HeightAdjustment(0.0001f * heightAdjustmentIndex);
-		heightAdjustmentIndex = (heightAdjustmentIndex % 4) + 1;
+		Dead();
 	}
-	
+}
+
+void ElementBall::Dead() {
+	isLife_ = false;
+	phaseRequest_ = Phase::kRoot;
+	collider_->ColliderOff();
+
+	burnScar_->EffectStart(obj_->GetWorldPos());
+	burnScar_->HeightAdjustment(0.0001f * heightAdjustmentIndex);
+	heightAdjustmentIndex = (heightAdjustmentIndex % 4) + 1;
 }
 
 void ElementBall::AttackStart() {

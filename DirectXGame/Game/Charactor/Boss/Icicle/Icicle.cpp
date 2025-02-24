@@ -92,28 +92,30 @@ void Icicle::DrawParticle(const DaiEngine::Camera& camera) {
 }
 
 void Icicle::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
-
 	if (other->GetTag() == "Player" || other->GetTag() == "Ground") {
-		phaseRequest_ = Phase::kRoot;
-		isLife_ = false;
+		Dead();
+	}
+}
 
-		//ヒットエフェクト開始
-		for (auto& [group, particle] : trailEff_) {
-			particle->particleData_.isLoop_ = false;
-		}
+void Icicle::Dead() {
+	phaseRequest_ = Phase::kRoot;
+	isLife_ = false;
 
-		for (auto& [group, particle] : hitEffect_) {
-			particle->Emit();
-			particle->particleData_.emitter_.translate = obj_->GetWorldPos();
-		}
-
-		collider_->ColliderOff();
-
-		iceScar_->EffectStart(GetWorldPos());
-		iceScar_->HeightAdjustment(0.0001f * heightAdjustmentIndex);
-		heightAdjustmentIndex = (heightAdjustmentIndex % 4) + 1;
+	//ヒットエフェクト開始
+	for (auto& [group, particle] : trailEff_) {
+		particle->particleData_.isLoop_ = false;
 	}
 
+	for (auto& [group, particle] : hitEffect_) {
+		particle->Emit();
+		particle->particleData_.emitter_.translate = obj_->GetWorldPos();
+	}
+
+	collider_->ColliderOff();
+
+	iceScar_->EffectStart(obj_->GetWorldPos());
+	iceScar_->HeightAdjustment(0.0001f * heightAdjustmentIndex);
+	heightAdjustmentIndex = (heightAdjustmentIndex % 4) + 1;
 }
 
 void Icicle::AttackStart() {
@@ -219,10 +221,6 @@ void Icicle::ShotUpdate() {
 	velocity_ = direction_ * speed_;
 
 	obj_->worldTransform_.translation_ += velocity_;
-	//地面より下にはいかない
-	/*if (obj_->worldTransform_.translation_.y <= 0.0f) {
-		OnCollision();
-	}*/
 
 }
 

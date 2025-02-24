@@ -19,7 +19,7 @@
 
 
 //プレイヤー攻撃クラス
-class PlayerMagicBall {
+class MagicBall {
 public:
 
 	enum class Phase {
@@ -65,7 +65,7 @@ private:
 
 public:
 
-	~PlayerMagicBall();
+	~MagicBall();
 	/// <summary>
 	/// 初期化
 	/// </summary>

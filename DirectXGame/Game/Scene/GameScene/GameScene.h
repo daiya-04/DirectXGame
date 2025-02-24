@@ -36,10 +36,10 @@
 #include "FollowCamera.h"
 #include "LockOn.h"
 #include "ElementBallManager.h"
-#include "PlayerMagicBall.h"
+#include "MagicBall.h"
 #include "BurnScar.h"
 #include "IceScar.h"
-#include "GroundFlare.h"
+#include "GroundFlareManager.h"
 #include "IcicleManager.h"
 #include "PlasmaShotManager.h"
 #include "Rock.h"
@@ -176,7 +176,7 @@ private:
 
 	///敵の攻撃の各種マネージャ
 	//地面から火が出るやつ
-	std::unique_ptr<GroundFlare> groundFlare_;
+	std::unique_ptr<GroundFlareManager> groundFlare_;
 	//つらら
 	std::unique_ptr<IcicleManager> icicle_;
 	//電気玉
@@ -206,7 +206,7 @@ public:
 	LockOn* GetLockOn() { return lockOn_.get(); }
 
 	///攻撃各種取得
-	GroundFlare* GetGroundFlare() { return groundFlare_.get(); }
+	GroundFlareManager* GetGroundFlare() { return groundFlare_.get(); }
 	ElementBallManager* GetElementBall() { return elementBall_.get(); }
 	PlasmaShotManager* GetPlasmaShot() { return plasmaShot_.get(); }
 	IcicleManager* GetIcicle() { return icicle_.get(); }

@@ -24,7 +24,7 @@ void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 	std::shared_ptr<DaiEngine::Model> attackModel = DaiEngine::ModelManager::LoadOBJ("PlayerBullet");
 
 	for (auto& attack : attacks_) {
-		attack = std::make_unique<PlayerMagicBall>();
+		attack = std::make_unique<MagicBall>();
 		attack->Init(attackModel);
 	}
 
@@ -130,9 +130,9 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 	float distance = (target_->GetWorldPos().GetXZ() - GetCenterPos().GetXZ()).Length();
 	//射程内に入ったらズーム
 	if (distance <= attackRange_) {
-		followCamera_->SetZoom(true);
+		followCamera_->SetZoomFlag(true);
 	}else {
-		followCamera_->SetZoom(false);
+		followCamera_->SetZoomFlag(false);
 	}
 
 	//HPが0になったら...

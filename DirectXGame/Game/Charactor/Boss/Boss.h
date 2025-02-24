@@ -23,7 +23,7 @@
 #include "IcicleManager.h"
 #include "PlasmaShotManager.h"
 #include "ElementBallManager.h"
-#include "GroundFlare.h"
+#include "GroundFlareManager.h"
 #include "BaseCharactor.h"
 #include "IBossBehavior.h"
 
@@ -100,7 +100,7 @@ private:
 	//電気玉
 	PlasmaShotManager* plasmaShot_ = nullptr;
 	//地面から炎
-	GroundFlare* groundFlare_ = nullptr;
+	GroundFlareManager* groundFlare_ = nullptr;
 	///
 
 public:
@@ -155,8 +155,8 @@ public:
 	void SetPlasmaShot(PlasmaShotManager* plasmaShot) { plasmaShot_ = plasmaShot; }
 	PlasmaShotManager* GetPlasmaShot() { return plasmaShot_; }
 	
-	void SetGroudFlare(GroundFlare* groundFlare) { groundFlare_ = groundFlare; }
-	GroundFlare* GetGroundFlare() { return groundFlare_; }
+	void SetGroudFlare(GroundFlareManager* groundFlare) { groundFlare_ = groundFlare; }
+	GroundFlareManager* GetGroundFlare() { return groundFlare_; }
 
 	/// <summary>
 	/// 死亡アニメーションの終了

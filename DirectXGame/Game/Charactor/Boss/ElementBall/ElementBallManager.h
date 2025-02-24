@@ -8,7 +8,7 @@
 #include "ElementBall.h"
 #include "BurnScar.h"
 #include "ModelManager.h"
-#include <Camera.h>
+#include "Camera.h"
 
 #include <array>
 
@@ -24,11 +24,6 @@ public:
 	/// 更新
 	/// </summary>
 	void Update();
-	/// <summary>
-	/// 描画
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void Draw(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
@@ -79,8 +74,6 @@ public:
 	/// </summary>
 	/// <returns>火の玉の数</returns>
 	uint32_t GetElementballCount() const { return kElementBallNum_; }
-
-	Vector3 GetWorldPos(uint32_t index) { return elementBalls_[index]->GetWorldPos(); }
 	
 
 private:

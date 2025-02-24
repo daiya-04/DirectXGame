@@ -76,8 +76,6 @@ public:
 	/// <returns>つららの数</returns>
 	uint32_t GetIcicleCount() const { return kIcicleNum_; }
 
-	Vector3 GetWorldPos(uint32_t index) { return icicles_[index]->GetWorldPos(); }
-
 private:
 	//つららの数
 	static const uint32_t kIcicleNum_ = 4;
