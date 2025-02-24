@@ -36,14 +36,17 @@
 #include "FollowCamera.h"
 #include "LockOn.h"
 #include "ElementBallManager.h"
-#include "PlayerMagicBall.h"
+#include "MagicBallManager.h"
+#include "GroundBurstManager.h"
 #include "BurnScar.h"
 #include "IceScar.h"
-#include "GroundFlare.h"
+#include "GroundFlareManager.h"
 #include "IcicleManager.h"
 #include "PlasmaShotManager.h"
 #include "Rock.h"
 #include "ISceneState.h"
+#include "BasePlayerAttackManager.h"
+#include "BaseBossAttackManager.h"
 
 //ゲームシーンクラス
 class GameScene : public DaiEngine::IScene {
@@ -97,13 +100,22 @@ public:
 	/// </summary>
 	GameScene();
 
+private:
+	/// <summary>
+	/// GlobalVariablesに項目の追加
+	/// </summary>
+	void SetGlobalVariables();
+	/// <summary>
+	/// GlobalVariablesから変数に代入
+	/// </summary>
+	void ApplyGlobalVariables();
+
 public:
 
 	enum class CharactorType {
 		kPlayer,
 		kBoss,
 	};
-
 
 	//シーンイベント
 	enum class SceneEvent {
@@ -131,7 +143,7 @@ private:
 	//地面
 	std::unique_ptr<Ground> ground_;
 
-	std::array<std::unique_ptr<BaseCharactor>, 2> charactors_;
+	std::vector<std::unique_ptr<BaseCharactor>> charactors_;
 	//プレイヤー
 	Player* player_ = nullptr;
 	//ボス
@@ -174,16 +186,10 @@ private:
 	//レベルデータ
 	std::unique_ptr<LevelData> levelData_;
 
-	///敵の攻撃の各種マネージャ
-	//地面から火が出るやつ
-	std::unique_ptr<GroundFlare> groundFlare_;
-	//つらら
-	std::unique_ptr<IcicleManager> icicle_;
-	//電気玉
-	std::unique_ptr<PlasmaShotManager> plasmaShot_;
-	//火の玉
-	std::unique_ptr<ElementBallManager> elementBall_;
-	///
+	//敵の攻撃マネージャ
+	std::vector<std::unique_ptr<BaseBossAttackManager>> bossAttacks_;
+	//プレイヤーの攻撃マネージャ
+	std::vector<std::unique_ptr<BasePlayerAttackManager>> playerAttacks_;
 
 	//ゲームを止めるか
 	bool isGameStop_ = false;
@@ -200,16 +206,14 @@ public:
 	DaiEngine::Camera& GetCamera() { return camera_; }
 
 	//キャラクター取得
-	std::array<std::unique_ptr<BaseCharactor>, 2>& GetCharactors() { return charactors_; }
-	Player* GetPlayer() { return dynamic_cast<Player*>(charactors_[static_cast<size_t>(CharactorType::kPlayer)].get()); }
-	Boss* GetBoss() { return dynamic_cast<Boss*>(charactors_[static_cast<size_t>(CharactorType::kBoss)].get()); }
+	std::vector<std::unique_ptr<BaseCharactor>>& GetCharactors() { return charactors_; }
+	Player* GetPlayer() { return player_; }
+	Boss* GetBoss() { return boss_; }
 	LockOn* GetLockOn() { return lockOn_.get(); }
 
 	///攻撃各種取得
-	GroundFlare* GetGroundFlare() { return groundFlare_.get(); }
-	ElementBallManager* GetElementBall() { return elementBall_.get(); }
-	PlasmaShotManager* GetPlasmaShot() { return plasmaShot_.get(); }
-	IcicleManager* GetIcicle() { return icicle_.get(); }
+	std::vector<std::unique_ptr<BaseBossAttackManager>>& GetBossAttacks() { return bossAttacks_; }
+	std::vector<std::unique_ptr<BasePlayerAttackManager>>& GetPlayerAttacks() { return playerAttacks_; }
 
 	//追従カメラ取得
 	FollowCamera* GetFollowCamera() { return followCamera_.get(); }
@@ -221,6 +225,24 @@ public:
 	DaiEngine::Sprite* GetCharDashUI() { return charDash_.get(); }
 	DaiEngine::Sprite* GetFinishUI() { return finish_.get(); }
 	DaiEngine::Sprite* GetGameOverUI() { return gameOver_.get(); }
+
+	/// <summary>
+	/// ボスの攻撃配列から特定の型取り出し
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <returns></returns>
+	template <typename T>
+	T* GetBossAttackType() {
+		for (auto& attack : bossAttacks_) {
+			T* attackType = dynamic_cast<T*>(attack.get());
+			if (attackType) {
+				//見つかったら返す
+				return attackType;
+			}
+		}
+		//見つからない...
+		return nullptr;
+	}
 
 };
 

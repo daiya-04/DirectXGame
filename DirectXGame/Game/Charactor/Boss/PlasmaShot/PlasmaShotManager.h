@@ -7,42 +7,37 @@
 
 #include "PlasmaShot.h"
 #include "ModelManager.h"
-#include "Camera.h"
+#include "BaseBossAttackManager.h"
 
 #include <array>
 
 //電気玉攻撃マネージャクラス
-class PlasmaShotManager {
+class PlasmaShotManager : public BaseBossAttackManager {
 public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<DaiEngine::Model>& model);
+	void Init() override;
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update() override;
 	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const DaiEngine::Camera& camera);
+	void Draw(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// パーティクルの描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const DaiEngine::Camera& camera);
-	/// <summary>
-	/// 衝突時
-	/// </summary>
-	/// <param name="index">インデックス</param>
-	void OnCollision(size_t index, DaiEngine::Collider* other);
+	void DrawParticle(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// ターゲットセット
 	/// </summary>
 	/// <param name="target">ターゲット</param>
-	void SetTarget(const Vector3* target);
+	void SetTarget(const Vector3* target) override;
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>
@@ -73,8 +68,6 @@ public:
 	/// </summary>
 	/// <returns>電気玉の総数</returns>
 	uint32_t GetPlasmaShotCount() const { return kPlasmaShotNum_; }
-
-	Vector3 GetWorldPos(uint32_t index) { return plasmaShots_[index]->GetWorldPos(); }
 
 private:
 	//電気玉の数

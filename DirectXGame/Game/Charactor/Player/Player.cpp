@@ -21,18 +21,6 @@ void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 	//モデル関連の初期化
 	BaseCharactor::Init(models);
 
-	std::shared_ptr<DaiEngine::Model> attackModel = DaiEngine::ModelManager::LoadOBJ("PlayerBullet");
-
-	for (auto& attack : attacks_) {
-		attack = std::make_unique<PlayerMagicBall>();
-		attack->Init(attackModel);
-	}
-
-	for (auto& groundBurst : groundBursts_) {
-		groundBurst = std::make_unique<GroundBurst>();
-		groundBurst->Init();
-	}
-
 	collider_->Init("Player", obj_->worldTransform_, {});
 	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->ColliderOn();
@@ -64,13 +52,6 @@ void Player::Update(){
 	obj_->worldTransform_.translation_.z = std::clamp(obj_->worldTransform_.translation_.z, -20.0f, 40.0f);
 	///
 
-	for (auto& attack : attacks_) {
-		attack->Update();
-	}
-	for (auto& groundBurst : groundBursts_) {
-		groundBurst->Update();
-	}
-
 	BaseCharactor::Update();
 }
 
@@ -85,21 +66,6 @@ void Player::Draw(const DaiEngine::Camera& camera){
 
 	BaseCharactor::Draw(camera);
 
-}
-
-void Player::DrawAttack(const DaiEngine::Camera& camera) {
-	for (auto& attack : attacks_) {
-		attack->Draw(camera);
-	}
-}
-
-void Player::DrawParticle(const DaiEngine::Camera& camera) {
-	for (auto& attack : attacks_) {
-		attack->DrawParticle(camera);
-	}
-	for (auto& groundBurst : groundBursts_) {
-		groundBurst->DrawParticle(camera);
-	}
 }
 
 void Player::DrawUI() {
@@ -130,9 +96,9 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 	float distance = (target_->GetWorldPos().GetXZ() - GetCenterPos().GetXZ()).Length();
 	//射程内に入ったらズーム
 	if (distance <= attackRange_) {
-		followCamera_->SetZoom(true);
+		followCamera_->SetZoomFlag(true);
 	}else {
-		followCamera_->SetZoom(false);
+		followCamera_->SetZoomFlag(false);
 	}
 
 	//HPが0になったら...
@@ -143,7 +109,7 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 }
 
 void Player::ChangeBehavior(const std::string& behaviorName) {
-
+	//行動とそれに対応するStateクラスの生成処理のマップ
 	const std::map<std::string, std::function<std::unique_ptr<IPlayerBehavior>()>> behaviorTable{
 		{"Idel",[this]() {return std::make_unique<PlayerIdel>(this); }},
 		{"Attack",[this]() {return std::make_unique<PlayerAttack>(this); }},
@@ -152,9 +118,10 @@ void Player::ChangeBehavior(const std::string& behaviorName) {
 		{"Dead",[this]() {return std::make_unique<PlayerDead>(this); }},
 		{"KnockBack",[this]() {return std::make_unique<PlayerKnockBack>(this); }},
 	};
-
+	//検索
 	auto nextBehavior = behaviorTable.find(behaviorName);
 	if (nextBehavior != behaviorTable.end()) {
+		//対応するStateクラスの生成
 		behaviorRequest_ = nextBehavior->second();
 	}
 
@@ -169,36 +136,34 @@ void Player::ShotMagicBall() {
 	///攻撃の玉の生成
 	Vector3 offset = { 0.0f,0.0f,1.0f };
 	offset = TransformNormal(offset, rotateMat_);
+	//手から発射
 	Vector3 shotPos = Transform(skeletons_[actionIndex_].GetSkeletonPos("mixamorig1:RightHand"), obj_->worldTransform_.matWorld_) + offset;
-
-	attacks_[shotIndex]->StartAttack(shotPos, direction);
-	shotIndex++;
-	shotIndex = shotIndex % 10;
+	//攻撃配列から魔法弾を取り出す
+	MagicBallManager* magicBall = GetAttackType<MagicBallManager>();
+	magicBall->AttackStart(shotPos, direction);
 
 	///
 }
 
 void Player::AttackGroundBurst() {
-
-	Vector3 playerPos = obj_->GetWorldPos();
-	playerPos.y = 0.0f;
-	Vector3 targetPos = target_->GetWorldPos();
-	targetPos.y = 0.0f;
-
-	float distance = (targetPos - playerPos).Length();
-
+	
+	//プレイヤーとターゲットの距離の計算
+	float distance = (target_->GetWorldPos().GetXZ() - obj_->GetWorldPos().GetXZ()).Length();
+	//攻撃配列から地面噴射を取り出す
+	GroundBurstManager* groundBurst = GetAttackType<GroundBurstManager>();
+	
+	//射程内か？
 	if (distance <= attackRange_) {
-		groundBursts_[attackIndex_]->AttackStart(target_->GetWorldPos());
+		//射程内ならターゲットの場所に
+		groundBurst->AttackStart(target_->GetWorldPos());
 	}
 	else {
+		//射程外なら一定の距離に
 		//攻撃を発射する方向の計算
 		Vector3 offset = { 0.0f,0.0f, 7.0f };
 		offset = TransformNormal(offset, rotateMat_);
 
-		groundBursts_[attackIndex_]->AttackStart(GetCenterPos() + offset);
+		groundBurst->AttackStart(GetCenterPos() + offset);
 	}
-
-	attackIndex_++;
-	attackIndex_ = attackIndex_ % 5;
 
 }

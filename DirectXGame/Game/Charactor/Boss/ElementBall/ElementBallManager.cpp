@@ -2,7 +2,7 @@
 #include "TextureManager.h"
 
 
-void ElementBallManager::Init(const std::shared_ptr<DaiEngine::Model>& model) {
+void ElementBallManager::Init() {
 
 	for (auto& burnScars : burnScareses_) {
 		burnScars.reset(BurnScar::Create(DaiEngine::TextureManager::Load("BurnScars.png")));
@@ -10,7 +10,7 @@ void ElementBallManager::Init(const std::shared_ptr<DaiEngine::Model>& model) {
 
 	for (size_t index = 0; index < elementBalls_.size(); index++) {
 		elementBalls_[index] = std::make_unique<ElementBall>();
-		elementBalls_[index]->Init(model);
+		elementBalls_[index]->Init();
 		elementBalls_[index]->SetBurnScar(burnScareses_[index].get());
 	}
 
@@ -47,14 +47,6 @@ void ElementBallManager::Update() {
 
 }
 
-void ElementBallManager::Draw(const DaiEngine::Camera& camera) {
-
-	for (auto& elementBall : elementBalls_) {
-		elementBall->Draw(camera);
-	}
-
-}
-
 void ElementBallManager::DrawParticle(const DaiEngine::Camera& camera) {
 
 	for (auto& elementBall : elementBalls_) {
@@ -79,7 +71,7 @@ void ElementBallManager::DrawBurnScars(const DaiEngine::Camera& camera) {
 
 }
 
-void ElementBallManager::SetTartget(const Vector3* target) {
+void ElementBallManager::SetTarget(const Vector3* target) {
 
 	for (auto& elementBall : elementBalls_) {
 		elementBall->SetTarget(target);

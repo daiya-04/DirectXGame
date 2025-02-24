@@ -1,10 +1,12 @@
 #pragma once
 #include "IBossBehavior.h"
-
 #include "ElementBallManager.h"
-#include "GroundFlare.h"
+#include "GroundFlareManager.h"
 #include "PlasmaShotManager.h"
 #include "IcicleManager.h"
+#include "BaseBossAttackManager.h"
+
+#include <vector>
 
 class BossAttack : public IBossBehavior {
 public:
@@ -21,7 +23,6 @@ private:
 
 	Boss* boss_ = nullptr;
 
-	/// 攻撃の各種マネージャ
 	//火の玉
 	ElementBallManager* elementBall_ = nullptr;
 	//つらら
@@ -29,8 +30,7 @@ private:
 	//電気玉
 	PlasmaShotManager* plasmaShot_ = nullptr;
 	//地面から炎
-	GroundFlare* groundFlare_ = nullptr;
-	///
-
+	GroundFlareManager* groundFlare_ = nullptr;
+	///	
 };
 

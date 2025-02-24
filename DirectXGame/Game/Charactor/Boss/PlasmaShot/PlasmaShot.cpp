@@ -4,17 +4,20 @@
 #include "Easing.h"
 #include "ParticleManager.h"
 #include "ColliderManager.h"
+#include "ModelManager.h"
 
 PlasmaShot::~PlasmaShot() {
 	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
 }
 
-void PlasmaShot::Init(const std::shared_ptr<DaiEngine::Model>& model) {
+void PlasmaShot::Init() {
 
+	std::shared_ptr<DaiEngine::Model> model = DaiEngine::ModelManager::LoadOBJ("PlasmaBall");
 	obj_.reset(DaiEngine::Object3d::Create(model));
 
 	collider_ = std::make_unique<DaiEngine::SphereCollider>();
 	collider_->Init("BossAttack", obj_->worldTransform_, 0.5f);
+	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 	///エフェクト設定
@@ -80,12 +83,18 @@ void PlasmaShot::DrawParticle(const DaiEngine::Camera& camera) {
 }
 
 
-void PlasmaShot::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
+void PlasmaShot::OnCollision(DaiEngine::Collider* other) {
+	if (other->GetTag() == "Player" || other->GetTag() == "Ground") {
+		Dead();
+	}
+}
+
+void PlasmaShot::Dead() {
 	phaseRequest_ = Phase::kRoot;
 	isLife_ = false;
 
 	collider_->ColliderOff();
-	
+
 	//ヒットエフェクト開始
 	for (auto& [group, particle] : trailEff_) {
 		particle->particleData_.isLoop_ = false;

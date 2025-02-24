@@ -8,32 +8,28 @@
 #include "ElementBall.h"
 #include "BurnScar.h"
 #include "ModelManager.h"
-#include <Camera.h>
+#include "BaseBossAttackManager.h"
 
 #include <array>
 
 //火の玉攻撃マネージャクラス
-class ElementBallManager {
+class ElementBallManager : public BaseBossAttackManager {
 public:
+	~ElementBallManager() override {}
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<DaiEngine::Model>& model);
+	void Init() override;
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
-	/// <summary>
-	/// 描画
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void Draw(const DaiEngine::Camera& camera);
+	void Update() override;
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const DaiEngine::Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// 焼け跡描画
 	/// </summary>
@@ -43,7 +39,7 @@ public:
 	/// ターゲットセット
 	/// </summary>
 	/// <param name="target">ターゲットのワールドトランスフォーム</param>
-	void SetTartget(const Vector3* target);
+	void SetTarget(const Vector3* target) override;
 	/// <summary>
 	/// データセット
 	/// </summary>
@@ -79,8 +75,6 @@ public:
 	/// </summary>
 	/// <returns>火の玉の数</returns>
 	uint32_t GetElementballCount() const { return kElementBallNum_; }
-
-	Vector3 GetWorldPos(uint32_t index) { return elementBalls_[index]->GetWorldPos(); }
 	
 
 private:

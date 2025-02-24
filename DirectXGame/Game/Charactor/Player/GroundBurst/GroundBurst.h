@@ -1,4 +1,5 @@
 #pragma once
+#include "BaseAttack.h"
 #include "WorldTransform.h"
 #include "Camera.h"
 #include "GPUParticle.h"
@@ -11,7 +12,7 @@
 #include <functional>
 
 
-class GroundBurst {
+class GroundBurst : public BaseAttack {
 public:
 
 	enum class Phase {
@@ -51,20 +52,20 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Init();
+	void Init() override;
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update() override;
 	/// <summary>
 	/// Particle描画
 	/// </summary>
 	/// <param name="camera"></param>
-	void DrawParticle(const DaiEngine::Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// 衝突のお知らせ
 	/// </summary>
-	void OnCollision(DaiEngine::Collider* other);
+	void OnCollision(DaiEngine::Collider* other) override;
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>

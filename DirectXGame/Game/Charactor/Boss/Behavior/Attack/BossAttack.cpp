@@ -9,16 +9,17 @@ BossAttack::BossAttack(Boss* boss) {
 
 	boss_ = boss;
 
-	elementBall_ = boss_->GetElementBall();
-	icicle_ = boss_->GetIcicle();
-	plasmaShot_ = boss_->GetPlasmaShot();
-	groundFlare_ = boss_->GetGroundFlare();
+	elementBall_ = boss_->GetAttackType<ElementBallManager>();
+	groundFlare_ = boss_->GetAttackType<GroundFlareManager>();
+	icicle_ = boss_->GetAttackType<IcicleManager>();
+	plasmaShot_ = boss_->GetAttackType<PlasmaShotManager>();
 
 }
 
 void BossAttack::Init() {
 
 	assert(boss_);
+
 
 	//攻撃の設定
 	if (boss_->GetAttackType() == Boss::AttackType::kElementBall) {

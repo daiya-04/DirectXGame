@@ -7,26 +7,22 @@
 ///---------------------------------------------------------------------------------------------
 
 
-#include "ModelManager.h"
-#include "Vec3.h"
+#include "BaseAttack.h"
 #include "Vec2.h"
 #include "Matrix44.h"
 #include "WorldTransform.h"
-#include "Camera.h"
-#include "Object3d.h"
 #include "CollisionShapes.h"
 #include "GPUParticle.h"
 #include "SphereCollider.h"
 #include "IceScar.h"
 
-#include <memory>
 #include <string>
 #include <optional>
 #include <functional>
 #include <map>
 
 //つらら攻撃クラス
-class Icicle {
+class Icicle : public BaseAttack {
 public:
 	//フェーズ
 	enum class Phase {
@@ -103,34 +99,34 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<DaiEngine::Model>& model);
+	void Init() override;
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update() override;
 	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const DaiEngine::Camera& camera);
+	void Draw(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const DaiEngine::Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision(DaiEngine::Collider* other);
+	void OnCollision(DaiEngine::Collider* other) override;
+	/// <summary>
+	/// ターゲットセット
+	/// </summary>
+	/// <param name="target"></param>
+	void SetTarget(const Vector3* target) { target_ = target; }
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>
 	void AttackStart();
-	/// <summary>
-	/// ターゲットセット
-	/// </summary>
-	/// <param name="target">ターゲットのワールドトランスフォーム</param>
-	void SetTarget(const Vector3* target) { target_ = target; }
 	/// <summary>
 	/// 攻撃に必要なデータの設定
 	/// </summary>
@@ -138,11 +134,6 @@ public:
 	/// <param name="direction">初期方向</param>
 	/// <param name="interval">待ち時間</param>
 	void SetAttackData(const Vector3& pos, const Vector3& direction, float interval);
-	/// <summary>
-	/// ワールド座標取得
-	/// </summary>
-	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos() const { return obj_->GetWorldPos(); }
 	/// <summary>
 	/// コライダー取得
 	/// </summary>
@@ -162,11 +153,14 @@ public:
 	void SetIceScar(IceScar* iceScar) { iceScar_ = iceScar; }
 
 private:
+
+	void Dead();
+
+private:
 	//跡の高さ調整用
 	static size_t heightAdjustmentIndex;
-
-	//攻撃先(ターゲット)
-	const Vector3* target_;
+	//攻撃先（ターゲット）
+	const Vector3* target_ = nullptr;
 	//オブジェクト
 	std::unique_ptr<DaiEngine::Object3d> obj_;
 	//回転行列

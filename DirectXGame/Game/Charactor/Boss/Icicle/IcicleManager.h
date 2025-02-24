@@ -7,33 +7,33 @@
 
 #include "Icicle.h"
 #include "ModelManager.h"
-#include "Camera.h"
 #include "IceScar.h"
+#include "BaseBossAttackManager.h"
 
 #include <array>
 
 //つらら攻撃マネージャクラス
-class IcicleManager {
+class IcicleManager : public BaseBossAttackManager {
 public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<DaiEngine::Model>& model);
+	void Init() override;
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update() override;
 	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const DaiEngine::Camera& camera);
+	void Draw(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const DaiEngine::Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// 霜描画
 	/// </summary>
@@ -43,7 +43,7 @@ public:
 	/// ターゲットセット
 	/// </summary>
 	/// <param name="target">ターゲットの中心座標</param>
-	void SetTarget(const Vector3* target);
+	void SetTarget(const Vector3* target) override;
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>
@@ -75,8 +75,6 @@ public:
 	/// </summary>
 	/// <returns>つららの数</returns>
 	uint32_t GetIcicleCount() const { return kIcicleNum_; }
-
-	Vector3 GetWorldPos(uint32_t index) { return icicles_[index]->GetWorldPos(); }
 
 private:
 	//つららの数

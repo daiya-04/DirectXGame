@@ -15,7 +15,7 @@ private:
 
 	Player* player_ = nullptr;
 
-	float speed_ = 0.2f;
+	float speed_ = 0.15f;
 
 };
 

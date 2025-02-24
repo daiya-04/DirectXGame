@@ -6,22 +6,19 @@
 // 
 ///---------------------------------------------------------------------------------------------
 
+#include "BaseAttack.h"
 #include "WorldTransform.h"
-#include "Camera.h"
-#include "Object3d.h"
 #include "GPUParticle.h"
-#include "Vec3.h"
 #include "CollisionShapes.h"
 #include "OBBCollider.h"
 
-#include <memory>
 #include <array>
 #include <optional>
 #include <map>
 #include <functional>
 
 //地面から炎攻撃のクラス
-class GroundFlare {
+class GroundFlare : public BaseAttack {
 public:
 	//フェーズ
 	enum class Phase {
@@ -107,86 +104,49 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(std::shared_ptr<DaiEngine::Model> model);
+	void Init() override;
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update() override;
 	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Draw(const DaiEngine::Camera& camera);
+	void Draw(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const DaiEngine::Camera& camera);
-	/// <summary>
-	/// 衝突時
-	/// </summary>
-	void OnCollision(DaiEngine::Collider* other);
+	void DrawParticle(const DaiEngine::Camera& camera) override;
+
+	void OnCollision([[maybe_unused]] DaiEngine::Collider* other) override {}
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>
-	void AttackStart();
+	void AttackStart(const Vector3& firePos);
 	/// <summary>
-	/// ターゲットのセット
+	/// 発射中か
 	/// </summary>
-	/// <param name="target">ターゲット</param>
-	void SetTerget(const Vector3* target) { target_ = target; }
+	/// <returns></returns>
+	bool IsFire() const { return isFire_; }
 	/// <summary>
-	/// コライダー取得
+	/// 攻撃中か
 	/// </summary>
-	/// <returns>コライダー</returns>
-	DaiEngine::OBBCollider* GetCollider() const { return collider_.get(); }
-	/// <summary>
-	/// フラグ取得
-	/// </summary>
-	/// <returns>攻撃中ならtrue、それ以外false</returns>
+	/// <returns></returns>
 	bool IsAttack() const { return isAttack_; }
-	/// <summary>
-	/// 当たり判定が有効か
-	/// </summary>
-	/// <returns>有効ならture、それ以外ならfalse</returns>
-	bool IsHit() const { return isHit_; }
-	/// <summary>
-	/// 攻撃が終了したか
-	/// </summary>
-	/// <returns>攻撃が終了した瞬間true、それ以外はfalse</returns>
-	bool AttackFinish() const { return (!isAttack_ && preIsAttack_); }
-	/// <summary>
-	/// 攻撃が始まったか
-	/// </summary>
-	/// <returns>攻撃が開始した瞬間true、それ以外はfalse</returns>
-	bool FireStartFlag() const { return(isHit_ && !preIsHit_); }
 
 private:
-	//攻撃先(ターゲット)
-	const Vector3* target_;
-	//噴射する数
-	static const uint32_t flareNum_ = 5;
+	
 	//エフェクト
-	std::array<std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>>, flareNum_> fires_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> fire_;
 
 	//警告の円
-	std::array<std::unique_ptr<DaiEngine::Object3d>, flareNum_> warningZones_;
-	//警告円のオフセット
-	std::array<Vector3, flareNum_> offset_;
-	//オフセットの距離
-	const float offsetLength_ = 1.5f;
-	//コライダー
-	std::unique_ptr<DaiEngine::OBBCollider> collider_;
-	Matrix4x4 rotateMat_ = MakeIdentity44();
-	//中心座標
-	DaiEngine::WorldTransform worldtransform_;
-
+	std::unique_ptr<DaiEngine::Object3d> warningZone_;
 	//攻撃中か
 	bool isAttack_ = false;
-	bool preIsAttack_ = false;
-	//衝突判定の有無
-	bool isHit_ = false;
-	bool preIsHit_ = false;
+	//発射中か
+	bool isFire_ = false;
 
 };
 

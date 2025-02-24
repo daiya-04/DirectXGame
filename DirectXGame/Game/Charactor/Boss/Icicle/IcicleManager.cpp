@@ -4,7 +4,7 @@
 #include "Hit.h"
 
 
-void IcicleManager::Init(const std::shared_ptr<DaiEngine::Model>& model) {
+void IcicleManager::Init() {
 
 	for (auto& iceScar : iceScars_) {
 		iceScar.reset(IceScar::Create(DaiEngine::TextureManager::Load("ScarBase.png")));
@@ -12,7 +12,7 @@ void IcicleManager::Init(const std::shared_ptr<DaiEngine::Model>& model) {
 
 	for (size_t index = 0; index < icicles_.size(); index++) {
 		icicles_[index] = std::make_unique<Icicle>();
-		icicles_[index]->Init(model);
+		icicles_[index]->Init();
 		icicles_[index]->SetIceScar(iceScars_[index].get());
 	}
 	

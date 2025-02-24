@@ -1,19 +1,20 @@
-#include "PlayerMagicBall.h"
+#include "MagicBall.h"
 
 #include "TextureManager.h"
 #include "ColliderManager.h"
 #include "ParticleManager.h"
+#include "ModelManager.h"
 
-PlayerMagicBall::~PlayerMagicBall() {
+MagicBall::~MagicBall() {
 	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
 }
 
-void PlayerMagicBall::Init(std::shared_ptr<DaiEngine::Model> model) {
+void MagicBall::Init() {
 
-	obj_.reset(DaiEngine::Object3d::Create(model));
+	worldTransform_.Init();
 
 	collider_ = std::make_unique<DaiEngine::SphereCollider>();
-	collider_->Init("PlayerAttack", obj_->worldTransform_, 0.3f);
+	collider_->Init("PlayerAttack", worldTransform_, 0.3f);
 	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->ColliderOff();
 	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
@@ -31,7 +32,7 @@ void PlayerMagicBall::Init(std::shared_ptr<DaiEngine::Model> model) {
 
 }
 
-void PlayerMagicBall::Update() {
+void MagicBall::Update() {
 
 	//フェーズ切り替えの初期化
 	if (phaseRequest_) {
@@ -46,12 +47,12 @@ void PlayerMagicBall::Update() {
 
 
 	//行列計算
-	obj_->worldTransform_.UpdateMatrix();
+	worldTransform_.UpdateMatrix();
 	collider_->Update();
 
 	//エフェクト更新
 	for (auto& [group, particle] : trailEff_) {
-		particle->particleData_.emitter_.translate = GetWorldPos();
+		particle->particleData_.emitter_.translate = worldTransform_.GetWorldPos();
 		particle->Update();
 	}
 	for (auto& [group, particle] : endEff_) {
@@ -60,12 +61,7 @@ void PlayerMagicBall::Update() {
 
 }
 
-void PlayerMagicBall::Draw([[maybe_unused]] const DaiEngine::Camera& camera) {
-	if (phase_ == Phase::kRoot) { return; }
-	//obj_->Draw(camera);
-}
-
-void PlayerMagicBall::DrawParticle(const DaiEngine::Camera& camera) {
+void MagicBall::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& [group, particle] : trailEff_) {
 		particle->Draw(camera);
 	}
@@ -74,28 +70,28 @@ void PlayerMagicBall::DrawParticle(const DaiEngine::Camera& camera) {
 	}
 }
 
-void PlayerMagicBall::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
+void MagicBall::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
 
 	if (other->GetTag() == "Boss") {
 		Dead();
 	}
 }
 
-void PlayerMagicBall::Dead() {
+void MagicBall::Dead() {
 	isLife_ = false;
 	phaseRequest_ = Phase::kRoot;
 
 	for (auto& [group, particle] : endEff_) {
 		particle->Emit();
-		particle->particleData_.emitter_.translate = obj_->GetWorldPos();
+		particle->particleData_.emitter_.translate = worldTransform_.GetWorldPos();
 	}
 
 	collider_->ColliderOff();
 }
 
-void PlayerMagicBall::StartAttack(const Vector3& startPos, const Vector3& direction) {
+void MagicBall::AttackStart(const Vector3& startPos, const Vector3& direction) {
 
-	obj_->worldTransform_.translation_ = startPos;
+	worldTransform_.translation_ = startPos;
 	startPos_ = startPos;
 
 	velocity_ = direction.Normalize() * speed_;
@@ -103,35 +99,31 @@ void PlayerMagicBall::StartAttack(const Vector3& startPos, const Vector3& direct
 	phaseRequest_ = Phase::kShot;
 	collider_->ColliderOn();
 
-	obj_->worldTransform_.UpdateMatrix();
+	worldTransform_.UpdateMatrix();
 }
 
-Vector3 PlayerMagicBall::GetWorldPos() const {
-	return { obj_->worldTransform_.matWorld_.m[3][0],obj_->worldTransform_.matWorld_.m[3][1] ,obj_->worldTransform_.matWorld_.m[3][2] };
-}
-
-void PlayerMagicBall::RootInit() {
+void MagicBall::RootInit() {
 	for (auto& [group, particle] : trailEff_) {
 		particle->particleData_.isLoop_ = false;
 	}
 }
 
-void PlayerMagicBall::RootUpdate() {
+void MagicBall::RootUpdate() {
 
 }
 
-void PlayerMagicBall::ShotInit() {
+void MagicBall::ShotInit() {
 	for (auto& [group, particle] : trailEff_) {
 		particle->particleData_.isLoop_ = true;
 	}
 }
 
-void PlayerMagicBall::ShotUpdate() {
+void MagicBall::ShotUpdate() {
 	//移動
-	obj_->worldTransform_.translation_ += velocity_;
+	worldTransform_.translation_ += velocity_;
 
 	//射程外で消える
-	if ((GetWorldPos() - startPos_).Length() >= firingRange_) {
+	if ((worldTransform_.GetWorldPos() - startPos_).Length() >= firingRange_) {
 		Dead();
 	}
 }
