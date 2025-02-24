@@ -4,6 +4,7 @@
 #include "TextureManager.h"
 #include "ParticleManager.h"
 #include "ColliderManager.h"
+#include "ModelManager.h"
 
 size_t Icicle::heightAdjustmentIndex = 1;
 
@@ -11,8 +12,9 @@ Icicle::~Icicle() {
 	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
 }
 
-void Icicle::Init(const std::shared_ptr<DaiEngine::Model>& model) {
+void Icicle::Init() {
 
+	std::shared_ptr<DaiEngine::Model> model = DaiEngine::ModelManager::LoadOBJ("Icicle");
 	obj_.reset(DaiEngine::Object3d::Create(model));
 
 	collider_ = std::make_unique<DaiEngine::SphereCollider>();

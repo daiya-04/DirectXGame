@@ -5,21 +5,19 @@
 // 
 ///---------------------------------------------------------------------------------------------
 
+#include "BaseAttack.h"
 #include "WorldTransform.h"
-#include "Camera.h"
-#include "Object3d.h"
-#include "Vec3.h"
 #include "CollisionShapes.h"
 #include "SphereCollider.h"
 #include "GPUParticle.h"
-#include <memory>
+
 #include <optional>
 #include <functional>
 #include <map>
 
 
 //プレイヤー攻撃クラス
-class MagicBall {
+class MagicBall : public BaseAttack {
 public:
 
 	enum class Phase {
@@ -69,30 +67,22 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="model">モデル</param>
-	/// <param name="startPos">開始位置座標</param>
-	/// <param name="direction">発射方向</param>
-	void Init(std::shared_ptr<DaiEngine::Model> model);
+	void Init() override;
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
-	/// <summary>
-	/// モデル描画
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void Draw(const DaiEngine::Camera& camera);
+	void Update() override;
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const DaiEngine::Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// 衝突時
 	/// </summary>
-	void OnCollision(DaiEngine::Collider* other);
+	void OnCollision(DaiEngine::Collider* other) override;
 
-	void StartAttack(const Vector3& startPos, const Vector3& direction);
+	void AttackStart(const Vector3& startPos, const Vector3& direction);
 	/// <summary>
 	/// /存在しているか
 	/// </summary>
@@ -103,11 +93,6 @@ public:
 	/// </summary>
 	/// <returns>コライダー</returns>
 	DaiEngine::SphereCollider* GetCollider() const { return collider_.get(); }
-	/// <summary>
-	/// ワールド座標取得
-	/// </summary>
-	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos() const;
 
 private:
 
@@ -115,7 +100,7 @@ private:
 
 private:
 	//オブジェクト
-	std::unique_ptr<DaiEngine::Object3d> obj_;
+	DaiEngine::WorldTransform worldTransform_;
 	//衝突判定用
 	std::unique_ptr<DaiEngine::SphereCollider> collider_;
 	//スピード

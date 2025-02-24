@@ -110,10 +110,10 @@ private:
 private:
 	//跡の高さ調整用
 	static size_t heightAdjustmentIndex;
+	DaiEngine::WorldTransform worldTransform_;
 	//攻撃先（ターゲット）
 	const Vector3* target_ = nullptr;
-	//
-	std::unique_ptr<DaiEngine::Object3d> obj_;
+	std::shared_ptr<DaiEngine::Model> animeData_;
 	//アニメーション
 	DaiEngine::Animation animation_;
 
@@ -141,7 +141,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<DaiEngine::Model>& model) override;
+	void Init() override;
 	/// <summary>
 	/// 更新
 	/// </summary>

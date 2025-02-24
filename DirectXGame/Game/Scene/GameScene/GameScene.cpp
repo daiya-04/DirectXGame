@@ -17,6 +17,7 @@
 #include "BossDeadState.h"
 #include "ClearState.h"
 #include "GameOverState.h"
+#include "GlobalVariables.h"
 
 GameScene::GameScene() {
 	
@@ -24,6 +25,53 @@ GameScene::GameScene() {
 
 GameScene::~GameScene() {
 	postEffect_->SetGrayScaleEffect(false);
+}
+
+void GameScene::SetGlobalVariables() {
+	DaiEngine::GlobalVariables* globalVariables = DaiEngine::GlobalVariables::GetInstance();
+
+	std::string groupName = "XButton";
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "Position", XButton_->GetPosition());
+
+	groupName = "AButton";
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "Position", AButton_->GetPosition());
+
+	groupName = "charAttack";
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "Position", charAttack_->GetPosition());
+
+	groupName = "charDash";
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "Position", charDash_->GetPosition());
+
+	groupName = "gameOver";
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "Position", gameOver_->GetPosition());
+
+	groupName = "finish";
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "Position", finish_->GetPosition());
+
+}
+
+void GameScene::ApplyGlobalVariables() {
+	DaiEngine::GlobalVariables* globalVariables = DaiEngine::GlobalVariables::GetInstance();
+	
+	std::string groupName = "XButton";
+	XButton_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	groupName = "AButton";
+	AButton_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	groupName = "charAttack";
+	charAttack_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	groupName = "charDash";
+	charDash_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	groupName = "gameOver";
+	gameOver_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	groupName = "finish";
+	finish_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+
 }
 
 void GameScene::Init(){
@@ -60,10 +108,6 @@ void GameScene::Init(){
 	std::shared_ptr<DaiEngine::Model> bossAttackModel = DaiEngine::ModelManager::LoadGLTF("BossAttack");
 	std::shared_ptr<DaiEngine::Model> bossDeadModel = DaiEngine::ModelManager::LoadGLTF("BossDead");
 
-	std::shared_ptr<DaiEngine::Model> warningZoneModel = DaiEngine::ModelManager::LoadOBJ("WarningZone");
-	std::shared_ptr<DaiEngine::Model> icicleModel = DaiEngine::ModelManager::LoadOBJ("Icicle");
-	std::shared_ptr<DaiEngine::Model> plasmaBallModel = DaiEngine::ModelManager::LoadOBJ("PlasmaBall");
-	std::shared_ptr<DaiEngine::Model> elementBallModel = DaiEngine::ModelManager::LoadGLTF("ElementBall");
 	std::shared_ptr<DaiEngine::Model> rockModel = DaiEngine::ModelManager::LoadOBJ("Rock");
 
 	///
@@ -99,16 +143,18 @@ void GameScene::Init(){
 	ground_->Init(groundModel);
 
 
-	charactors_[static_cast<size_t>(CharactorType::kPlayer)] = std::make_unique<Player>();
-	charactors_[static_cast<size_t>(CharactorType::kBoss)] = std::make_unique<Boss>();
+	charactors_.push_back(std::make_unique<Player>());
+	charactors_.push_back(std::make_unique<Boss>());
 
 	//プレイヤー
-	player_ = dynamic_cast<Player*>(charactors_[static_cast<size_t>(CharactorType::kPlayer)].get());
+	player_ = static_cast<Player*>(charactors_[static_cast<size_t>(CharactorType::kPlayer)].get());
+	assert(player_);
 	player_->Init({ playerStandingModel, playerRunningModel, playerAttackModel, playerAttackC2Model, playerAttackC3Model, playerDeadModel, playerAccelModel, playerKnockBackModel });
 
 
 	//ボス
-	boss_ = dynamic_cast<Boss*>(charactors_[static_cast<size_t>(CharactorType::kBoss)].get());
+	boss_ = static_cast<Boss*>(charactors_[static_cast<size_t>(CharactorType::kBoss)].get());
+	assert(boss_);
 	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel,bossDeadModel });
 	boss_->SetTarget(&player_->GetWorldTransform());
 	player_->SetTerget(&boss_->GetWorldTransform());
@@ -133,31 +179,32 @@ void GameScene::Init(){
 	///
 
 	///ボスの攻撃
-
 	//属性球
-	elementBall_ = std::make_unique<ElementBallManager>();
-	elementBall_->Init(elementBallModel);
-	elementBall_->SetTartget(&player_->GetCenterPos());
-	boss_->SetElementBall(elementBall_.get());
-
+	bossAttacks_.push_back(std::make_unique<ElementBallManager>());
 	//地面から火が出るやつ
-	groundFlare_ = std::make_unique<GroundFlareManager>();
-	groundFlare_->Init(warningZoneModel);
-	groundFlare_->SetTarget(&player_->GetCenterPos());
-	boss_->SetGroudFlare(groundFlare_.get());
-
+	bossAttacks_.push_back(std::make_unique<GroundFlareManager>());
 	//つらら飛ばすやつ
-	icicle_ = std::make_unique<IcicleManager>();
-	icicle_->Init(icicleModel);
-	icicle_->SetTarget(&player_->GetCenterPos());
-	boss_->SetIcicle(icicle_.get());
-
+	bossAttacks_.push_back(std::make_unique<IcicleManager>());
 	//電気玉
-	plasmaShot_ = std::make_unique<PlasmaShotManager>();
-	plasmaShot_->Init(plasmaBallModel);
-	plasmaShot_->SetTarget(&player_->GetCenterPos());
-	boss_->SetPlasmaShot(plasmaShot_.get());
+	bossAttacks_.push_back(std::make_unique<PlasmaShotManager>());
 
+	for (auto& bossAttack : bossAttacks_) {
+		bossAttack->Init();
+		bossAttack->SetTarget(&player_->GetCenterPos());
+		boss_->SetAttack(bossAttack.get());
+	}
+	///
+
+	///プレイヤーの攻撃
+	//魔法弾
+	playerAttacks_.push_back(std::make_unique<MagicBallManager>());
+	//地面噴射
+	playerAttacks_.push_back(std::make_unique<GroundBurstManager>());
+
+	for (auto& playerAttack : playerAttacks_) {
+		playerAttack->Init();
+		player_->SetAttack(playerAttack.get());
+	}
 	///
 
 	//追従カメラ
@@ -175,19 +222,23 @@ void GameScene::Init(){
 
 	//UI
 	
-	XButton_.reset(DaiEngine::Sprite::Create(XButtonTex, {1200.0f,70.0f}));
+	XButton_.reset(DaiEngine::Sprite::Create(XButtonTex, {}));
 
-	AButton_.reset(DaiEngine::Sprite::Create(AButtonTex, { 1200.0f,170.0f }));
+	AButton_.reset(DaiEngine::Sprite::Create(AButtonTex, {}));
 
-	charAttack_.reset(DaiEngine::Sprite::Create(char_AttackTex, {1080.0f,70.0f}));
+	charAttack_.reset(DaiEngine::Sprite::Create(char_AttackTex, {}));
 
-	charDash_.reset(DaiEngine::Sprite::Create(char_DashTex, { 1080.0f,170.0f }));
+	charDash_.reset(DaiEngine::Sprite::Create(char_DashTex, {}));
 
-	gameOver_.reset(DaiEngine::Sprite::Create(gameOverTex, { 670.0f,200.0f }));
+	gameOver_.reset(DaiEngine::Sprite::Create(gameOverTex, {}));
 
-	finish_.reset(DaiEngine::Sprite::Create(finishTex, { 670.0f,200.0f }));
+	finish_.reset(DaiEngine::Sprite::Create(finishTex, {}));
 
 	///
+
+	//調整項目の追加と代入
+	SetGlobalVariables();
+	ApplyGlobalVariables();
 
 	ChangeState(SceneEvent::Battle);
 
@@ -197,6 +248,8 @@ void GameScene::Update() {
 	DebugGUI();
 
 #ifdef _DEBUG
+	//調整項目代入
+	ApplyGlobalVariables();
 	//デバッグ用シーンの切り替えコマンド
 	if (DaiEngine::Input::GetInstance()->PushKey(DIK_LCONTROL) && DaiEngine::Input::GetInstance()->TriggerKey(DIK_1)) {
 		DaiEngine::SceneManager::GetInstance()->ChangeScene("Title");
@@ -277,15 +330,10 @@ void GameScene::DrawPostEffect() {
 	
 	ground_->Draw(camera_);
 	
-	if (nowSceneEvent_ == SceneEvent::Battle || nowSceneEvent_ == SceneEvent::Clear) {
-		player_->DrawAttack(camera_);
-	}
-	
 	if (nowSceneEvent_ == SceneEvent::Battle) {
-		icicle_->Draw(camera_);
-		plasmaShot_->Draw(camera_);
-
-		groundFlare_->Draw(camera_);
+		for (auto& bossAttack : bossAttacks_) {
+			bossAttack->Draw(camera_);
+		}
 	}
 	
 
@@ -294,10 +342,10 @@ void GameScene::DrawPostEffect() {
 	}
 	
 	BurnScar::preDraw();
-	elementBall_->DrawBurnScars(camera_);
+	GetBossAttackType<ElementBallManager>()->DrawBurnScars(camera_);
 
 	IceScar::preDraw();
-	icicle_->DrawScar(camera_);
+	GetBossAttackType<IcicleManager>()->DrawScar(camera_);
 
 	skyBox_->Draw(camera_);
 
@@ -306,16 +354,16 @@ void GameScene::DrawPostEffect() {
 	boss_->DrawParticle(camera_);
 
 	if (nowSceneEvent_ == SceneEvent::Battle || nowSceneEvent_ == SceneEvent::Clear) {
-		player_->DrawParticle(camera_);
+		for (auto& playerAttack : playerAttacks_) {
+			playerAttack->DrawParticle(camera_);
+		}
 	}
 	
 	
-	
 	if (nowSceneEvent_ == SceneEvent::Battle) {
-		groundFlare_->DrawParticle(camera_);
-		icicle_->DrawParticle(camera_);
-		plasmaShot_->DrawParticle(camera_);
-		elementBall_->DrawParticle(camera_);
+		for (auto& bossAttack : bossAttacks_) {
+			bossAttack->DrawParticle(camera_);
+		}
 	}
 	
 
@@ -339,6 +387,7 @@ void GameScene::DrawRenderTexture() {
 
 void GameScene::ChangeState(SceneEvent stateName) {
 
+	//シーンイベントとそれに対応するStateクラスの生成処理のマップ
 	const std::map<SceneEvent, std::function<std::unique_ptr<ISceneState>()>> stateTable{
 		{SceneEvent::Battle, [this]() {return std::make_unique<BattleState>(this); }},
 		{SceneEvent::PlayerDead, [this]() {return std::make_unique<PlayerDeadState>(this); }},
@@ -346,10 +395,12 @@ void GameScene::ChangeState(SceneEvent stateName) {
 		{SceneEvent::Clear, [this]() {return std::make_unique<ClearState>(this); }},
 		{SceneEvent::GameOver, [this]() {return std::make_unique<GameOverState>(this); }},
 	};
-
+	//検索
 	auto nextState = stateTable.find(stateName);
 	if (nextState != stateTable.end()) {
+		//現在のシーンイベント更新
 		nowSceneEvent_ = nextState->first;
+		//対応するStateクラスの生成と初期化
 		state_ = nextState->second();
 		state_->Init();
 	}

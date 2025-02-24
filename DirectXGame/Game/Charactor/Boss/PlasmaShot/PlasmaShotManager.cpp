@@ -3,12 +3,11 @@
 #include "Hit.h"
 
 
-void PlasmaShotManager::Init(const std::shared_ptr<DaiEngine::Model>& model) {
+void PlasmaShotManager::Init() {
 	//電気玉生成
 	for (size_t index = 0; index < plasmaShots_.size(); index++) {
 		plasmaShots_[index] = std::make_unique<PlasmaShot>();
-		plasmaShots_[index]->Init(model);
-		plasmaShots_[index]->GetCollider()->SetCallbackFunc([this, number = index](DaiEngine::Collider* other) {this->OnCollision(number, other); });
+		plasmaShots_[index]->Init();
 	}
 
 	isAttack_ = false;
@@ -43,12 +42,6 @@ void PlasmaShotManager::DrawParticle(const DaiEngine::Camera& camera) {
 		plasmaShot->DrawParticle(camera);
 	}
 
-}
-
-void PlasmaShotManager::OnCollision(size_t index, DaiEngine::Collider* other) {
-	if (other->GetTag() == "Player" || other->GetTag() == "Ground") {
-		plasmaShots_[index]->OnCollision(other);
-	}
 }
 
 void PlasmaShotManager::AttackStart() {

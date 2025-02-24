@@ -6,30 +6,31 @@
 ///---------------------------------------------------------------------------------------------
 
 #include "GroundFlare.h"
+#include "BaseBossAttackManager.h"
 
 #include <array>
 
-class GroundFlareManager {
+class GroundFlareManager : public BaseBossAttackManager {
 public:
-	~GroundFlareManager();
+	~GroundFlareManager() override;
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Init(const std::shared_ptr<DaiEngine::Model>& model);
+	void Init() override;
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update() override;
 	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="camera"></param>
-	void Draw(const DaiEngine::Camera& camera);
+	void Draw(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera"></param>
-	void DrawParticle(const DaiEngine::Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// 衝突時
 	/// </summary>
@@ -38,7 +39,7 @@ public:
 	/// ターゲットセット
 	/// </summary>
 	/// <param name="target"></param>
-	void SetTarget(const Vector3* target) { target_ = target; }
+	void SetTarget(const Vector3* target) override { target_ = target; }
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>

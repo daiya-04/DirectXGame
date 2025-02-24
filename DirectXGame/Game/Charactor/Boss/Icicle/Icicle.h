@@ -99,7 +99,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<DaiEngine::Model>& model) override;
+	void Init() override;
 	/// <summary>
 	/// 更新
 	/// </summary>

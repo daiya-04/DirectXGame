@@ -122,13 +122,11 @@ void TitleScene::Init() {
 }
 
 void TitleScene::Update() {
-#ifdef _DEBUG
-	//調整項目代入
-	ApplyGlobalVariables();
-#endif // _DEBUG
 	DebugGUI();
 
 #ifdef _DEBUG
+	//調整項目代入
+	ApplyGlobalVariables();
 	//デバッグ用シーン切り替えコマンド
 	if (DaiEngine::Input::GetInstance()->PushKey(DIK_LCONTROL) && DaiEngine::Input::GetInstance()->TriggerKey(DIK_2)) {
 		DaiEngine::SceneManager::GetInstance()->ChangeScene("Game");

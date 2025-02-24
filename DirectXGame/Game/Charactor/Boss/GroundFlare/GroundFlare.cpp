@@ -4,13 +4,14 @@
 #include "TextureManager.h"
 #include "ParticleManager.h"
 #include "ColliderManager.h"
+#include "ModelManager.h"
 
 GroundFlare::~GroundFlare() {
 	
 }
 
-void GroundFlare::Init(const std::shared_ptr<DaiEngine::Model>& model) {
-
+void GroundFlare::Init() {
+	std::shared_ptr<DaiEngine::Model> model = DaiEngine::ModelManager::LoadOBJ("WarningZone");
 	warningZone_.reset(DaiEngine::Object3d::Create(model));
 
 	fire_ = ParticleManager::Load("GroundFire");

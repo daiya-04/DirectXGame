@@ -104,7 +104,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<DaiEngine::Model>& model) override;
+	void Init() override;
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -119,6 +119,8 @@ public:
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	void DrawParticle(const DaiEngine::Camera& camera) override;
+
+	void OnCollision([[maybe_unused]] DaiEngine::Collider* other) override {}
 	/// <summary>
 	/// 攻撃開始
 	/// </summary>

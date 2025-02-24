@@ -97,7 +97,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<DaiEngine::Model>& model) override;
+	void Init() override;
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -139,6 +139,9 @@ public:
 	/// <returns>生存していたらtrue、それ以外false</returns>
 	bool IsLife() const { return isLife_; }
 
+private:
+
+	void Dead();
 
 private:
 	//ターゲットがいる方向

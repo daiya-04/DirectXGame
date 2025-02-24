@@ -3,6 +3,7 @@
 #include "Easing.h"
 #include "ShapesDraw.h"
 #include "AnimationManager.h"
+#include "ModelManager.h"
 #include "TextureManager.h"
 #include "ParticleManager.h"
 #include "ColliderManager.h"
@@ -13,13 +14,15 @@ ElementBall::~ElementBall() {
 	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
 }
 
-void ElementBall::Init(const std::shared_ptr<DaiEngine::Model>& model) {
+void ElementBall::Init() {
 
-	obj_.reset(DaiEngine::Object3d::Create(model));
-	animation_ = DaiEngine::AnimationManager::Load(obj_->GetModel()->name_);
+	animeData_ = DaiEngine::ModelManager::LoadGLTF("ElementBall");
+	animation_ = DaiEngine::AnimationManager::Load(animeData_->name_);
+
+	worldTransform_.Init();
 
 	collider_ = std::make_unique<DaiEngine::SphereCollider>();
-	collider_->Init("BossAttack", obj_->worldTransform_, 1.3f);
+	collider_->Init("BossAttack", worldTransform_, 1.3f);
 	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) { this->OnCollision(other); });
 	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
@@ -56,15 +59,15 @@ void ElementBall::Update() {
 	phaseUpdateTable_[phase_]();
 
 	//行列更新
-	obj_->worldTransform_.UpdateMatrix();
+	worldTransform_.UpdateMatrix();
 
 	if (animation_.IsPlaying()) {
-		animation_.Play(obj_->GetModel()->rootNode_);
-		obj_->worldTransform_.matWorld_ = animation_.GetLocalMatrix() * obj_->worldTransform_.matWorld_;
+		animation_.Play(animeData_->rootNode_);
+		worldTransform_.matWorld_ = animation_.GetLocalMatrix() * worldTransform_.matWorld_;
 	}
 
 	for (auto& [name, particle] : effect_) {
-		particle->particleData_.emitter_.translate = obj_->GetWorldPos();
+		particle->particleData_.emitter_.translate = worldTransform_.GetWorldPos();
 		particle->Update();
 	}
 	for (auto& [name, particle] : setEff_) {
@@ -94,7 +97,7 @@ void ElementBall::Dead() {
 	phaseRequest_ = Phase::kRoot;
 	collider_->ColliderOff();
 
-	burnScar_->EffectStart(obj_->GetWorldPos());
+	burnScar_->EffectStart(worldTransform_.GetWorldPos());
 	burnScar_->HeightAdjustment(0.0001f * heightAdjustmentIndex);
 	heightAdjustmentIndex = (heightAdjustmentIndex % 4) + 1;
 }
@@ -102,7 +105,6 @@ void ElementBall::Dead() {
 void ElementBall::AttackStart() {
 
 	phaseRequest_ = Phase::kSet;
-	obj_->worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	isLife_ = true;
 
 	for (auto& [name, particle] : effect_) {
@@ -112,12 +114,11 @@ void ElementBall::AttackStart() {
 		particle->particleData_.isLoop_ = true;
 	}
 
-	obj_->worldTransform_.UpdateMatrix();
 }
 
 void ElementBall::SetAttackData(const Vector3& startPos, uint32_t interval) {
 
-	obj_->worldTransform_.translation_ = startPos;
+	worldTransform_.translation_ = startPos;
 	const uint32_t kFramePerSecond = 60;
 	workCharge_.coolTime_ = kFramePerSecond * interval;
 	for (auto& [name, particle] : effect_) {
@@ -132,7 +133,6 @@ void ElementBall::SetAttackData(const Vector3& startPos, uint32_t interval) {
 
 void ElementBall::RootInit() {
 
-	obj_->worldTransform_.scale_ = {};
 	for (auto& [name, particle] : effect_) {
 		particle->particleData_.isLoop_ = false;
 	}
@@ -158,9 +158,7 @@ void ElementBall::SetUpdate() {
 		phaseRequest_ = Phase::kCharge;
 		animation_.End();
 		//ローカル座標更新
-		obj_->worldTransform_.translation_.x = obj_->worldTransform_.matWorld_.m[3][0];
-		obj_->worldTransform_.translation_.y = obj_->worldTransform_.matWorld_.m[3][1];
-		obj_->worldTransform_.translation_.z = obj_->worldTransform_.matWorld_.m[3][2];
+		worldTransform_.translation_ = worldTransform_.GetWorldPos();
 
 		for (auto& [name, particle] : setEff_) {
 			particle->particleData_.isLoop_ = false;
@@ -192,7 +190,7 @@ void ElementBall::ShotInit() {
 
 void ElementBall::ShotUpdate() {
 	//進む方向を計算
-	Vector3 diff = *target_ - obj_->worldTransform_.translation_;
+	Vector3 diff = *target_ - worldTransform_.translation_;
 	float distance = diff.Length();
 	const float kSpeed = 0.5f;
 	//一定距離まで追尾
@@ -200,14 +198,10 @@ void ElementBall::ShotUpdate() {
 		workShot_.isTrack_ = false;
 	}
 	//追尾中の速度計算
-	if (workShot_.isTrack_ || obj_->worldTransform_.translation_.y >= collider_->GetRadius()) {
+	if (workShot_.isTrack_ || worldTransform_.translation_.y >= collider_->GetRadius()) {
 		velocity_ = diff.Normalize() * kSpeed;
 	}
 
-	obj_->worldTransform_.translation_ += velocity_;
-
-	if (obj_->worldTransform_.translation_.y < 0.0f) {
-		OnCollision(nullptr);
-	}
+	worldTransform_.translation_ += velocity_;
 
 }

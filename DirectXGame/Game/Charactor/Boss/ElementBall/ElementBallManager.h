@@ -8,27 +8,28 @@
 #include "ElementBall.h"
 #include "BurnScar.h"
 #include "ModelManager.h"
-#include "Camera.h"
+#include "BaseBossAttackManager.h"
 
 #include <array>
 
 //火の玉攻撃マネージャクラス
-class ElementBallManager {
+class ElementBallManager : public BaseBossAttackManager {
 public:
+	~ElementBallManager() override {}
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model">モデル</param>
-	void Init(const std::shared_ptr<DaiEngine::Model>& model);
+	void Init() override;
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update() override;
 	/// <summary>
 	/// パーティクル描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void DrawParticle(const DaiEngine::Camera& camera);
+	void DrawParticle(const DaiEngine::Camera& camera) override;
 	/// <summary>
 	/// 焼け跡描画
 	/// </summary>
@@ -38,7 +39,7 @@ public:
 	/// ターゲットセット
 	/// </summary>
 	/// <param name="target">ターゲットのワールドトランスフォーム</param>
-	void SetTartget(const Vector3* target);
+	void SetTarget(const Vector3* target) override;
 	/// <summary>
 	/// データセット
 	/// </summary>

@@ -5,13 +5,13 @@ GroundFlareManager::~GroundFlareManager() {
 	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
 }
 
-void GroundFlareManager::Init(const std::shared_ptr<DaiEngine::Model>& model) {
+void GroundFlareManager::Init() {
 
 	worldtransform_.Init();
 
 	for (auto& groundFlare : groundFlares_) {
 		groundFlare = std::make_unique<GroundFlare>();
-		groundFlare->Init(model);
+		groundFlare->Init();
 	}
 
 	collider_ = std::make_unique<DaiEngine::OBBCollider>();

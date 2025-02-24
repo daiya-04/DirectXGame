@@ -26,6 +26,7 @@
 #include "GroundFlareManager.h"
 #include "BaseCharactor.h"
 #include "IBossBehavior.h"
+#include "BaseBossAttackManager.h"
 
 #include <array>
 #include <optional>
@@ -86,21 +87,14 @@ private:
 	//攻撃種類
 	AttackType attackType_ = AttackType::kElementBall;
 	//最大HP
-	uint32_t maxHp_ = 15;
+	uint32_t maxHp_ = 45;
 	//死亡アニメーション終了フラグ
 	bool isFinishDeadMotion_ = false;
 	//攻撃のターゲット(プレイヤー)
 	const DaiEngine::WorldTransform* target_ = nullptr;
 
 	/// 攻撃の各種マネージャ
-	//火の玉
-	ElementBallManager* elementBall_ = nullptr;
-	//つらら
-	IcicleManager* icicle_ = nullptr;
-	//電気玉
-	PlasmaShotManager* plasmaShot_ = nullptr;
-	//地面から炎
-	GroundFlareManager* groundFlare_ = nullptr;
+	std::vector<BaseBossAttackManager*> attacks_;
 	///
 
 public:
@@ -145,19 +139,8 @@ public:
 	const DaiEngine::WorldTransform* GetTarget() { return target_; }
 	void SetTarget(const DaiEngine::WorldTransform* target) { target_ = target; }
 	
-
-	void SetElementBall(ElementBallManager* elementBall) { elementBall_ = elementBall; }
-	ElementBallManager* GetElementBall() { return elementBall_; }
-	
-	void SetIcicle(IcicleManager* icicle) { icicle_ = icicle; }
-	IcicleManager* GetIcicle() { return icicle_; }
-	
-	void SetPlasmaShot(PlasmaShotManager* plasmaShot) { plasmaShot_ = plasmaShot; }
-	PlasmaShotManager* GetPlasmaShot() { return plasmaShot_; }
-	
-	void SetGroudFlare(GroundFlareManager* groundFlare) { groundFlare_ = groundFlare; }
-	GroundFlareManager* GetGroundFlare() { return groundFlare_; }
-
+	void SetAttack(BaseBossAttackManager* attack) { attacks_.push_back(attack); }
+	std::vector<BaseBossAttackManager*>& GetAttacks() { return attacks_; }
 	/// <summary>
 	/// 死亡アニメーションの終了
 	/// </summary>
@@ -183,6 +166,24 @@ public:
 	//攻撃の種類の取得と設定
 	AttackType GetAttackType() { return attackType_; }
 	void SetAttackType(const AttackType& attackType) { attackType_ = attackType; }
+
+	/// <summary>
+	/// 攻撃配列から特定の型取り出し
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <returns></returns>
+	template <typename T>
+	T* GetAttackType() {
+		for (auto* attack : attacks_) {
+			T* attackType = dynamic_cast<T*>(attack);
+			if (attackType) {
+				//見つかったら返す
+				return attackType;
+			}
+		}
+		//見つからない...
+		return nullptr;
+	}
 
 };
 

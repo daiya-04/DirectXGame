@@ -12,30 +12,36 @@ void BattleState::Init() {
 }
 
 void BattleState::Update() {
-
+	//プレイヤーが死んだら専用シーンへ
 	if (gameScene_->GetPlayer()->IsDead()) {
 		gameScene_->ChangeState(GameScene::SceneEvent::PlayerDead);
+		//ロックオンを外す
 		gameScene_->GetLockOn()->LockOff();
 		return;
 	}
+	//ボスが死んだら専用シーンへ
 	if (gameScene_->GetBoss()->IsDead()) {
 		gameScene_->ChangeState(GameScene::SceneEvent::BossDead);
+		//ロックオンを外す
 		gameScene_->GetLockOn()->LockOff();
 		return;
 	}
 
-	auto& charactors = gameScene_->GetCharactors();
-
-	for (auto& charactor : charactors) {
+	for (auto& charactor : gameScene_->GetCharactors()) {
 		charactor->Update();
 	}
 
 	gameScene_->GetFollowCamera()->Update();
 
-	gameScene_->GetElementBall()->Update();
-	gameScene_->GetGroundFlare()->Update();
-	gameScene_->GetPlasmaShot()->Update();
-	gameScene_->GetIcicle()->Update();
+	///攻撃の更新
+	//ボス攻撃
+	for (auto& bossAttack : gameScene_->GetBossAttacks()) {
+		bossAttack->Update();
+	}
+	//プレイヤー攻撃
+	for (auto& playerAttack : gameScene_->GetPlayerAttacks()) {
+		playerAttack->Update();
+	}
 
 	///衝突判定
 

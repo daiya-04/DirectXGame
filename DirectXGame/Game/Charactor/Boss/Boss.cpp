@@ -110,17 +110,17 @@ void Boss::OnCollision(DaiEngine::Collider* other) {
 }
 
 void Boss::ChangeBehavior(const std::string& behaviorName) {
-
+	//行動とそれに対応するStateクラスの生成処理のマップ
 	const std::unordered_map<std::string, std::function<std::unique_ptr<IBossBehavior>()>> behaviorTable{
 		{"Idel", [this]() { return std::make_unique<BossIdel>(this); }},
 		{"Attack", [this]() {return std::make_unique<BossAttack>(this); }},
 		{"Appear", [this]() {return std::make_unique<BossAppear>(this); }},
 		{"Dead", [this]() {return std::make_unique<BossDead>(this); }},
 	};
-
-
+	//検索
 	auto nextBehavior = behaviorTable.find(behaviorName);
 	if (nextBehavior != behaviorTable.end()) {
+		//対応するStateクラスの生成
 		behaviorRequest_ = nextBehavior->second();
 	}
 

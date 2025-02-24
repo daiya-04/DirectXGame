@@ -9,8 +9,8 @@
 #include "FollowCamera.h"
 #include "BaseCharactor.h"
 #include "IPlayerBehavior.h"
-#include "MagicBall.h"
-#include "GroundBurst.h"
+#include "MagicBallManager.h"
+#include "GroundBurstManager.h"
 
 #include <memory>
 #include <list>
@@ -86,12 +86,8 @@ private:
 
 	//死亡演出(アニメーション)が終わったか
 	bool isFinishDeadMotion_ = false;
-	
-	std::array<std::unique_ptr<MagicBall>, 10> attacks_;
-	uint32_t shotIndex = 0;
-
-	std::array<std::unique_ptr<GroundBurst>, 5> groundBursts_;
-	uint32_t attackIndex_ = 0;
+	//攻撃
+	std::vector<BasePlayerAttackManager*> attacks_;
 
 public:
 	/// <summary>
@@ -119,10 +115,6 @@ public:
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	void Draw(const DaiEngine::Camera& camera) override;
-
-	void DrawAttack(const DaiEngine::Camera& camera);
-
-	void DrawParticle(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// UI描画
 	/// </summary>
@@ -148,9 +140,14 @@ public:
 	//カメラの取得と設定
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
 	FollowCamera* GetFollowCamera() { return followCamera_; }
-	//
+	//ターゲットセット
 	void SetTerget(const DaiEngine::WorldTransform* target) { target_ = target; }
 	const DaiEngine::WorldTransform* GetTarget() { return target_; }
+	/// <summary>
+	/// 攻撃のセット
+	/// </summary>
+	/// <param name="attack"></param>
+	void SetAttack(BasePlayerAttackManager* attack) { attacks_.push_back(attack); }
 	/// <summary>
 	/// 死亡アニメーションの終了
 	/// </summary>
@@ -169,6 +166,25 @@ public:
 	Vector3 GetKnockBackBaseDict() { return knockBackBaseDict_; }
 
 	float GetAttackRange() { return attackRange_; }
+
+private:
+	/// <summary>
+	/// 攻撃の配列から特定の型取り出し
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <returns></returns>
+	template <typename T>
+	T* GetAttackType() {
+		for (auto* attack : attacks_) {
+			T* attackType = dynamic_cast<T*>(attack);
+			if (attackType) {
+				//見つかったら返す
+				return attackType;
+			}
+		}
+		//見つからない...
+		return nullptr;
+	}
 
 };
 
