@@ -89,10 +89,11 @@ private:
 
 	//登場演出
 	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> effect_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> deadEff_;
 	//攻撃種類
 	AttackType attackType_ = AttackType::kElementBall;
 	//最大HP
-	uint32_t maxHp_ = 30;
+	uint32_t maxHp_ = 1;
 	//死亡アニメーション終了フラグ
 	bool isFinishDeadMotion_ = false;
 	//攻撃のターゲット(プレイヤー)
@@ -101,6 +102,9 @@ private:
 	/// 攻撃の各種マネージャ
 	std::vector<BaseBossAttackManager*> attacks_;
 	///
+
+	//攻撃回数
+	uint32_t attackCount_ = 0;
 
 public:
 	/// <summary>
@@ -192,6 +196,12 @@ public:
 	/// ターゲットの方に向く
 	/// </summary>
 	void LookAtTarget();
+
+	void AttackCountIncrement() { attackCount_++; }
+	uint32_t GetAttackCount() const { return attackCount_; }
+	void AttackCountReset() { attackCount_ = 0; }
+
+	void DeadEffStart();
 
 	/// <summary>
 	/// 攻撃配列から特定の型取り出し

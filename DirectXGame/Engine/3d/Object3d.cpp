@@ -36,7 +36,7 @@ namespace DaiEngine {
 	void Object3d::Initialize(std::shared_ptr<Model> model) {
 		model_ = model;
 		worldTransform_.Init();
-
+		visible_ = true;
 	}
 
 	void Object3d::Update() {
@@ -52,6 +52,8 @@ namespace DaiEngine {
 	}
 
 	void Object3d::Draw(const Camera& camera, BlendMode blendMode) {
+
+		if (!visible_) { return; }
 
 		PipelineManager::GetInstance()->preDraw("Object3d", blendMode);
 

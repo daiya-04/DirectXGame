@@ -41,6 +41,8 @@ namespace DaiEngine {
 
 		std::shared_ptr<Model> model_;
 
+		bool visible_ = true;
+
 	public:
 
 		WorldTransform worldTransform_;
@@ -60,6 +62,8 @@ namespace DaiEngine {
 
 		Vector3 GetWorldPos() const;
 		std::shared_ptr<Model> GetModel() const { return model_; }
+
+		void SetVisible(bool visible) { visible_ = visible; }
 
 	};
 }

@@ -49,6 +49,8 @@ namespace DaiEngine {
 		ComPtr<ID3D12Resource> deadEffectBuffer_;
 		DeadEffectData* deadEffectData_ = nullptr;
 
+		bool visible_ = true;
+
 	public:
 
 		WorldTransform worldTransform_;
@@ -72,6 +74,8 @@ namespace DaiEngine {
 		std::shared_ptr<Model> GetModel() const { return model_; }
 
 		Vector3 GetWorldPos() const;
+
+		void SetVisible(bool visible) { visible_ = visible; }
 
 	};
 }

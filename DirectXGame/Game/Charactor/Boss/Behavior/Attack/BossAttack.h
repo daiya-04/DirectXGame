@@ -33,8 +33,5 @@ private:
 	GroundFlareManager* groundFlare_ = nullptr;
 	///
 
-	//攻撃回数
-	static uint32_t attackCount_;
-
 };
 

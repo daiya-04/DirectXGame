@@ -9,6 +9,8 @@ void ClearState::Init() {
 
 	assert(gameScene_);
 
+	gameScene_->GetPlayer()->GetObj()->SetVisible(true);
+
 }
 
 void ClearState::Update() {

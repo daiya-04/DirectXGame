@@ -10,6 +10,7 @@ void PlayerDeadState::Init() {
 
 	count_ = 0;
 
+	offset_ = Transform(offset_, DirectionToDirection(Vector3(0.0f, 0.0f, 1.0f), gameScene_->GetBoss()->GetDirection()));
 	cameraPos_ = gameScene_->GetPlayer()->GetCenterPos() + offset_;
 	gameScene_->GetCamera().translation_ = cameraPos_;
 	gameScene_->GetCamera().rotation_ = cameraRotate_;

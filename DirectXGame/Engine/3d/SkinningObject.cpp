@@ -41,10 +41,13 @@ namespace DaiEngine {
 		deadEffectBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&deadEffectData_));
 
 		threshold_ = 0.0f;
+		visible_ = true;
 
 	}
 
 	void SkinningObject::Draw(const Camera& camera) {
+
+		if (!visible_) { return; }
 
 		worldTransform_.Map();
 

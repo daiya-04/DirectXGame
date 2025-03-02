@@ -37,6 +37,7 @@ void Boss::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models) {
 	for (auto& [group, particle] : effect_) {
 		particle->particleData_.isLoop_ = false;
 	}
+	deadEff_ = ParticleManager::Load("BossDeadEff");
 	///
 
 	//状態設定
@@ -80,6 +81,9 @@ void Boss::Update() {
 		particle->particleData_.emitter_.translate.y = 0.01f;
 		particle->Update();
 	}
+	for (auto& [group, particle] : deadEff_) {
+		particle->Update();
+	}
 
 }
 
@@ -107,6 +111,9 @@ void Boss::Draw(const DaiEngine::Camera& camera) {
 
 void Boss::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& [group, particle] : effect_) {
+		particle->Draw(camera);
+	}
+	for (auto& [group, particle] : deadEff_) {
 		particle->Draw(camera);
 	}
 }
@@ -162,6 +169,13 @@ void Boss::AppearEffectStart() {
 void Boss::AppearEffectEnd() {
 	for (auto& [group, particle] : effect_) {
 		particle->particleData_.isLoop_ = false;
+	}
+}
+
+void Boss::DeadEffStart() {
+	for (auto& [group, particle] : deadEff_) {
+		particle->Emit();
+		particle->particleData_.emitter_.translate = GetCenterPos();
 	}
 }
 

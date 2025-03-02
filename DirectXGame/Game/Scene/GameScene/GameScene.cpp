@@ -312,11 +312,8 @@ void GameScene::DrawPostEffect() {
 
 	outLine_->PreDrawScene(DaiEngine::DirectXCommon::GetInstance()->GetCommandList());
 
-	if (nowSceneEvent_ != SceneEvent::Clear) {
-		boss_->Draw(camera_);
-	}
-	if (nowSceneEvent_ != SceneEvent::GameOver) {
-		player_->Draw(camera_);
+	for (auto& charactor : charactors_) {
+		charactor->Draw(camera_);
 	}
 
 	outLine_->PostDrawScene(DaiEngine::DirectXCommon::GetInstance()->GetCommandList());

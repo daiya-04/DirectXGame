@@ -11,6 +11,7 @@ void GameOverState::Init() {
 
 	alpha_ = 0.0f;
 	PostEffect::GetInstance()->SetGrayScaleEffect(true);
+	gameScene_->GetPlayer()->GetObj()->SetVisible(false);
 
 }
 

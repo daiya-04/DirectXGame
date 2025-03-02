@@ -15,6 +15,8 @@ void BossDeadState::Init() {
 
 	gameScene_->GetCamera().UpdateViewMatrix();
 
+	gameScene_->GetPlayer()->GetObj()->SetVisible(false);
+
 }
 
 void BossDeadState::Update() {

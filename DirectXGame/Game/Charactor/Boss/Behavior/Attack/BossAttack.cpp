@@ -4,8 +4,6 @@
 #include <cassert>
 #include "RandomEngine.h"
 
-uint32_t BossAttack::attackCount_ = 0;
-
 BossAttack::BossAttack(Boss* boss) {
 
 	assert(boss);
@@ -23,7 +21,7 @@ void BossAttack::Init() {
 
 	assert(boss_);
 
-	attackCount_++;
+	boss_->AttackCountIncrement();
 
 	//攻撃の設定
 	if (boss_->GetAttackType() == Boss::AttackType::kElementBall) {
@@ -76,13 +74,13 @@ void BossAttack::Update() {
 	//攻撃が終わったら通常行動に
 	if (groundFlare_->AttackFinish() || icicle_->AttackFinish() || plasmaShot_->AttackFinish() || elementBall_->AttackFinish()) {
 
-		if (attackCount_ >= 2) {
+		if (boss_->GetAttackCount() >= 2) {
 
 			uint32_t threshold = static_cast<uint32_t>(RandomEngine::GetIntRandom(2, 3));
 
-			if (attackCount_ >= threshold) {
+			if (boss_->GetAttackCount() >= threshold) {
 				boss_->ChangeBehavior("Move");
-				attackCount_ = 0;
+				boss_->AttackCountReset();
 			}
 			else {
 				boss_->ChangeBehavior("Idle");
