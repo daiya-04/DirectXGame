@@ -220,7 +220,7 @@ void Icicle::ShotUpdate() {
 	//少しずつプレイヤーの方向に向かせる
 	direction_ = Lerp(shotData_.param_, direction_.Normalize(), targetDict_.Normalize());
 	//速度計算
-	velocity_ = direction_ * speed_;
+	velocity_ = direction_.Normalize() * speed_;
 
 	obj_->worldTransform_.translation_ += velocity_;
 

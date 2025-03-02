@@ -31,6 +31,10 @@ private:
 	PlasmaShotManager* plasmaShot_ = nullptr;
 	//地面から炎
 	GroundFlareManager* groundFlare_ = nullptr;
-	///	
+	///
+
+	//攻撃回数
+	static uint32_t attackCount_;
+
 };
 

@@ -18,6 +18,7 @@ void ElementBall::Init() {
 
 	animeData_ = DaiEngine::ModelManager::LoadGLTF("ElementBall");
 	animation_ = DaiEngine::AnimationManager::Load(animeData_->name_);
+	animation_.SetAnimationSpeed(1.0f / 30.0f);
 
 	worldTransform_.Init();
 
@@ -192,7 +193,7 @@ void ElementBall::ShotUpdate() {
 	//進む方向を計算
 	Vector3 diff = *target_ - worldTransform_.translation_;
 	float distance = diff.Length();
-	const float kSpeed = 0.5f;
+	const float kSpeed = 0.6f;
 	//一定距離まで追尾
 	if (distance < workShot_.trackingDist_) {
 		workShot_.isTrack_ = false;

@@ -2,7 +2,7 @@
 #include "Boss.h"
 #include <cassert>
 
-void BossIdel::Init() {
+void BossIdle::Init() {
 
 	assert(boss_);
 
@@ -13,7 +13,7 @@ void BossIdel::Init() {
 
 }
 
-void BossIdel::Update() {
+void BossIdle::Update() {
 
 	if (++counter_ >= coolTime_) {
 		boss_->ChangeBehavior("Attack");

@@ -12,7 +12,9 @@
 #include "BossAttack.h"
 #include "BossAppear.h"
 #include "BossDead.h"
+#include "BossMove.h"
 #include "ColliderManager.h"
+#include "Line.h"
 
 #include "GroundFlare.h"
 
@@ -23,6 +25,8 @@ void Boss::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models) {
 	
 	//モデル関連の初期化
 	BaseCharactor::Init(models);
+
+	obj_.reset(DaiEngine::Object3d::Create(animationModels_[actionIndex_]));
 
 	collider_->Init("Boss", obj_->worldTransform_, {});
 	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
@@ -54,13 +58,19 @@ void Boss::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models) {
 void Boss::Update() {
 
 	if (behaviorRequest_) {
-
 		behavior_ = std::move(behaviorRequest_);
 		behavior_->Init();
-
 	}
 
 	behavior_->Update();
+
+	//行列更新
+	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
+	UpdateCenterPos();
+	//アニメーション再生
+	animations_[actionIndex_].Play(animationModels_[actionIndex_]->rootNode_);
+	obj_->worldTransform_.matWorld_ = animations_[actionIndex_].GetLocalMatrix() * obj_->worldTransform_.matWorld_;
+	obj_->worldTransform_.WorldInverseTransposeMat_ = (obj_->worldTransform_.matWorld_.Inverse()).Transpose();
 
 	BaseCharactor::Update();
 
@@ -80,20 +90,25 @@ void Boss::UpdateUI() {
 	hpBar_->SetSize({ hpBarSize_.x * percent,hpBarSize_.y });
 }
 
-void Boss::Draw(const DaiEngine::Camera& camera) {
+void Boss::UpdateCenterPos() {
+	centerPos_ = {
+		obj_->worldTransform_.matWorld_.m[3][0],
+		obj_->worldTransform_.matWorld_.m[3][1],
+		obj_->worldTransform_.matWorld_.m[3][2],
+	};
+}
 
+
+void Boss::Draw(const DaiEngine::Camera& camera) {
 	BaseCharactor::Draw(camera);
 
+	obj_->Draw(camera);
 }
 
 void Boss::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& [group, particle] : effect_) {
 		particle->Draw(camera);
 	}
-}
-
-void Boss::DrawUI() {
-	hpBar_->Draw();
 }
 
 void Boss::OnCollision(DaiEngine::Collider* other) {
@@ -112,10 +127,11 @@ void Boss::OnCollision(DaiEngine::Collider* other) {
 void Boss::ChangeBehavior(const std::string& behaviorName) {
 	//行動とそれに対応するStateクラスの生成処理のマップ
 	const std::unordered_map<std::string, std::function<std::unique_ptr<IBossBehavior>()>> behaviorTable{
-		{"Idel", [this]() { return std::make_unique<BossIdel>(this); }},
+		{"Idle", [this]() { return std::make_unique<BossIdle>(this); }},
 		{"Attack", [this]() {return std::make_unique<BossAttack>(this); }},
 		{"Appear", [this]() {return std::make_unique<BossAppear>(this); }},
 		{"Dead", [this]() {return std::make_unique<BossDead>(this); }},
+		{"Move", [this]() {return std::make_unique<BossMove>(this); }},
 	};
 	//検索
 	auto nextBehavior = behaviorTable.find(behaviorName);
@@ -124,7 +140,18 @@ void Boss::ChangeBehavior(const std::string& behaviorName) {
 		behaviorRequest_ = nextBehavior->second();
 	}
 
-}	
+}
+
+void Boss::SetData(const LevelData::ObjectData& data) {
+	obj_->worldTransform_.translation_ = data.translation;
+	obj_->worldTransform_.scale_ = data.scaling;
+
+	BaseCharactor::SetData(data);
+
+	//行列更新
+	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
+	UpdateCenterPos();
+}
 
 void Boss::AppearEffectStart() {
 	for (auto& [group, particle] : effect_) {
@@ -138,3 +165,7 @@ void Boss::AppearEffectEnd() {
 	}
 }
 
+void Boss::LookAtTarget() {
+	Vector3 direction = target_->GetWorldPos().GetXZ() - obj_->GetWorldPos().GetXZ();
+	SetDirection(direction);
+}

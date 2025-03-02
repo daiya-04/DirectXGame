@@ -108,6 +108,8 @@ void GameScene::Init(){
 	std::shared_ptr<DaiEngine::Model> bossAttackModel = DaiEngine::ModelManager::LoadGLTF("BossAttack");
 	std::shared_ptr<DaiEngine::Model> bossDeadModel = DaiEngine::ModelManager::LoadGLTF("BossDead");
 
+	std::shared_ptr<DaiEngine::Model> bossIdleModel = DaiEngine::ModelManager::LoadGLTF("Boss");
+
 	std::shared_ptr<DaiEngine::Model> rockModel = DaiEngine::ModelManager::LoadOBJ("Rock");
 
 	///
@@ -155,7 +157,7 @@ void GameScene::Init(){
 	//ボス
 	boss_ = static_cast<Boss*>(charactors_[static_cast<size_t>(CharactorType::kBoss)].get());
 	assert(boss_);
-	boss_->Init({ bossStandingModel,bossSetModel,bossAttackModel,bossDeadModel });
+	boss_->Init({ bossIdleModel });
 	boss_->SetTarget(&player_->GetWorldTransform());
 	player_->SetTerget(&boss_->GetWorldTransform());
 
@@ -310,7 +312,6 @@ void GameScene::DrawPostEffect() {
 
 	outLine_->PreDrawScene(DaiEngine::DirectXCommon::GetInstance()->GetCommandList());
 
-	DaiEngine::SkinningObject::preDraw();
 	if (nowSceneEvent_ != SceneEvent::Clear) {
 		boss_->Draw(camera_);
 	}
@@ -326,7 +327,6 @@ void GameScene::DrawPostEffect() {
 
 	outLine_->Draw(DaiEngine::DirectXCommon::GetInstance()->GetCommandList());
 
-	DaiEngine::Object3d::preDraw();
 	
 	ground_->Draw(camera_);
 	
@@ -348,8 +348,6 @@ void GameScene::DrawPostEffect() {
 	GetBossAttackType<IcicleManager>()->DrawScar(camera_);
 
 	skyBox_->Draw(camera_);
-
-	DaiEngine::GPUParticle::preDraw();
 
 	boss_->DrawParticle(camera_);
 

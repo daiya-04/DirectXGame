@@ -53,7 +53,7 @@ namespace DaiEngine {
 
 		struct AccelerationField {
 			Vector3 acceleration_; //効果(加速度)
-			AABB area_; //効果範囲
+			Shapes::AABB area_; //効果範囲
 		};
 
 	public:

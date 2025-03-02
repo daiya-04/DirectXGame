@@ -107,6 +107,7 @@ void FollowCamera::CalcInterTarget() {
 
 void FollowCamera::SetTarget(const DaiEngine::WorldTransform* target) {
 	target_ = target;
+	interTarget_ = target_->translation_;
 	//オフセット計算
 	Vector3 offset = OffsetCalc();
 	camera_.translation_ = target_->translation_ + offset;

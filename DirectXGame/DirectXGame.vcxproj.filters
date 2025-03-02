@@ -176,6 +176,9 @@
     <Filter Include="Game\Charactor\Player\GroundBurst">
       <UniqueIdentifier>{6d5ee438-ed03-411d-ae6b-e2ad3a2ec033}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Charactor\Boss\Behavior\Move">
+      <UniqueIdentifier>{fc351a0c-10a7-4e27-959c-7d4dc1ab887e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -472,6 +475,9 @@
     </ClCompile>
     <ClCompile Include="Game\Charactor\Player\GroundBurst\GroundBurstManager.cpp">
       <Filter>Game\Charactor\Player\GroundBurst</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\Behavior\Move\BossMove.cpp">
+      <Filter>Game\Charactor\Boss\Behavior\Move</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -816,6 +822,12 @@
     </ClInclude>
     <ClInclude Include="Game\Charactor\Boss\BaseBossAttackManager.h">
       <Filter>Game\Charactor\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\Behavior\Move\BossMove.h">
+      <Filter>Game\Charactor\Boss\Behavior\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Base\RandomEngine.h">
+      <Filter>Engine\Base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

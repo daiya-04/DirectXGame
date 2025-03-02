@@ -60,6 +60,8 @@ public:
 		Attack,
 		//死亡
 		Dead,
+		//移動
+		Move,
 
 		//アクション総数
 		ActionNum,
@@ -79,6 +81,9 @@ public:
 
 private:
 
+	//オブジェクト
+	std::unique_ptr<DaiEngine::Object3d> obj_;
+
 	std::unique_ptr<IBossBehavior> behavior_;
 	std::unique_ptr<IBossBehavior> behaviorRequest_;
 
@@ -87,7 +92,7 @@ private:
 	//攻撃種類
 	AttackType attackType_ = AttackType::kElementBall;
 	//最大HP
-	uint32_t maxHp_ = 45;
+	uint32_t maxHp_ = 30;
 	//死亡アニメーション終了フラグ
 	bool isFinishDeadMotion_ = false;
 	//攻撃のターゲット(プレイヤー)
@@ -118,6 +123,12 @@ public:
 	/// </summary>
 	void UpdateUI() override;
 	/// <summary>
+	/// 中心座標の更新
+	/// </summary>
+	/// <param name="camera"></param>
+	/// <returns></returns>
+	void UpdateCenterPos() override;
+	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
@@ -128,13 +139,14 @@ public:
 	/// <param name="camera">カメラ</param>
 	void DrawParticle(const DaiEngine::Camera& camera);
 	/// <summary>
-	/// UI描画
-	/// </summary>
-	void DrawUI() override;
-	/// <summary>
 	/// 衝突時
 	/// </summary>
 	void OnCollision(DaiEngine::Collider* other) override;
+	/// <summary>
+	/// データ設定
+	/// </summary>
+	/// <param name="data">オブジェクトデータ</param>
+	void SetData(const LevelData::ObjectData& data) override;
 	
 	const DaiEngine::WorldTransform* GetTarget() { return target_; }
 	void SetTarget(const DaiEngine::WorldTransform* target) { target_ = target; }
@@ -166,6 +178,20 @@ public:
 	//攻撃の種類の取得と設定
 	AttackType GetAttackType() { return attackType_; }
 	void SetAttackType(const AttackType& attackType) { attackType_ = attackType; }
+	/// <summary>
+	/// ワールドトランスフォーム取得
+	/// </summary>
+	/// <returns>オブジェクトのワールドトランスフォーム</returns>
+	const DaiEngine::WorldTransform& GetWorldTransform() override { return obj_->worldTransform_; }
+	/// <summary>
+	/// obj_の取得
+	/// </summary>
+	/// <returns></returns>
+	DaiEngine::Object3d* GetObj() { return obj_.get(); }
+	/// <summary>
+	/// ターゲットの方に向く
+	/// </summary>
+	void LookAtTarget();
 
 	/// <summary>
 	/// 攻撃配列から特定の型取り出し

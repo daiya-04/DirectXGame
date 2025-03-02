@@ -47,7 +47,7 @@ public:
 	/// </summary>
 	/// <param name="camera"></param>
 	/// <returns></returns>
-	void UpdateCenterPos();
+	virtual void UpdateCenterPos() {}
 
 	/// <summary>
 	/// モデル描画
@@ -57,16 +57,14 @@ public:
 	/// <summary>
 	/// UI描画
 	/// </summary>
-	virtual void DrawUI();
+	void DrawUI();
 
 	virtual void OnCollision([[maybe_unused]] DaiEngine::Collider* other) {};
-
 	/// <summary>
 	/// データ設定
 	/// </summary>
 	/// <param name="data">オブジェクトデータ</param>
-	void SetData(const LevelData::ObjectData& data);
-
+	virtual void SetData(const LevelData::ObjectData& data);
 	/// <summary>
 	/// キャラの中心位置取得
 	/// </summary>
@@ -77,16 +75,15 @@ public:
 	/// </summary>
 	/// <returns>死んでいたらtrue、生きていればfalse</returns>
 	bool IsDead() const { return isDead_; }
-
 	/// <summary>
 	/// ワールドトランスフォーム取得
 	/// </summary>
 	/// <returns>オブジェクトのワールドトランスフォーム</returns>
-	const DaiEngine::WorldTransform& GetWorldTransform() { return obj_->worldTransform_; }
+	virtual const DaiEngine::WorldTransform& GetWorldTransform() = 0;
 	/// <summary>
 	/// アニメーションの設定
 	/// </summary>
-	void SetAnimation(size_t actionIndex, bool isLoop = true);
+	virtual void SetAnimation(size_t actionIndex, bool isLoop = true);
 	//キャラの向きの取得と設定
 	const Vector3 GetDirection() const { return direction_; }
 	void SetDirection(const Vector3& direction);
@@ -97,15 +94,7 @@ public:
 	/// </summary>
 	/// <param name="behaviorName">切り替える行動の名前</param>
 	virtual void ChangeBehavior(const std::string& behaviorName) = 0;
-	/// <summary>
-	/// obj_の取得
-	/// </summary>
-	/// <returns></returns>
-	DaiEngine::SkinningObject* GetObj() { return obj_.get(); }
-	/// <summary>
-	/// キャラがディゾルブで消えていく
-	/// </summary>
-	void DissolveUpdate();
+	
 	/// <summary>
 	/// 現在のアニメーションの取得
 	/// </summary>
@@ -113,23 +102,14 @@ public:
 	DaiEngine::Animation& GetNowAnimation() { return animations_[actionIndex_]; }
 	const size_t GetActionIndex() const { return actionIndex_; }
 
-	DaiEngine::Skeleton& GetNowSkelton() { return skeletons_[actionIndex_]; }
-
 	DaiEngine::Collider* GetCollider() { return collider_.get(); }
 
 protected:
 
-	///スキニングアニメーションに必要なもの
-	//スキニングオブジェクト
-	std::unique_ptr<DaiEngine::SkinningObject> obj_;
-	//スキニングアニメーションデータ
+	//アニメーションモデルデータ
 	std::vector<std::shared_ptr<DaiEngine::Model>> animationModels_;
 	//アニメーション再生
 	std::vector<DaiEngine::Animation> animations_;
-	//スケルトン
-	std::vector<DaiEngine::Skeleton> skeletons_;
-	//スキンクラスター
-	std::vector<DaiEngine::SkinCluster> skinClusters_;
 
 	//アクションインデックス(今なんのアニメーションか)
 	size_t actionIndex_ = 0;

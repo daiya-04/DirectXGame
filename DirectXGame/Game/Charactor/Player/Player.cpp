@@ -17,10 +17,19 @@ void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 
 	//アクション設定
 	actionIndex_ = Action::Standing;
-	
-	//モデル関連の初期化
+
 	BaseCharactor::Init(models);
 
+	//モデル関連の初期化
+	//モデルやアニメーションの設定
+	obj_.reset(DaiEngine::SkinningObject::Create(animationModels_[actionIndex_]));
+	skinClusters_.resize(animationModels_.size());
+	for (size_t index = 0; index < animationModels_.size(); index++) {
+		skeletons_.emplace_back(DaiEngine::Skeleton::Create(animationModels_[index]->rootNode_));
+		skinClusters_[index].Create(skeletons_[index], animationModels_[index]);
+	}
+	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
+	
 	collider_->Init("Player", obj_->worldTransform_, {});
 	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->ColliderOn();
@@ -49,8 +58,19 @@ void Player::Update(){
 
 	///プレイヤーの移動制限
 	obj_->worldTransform_.translation_.x = std::clamp(obj_->worldTransform_.translation_.x, -30.0f, 30.0f);
-	obj_->worldTransform_.translation_.z = std::clamp(obj_->worldTransform_.translation_.z, -20.0f, 40.0f);
+	obj_->worldTransform_.translation_.z = std::clamp(obj_->worldTransform_.translation_.z, -30.0f, 30.0f);
 	///
+
+	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
+
+	//行列更新
+	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
+	UpdateCenterPos();
+	//アニメーション再生
+	animations_[actionIndex_].Play(skeletons_[actionIndex_]);
+
+	skeletons_[actionIndex_].Update();
+	skinClusters_[actionIndex_].Update(skeletons_[actionIndex_]);
 
 	BaseCharactor::Update();
 }
@@ -62,14 +82,21 @@ void Player::UpdateUI() {
 	hpBar_->SetSize({ hpBarSize_.x * percent,hpBarSize_.y });
 }
 
+void Player::UpdateCenterPos() {
+	centerPos_ = {
+		obj_->worldTransform_.matWorld_.m[3][0],
+		obj_->worldTransform_.matWorld_.m[3][1] + collider_->GetSize().y,
+		obj_->worldTransform_.matWorld_.m[3][2],
+	};
+}
+
 void Player::Draw(const DaiEngine::Camera& camera){
 
 	BaseCharactor::Draw(camera);
 
-}
+	obj_->Draw(camera);
+	skeletons_[actionIndex_].Draw(obj_->worldTransform_, camera);
 
-void Player::DrawUI() {
-	hpBar_->Draw();
 }
 
 void Player::OnCollision(DaiEngine::Collider* other) {
@@ -127,6 +154,17 @@ void Player::ChangeBehavior(const std::string& behaviorName) {
 
 }
 
+void Player::SetData(const LevelData::ObjectData& data) {
+	obj_->worldTransform_.translation_ = data.translation;
+	obj_->worldTransform_.scale_ = data.scaling;
+
+	BaseCharactor::SetData(data);
+
+	//行列更新
+	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
+	UpdateCenterPos();
+}
+
 void Player::ShotMagicBall() {
 
 	//攻撃を発射する方向の計算
@@ -166,4 +204,14 @@ void Player::AttackGroundBurst() {
 		groundBurst->AttackStart(GetCenterPos() + offset);
 	}
 
+}
+
+void Player::SetAnimation(size_t actionIndex, bool isLoop) {
+	BaseCharactor::SetAnimation(actionIndex, isLoop);
+	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
+}
+
+void Player::DissolveUpdate() {
+	obj_->threshold_ = animations_[actionIndex_].GetAnimationTime() / animations_[actionIndex_].GetDuration();
+	obj_->threshold_ = std::clamp(obj_->threshold_, 0.0f, animations_[actionIndex_].GetDuration());
 }

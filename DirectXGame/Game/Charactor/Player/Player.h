@@ -63,6 +63,13 @@ public:
 	};
 
 private:
+	
+	//スキニングオブジェクト
+	std::unique_ptr<DaiEngine::SkinningObject> obj_;
+	//スケルトン
+	std::vector<DaiEngine::Skeleton> skeletons_;
+	//スキンクラスター
+	std::vector<DaiEngine::SkinCluster> skinClusters_;
 
 	std::unique_ptr<IPlayerBehavior> behavior_;
 	std::unique_ptr<IPlayerBehavior> behaviorRequest_;
@@ -111,14 +118,16 @@ public:
 	/// </summary>
 	void UpdateUI() override;
 	/// <summary>
+	/// 中心座標の更新
+	/// </summary>
+	/// <param name="camera"></param>
+	/// <returns></returns>
+	void UpdateCenterPos() override;
+	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	void Draw(const DaiEngine::Camera& camera) override;
-	/// <summary>
-	/// UI描画
-	/// </summary>
-	void DrawUI() override;
 	/// <summary>
 	/// 衝突時
 	/// </summary>
@@ -129,6 +138,11 @@ public:
 	/// <param name="behaviorName">切り替える行動の名前</param>
 	void ChangeBehavior(const std::string& behaviorName) override;
 	/// <summary>
+	/// データ設定
+	/// </summary>
+	/// <param name="data">オブジェクトデータ</param>
+	void SetData(const LevelData::ObjectData& data) override;
+	/// <summary>
 	/// 攻撃の発射
 	/// </summary>
 	void ShotMagicBall();
@@ -136,7 +150,10 @@ public:
 	/// 攻撃の発射2
 	/// </summary>
 	void AttackGroundBurst();
-
+	/// <summary>
+	/// アニメーションの設定
+	/// </summary>
+	void SetAnimation(size_t actionIndex, bool isLoop = true) override;
 	//カメラの取得と設定
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
 	FollowCamera* GetFollowCamera() { return followCamera_; }
@@ -165,7 +182,23 @@ public:
 
 	Vector3 GetKnockBackBaseDict() { return knockBackBaseDict_; }
 
-	float GetAttackRange() { return attackRange_; }
+	float GetAttackRange() const { return attackRange_; }
+	/// <summary>
+	/// ワールドトランスフォーム取得
+	/// </summary>
+	/// <returns>オブジェクトのワールドトランスフォーム</returns>
+	const DaiEngine::WorldTransform& GetWorldTransform() override { return obj_->worldTransform_; }
+	/// <summary>
+	/// obj_の取得
+	/// </summary>
+	/// <returns></returns>
+	DaiEngine::SkinningObject* GetObj() { return obj_.get(); }
+
+	DaiEngine::Skeleton& GetNowSkelton() { return skeletons_[actionIndex_]; }
+	/// <summary>
+	/// キャラがディゾルブで消えていく
+	/// </summary>
+	void DissolveUpdate();
 
 private:
 	/// <summary>

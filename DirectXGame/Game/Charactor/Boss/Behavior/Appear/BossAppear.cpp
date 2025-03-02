@@ -11,7 +11,7 @@ void BossAppear::Init() {
 
 	startPos_ = boss_->GetObj()->GetWorldPos();
 	endPos_ = startPos_;
-	endPos_.y = 0.0f;
+	endPos_.y = endPosHeight_;
 
 	boss_->AppearEffectStart();
 
@@ -20,7 +20,7 @@ void BossAppear::Init() {
 void BossAppear::Update() {
 	//移動が終わったら通常行動に
 	if (param_ >= 1.0f) {
-		boss_->ChangeBehavior("Idel");
+		boss_->ChangeBehavior("Idle");
 		boss_->AppearEffectEnd();
 		return;
 	}

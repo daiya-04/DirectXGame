@@ -220,7 +220,7 @@ private:
 		//追尾が終わる距離
 		float trackingDist_ = 10.0f;
 		//回転スピード
-		float rotateSpeed_ = 0.005f;
+		float rotateSpeed_ = 0.007f;
 	};
 
 	//生成用パラメータ

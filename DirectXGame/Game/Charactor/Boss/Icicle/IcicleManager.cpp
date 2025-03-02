@@ -90,7 +90,7 @@ void IcicleManager::SetAttackData(const Vector3& pos, const Vector3& direction) 
 	const float kIntervalList[kIcicleNum_] = { kIntervalMax, kIntervalMax, kIntervalMin, kIntervalMin };
 
 	for (size_t index = 0; index < kIcicleNum_; index++) {
-		icicles_[index]->SetAttackData(pos + kOffset[index], direction, kIntervalList[index]);
+		icicles_[index]->SetAttackData(pos + Transform(kOffset[index],DirectionToDirection(Vector3(0.0f,0.0f,-1.0f),direction)), direction, kIntervalList[index]);
 	}
 
 }

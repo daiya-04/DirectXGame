@@ -10,6 +10,7 @@
 #include "Audio.h"
 #include "DXCompiler.h"
 #include "PipelineManager.h"
+#include "RandomEngine.h"
 
 namespace DaiEngine {
 
@@ -28,6 +29,8 @@ namespace DaiEngine {
 
 		TextureManager::GetInstance()->Initialize();
 		TextureManager::GetInstance()->LoadAllFile();
+
+		RandomEngine::GetInstance();
 
 		PipelineManager::GetInstance()->Init();
 

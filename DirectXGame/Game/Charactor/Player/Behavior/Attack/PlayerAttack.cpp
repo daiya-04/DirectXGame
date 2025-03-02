@@ -36,7 +36,7 @@ void PlayerAttack::Init() {
 
 	if (player_->GetTarget()) {
 		//攻撃の発射方向計算
-		Vector3 direction = player_->GetTarget()->translation_ - player_->GetObj()->worldTransform_.translation_;
+		Vector3 direction = player_->GetTarget()->GetWorldPos().GetXZ() - player_->GetObj()->GetWorldPos().GetXZ();
 		//射程内ならターゲット方向に向く
 		if (direction.Length() <= player_->GetAttackRange()) {
 			player_->SetDirection(direction);

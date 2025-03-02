@@ -16,5 +16,8 @@ private:
 
 	Boss* boss_ = nullptr;
 
+	uint32_t counter_ = 0;
+	uint32_t deadTime_ = 60;
+
 };
 

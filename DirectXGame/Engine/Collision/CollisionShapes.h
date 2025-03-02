@@ -1,5 +1,6 @@
 #pragma once
 #include "Vec3.h"
+#include "Vec2.h"
 
 namespace Shapes{
 	// 線分
@@ -36,15 +37,30 @@ namespace Shapes{
 	struct Triangle {
 		Vector3 vertices[3]; // 頂点
 	};
-
+	//AABB
 	struct AABB {
 		Vector3 min;
 		Vector3 max;
 	};
-
+	//OBB
 	struct OBB {
 		Vector3 center;
 		Vector3 orientation[3];
 		Vector3 size;
 	};
+
+	//矩形
+	struct RectAngle {
+		float left;
+		float right;
+		float top;
+		float bottom;
+	};
+
+	//円
+	struct Circle {
+		Vector2 center;
+		float radius;
+	};
+
 }

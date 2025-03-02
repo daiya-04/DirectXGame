@@ -8,16 +8,16 @@ void BossDead::Init() {
 
 	assert(boss_);
 
-	boss_->SetAnimation(Boss::Action::Dead, false);
+	boss_->GetNowAnimation().SetAnimationSpeed(0.0f);
 
 }
 
 void BossDead::Update() {
 
-	if (!boss_->GetNowAnimation().IsPlaying()) {
+
+
+	if (++counter_ >= deadTime_) {
 		boss_->FinishDeadMotion();
 	}
-
-	boss_->DissolveUpdate();
 	
 }

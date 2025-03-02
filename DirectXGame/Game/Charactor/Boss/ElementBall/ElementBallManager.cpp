@@ -83,10 +83,10 @@ void ElementBallManager::SetAttackData(const Vector3& pos) {
 
 	//攻撃位置のオフセット
 	const Vector3 kOffset[kElementBallNum_] = {
-		{4.0f,0.0f,2.0f},
-		{-4.0f,0.0f,2.0f},
-		{4.0f,0.0f,-2.0f},
-		{-4.0f,0.0f,-2.0f},
+		{3.0f,0.0f,3.0f},
+		{-3.0f,0.0f,3.0f},
+		{3.0f,0.0f,-3.0f},
+		{-3.0f,0.0f,-3.0f},
 	};
 	//インターバルの基準
 	const uint32_t kBaseInterval = 2;

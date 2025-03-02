@@ -22,6 +22,7 @@ private:
 	Vector3 endPos_{};
 	const float speed_ = 0.005f;
 	float param_ = 0.0f;
+	float endPosHeight_ = 3.0f;
 
 };
 
