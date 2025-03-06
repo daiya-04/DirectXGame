@@ -9,11 +9,7 @@ void BossDeadState::Init() {
 
 	count_ = 0;
 
-	cameraPos_ = gameScene_->GetBoss()->GetCenterPos() + offset_;
-	gameScene_->GetCamera().translation_ = cameraPos_;
-	gameScene_->GetCamera().rotation_ = cameraRotate_;
-
-	gameScene_->GetCamera().UpdateViewMatrix();
+	SetCamera();
 
 	gameScene_->GetPlayer()->GetObj()->SetVisible(false);
 
@@ -28,6 +24,19 @@ void BossDeadState::Update() {
 			gameScene_->ChangeState(GameScene::SceneEvent::Clear);
 		}
 	}
+}
 
+void BossDeadState::SetCamera() {
+	//カメラのターゲットの座標
+	Vector3 targetPos = gameScene_->GetBoss()->GetCenterPos();
+	//カメラの座標計算
+	cameraPos_ = targetPos + offset_;
+	//座標更新
+	gameScene_->GetCamera().translation_ = cameraPos_;
+	
+	Vector3 sub = targetPos - cameraPos_;
+	rotateMat_ = DirectionToDirection(Vector3(0.0f, 0.0f, 1.0f), sub);
+
+	gameScene_->GetCamera().UpdateViewMatrixRotate(rotateMat_);
 
 }

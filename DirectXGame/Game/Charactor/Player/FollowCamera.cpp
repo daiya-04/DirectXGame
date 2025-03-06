@@ -46,12 +46,12 @@ void FollowCamera::Update(){
 		float T = Easing::easeInOutQuart(zoomParam_);
 		offset = Lerp(T, baseOffset_, attackOffset_);
 
-		Matrix4x4 rotateMatrix;
+		/*Matrix4x4 rotateMatrix;
 		rotateMatrix = MakeRotateXMatrix(rotation_.x) *
 					   DirectionToDirection({ 0.0f,0.0f,-1.0f }, -sub.GetXZ()) *
-					   MakeRotateZMatrix(rotation_.z);
+					   MakeRotateZMatrix(rotation_.z);*/
 
-		offset = TransformNormal(offset, rotateMatrix);
+		offset = TransformNormal(offset, DirectionToDirection({ 0.0f,0.0f,-1.0f }, -sub.GetXZ()));
 
 		CalcInterTarget();
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "ISceneState.h"
 #include "Vec3.h"
+#include "Matrix44.h"
 
 class BossDeadState : public ISceneState {
 public:
@@ -15,6 +16,8 @@ public:
 
 	void DrawUI() override {}
 
+	void SetCamera();
+
 private:
 
 	GameScene* gameScene_ = nullptr;
@@ -25,8 +28,8 @@ private:
 	int32_t count_ = 0;
 	//カメラの位置
 	Vector3 cameraPos_ = {};
-	//カメラの回転角
-	Vector3 cameraRotate_ = { 0.2f,0.34f,0.0f };
+	//カメラの回転行列
+	Matrix4x4 rotateMat_ = MakeIdentity44();
 	//ターゲットからのオフセット
 	Vector3 offset_ = { -3.0f,2.0f,-8.0f };
 

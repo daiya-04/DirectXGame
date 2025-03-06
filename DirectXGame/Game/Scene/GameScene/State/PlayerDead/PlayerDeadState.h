@@ -2,6 +2,7 @@
 #include "ISceneState.h"
 #include "Vec3.h"
 #include "Player.h"
+#include "Matrix44.h"
 
 class PlayerDeadState : public ISceneState {
 public:
@@ -15,6 +16,8 @@ public:
 	void Update() override;
 
 	void DrawUI() override {}
+
+	void SetCamera();
 
 private:
 

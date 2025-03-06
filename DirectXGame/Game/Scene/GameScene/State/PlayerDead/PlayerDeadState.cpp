@@ -10,12 +10,9 @@ void PlayerDeadState::Init() {
 
 	count_ = 0;
 
-	offset_ = Transform(offset_, DirectionToDirection(Vector3(0.0f, 0.0f, 1.0f), gameScene_->GetBoss()->GetDirection()));
-	cameraPos_ = gameScene_->GetPlayer()->GetCenterPos() + offset_;
-	gameScene_->GetCamera().translation_ = cameraPos_;
-	gameScene_->GetCamera().rotation_ = cameraRotate_;
+	SetCamera();
 
-	gameScene_->GetCamera().UpdateViewMatrix();
+	gameScene_->GetBoss()->GetObj()->SetVisible(false);
 
 }
 
@@ -29,4 +26,13 @@ void PlayerDeadState::Update() {
 		}
 	}
 
+}
+
+void PlayerDeadState::SetCamera() {
+
+	cameraPos_ = gameScene_->GetPlayer()->GetCenterPos() + offset_;
+	gameScene_->GetCamera().translation_ = cameraPos_;
+	gameScene_->GetCamera().rotation_ = cameraRotate_;
+
+	gameScene_->GetCamera().UpdateViewMatrix();
 }

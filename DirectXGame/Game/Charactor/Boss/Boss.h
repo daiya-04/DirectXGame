@@ -93,7 +93,7 @@ private:
 	//攻撃種類
 	AttackType attackType_ = AttackType::kElementBall;
 	//最大HP
-	uint32_t maxHp_ = 1;
+	uint32_t maxHp_ = 30;
 	//死亡アニメーション終了フラグ
 	bool isFinishDeadMotion_ = false;
 	//攻撃のターゲット(プレイヤー)
