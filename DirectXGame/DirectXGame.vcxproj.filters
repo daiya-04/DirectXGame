@@ -479,6 +479,9 @@
     <ClCompile Include="Game\Charactor\Boss\Behavior\Move\BossMove.cpp">
       <Filter>Game\Charactor\Boss\Behavior\Move</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Charactor\HP.cpp">
+      <Filter>Game\Charactor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -828,6 +831,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Base\RandomEngine.h">
       <Filter>Engine\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\HP.h">
+      <Filter>Game\Charactor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -14,16 +14,16 @@ void BattleState::Init() {
 void BattleState::Update() {
 	//プレイヤーが死んだら専用シーンへ
 	if (gameScene_->GetPlayer()->IsDead()) {
-		gameScene_->ChangeState(GameScene::SceneEvent::PlayerDead);
 		//ロックオンを外す
 		gameScene_->GetLockOn()->LockOff();
+		gameScene_->ChangeState(GameScene::SceneEvent::PlayerDead);
 		return;
 	}
 	//ボスが死んだら専用シーンへ
 	if (gameScene_->GetBoss()->IsDead()) {
-		gameScene_->ChangeState(GameScene::SceneEvent::BossDead);
 		//ロックオンを外す
 		gameScene_->GetLockOn()->LockOff();
+		gameScene_->ChangeState(GameScene::SceneEvent::BossDead);
 		return;
 	}
 

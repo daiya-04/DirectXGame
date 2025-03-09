@@ -123,10 +123,6 @@ public:
 	/// </summary>
 	void Update() override;
 	/// <summary>
-	/// UI更新
-	/// </summary>
-	void UpdateUI() override;
-	/// <summary>
 	/// 中心座標の更新
 	/// </summary>
 	/// <param name="camera"></param>

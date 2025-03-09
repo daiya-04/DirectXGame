@@ -114,10 +114,6 @@ public:
 	/// </summary>
 	void Update() override;
 	/// <summary>
-	/// UI更新
-	/// </summary>
-	void UpdateUI() override;
-	/// <summary>
 	/// 中心座標の更新
 	/// </summary>
 	/// <param name="camera"></param>
@@ -174,11 +170,6 @@ public:
 	/// </summary>
 	/// <returns>終わってたらture, それ以外false</returns>
 	bool IsFinishDeadMotion() const { return isFinishDeadMotion_; }
-	/// <summary>
-	/// 現在のHPの取得
-	/// </summary>
-	/// <returns>現在のHP</returns>
-	uint32_t GetHP() const { return hp_; }
 
 	Vector3 GetKnockBackBaseDict() { return knockBackBaseDict_; }
 

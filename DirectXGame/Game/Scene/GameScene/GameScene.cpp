@@ -116,7 +116,7 @@ void GameScene::Init(){
 
 	///テクスチャの読み込み
 
-	uint32_t finishTex = DaiEngine::TextureManager::Load("finish.png");
+	uint32_t finishTex = DaiEngine::TextureManager::Load("Clear_text.png");
 	uint32_t XButtonTex = DaiEngine::TextureManager::Load("XButton.png");
 	uint32_t AButtonTex = DaiEngine::TextureManager::Load("AButton_P.png");
 	uint32_t char_AttackTex = DaiEngine::TextureManager::Load("char_Attack.png");

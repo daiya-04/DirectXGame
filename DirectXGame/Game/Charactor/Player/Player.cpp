@@ -36,14 +36,17 @@ void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 
 	//状態の設定
 	ChangeBehavior("Idel");
-	//HPの設定
-	hp_ = maxHp_;
-	hpBarSize_ = { 400.0f,10.0f };
+	////HPの設定
+	//hp_ = maxHp_;
+	//hpBarSize_ = { 400.0f,10.0f };
 
-	//UIの設定
-	hpBar_.reset(DaiEngine::Sprite::Create(DaiEngine::TextureManager::Load("Player_HP.png"), {440.0f,700.0f}));
-	hpBar_->SetAnchorpoint({ 0.0f,0.5f });
-	hpBar_->SetSize(hpBarSize_);
+	////UIの設定
+	//hpBar_.reset(DaiEngine::Sprite::Create(DaiEngine::TextureManager::Load("Player_HP.png"), {440.0f,700.0f}));
+	//hpBar_->SetAnchorpoint({ 0.0f,0.5f });
+	//hpBar_->SetSize(hpBarSize_);
+
+	hp_.Init(DaiEngine::TextureManager::Load("Player_HP.png"), { 440.0f,700.0f }, { 400.0f,10.0f });
+	hp_.SetMaxHP(maxHp_);
 
 }
 
@@ -75,13 +78,6 @@ void Player::Update(){
 	BaseCharactor::Update();
 }
 
-void Player::UpdateUI() {
-	//現在のHPのパーセント計算
-	float percent = static_cast<float>(hp_) / static_cast<float>(maxHp_);
-	//HPのUIを割合に合わせる
-	hpBar_->SetSize({ hpBarSize_.x * percent,hpBarSize_.y });
-}
-
 void Player::UpdateCenterPos() {
 	centerPos_ = {
 		obj_->worldTransform_.matWorld_.m[3][0],
@@ -106,7 +102,7 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 	}
 
 	if (other->GetTag() == "BossAttack") {
-		hp_--;
+		hp_.TakeDamage();
 
 		Vector3 attackPos = other->GetWorldPos();
 		attackPos.y = GetCenterPos().y;
@@ -129,7 +125,7 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 	}
 
 	//HPが0になったら...
-	if (hp_ <= 0) {
+	if (hp_.GetHP() <= 0) {
 		isDead_ = true;
 		ChangeBehavior("Dead");
 	}

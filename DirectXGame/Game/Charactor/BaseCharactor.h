@@ -19,6 +19,7 @@
 #include "Matrix44.h"
 #include "Sprite.h"
 #include "OBBCollider.h"
+#include "HP.h"
 
 #include <memory>
 #include <vector>
@@ -38,10 +39,6 @@ public:
 	/// 更新
 	/// </summary>
 	virtual void Update();
-	/// <summary>
-	/// UI更新
-	/// </summary>
-	virtual void UpdateUI() {};
 	/// <summary>
 	/// 中心座標の更新
 	/// </summary>
@@ -121,12 +118,14 @@ protected:
 	//向いている方向
 	Vector3 direction_ = { 0.0f,0.0f,1.0f };
 
-	//HP
-	int32_t hp_;
-	//HP用UI
-	std::unique_ptr<DaiEngine::Sprite> hpBar_;
-	//HP用UIサイズ
-	Vector2 hpBarSize_ = {};
+	////HP
+	//int32_t hp_;
+	////HP用UI
+	//std::unique_ptr<DaiEngine::Sprite> hpBar_;
+	////HP用UIサイズ
+	//Vector2 hpBarSize_ = {};
+
+	HP hp_;
 
 	//死亡フラグ
 	bool isDead_ = false;

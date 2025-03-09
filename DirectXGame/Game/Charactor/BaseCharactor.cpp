@@ -23,7 +23,7 @@ void BaseCharactor::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& m
 void BaseCharactor::Update() {
 
 	//UI更新
-	UpdateUI();
+	hp_.Update();
 	//コライダー更新
 	collider_->Update(rotateMat_);
 }
@@ -38,7 +38,7 @@ void BaseCharactor::Draw(const DaiEngine::Camera& camera) {
 }
 
 void BaseCharactor::DrawUI() {
-	hpBar_->Draw();
+	hp_.Draw();
 }
 
 void BaseCharactor::SetData(const LevelData::ObjectData& data) {

@@ -160,6 +160,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Charactor\Player\LockOn.cpp" />
     <ClCompile Include="Game\Charactor\Boss\GroundFlare\GroundFlareManager.cpp" />
     <ClCompile Include="Game\Charactor\Player\GroundBurst\GroundBurstManager.cpp" />
+    <ClCompile Include="Game\Charactor\HP.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\3d\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\3d\Object3d.cpp" />
@@ -328,6 +329,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Charactor\Player\MasicBall\MagicBallManager.h" />
     <ClInclude Include="Game\Charactor\Player\GroundBurst\GroundBurstManager.h" />
     <ClInclude Include="Engine\Base\RandomEngine.h" />
+    <ClInclude Include="Game\Charactor\HP.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
