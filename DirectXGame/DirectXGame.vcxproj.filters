@@ -485,7 +485,7 @@
     <ClCompile Include="Game\Charactor\HP.cpp">
       <Filter>Game\Charactor</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerAvoid.cpp">
+    <ClCompile Include="Game\Charactor\Player\Behavior\Avoid\PlayerAvoid.cpp">
       <Filter>Game\Charactor\Player\Behavior\Avoid</Filter>
     </ClCompile>
   </ItemGroup>
@@ -841,7 +841,7 @@
     <ClInclude Include="Game\Charactor\HP.h">
       <Filter>Game\Charactor</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerAvoid.h">
+    <ClInclude Include="Game\Charactor\Player\Behavior\Avoid\PlayerAvoid.h">
       <Filter>Game\Charactor\Player\Behavior\Avoid</Filter>
     </ClInclude>
   </ItemGroup>
