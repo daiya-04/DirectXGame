@@ -22,6 +22,7 @@ void BossAppear::Update() {
 	if (param_ >= 1.0f) {
 		boss_->ChangeBehavior("Idle");
 		boss_->AppearEffectEnd();
+		boss_->AuraEffStart();
 		return;
 	}
 

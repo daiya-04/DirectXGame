@@ -29,9 +29,9 @@ private:
 	float deltaTime_ = 1.0f / 60.0f;
 
 	//通常の減衰率
-	uint32_t baseDampingRate_ = 8;
+	uint32_t baseDampingRate_ = 7;
 	//ダッシュ時の減衰率
-	uint32_t dashDampingRate_ = 2;
+	uint32_t dashDampingRate_ = 5;
 	//ズーム時の減衰率
 	uint32_t zoomDampingRate_ = 15;
 	//ダッシュ用フラグ
@@ -49,7 +49,7 @@ private:
 	bool isZoom_ = false;
 
 	float zoomParam_ = 0.0f;
-	float zoomSpeed_ = 1.0f / 20.0f;
+	float zoomSpeed_ = 0.1f;
 
 public:
 	/// <summary>

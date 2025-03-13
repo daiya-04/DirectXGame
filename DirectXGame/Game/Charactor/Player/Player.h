@@ -35,6 +35,8 @@ private: //ふるまい用メンバ変数
 		kDash,
 		//死亡
 		kDead,
+		//回避
+		Avoid,
 	};
 
 public:
@@ -53,10 +55,12 @@ public:
 		AttackCombo3,
 		//死亡
 		Dead,
-		//加速
-		Accel,
+		//走り
+		Dash,
 		//ノックバック
 		KnockBack,
+		//回避
+		Avoid,
 
 		//アクション総数
 		kActionNum,
@@ -95,6 +99,8 @@ private:
 	bool isFinishDeadMotion_ = false;
 	//攻撃
 	std::vector<BasePlayerAttackManager*> attacks_;
+	//速度
+	float speed_ = 0.15f;
 
 public:
 	/// <summary>
@@ -190,6 +196,12 @@ public:
 	/// キャラがディゾルブで消えていく
 	/// </summary>
 	void DissolveUpdate();
+	/// <summary>
+	/// 移動
+	/// </summary>
+	void Move();
+
+	void SetSpeed(float speed) { speed_ = speed; }
 
 private:
 	/// <summary>

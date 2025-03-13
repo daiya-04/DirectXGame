@@ -110,6 +110,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="PlayerAvoid.cpp" />
     <ClCompile Include="Game\Charactor\Boss\Behavior\Move\BossMove.cpp" />
     <ClCompile Include="Game\Scene\GameScene\State\Battle\BattleState.cpp" />
     <ClCompile Include="Game\Scene\GameScene\State\BossDead\BossDeadState.cpp" />
@@ -213,6 +214,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Charactor\Player\MasicBall\MagicBallManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PlayerAvoid.h" />
     <ClInclude Include="Game\Charactor\Boss\Behavior\Move\BossMove.h" />
     <ClInclude Include="Game\Charactor\Boss\BaseBossAttackManager.h" />
     <ClInclude Include="Game\Charactor\Player\BasePlayerAttackManager.h" />

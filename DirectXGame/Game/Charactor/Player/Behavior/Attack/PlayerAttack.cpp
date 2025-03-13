@@ -85,7 +85,12 @@ void PlayerAttack::Update() {
 			//続かないなら...
 			//スティック入力がされたままだったらJogStateへ
 			if (DaiEngine::Input::GetInstance()->TiltLStick(DaiEngine::Input::Stick::All)) {
-				player_->ChangeBehavior("Jog");
+				if (DaiEngine::Input::GetInstance()->PushButton(DaiEngine::Input::Button::A)) {
+					player_->ChangeBehavior("Dash");
+				}
+				else {
+					player_->ChangeBehavior("Jog");
+				}	
 			}
 			else {
 				player_->ChangeBehavior("Idel");

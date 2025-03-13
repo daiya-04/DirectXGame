@@ -90,6 +90,7 @@ private:
 	//登場演出
 	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> effect_;
 	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> deadEff_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> auraEff_;
 	//攻撃種類
 	AttackType attackType_ = AttackType::kElementBall;
 	//最大HP
@@ -198,6 +199,10 @@ public:
 	void AttackCountReset() { attackCount_ = 0; }
 
 	void DeadEffStart();
+
+	void AuraEffStart();
+	void AuraEffEnd();
+
 
 	/// <summary>
 	/// 攻撃配列から特定の型取り出し

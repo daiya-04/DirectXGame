@@ -11,6 +11,8 @@ void FollowCamera::Init(){
 	camera_.Init();
 	//行列更新
 	camera_.UpdateViewMatrixRotate(rotateMat_);
+
+	zoomSpeed_ = 0.02f;
 }
 
 void FollowCamera::Update(){

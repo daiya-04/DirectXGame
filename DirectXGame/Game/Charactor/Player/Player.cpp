@@ -11,6 +11,7 @@
 #include "PlayerDead.h"
 #include "PlayerJog.h"
 #include "PlayerKnockBack.h"
+#include "PlayerAvoid.h"
 #include "ColliderManager.h"
 
 void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
@@ -36,15 +37,7 @@ void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 
 	//状態の設定
 	ChangeBehavior("Idel");
-	////HPの設定
-	//hp_ = maxHp_;
-	//hpBarSize_ = { 400.0f,10.0f };
-
-	////UIの設定
-	//hpBar_.reset(DaiEngine::Sprite::Create(DaiEngine::TextureManager::Load("Player_HP.png"), {440.0f,700.0f}));
-	//hpBar_->SetAnchorpoint({ 0.0f,0.5f });
-	//hpBar_->SetSize(hpBarSize_);
-
+	//HPの設定
 	hp_.Init(DaiEngine::TextureManager::Load("Player_HP.png"), { 440.0f,700.0f }, { 400.0f,10.0f });
 	hp_.SetMaxHP(maxHp_);
 
@@ -97,10 +90,6 @@ void Player::Draw(const DaiEngine::Camera& camera){
 
 void Player::OnCollision(DaiEngine::Collider* other) {
 
-	if (actionIndex_ == Action::Accel) {
-		return;
-	}
-
 	if (other->GetTag() == "BossAttack") {
 		hp_.TakeDamage();
 
@@ -140,6 +129,7 @@ void Player::ChangeBehavior(const std::string& behaviorName) {
 		{"Dash",[this]() {return std::make_unique<PlayerDash>(this); }},
 		{"Dead",[this]() {return std::make_unique<PlayerDead>(this); }},
 		{"KnockBack",[this]() {return std::make_unique<PlayerKnockBack>(this); }},
+		{"Avoid", [this]() {return std::make_unique<PlayerAvoid>(this); }},
 	};
 	//検索
 	auto nextBehavior = behaviorTable.find(behaviorName);
@@ -210,4 +200,20 @@ void Player::SetAnimation(size_t actionIndex, bool isLoop) {
 void Player::DissolveUpdate() {
 	obj_->threshold_ = animations_[actionIndex_].GetAnimationTime() / animations_[actionIndex_].GetDuration();
 	obj_->threshold_ = std::clamp(obj_->threshold_, 0.0f, animations_[actionIndex_].GetDuration());
+}
+
+void Player::Move() {
+
+	//移動ベクトル
+	Vector3 move{};
+
+	move = DaiEngine::Input::GetInstance()->GetMoveXZ();
+	move = (move / SHRT_MAX) * speed_;
+
+	move = TransformNormal(move, GetRotateYMatrix(followCamera_->GetRotateMat()));
+
+	obj_->worldTransform_.translation_ += move.GetXZ();
+
+	SetDirection(move.Normalize());
+
 }

@@ -38,6 +38,10 @@ void Boss::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models) {
 		particle->particleData_.isLoop_ = false;
 	}
 	deadEff_ = ParticleManager::Load("BossDeadEff");
+	auraEff_ = ParticleManager::Load("BossAura");
+	for (auto& [group, particle] : auraEff_) {
+		particle->particleData_.isLoop_ = false;
+	}
 	///
 
 	//状態設定
@@ -46,14 +50,6 @@ void Boss::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models) {
 	attackType_ = AttackType::kElementBall;
 
 	//HPの設定
-	//hp_ = maxHp_;
-	//hpBarSize_ = { 500.0f,10.0f };
-
-	////UIの設定
-	//hpBar_.reset(DaiEngine::Sprite::Create(DaiEngine::TextureManager::Load("Boss_HP.png"), { 390.0f,40.0f }));
-	//hpBar_->SetAnchorpoint({ 0.0f,0.5f });
-	//hpBar_->SetSize(hpBarSize_);
-
 	hp_.Init(DaiEngine::TextureManager::Load("Boss_HP.png"), { 390.0f,40.0f }, { 500.0f,10.0f });
 	hp_.SetMaxHP(maxHp_);
 
@@ -87,6 +83,10 @@ void Boss::Update() {
 	for (auto& [group, particle] : deadEff_) {
 		particle->Update();
 	}
+	for (auto& [group, particle] : auraEff_) {
+		particle->particleData_.emitter_.translate = obj_->GetWorldPos();
+		particle->Update();
+	}
 
 }
 
@@ -110,6 +110,9 @@ void Boss::DrawParticle(const DaiEngine::Camera& camera) {
 		particle->Draw(camera);
 	}
 	for (auto& [group, particle] : deadEff_) {
+		particle->Draw(camera);
+	}
+	for (auto& [group, particle] : auraEff_) {
 		particle->Draw(camera);
 	}
 }
@@ -172,6 +175,18 @@ void Boss::DeadEffStart() {
 	for (auto& [group, particle] : deadEff_) {
 		particle->Emit();
 		particle->particleData_.emitter_.translate = GetCenterPos();
+	}
+}
+
+void Boss::AuraEffStart() {
+	for (auto& [group, particle] : auraEff_) {
+		particle->particleData_.isLoop_ = true;
+	}
+}
+
+void Boss::AuraEffEnd() {
+	for (auto& [group, particle] : auraEff_) {
+		particle->particleData_.isLoop_ = false;
 	}
 }
 

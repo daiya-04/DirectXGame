@@ -179,6 +179,9 @@
     <Filter Include="Game\Charactor\Boss\Behavior\Move">
       <UniqueIdentifier>{fc351a0c-10a7-4e27-959c-7d4dc1ab887e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Charactor\Player\Behavior\Avoid">
+      <UniqueIdentifier>{218c19ad-d8b1-4c19-8be3-5bfe1aba997c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -481,6 +484,9 @@
     </ClCompile>
     <ClCompile Include="Game\Charactor\HP.cpp">
       <Filter>Game\Charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerAvoid.cpp">
+      <Filter>Game\Charactor\Player\Behavior\Avoid</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -834,6 +840,9 @@
     </ClInclude>
     <ClInclude Include="Game\Charactor\HP.h">
       <Filter>Game\Charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerAvoid.h">
+      <Filter>Game\Charactor\Player\Behavior\Avoid</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

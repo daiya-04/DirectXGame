@@ -57,8 +57,10 @@ void BattleState::DrawUI() {
 
 	gameScene_->GetXButtonUI()->Draw();
 	gameScene_->GetAButtonUI()->Draw();
+	gameScene_->GetBButtonUI()->Draw();
 	gameScene_->GetCharAttackUI()->Draw();
 	gameScene_->GetCharDashUI()->Draw();
+	gameScene_->GetCharAvoidUI()->Draw();
 	gameScene_->GetPlayer()->DrawUI();
 	gameScene_->GetBoss()->DrawUI();
 

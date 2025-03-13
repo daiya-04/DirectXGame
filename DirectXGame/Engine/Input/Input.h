@@ -105,11 +105,11 @@ namespace DaiEngine {
 		Vector3 GetMoveXZ() {
 			float len = Vector2(static_cast<float>(joyState.Gamepad.sThumbLX), static_cast<float>(joyState.Gamepad.sThumbLY)).Length();
 			if (len < deadZone_) { return Vector3(); }
-			return { (float)joyState.Gamepad.sThumbLX, 0.0f, (float)joyState.Gamepad.sThumbLY };
+			return { static_cast<float>(joyState.Gamepad.sThumbLX), 0.0f, static_cast<float>(joyState.Gamepad.sThumbLY) };
 		}
 		//カメラの回転取得
 		Vector3 GetCameraRotate() {
-			return { (float)joyState.Gamepad.sThumbRY / SHRT_MAX,(float)joyState.Gamepad.sThumbRX / SHRT_MAX,0.0f };
+			return { static_cast<float>(joyState.Gamepad.sThumbRY) / SHRT_MAX, static_cast<float>(joyState.Gamepad.sThumbRX) / SHRT_MAX, 0.0f };
 		}
 
 		//Lスティックのトリガーチェック
