@@ -28,7 +28,7 @@ private:
 	//アニメーションのスピード
 	float attackAnimeSpeed_ = 1.0f / 30.0f;
 
-	uint32_t dashCoolTime_ = 6;
+	uint32_t avoidCoolTime_ = 6;
 	uint32_t timer_ = 0;
 
 };

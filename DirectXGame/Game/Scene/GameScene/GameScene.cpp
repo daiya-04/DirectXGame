@@ -38,6 +38,10 @@ void GameScene::SetGlobalVariables() {
 	globalVariables->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "Position", AButton_->GetPosition());
 
+	groupName = "BButton";
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "Position", BButton_->GetPosition());
+
 	groupName = "charAttack";
 	globalVariables->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "Position", charAttack_->GetPosition());
@@ -45,6 +49,10 @@ void GameScene::SetGlobalVariables() {
 	groupName = "charDash";
 	globalVariables->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "Position", charDash_->GetPosition());
+
+	groupName = "charAvoid";
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "Position", charAvoid_->GetPosition());
 
 	groupName = "gameOver";
 	globalVariables->CreateGroup(groupName);
@@ -63,10 +71,14 @@ void GameScene::ApplyGlobalVariables() {
 	XButton_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
 	groupName = "AButton";
 	AButton_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	groupName = "BButton";
+	BButton_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
 	groupName = "charAttack";
 	charAttack_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
 	groupName = "charDash";
 	charDash_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	groupName = "charAvoid";
+	charAvoid_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
 	groupName = "gameOver";
 	gameOver_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
 	groupName = "finish";
@@ -100,8 +112,9 @@ void GameScene::Init(){
 	std::shared_ptr<DaiEngine::Model> playerAttackC2Model = DaiEngine::ModelManager::LoadGLTF("PlayerAttackC2");
 	std::shared_ptr<DaiEngine::Model> playerAttackC3Model = DaiEngine::ModelManager::LoadGLTF("PlayerAttackC3");
 	std::shared_ptr<DaiEngine::Model> playerDeadModel = DaiEngine::ModelManager::LoadGLTF("PlayerDead");
-	std::shared_ptr<DaiEngine::Model> playerAccelModel = DaiEngine::ModelManager::LoadGLTF("Accel");
+	std::shared_ptr<DaiEngine::Model> playerDashModel = DaiEngine::ModelManager::LoadGLTF("PlayerDash");
 	std::shared_ptr<DaiEngine::Model> playerKnockBackModel = DaiEngine::ModelManager::LoadGLTF("KnockBack");
+	std::shared_ptr<DaiEngine::Model> playerAvoidModel = DaiEngine::ModelManager::LoadGLTF("PlayerAvoid");
 	//ボス
 	std::shared_ptr<DaiEngine::Model> bossStandingModel = DaiEngine::ModelManager::LoadGLTF("Standing");
 	std::shared_ptr<DaiEngine::Model> bossSetModel = DaiEngine::ModelManager::LoadGLTF("SetMotion");
@@ -116,11 +129,13 @@ void GameScene::Init(){
 
 	///テクスチャの読み込み
 
-	uint32_t finishTex = DaiEngine::TextureManager::Load("finish.png");
+	uint32_t finishTex = DaiEngine::TextureManager::Load("Clear_text.png");
 	uint32_t XButtonTex = DaiEngine::TextureManager::Load("XButton.png");
 	uint32_t AButtonTex = DaiEngine::TextureManager::Load("AButton_P.png");
+	uint32_t BButtonTex = DaiEngine::TextureManager::Load("BButton.png");
 	uint32_t char_AttackTex = DaiEngine::TextureManager::Load("char_Attack.png");
 	uint32_t char_DashTex = DaiEngine::TextureManager::Load("char_Dash.png");
+	uint32_t char_AvoidTex = DaiEngine::TextureManager::Load("char_Avoid.png");
 	uint32_t gameOverTex = DaiEngine::TextureManager::Load("GameOver.png");
 	uint32_t skyBoxTex = DaiEngine::TextureManager::Load("skyBox.dds");
 
@@ -151,7 +166,7 @@ void GameScene::Init(){
 	//プレイヤー
 	player_ = static_cast<Player*>(charactors_[static_cast<size_t>(CharactorType::kPlayer)].get());
 	assert(player_);
-	player_->Init({ playerStandingModel, playerRunningModel, playerAttackModel, playerAttackC2Model, playerAttackC3Model, playerDeadModel, playerAccelModel, playerKnockBackModel });
+	player_->Init({ playerStandingModel, playerRunningModel, playerAttackModel, playerAttackC2Model, playerAttackC3Model, playerDeadModel, playerDashModel, playerKnockBackModel, playerAvoidModel });
 
 
 	//ボス
@@ -228,9 +243,13 @@ void GameScene::Init(){
 
 	AButton_.reset(DaiEngine::Sprite::Create(AButtonTex, {}));
 
+	BButton_.reset(DaiEngine::Sprite::Create(BButtonTex, {}));
+
 	charAttack_.reset(DaiEngine::Sprite::Create(char_AttackTex, {}));
 
 	charDash_.reset(DaiEngine::Sprite::Create(char_DashTex, {}));
+
+	charAvoid_.reset(DaiEngine::Sprite::Create(char_AvoidTex, {}));
 
 	gameOver_.reset(DaiEngine::Sprite::Create(gameOverTex, {}));
 

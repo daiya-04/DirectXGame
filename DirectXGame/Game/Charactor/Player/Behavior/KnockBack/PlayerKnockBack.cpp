@@ -24,15 +24,20 @@ void PlayerKnockBack::Update() {
 	if (!player_->GetNowAnimation().IsPlaying()) {
 		//スティック入力がされたままだったらJogStateへ
 		if (DaiEngine::Input::GetInstance()->TiltLStick(DaiEngine::Input::Stick::All)) {
-			player_->ChangeBehavior("Jog");
+			if (DaiEngine::Input::GetInstance()->PushButton(DaiEngine::Input::Button::A)) {
+				player_->ChangeBehavior("Dash");
+			}
+			else {
+				player_->ChangeBehavior("Jog");
+			}
 		}else {
 			player_->ChangeBehavior("Idel");
 		}
 	}
 
-	if (++timer_ >= dashCoolTime_) {
-		if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::A)) {
-			player_->ChangeBehavior("Dash");
+	if (++timer_ >= avoidCoolTime_) {
+		if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::B)) {
+			player_->ChangeBehavior("Avoid");
 		}
 	}
 	

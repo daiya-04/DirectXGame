@@ -24,11 +24,11 @@ private:
 	//ダッシュの時間
 	uint32_t dashTime_ = 10;
 	//加速量(スカラー)
-	float absAccel_ = 0.1f;
+	float absAccel_ = 0.02f;
 	//ダッシュの速さ
-	float dashSpeed_ = 0.0f;
+	float dashSpeed_ = 0.15f;
 	//速さの最大値
-	float maxSpeed_ = 0.4f;
+	float maxSpeed_ = 0.2f;
 
 };
 

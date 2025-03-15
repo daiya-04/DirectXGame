@@ -9,12 +9,14 @@ void PlayerJog::Init() {
 	assert(player_);
 
 	player_->SetAnimation(Player::Action::Jogging);
+	player_->GetFollowCamera()->SetDashFlag(false);
+	player_->SetSpeed(speed_);
 
 }
 
 void PlayerJog::Update() {
 
-	//スティックを話したらIdelStateへ
+	//スティックを離したらIdelStateへ
 	if (DaiEngine::Input::GetInstance()->ReleaseLStick(DaiEngine::Input::Stick::All)) {
 		player_->ChangeBehavior("Idel");
 		return;
@@ -29,19 +31,21 @@ void PlayerJog::Update() {
 	//ダッシュ
 	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::A)) {
 		player_->ChangeBehavior("Dash");
+		/*player_->SetAnimation(Player::Action::Dash);
+		speed_ = dashSpeed_;
+		player_->GetFollowCamera()->SetDashFlag(true);*/
+	}
+	////ダッシュ解除
+	//if (DaiEngine::Input::GetInstance()->ReleaseButton(DaiEngine::Input::Button::A)) {
+	//	player_->SetAnimation(Player::Action::Jogging);
+	//	speed_ = baseSpeed_;
+	//	player_->GetFollowCamera()->SetDashFlag(false);
+	//}
+	//回避
+	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::B)) {
+		player_->ChangeBehavior("Avoid");
 	}
 
-	//移動ベクトル
-	Vector3 move{};
-
-	move = DaiEngine::Input::GetInstance()->GetMoveXZ();
-	move = (move / SHRT_MAX) * speed_;
-
-	move = TransformNormal(move, GetRotateYMatrix(player_->GetFollowCamera()->GetRotateMat()));
-
-	player_->GetObj()->worldTransform_.translation_ += move;
-	player_->GetObj()->worldTransform_.translation_.y = 0.0f;
-
-	player_->SetDirection(move.Normalize());
+	player_->Move();
 
 }

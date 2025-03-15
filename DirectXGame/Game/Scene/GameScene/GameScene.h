@@ -164,10 +164,14 @@ private:
 	std::unique_ptr<DaiEngine::Sprite> XButton_;
 	//Aボタン
 	std::unique_ptr<DaiEngine::Sprite> AButton_;
+	//Bボタン
+	std::unique_ptr<DaiEngine::Sprite> BButton_;
 	//攻撃文字
 	std::unique_ptr<DaiEngine::Sprite> charAttack_;
 	//走る文字
 	std::unique_ptr<DaiEngine::Sprite> charDash_;
+	//回避文字
+	std::unique_ptr<DaiEngine::Sprite> charAvoid_;
 	//ゲームオーバー文字
 	std::unique_ptr<DaiEngine::Sprite> gameOver_;
 	//終了文字
@@ -221,8 +225,10 @@ public:
 	///UI各種取得
 	DaiEngine::Sprite* GetXButtonUI() { return XButton_.get(); }
 	DaiEngine::Sprite* GetAButtonUI() { return AButton_.get(); }
+	DaiEngine::Sprite* GetBButtonUI() { return BButton_.get(); }
 	DaiEngine::Sprite* GetCharAttackUI() { return charAttack_.get(); }
 	DaiEngine::Sprite* GetCharDashUI() { return charDash_.get(); }
+	DaiEngine::Sprite* GetCharAvoidUI() { return charAvoid_.get(); }
 	DaiEngine::Sprite* GetFinishUI() { return finish_.get(); }
 	DaiEngine::Sprite* GetGameOverUI() { return gameOver_.get(); }
 

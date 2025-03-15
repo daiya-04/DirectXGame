@@ -12,6 +12,7 @@ void BossDead::Init() {
 	boss_->GetNowAnimation().SetAnimationSpeed(0.0f);
 	isVib_ = true;
 	point_ = boss_->GetCenterPos();
+	boss_->AuraEffEnd();
 
 }
 
