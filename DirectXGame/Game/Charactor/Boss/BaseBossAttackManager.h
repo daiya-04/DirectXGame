@@ -30,6 +30,6 @@ public:
 	/// ターゲットセット
 	/// </summary>
 	/// <param name="target"></param>
-	virtual void SetTarget(const Vector3* target) = 0;
+	virtual void SetTarget([[maybe_unused]] const Vector3* target) {}
 
 };

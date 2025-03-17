@@ -13,6 +13,7 @@
 #include "PlayerKnockBack.h"
 #include "PlayerAvoid.h"
 #include "ColliderManager.h"
+#include "ParticleManager.h"
 
 void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 
@@ -34,6 +35,12 @@ void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 	collider_->Init("Player", obj_->worldTransform_, {});
 	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->ColliderOn();
+
+	handEff_ = ParticleManager::Load("PlayerHandEff");
+	for (auto& [group, particle] : handEff_) {
+		particle->particleData_.isLoop_ = false;
+	}
+
 
 	//状態の設定
 	ChangeBehavior("Idel");
@@ -68,6 +75,10 @@ void Player::Update(){
 	skeletons_[actionIndex_].Update();
 	skinClusters_[actionIndex_].Update(skeletons_[actionIndex_]);
 
+	for (auto& [group, particle] : handEff_) {
+		particle->Update();
+	}
+
 	BaseCharactor::Update();
 }
 
@@ -88,6 +99,12 @@ void Player::Draw(const DaiEngine::Camera& camera){
 
 }
 
+void Player::DrawParticle(const DaiEngine::Camera& camera) {
+	for (auto& [group, particle] : handEff_) {
+		particle->Draw(camera);
+	}
+}
+
 void Player::OnCollision(DaiEngine::Collider* other) {
 
 	if (other->GetTag() == "BossAttack") {
@@ -100,9 +117,11 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 		if (knockBackBaseDict_.Length() <= 0.0f) {
 			knockBackBaseDict_ = direction_;
 		}
-
+		EndHandEff();
 		ChangeBehavior("KnockBack");
 	}
+
+	
 
 	//ターゲットとの距離
 	float distance = (target_->GetWorldPos().GetXZ() - GetCenterPos().GetXZ()).Length();
@@ -116,6 +135,7 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 	//HPが0になったら...
 	if (hp_.GetHP() <= 0) {
 		isDead_ = true;
+		EndHandEff();
 		ChangeBehavior("Dead");
 	}
 }
@@ -216,4 +236,28 @@ void Player::Move() {
 
 	SetDirection(move.Normalize());
 
+}
+
+void Player::StartHandEff() {
+	for (auto& [group, particle] : handEff_) {
+		particle->particleData_.isLoop_ = true;
+	}
+}
+
+void Player::EndHandEff() {
+	for (auto& [group, particle] : handEff_) {
+		particle->particleData_.isLoop_ = false;
+	}
+}
+
+void Player::HandEffPosUpdate(const std::string& side) {
+	if (side == "right") {
+		for (auto& [group, particle] : handEff_) {
+			particle->particleData_.emitter_.translate = Transform(skeletons_[actionIndex_].GetSkeletonPos("mixamorig1:RightHand"), obj_->worldTransform_.matWorld_);
+		}
+	}else if(side=="left") {
+		for (auto& [group, particle] : handEff_) {
+			particle->particleData_.emitter_.translate = Transform(skeletons_[actionIndex_].GetSkeletonPos("mixamorig1:LeftHand"), obj_->worldTransform_.matWorld_);
+		}
+	}
 }

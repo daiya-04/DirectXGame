@@ -14,6 +14,7 @@ BossAttack::BossAttack(Boss* boss) {
 	groundFlare_ = boss_->GetAttackType<GroundFlareManager>();
 	icicle_ = boss_->GetAttackType<IcicleManager>();
 	plasmaShot_ = boss_->GetAttackType<PlasmaShotManager>();
+	iceImpact_ = boss_->GetAttackType<IceImpactManager>();
 
 }
 
@@ -54,6 +55,14 @@ void BossAttack::Init() {
 		plasmaShot_->AttackStart();
 
 		//次の攻撃
+		boss_->SetAttackType(Boss::AttackType::kIceImpact);
+
+	}else if (boss_->GetAttackType() == Boss::AttackType::kIceImpact) {
+		//データのセットと開始
+		iceImpact_->SetAttackData(boss_->GetCenterPos());
+		iceImpact_->AttackStart();
+
+		//次の攻撃
 		boss_->SetAttackType(Boss::AttackType::kElementBall);
 	}
 
@@ -72,7 +81,9 @@ void BossAttack::Update() {
 		//boss_->SetAnimation(Boss::Action::Attack, false);
 	}
 	//攻撃が終わったら通常行動に
-	if (groundFlare_->AttackFinish() || icicle_->AttackFinish() || plasmaShot_->AttackFinish() || elementBall_->AttackFinish()) {
+	if (groundFlare_->AttackFinish() || icicle_->AttackFinish() || plasmaShot_->AttackFinish() || elementBall_->AttackFinish()||iceImpact_->AttackFinish()) {
+
+		boss_->ChangeAuraColor();
 
 		if (boss_->GetAttackCount() >= 2) {
 

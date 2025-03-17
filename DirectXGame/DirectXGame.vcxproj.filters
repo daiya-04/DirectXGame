@@ -182,6 +182,9 @@
     <Filter Include="Game\Charactor\Player\Behavior\Avoid">
       <UniqueIdentifier>{218c19ad-d8b1-4c19-8be3-5bfe1aba997c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Charactor\Boss\IceImpact">
+      <UniqueIdentifier>{1f873148-b364-4776-a7c1-315a67e50a49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -487,6 +490,12 @@
     </ClCompile>
     <ClCompile Include="Game\Charactor\Player\Behavior\Avoid\PlayerAvoid.cpp">
       <Filter>Game\Charactor\Player\Behavior\Avoid</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\IceImpact\IceImpactManager.cpp">
+      <Filter>Game\Charactor\Boss\IceImpact</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Boss\IceImpact\IceImpact.cpp">
+      <Filter>Game\Charactor\Boss\IceImpact</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -843,6 +852,12 @@
     </ClInclude>
     <ClInclude Include="Game\Charactor\Player\Behavior\Avoid\PlayerAvoid.h">
       <Filter>Game\Charactor\Player\Behavior\Avoid</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\IceImpact\IceImpactManager.h">
+      <Filter>Game\Charactor\Boss\IceImpact</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Boss\IceImpact\IceImpact.h">
+      <Filter>Game\Charactor\Boss\IceImpact</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

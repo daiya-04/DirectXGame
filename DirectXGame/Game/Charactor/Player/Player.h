@@ -11,6 +11,7 @@
 #include "IPlayerBehavior.h"
 #include "MagicBallManager.h"
 #include "GroundBurstManager.h"
+#include "GPUParticle.h"
 
 #include <memory>
 #include <list>
@@ -102,6 +103,8 @@ private:
 	//速度
 	float speed_ = 0.15f;
 
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> handEff_;
+
 public:
 	/// <summary>
 	/// コンストラクタ
@@ -130,6 +133,11 @@ public:
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	void Draw(const DaiEngine::Camera& camera) override;
+	/// <summary>
+	/// パーティクル描画
+	/// </summary>
+	/// <param name="camera"></param>
+	void DrawParticle(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// 衝突時
 	/// </summary>
@@ -202,6 +210,12 @@ public:
 	void Move();
 
 	void SetSpeed(float speed) { speed_ = speed; }
+
+	void StartHandEff();
+
+	void EndHandEff();
+
+	void HandEffPosUpdate(const std::string& side);
 
 private:
 	/// <summary>

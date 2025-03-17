@@ -77,6 +77,10 @@ public:
 		kIcicle,
 		//電気玉
 		kPlasmaShot,
+		//氷爆発
+		kIceImpact,
+
+		kTypeNum,
 	};
 
 private:
@@ -103,6 +107,14 @@ private:
 	/// 攻撃の各種マネージャ
 	std::vector<BaseBossAttackManager*> attacks_;
 	///
+
+	std::array<Vector4, AttackType::kTypeNum> auraColors_ = {
+		Vector4(1.0f, 0.029f, 0.029f, 0.0f), //火
+		Vector4(1.0f, 0.029f, 0.029f, 0.0f), //火
+		Vector4(0.08f, 0.99f, 0.85f, 0.0f), //氷
+		Vector4(0.42f, 0.18f, 1.0f, 0.0f), //雷
+		Vector4(0.08f, 0.99f, 0.85f, 0.0f), //氷
+	};
 
 	//攻撃回数
 	uint32_t attackCount_ = 0;
@@ -202,7 +214,8 @@ public:
 
 	void AuraEffStart();
 	void AuraEffEnd();
-
+	//オーラの色を変える
+	void ChangeAuraColor();
 
 	/// <summary>
 	/// 攻撃配列から特定の型取り出し

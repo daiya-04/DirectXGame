@@ -27,7 +27,7 @@ public:
 
 private:
 	//地面からバーン出来る総数
-	static const uint32_t kGroundBurstNum_ = 5;
+	static const uint32_t kGroundBurstNum_ = 2;
 	//攻撃の配列
 	std::array<std::unique_ptr<GroundBurst>, kGroundBurstNum_> groundBursts_;
 

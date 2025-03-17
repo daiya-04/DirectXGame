@@ -28,7 +28,7 @@ public:
 
 private:
 	//発射できる総数
-	static const uint32_t kMagicBallNum_ = 10;
+	static const uint32_t kMagicBallNum_ = 5;
 	//弾の配列
 	std::array<std::unique_ptr<MagicBall>, kMagicBallNum_> masicBalls_;
 

@@ -49,6 +49,8 @@ void Boss::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models) {
 	//攻撃設定
 	attackType_ = AttackType::kElementBall;
 
+	ChangeAuraColor();
+
 	//HPの設定
 	hp_.Init(DaiEngine::TextureManager::Load("Boss_HP.png"), { 390.0f,40.0f }, { 500.0f,10.0f });
 	hp_.SetMaxHP(maxHp_);
@@ -193,4 +195,10 @@ void Boss::AuraEffEnd() {
 void Boss::LookAtTarget() {
 	Vector3 direction = target_->GetWorldPos().GetXZ() - obj_->GetWorldPos().GetXZ();
 	SetDirection(direction);
+}
+
+void Boss::ChangeAuraColor() {
+	for (auto& [group, particle] : auraEff_) {
+		particle->particleData_.emitter_.color = auraColors_[attackType_];
+	}
 }

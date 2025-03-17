@@ -43,6 +43,7 @@
 #include "GroundFlareManager.h"
 #include "IcicleManager.h"
 #include "PlasmaShotManager.h"
+#include "IceImpactManager.h"
 #include "Rock.h"
 #include "ISceneState.h"
 #include "BasePlayerAttackManager.h"

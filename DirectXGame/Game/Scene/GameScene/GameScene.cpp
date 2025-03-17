@@ -204,6 +204,8 @@ void GameScene::Init(){
 	bossAttacks_.push_back(std::make_unique<IcicleManager>());
 	//電気玉
 	bossAttacks_.push_back(std::make_unique<PlasmaShotManager>());
+	//氷爆発
+	bossAttacks_.push_back(std::make_unique<IceImpactManager>());
 
 	for (auto& bossAttack : bossAttacks_) {
 		bossAttack->Init();
@@ -362,10 +364,12 @@ void GameScene::DrawPostEffect() {
 
 	IceScar::preDraw();
 	GetBossAttackType<IcicleManager>()->DrawScar(camera_);
+	GetBossAttackType<IceImpactManager>()->DrawScar(camera_);
 
 	skyBox_->Draw(camera_);
 
 	boss_->DrawParticle(camera_);
+	player_->DrawParticle(camera_);
 
 	if (nowSceneEvent_ == SceneEvent::Battle || nowSceneEvent_ == SceneEvent::Clear) {
 		for (auto& playerAttack : playerAttacks_) {

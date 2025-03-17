@@ -131,6 +131,11 @@ public:
 	/// </summary>
 	/// <returns>演出中はtrue、それ以外はfalse</returns>
 	bool IsEffect() const { return isEffect_; }
+	/// <summary>
+	/// 大きさ設定
+	/// </summary>
+	/// <param name="scale"></param>
+	void SetScale(float scale) { scale_ = { scale,scale }; }
 
 private:
 	/// <summary>

@@ -1,0 +1,283 @@
+{
+    "IceImpact": {
+        "ice": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    0.2597077786922455,
+                    0.9460784196853638,
+                    0.8451414704322815,
+                    1.0
+                ],
+                "Count": 10000,
+                "EmitterType": 1,
+                "Frequency": 0.01666666753590107,
+                "LifeTime": 1.0,
+                "Radius": 2.0,
+                "Rotate": 360.0,
+                "Scale": 0.30000001192092896,
+                "Size": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Speed": 1.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 0.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 0,
+                "isConstantVelocity": 0,
+                "isNoise": 0,
+                "isRandom": 0,
+                "isRoring": 1,
+                "isScale": 1,
+                "isTransSpeed": 1,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    5.0,
+                    5.0,
+                    5.0
+                ],
+                "midAlpha": 1.0,
+                "minRoringSpeed": [
+                    3.0,
+                    3.0,
+                    3.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 0.20000000298023224,
+                "startSpeed": 30.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": false,
+            "isModel": true,
+            "modelName": "cube",
+            "textureName": "tex_eff_thunder_aura01.png"
+        },
+        "particle1": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    0.33859574794769287,
+                    0.8970588445663452,
+                    0.7163795828819275,
+                    0.0
+                ],
+                "Count": 5000,
+                "EmitterType": 1,
+                "Frequency": 0.01600000075995922,
+                "LifeTime": 0.699999988079071,
+                "Radius": 2.0,
+                "Rotate": 360.0,
+                "Scale": 0.10000000149011612,
+                "Size": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Speed": 1.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 0.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 1,
+                "isColor": 0,
+                "isConstantVelocity": 0,
+                "isNoise": 0,
+                "isRandom": 0,
+                "isRoring": 1,
+                "isScale": 1,
+                "isTransSpeed": 1,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    5.0
+                ],
+                "midAlpha": 1.0,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    3.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 1.0,
+                "startSpeed": 25.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": false,
+            "isModel": false,
+            "modelName": "",
+            "textureName": "flare_01.png"
+        },
+        "wave": {
+            "Emitter": {
+                "BillboardType": 0,
+                "Color": [
+                    0.2547577917575836,
+                    0.9117646813392639,
+                    0.8924407362937927,
+                    1.0
+                ],
+                "Count": 3,
+                "EmitterType": 1,
+                "Frequency": 0.01666666753590107,
+                "LifeTime": 0.6000000238418579,
+                "Radius": 0.0010000000474974513,
+                "Rotate": 360.0,
+                "Scale": 0.10000000149011612,
+                "Size": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "Speed": 0.0,
+                "Translate": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "OverLifeTime": {
+                "Gravity": 0.0,
+                "Velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "density": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endAlpha": 0.0,
+                "endColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "endScale": 16.0,
+                "endSpeed": 0.0,
+                "endVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isAlpha": 0,
+                "isColor": 0,
+                "isConstantVelocity": 0,
+                "isNoise": 0,
+                "isRandom": 0,
+                "isRoring": 0,
+                "isScale": 1,
+                "isTransSpeed": 0,
+                "isTransVelocity": 0,
+                "maxRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "midAlpha": 1.0,
+                "minRoringSpeed": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startAlpha": 0.0,
+                "startColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "startScale": 0.0,
+                "startSpeed": 0.0,
+                "startVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "strength": 0.0
+            },
+            "isLoop": false,
+            "isModel": false,
+            "modelName": "",
+            "textureName": "tex_eff_shine01.png"
+        }
+    }
+}
