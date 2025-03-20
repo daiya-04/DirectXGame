@@ -4,6 +4,7 @@
 #include "GroundFlareManager.h"
 #include "PlasmaShotManager.h"
 #include "IcicleManager.h"
+#include "IceImpactManager.h"
 #include "BaseBossAttackManager.h"
 
 #include <vector>
@@ -31,6 +32,8 @@ private:
 	PlasmaShotManager* plasmaShot_ = nullptr;
 	//地面から炎
 	GroundFlareManager* groundFlare_ = nullptr;
+	//氷爆発
+	IceImpactManager* iceImpact_ = nullptr;
 	///
 
 };

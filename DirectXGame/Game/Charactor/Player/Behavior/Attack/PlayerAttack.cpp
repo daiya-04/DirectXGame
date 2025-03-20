@@ -34,6 +34,8 @@ void PlayerAttack::Init() {
 
 	count_ = 0;
 
+	player_->StartHandEff();
+
 	if (player_->GetTarget()) {
 		//攻撃の発射方向計算
 		Vector3 direction = player_->GetTarget()->GetWorldPos().GetXZ() - player_->GetObj()->GetWorldPos().GetXZ();
@@ -46,6 +48,8 @@ void PlayerAttack::Init() {
 }
 
 void PlayerAttack::Update() {
+
+	player_->StaminaHeal();
 
 	//1コンボ目、2コンボ目だったら入力を受け付ける
 	if (comboIndex_ < comboNum_ - 1) {
@@ -96,6 +100,7 @@ void PlayerAttack::Update() {
 				player_->ChangeBehavior("Idel");
 			}
 			comboIndex_ = static_cast<uint32_t>(ComboIndex::First);
+			player_->EndHandEff();
 			return;
 		}
 	}
@@ -109,6 +114,12 @@ void PlayerAttack::Update() {
 		}
 	}
 
+	if (comboIndex_ == static_cast<uint32_t>(ComboIndex::Second)) {
+		player_->HandEffPosUpdate("left");
+	}else {
+		player_->HandEffPosUpdate("right");
+	}
+	
 
 	count_++;
 }

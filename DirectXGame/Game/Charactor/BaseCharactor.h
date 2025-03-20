@@ -54,7 +54,7 @@ public:
 	/// <summary>
 	/// UI描画
 	/// </summary>
-	void DrawUI();
+	virtual void DrawUI();
 
 	virtual void OnCollision([[maybe_unused]] DaiEngine::Collider* other) {};
 	/// <summary>

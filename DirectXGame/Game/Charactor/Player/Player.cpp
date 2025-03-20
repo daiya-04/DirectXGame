@@ -13,6 +13,7 @@
 #include "PlayerKnockBack.h"
 #include "PlayerAvoid.h"
 #include "ColliderManager.h"
+#include "ParticleManager.h"
 
 void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 
@@ -35,11 +36,24 @@ void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->ColliderOn();
 
+	handEff_ = ParticleManager::Load("PlayerHandEff");
+	for (auto& [group, particle] : handEff_) {
+		particle->particleData_.isLoop_ = false;
+	}
+
+
 	//状態の設定
 	ChangeBehavior("Idel");
 	//HPの設定
-	hp_.Init(DaiEngine::TextureManager::Load("Player_HP.png"), { 440.0f,700.0f }, { 400.0f,10.0f });
+	hp_.Init(DaiEngine::TextureManager::Load("Player_HP.png"), { 440.0f,690.0f }, { 400.0f,10.0f });
 	hp_.SetMaxHP(maxHp_);
+
+	stamina_.Init({ 440.0f,700.0f }, { 400.0f,10.0f });
+	maxStamina_ = 150.0f;
+	dashStamina_ = 15.0f;
+	avoidStamina_ = 30.0f;
+	healStamina_ = 20.0f;
+	stamina_.SetMaxStamina(maxStamina_);
 
 }
 
@@ -68,6 +82,11 @@ void Player::Update(){
 	skeletons_[actionIndex_].Update();
 	skinClusters_[actionIndex_].Update(skeletons_[actionIndex_]);
 
+	for (auto& [group, particle] : handEff_) {
+		particle->Update();
+	}
+
+	stamina_.Update();
 	BaseCharactor::Update();
 }
 
@@ -88,6 +107,17 @@ void Player::Draw(const DaiEngine::Camera& camera){
 
 }
 
+void Player::DrawParticle(const DaiEngine::Camera& camera) {
+	for (auto& [group, particle] : handEff_) {
+		particle->Draw(camera);
+	}
+}
+
+void Player::DrawUI() {
+	BaseCharactor::DrawUI();
+	stamina_.Draw();
+}
+
 void Player::OnCollision(DaiEngine::Collider* other) {
 
 	if (other->GetTag() == "BossAttack") {
@@ -100,9 +130,11 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 		if (knockBackBaseDict_.Length() <= 0.0f) {
 			knockBackBaseDict_ = direction_;
 		}
-
+		EndHandEff();
 		ChangeBehavior("KnockBack");
 	}
+
+	
 
 	//ターゲットとの距離
 	float distance = (target_->GetWorldPos().GetXZ() - GetCenterPos().GetXZ()).Length();
@@ -116,6 +148,7 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 	//HPが0になったら...
 	if (hp_.GetHP() <= 0) {
 		isDead_ = true;
+		EndHandEff();
 		ChangeBehavior("Dead");
 	}
 }
@@ -216,4 +249,28 @@ void Player::Move() {
 
 	SetDirection(move.Normalize());
 
+}
+
+void Player::StartHandEff() {
+	for (auto& [group, particle] : handEff_) {
+		particle->particleData_.isLoop_ = true;
+	}
+}
+
+void Player::EndHandEff() {
+	for (auto& [group, particle] : handEff_) {
+		particle->particleData_.isLoop_ = false;
+	}
+}
+
+void Player::HandEffPosUpdate(const std::string& side) {
+	if (side == "right") {
+		for (auto& [group, particle] : handEff_) {
+			particle->particleData_.emitter_.translate = Transform(skeletons_[actionIndex_].GetSkeletonPos("mixamorig1:RightHand"), obj_->worldTransform_.matWorld_);
+		}
+	}else if(side=="left") {
+		for (auto& [group, particle] : handEff_) {
+			particle->particleData_.emitter_.translate = Transform(skeletons_[actionIndex_].GetSkeletonPos("mixamorig1:LeftHand"), obj_->worldTransform_.matWorld_);
+		}
+	}
 }
