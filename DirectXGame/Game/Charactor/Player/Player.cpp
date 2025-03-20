@@ -45,8 +45,15 @@ void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 	//状態の設定
 	ChangeBehavior("Idel");
 	//HPの設定
-	hp_.Init(DaiEngine::TextureManager::Load("Player_HP.png"), { 440.0f,700.0f }, { 400.0f,10.0f });
+	hp_.Init(DaiEngine::TextureManager::Load("Player_HP.png"), { 440.0f,690.0f }, { 400.0f,10.0f });
 	hp_.SetMaxHP(maxHp_);
+
+	stamina_.Init({ 440.0f,700.0f }, { 400.0f,10.0f });
+	maxStamina_ = 150.0f;
+	dashStamina_ = 15.0f;
+	avoidStamina_ = 30.0f;
+	healStamina_ = 20.0f;
+	stamina_.SetMaxStamina(maxStamina_);
 
 }
 
@@ -79,6 +86,7 @@ void Player::Update(){
 		particle->Update();
 	}
 
+	stamina_.Update();
 	BaseCharactor::Update();
 }
 
@@ -103,6 +111,11 @@ void Player::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& [group, particle] : handEff_) {
 		particle->Draw(camera);
 	}
+}
+
+void Player::DrawUI() {
+	BaseCharactor::DrawUI();
+	stamina_.Draw();
 }
 
 void Player::OnCollision(DaiEngine::Collider* other) {

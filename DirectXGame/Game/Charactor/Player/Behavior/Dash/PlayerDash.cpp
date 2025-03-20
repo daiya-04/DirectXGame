@@ -12,6 +12,8 @@ void PlayerDash::Init() {
 	player_->GetFollowCamera()->SetDashFlag(true);
 	player_->SetSpeed(dashSpeed_);
 
+	consumeStamina_ = 15.0f;
+
 }
 
 void PlayerDash::Update() {
@@ -24,7 +26,7 @@ void PlayerDash::Update() {
 	}
 
 	//回避
-	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::B)) {
+	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::B) && player_->IsAvoid()) {
 		player_->ChangeBehavior("Avoid");
 		return;
 	}
@@ -41,11 +43,17 @@ void PlayerDash::Update() {
 		return;
 	}
 
+	if (player_->GetStamina().GetStamina() <= 0.0f) {
+		player_->ChangeBehavior("Jog");
+	}
+
 	//加速
 	dashSpeed_ += absAccel_;
 	dashSpeed_ = std::clamp(dashSpeed_, 0.0f, maxSpeed_);
 	player_->SetSpeed(dashSpeed_);
 
 	player_->Move();
+
+	player_->GetStamina().ConsumeDash(consumeStamina_);
 
 }

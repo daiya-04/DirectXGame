@@ -21,6 +21,7 @@ void PlayerAvoid::Init() {
 	}
 
 	player_->GetCollider()->ColliderOff();
+	player_->GetStamina().ConsumeAvoid(consumeStamina_);
 
 }
 

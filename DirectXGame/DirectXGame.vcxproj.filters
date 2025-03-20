@@ -497,6 +497,9 @@
     <ClCompile Include="Game\Charactor\Boss\IceImpact\IceImpact.cpp">
       <Filter>Game\Charactor\Boss\IceImpact</Filter>
     </ClCompile>
+    <ClCompile Include="Stamina.cpp">
+      <Filter>Game\Charactor\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -858,6 +861,9 @@
     </ClInclude>
     <ClInclude Include="Game\Charactor\Boss\IceImpact\IceImpact.h">
       <Filter>Game\Charactor\Boss\IceImpact</Filter>
+    </ClInclude>
+    <ClInclude Include="Stamina.h">
+      <Filter>Game\Charactor\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

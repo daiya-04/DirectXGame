@@ -49,6 +49,8 @@ void PlayerAttack::Init() {
 
 void PlayerAttack::Update() {
 
+	player_->StaminaHeal();
+
 	//1コンボ目、2コンボ目だったら入力を受け付ける
 	if (comboIndex_ < comboNum_ - 1) {
 		if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::X)) {

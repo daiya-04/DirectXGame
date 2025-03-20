@@ -214,6 +214,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Collision\Collider\SphereCollider.cpp" />
     <ClCompile Include="Game\Scene\GameScene\State\PlayerDead\PlayerDeadState.cpp" />
     <ClCompile Include="Game\Charactor\Player\MasicBall\MagicBallManager.cpp" />
+    <ClCompile Include="Stamina.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Charactor\Player\Behavior\Avoid\PlayerAvoid.h" />
@@ -336,6 +337,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Charactor\HP.h" />
     <ClInclude Include="Game\Charactor\Boss\IceImpact\IceImpact.h" />
     <ClInclude Include="Game\Charactor\Boss\IceImpact\IceImpactManager.h" />
+    <ClInclude Include="Stamina.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

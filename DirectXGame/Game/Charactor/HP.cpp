@@ -19,12 +19,12 @@ void HP::Init(uint32_t textureHandle, const Vector2& pos, const Vector2& size) {
 
 void HP::Update() {
 	//HPの割合計算
-	persent_ = static_cast<float>(hp_) / static_cast<float>(maxHp_);
+	percent_ = static_cast<float>(hp_) / static_cast<float>(maxHp_);
 
-	currectPer_ = Lerp(dampingRate_, currectPer_, persent_);
+	currentPer_ = Lerp(dampingRate_, currentPer_, percent_);
 	
-	gauge_->SetSize({ gaugeSize_.x * persent_, gaugeSize_.y });
-	damageGauge_->SetSize({ gaugeSize_.x * currectPer_, gaugeSize_.y });
+	gauge_->SetSize({ gaugeSize_.x * percent_, gaugeSize_.y });
+	damageGauge_->SetSize({ gaugeSize_.x * currentPer_, gaugeSize_.y });
 }
 
 void HP::Draw() {

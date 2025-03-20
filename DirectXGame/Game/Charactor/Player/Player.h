@@ -12,6 +12,7 @@
 #include "MagicBallManager.h"
 #include "GroundBurstManager.h"
 #include "GPUParticle.h"
+#include "Stamina.h"
 
 #include <memory>
 #include <list>
@@ -85,6 +86,16 @@ private:
 	int32_t maxHp_ = 10;
 	//攻撃の射程
 	float attackRange_ = 20.0f;
+	//スタミナ
+	Stamina stamina_;
+	//スタミナ最大値
+	float maxStamina_ = 0.0f;
+	//ダッシュ時消費スタミナの基準
+	float dashStamina_ = 0.0f;
+	//回避時の消費スタミナの基準
+	float avoidStamina_ = 0.0f;
+	//スタミナ回復量
+	float healStamina_ = 0.0f;
 
 	//攻撃アニメーションのスピード
 	float attackAnimeSpeed_ = 1.0f / 30.0f;
@@ -138,6 +149,10 @@ public:
 	/// </summary>
 	/// <param name="camera"></param>
 	void DrawParticle(const DaiEngine::Camera& camera);
+	/// <summary>
+	/// UI描画
+	/// </summary>
+	void DrawUI() override;
 	/// <summary>
 	/// 衝突時
 	/// </summary>
@@ -216,6 +231,11 @@ public:
 	void EndHandEff();
 
 	void HandEffPosUpdate(const std::string& side);
+
+	Stamina& GetStamina() { return stamina_; }
+	bool IsDash() { return stamina_.GetStamina() > dashStamina_; }
+	bool IsAvoid() { return stamina_.GetStamina() > avoidStamina_; }
+	void StaminaHeal() { stamina_.Healing(healStamina_); }
 
 private:
 	/// <summary>

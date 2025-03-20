@@ -46,8 +46,8 @@ private:
 	//最大HP
 	uint32_t maxHp_;
 
-	float persent_ = 1.0f;
-	float currectPer_ = 1.0f;
+	float percent_ = 1.0f;
+	float currentPer_ = 1.0f;
 
 	float dampingRate_ = 0.2f;
 

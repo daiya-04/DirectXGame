@@ -16,6 +16,8 @@ void PlayerJog::Init() {
 
 void PlayerJog::Update() {
 
+	player_->StaminaHeal();
+
 	//スティックを離したらIdelStateへ
 	if (DaiEngine::Input::GetInstance()->ReleaseLStick(DaiEngine::Input::Stick::All)) {
 		player_->ChangeBehavior("Idel");
@@ -29,20 +31,12 @@ void PlayerJog::Update() {
 	}
 
 	//ダッシュ
-	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::A)) {
+	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::A) && player_->IsDash()) {
 		player_->ChangeBehavior("Dash");
-		/*player_->SetAnimation(Player::Action::Dash);
-		speed_ = dashSpeed_;
-		player_->GetFollowCamera()->SetDashFlag(true);*/
 	}
-	////ダッシュ解除
-	//if (DaiEngine::Input::GetInstance()->ReleaseButton(DaiEngine::Input::Button::A)) {
-	//	player_->SetAnimation(Player::Action::Jogging);
-	//	speed_ = baseSpeed_;
-	//	player_->GetFollowCamera()->SetDashFlag(false);
-	//}
+	
 	//回避
-	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::B)) {
+	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::B) && player_->IsAvoid()) {
 		player_->ChangeBehavior("Avoid");
 	}
 

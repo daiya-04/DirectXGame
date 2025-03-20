@@ -30,5 +30,7 @@ private:
 	//速さの最大値
 	float maxSpeed_ = 0.2f;
 
+	float consumeStamina_ = 0.0f;
+
 };
 
