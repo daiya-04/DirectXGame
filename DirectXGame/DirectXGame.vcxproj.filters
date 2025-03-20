@@ -497,7 +497,7 @@
     <ClCompile Include="Game\Charactor\Boss\IceImpact\IceImpact.cpp">
       <Filter>Game\Charactor\Boss\IceImpact</Filter>
     </ClCompile>
-    <ClCompile Include="Stamina.cpp">
+    <ClCompile Include="Game\Charactor\Player\Stamina.cpp">
       <Filter>Game\Charactor\Player</Filter>
     </ClCompile>
   </ItemGroup>
@@ -862,7 +862,7 @@
     <ClInclude Include="Game\Charactor\Boss\IceImpact\IceImpact.h">
       <Filter>Game\Charactor\Boss\IceImpact</Filter>
     </ClInclude>
-    <ClInclude Include="Stamina.h">
+    <ClInclude Include="Game\Charactor\Player\Stamina.h">
       <Filter>Game\Charactor\Player</Filter>
     </ClInclude>
   </ItemGroup>
