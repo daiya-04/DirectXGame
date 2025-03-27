@@ -19,18 +19,39 @@ namespace DaiEngine {
 			Collider* colliderA = colliders_[i];
 			if (colliderA == nullptr || !colliderA->IsHit()) { continue; }
 
-			for (size_t j = 0; j < colliders_.size(); j++) {
+			for (size_t j = i + 1; j < colliders_.size(); j++) {
 
 				Collider* colliderB = colliders_[j];
 				if (colliderB == nullptr || !colliderB->IsHit()) { continue; }
 
-				if (CheckCollision(colliderA, colliderB)) {
+				//衝突しているか？
+				bool isCollision = CheckCollision(colliderA, colliderB);
 
-					colliderA->OnCollision(colliderB);
-					colliderB->OnCollision(colliderA);
+				//衝突ペアの順序を統一
+				auto key = std::minmax(colliderA, colliderB);
+				//衝突ペアの状態を取得
+				auto& state = collisionMap_[key];
+
+				//衝突状態に合わせた関数を呼び出す
+				if (isCollision && !state.preCollision) {
+					//衝突した瞬間
+					colliderA->OnCollision(Collider::CollisionPhase::Enter, colliderB);
+					colliderB->OnCollision(Collider::CollisionPhase::Enter, colliderA);
+
+				}else if (isCollision && state.preCollision) {
+					//衝突中
+					colliderA->OnCollision(Collider::CollisionPhase::Stay, colliderB);
+					colliderB->OnCollision(Collider::CollisionPhase::Stay, colliderA);
+
+				}else if (!isCollision && state.preCollision) {
+					//離れた瞬間
+					colliderA->OnCollision(Collider::CollisionPhase::Exit, colliderB);
+					colliderB->OnCollision(Collider::CollisionPhase::Exit, colliderA);
 
 				}
+				
 
+				state.preCollision = isCollision;
 			}
 		}
 

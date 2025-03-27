@@ -50,6 +50,8 @@ public: //静的メンバ関数
 	static void preDraw();
 
 public:
+
+	~IceScar() override {}
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -69,11 +71,20 @@ public:
 	/// <param name="camera">カメラ</param>
 	void Draw(const DaiEngine::Camera& camera) override;
 	/// <summary>
+	/// 衝突時
+	/// </summary>
+	/// <param name="other"></param>
+	void OnCollision(DaiEngine::Collider* other) override;
+	/// <summary>
 	/// 演出開始
 	/// </summary>
 	/// <param name="pos">中心座標</param>
 	void EffectStart(const Vector3& pos) override;
 
+private:
+
+	//フェードアウト開始時間
+	const int32_t kFadeOutStartTime_ = 60 * 2;
 
 };
 

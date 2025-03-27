@@ -9,6 +9,8 @@
 #include "ParticleManager.h"
 #include "DXCompiler.h"
 #include "Log.h"
+#include "WorldTransform.h"
+#include "ShapesDraw.h"
 
 #pragma comment(lib,"dxcompiler.lib")
 
@@ -211,21 +213,27 @@ void BurnScar::Init(uint32_t textureHandle) {
 		particle->particleData_.isLoop_ = false;
 	}
 
+	
+	collider_->Init("BurnScar", worldTransform_, 2.0f);
+	collider_->SetStayCallback([this](DaiEngine::Collider* other) {this->OnCollision(other); });
+	collider_->ColliderOff();
+
 }
 
 void BurnScar::Update() {
 
 	EffectUpdate();
 
+	BaseScar::Update();
+
 	for (auto& [group, particle] : impact_) {
-		particle->particleData_.emitter_.translate = position_ + Vector3(0.0f, 0.001f, 0.0f);
+		particle->particleData_.emitter_.translate = worldTransform_.GetWorldPos() + Vector3(0.0f, 0.001f, 0.0f);
 		particle->Update();
 	}
 	for (auto& [group, particle] : residual_) {
-		particle->particleData_.emitter_.translate = position_;
+		particle->particleData_.emitter_.translate = worldTransform_.GetWorldPos();
 		particle->Update();
 	}
-
 }
 
 void BurnScar::EffectUpdate() {
@@ -233,20 +241,16 @@ void BurnScar::EffectUpdate() {
 	if (!isEffect_) { return; }
 
 	lifeTimer_--;
-	//ディゾルブ開始時間
-	const int32_t kDissolveStartTime = 60 * 2;
 	
-	if (lifeTimer_ < kDissolveStartTime) {
+	if (lifeTimer_ < kDissolveStartTime_) {
 		//ディゾルブ用閾値の計算
-		threshold_ = float(kDissolveStartTime - lifeTimer_) / (float)kDissolveStartTime;
+		threshold_ = static_cast<float>(kDissolveStartTime_ - lifeTimer_) / static_cast<float>(kDissolveStartTime_);
 		threshold_ = std::clamp(threshold_, 0.0f, 1.0f);
+		collider_->ColliderOff();
 	}
 	//エフェクト終了
 	if (lifeTimer_ <= 0) {
-		isEffect_ = false;
-		for (auto& [group, particle] : residual_) {
-			particle->particleData_.isLoop_ = false;
-		}
+		EffectEnd();
 	}
 
 }
@@ -256,7 +260,6 @@ void BurnScar::Draw(const DaiEngine::Camera& camera) {
 	if (!isEffect_) { return; }
 
 	BaseScar::Draw(camera);
-
 }
 
 void BurnScar::DrawParticle(const DaiEngine::Camera& camera) {
@@ -266,6 +269,14 @@ void BurnScar::DrawParticle(const DaiEngine::Camera& camera) {
 	}
 	for (auto& [group, particle] : residual_) {
 		particle->Draw(camera);
+	}
+
+}
+
+void BurnScar::OnCollision(DaiEngine::Collider* other) {
+
+	if (other->GetTag() == "IceScar") {
+		lifeTimer_ = kDissolveStartTime_;
 	}
 
 }
@@ -281,4 +292,12 @@ void BurnScar::EffectStart(const Vector3& pos) {
 		particle->particleData_.isLoop_ = true;
 	}
 
+}
+
+void BurnScar::EffectEnd() {
+	isEffect_ = false;
+	for (auto& [group, particle] : residual_) {
+		particle->particleData_.isLoop_ = false;
+	}
+	collider_->ColliderOff();
 }

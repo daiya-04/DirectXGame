@@ -29,7 +29,7 @@ void Boss::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models) {
 	obj_.reset(DaiEngine::Object3d::Create(animationModels_[actionIndex_]));
 
 	collider_->Init("Boss", obj_->worldTransform_, {});
-	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
+	collider_->SetStayCallback([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->ColliderOn();
 
 	///エフェクト初期化

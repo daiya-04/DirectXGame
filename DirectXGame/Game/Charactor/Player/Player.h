@@ -13,6 +13,7 @@
 #include "GroundBurstManager.h"
 #include "GPUParticle.h"
 #include "Stamina.h"
+#include "IPlayerState.h"
 
 #include <memory>
 #include <list>
@@ -76,14 +77,16 @@ private:
 	std::vector<DaiEngine::Skeleton> skeletons_;
 	//スキンクラスター
 	std::vector<DaiEngine::SkinCluster> skinClusters_;
-
+	//行動
 	std::unique_ptr<IPlayerBehavior> behavior_;
 	std::unique_ptr<IPlayerBehavior> behaviorRequest_;
+	//状態
+	std::unique_ptr<IPlayerState> state_;
 
 	//ターゲット(ボス)
 	const DaiEngine::WorldTransform* target_ = nullptr;
 	//最大HP
-	int32_t maxHp_ = 10;
+	int32_t maxHp_ = 60;
 	//攻撃の射程
 	float attackRange_ = 20.0f;
 	//スタミナ
@@ -112,9 +115,15 @@ private:
 	//攻撃
 	std::vector<BasePlayerAttackManager*> attacks_;
 	//速度
-	float speed_ = 0.15f;
+	float speed_ = 0.1f;
+
+	
+	float speedRate_ = 1.0f;
 
 	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> handEff_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> burnEff_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> chilledEff_;
+
 
 public:
 	/// <summary>
@@ -157,11 +166,19 @@ public:
 	/// 衝突時
 	/// </summary>
 	void OnCollision(DaiEngine::Collider* other) override;
+
+	void EnterCollision(DaiEngine::Collider* other);
+	void ExitCollision(DaiEngine::Collider* other);
 	/// <summary>
 	/// 行動の切り替え
 	/// </summary>
 	/// <param name="behaviorName">切り替える行動の名前</param>
 	void ChangeBehavior(const std::string& behaviorName) override;
+	/// <summary>
+	/// 状態の切り替え
+	/// </summary>
+	/// <param name="stateName"></param>
+	void ChangeState(const std::string& stateName);
 	/// <summary>
 	/// データ設定
 	/// </summary>
@@ -225,6 +242,7 @@ public:
 	void Move();
 
 	void SetSpeed(float speed) { speed_ = speed; }
+	void SetSpeedRate(float rate) { speedRate_ = rate; }
 
 	void StartHandEff();
 
@@ -232,10 +250,20 @@ public:
 
 	void HandEffPosUpdate(const std::string& side);
 
+	void StartBurnEff();
+
+	void EndBurnEff();
+
+	void StartChilledEff();
+
+	void EndChilledEff();
+
 	Stamina& GetStamina() { return stamina_; }
 	bool IsDash() { return stamina_.GetStamina() > dashStamina_; }
 	bool IsAvoid() { return stamina_.GetStamina() > avoidStamina_; }
 	void StaminaHeal() { stamina_.Healing(healStamina_); }
+
+	HP& GetHP() { return hp_; }
 
 private:
 	/// <summary>

@@ -12,7 +12,7 @@ void Ground::Init(std::shared_ptr<DaiEngine::Model> model){
 
 	collider_ = std::make_unique<DaiEngine::OBBCollider>();
 	collider_->Init("Ground", obj_->worldTransform_, {});
-	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
+	collider_->SetStayCallback([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->ColliderOn();
 	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 

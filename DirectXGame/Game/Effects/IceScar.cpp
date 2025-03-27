@@ -8,6 +8,7 @@
 #include "TextureManager.h"
 #include "DXCompiler.h"
 #include "Log.h"
+#include "ShapesDraw.h"
 
 #pragma comment(lib,"dxcompiler.lib")
 
@@ -203,6 +204,12 @@ void IceScar::Init(uint32_t textureHandle) {
 
 	color_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
+	
+	collider_->Init("IceScar", worldTransform_, 1.5f);
+	collider_->SetStayCallback([this](DaiEngine::Collider* other) {this->OnCollision(other); });
+	collider_->ColliderOff();
+
+
 }
 
 void IceScar::Update() {
@@ -211,18 +218,18 @@ void IceScar::Update() {
 
 	EffectUpdate();
 
+	BaseScar::Update();
 }
 
 void IceScar::EffectUpdate() {
 
 	lifeTimer_--;
-	//フェードアウト開始時間
-	const int32_t kFadeOutStartTime = 60 * 2;
 
-	if (lifeTimer_ < kFadeOutStartTime) {
+	if (lifeTimer_ < kFadeOutStartTime_) {
 		//フェードアウト用の閾値の計算
-		threshold_ = float(kFadeOutStartTime - lifeTimer_) / (float)kFadeOutStartTime;
+		threshold_ = static_cast<float>(kFadeOutStartTime_ - lifeTimer_) / static_cast<float>(kFadeOutStartTime_);
 		threshold_ = std::clamp(threshold_, 0.0f, 1.0f);
+		collider_->ColliderOff();
 	}
 	
 	if (lifeTimer_ <= 0) {
@@ -236,6 +243,14 @@ void IceScar::Draw(const DaiEngine::Camera& camera) {
 	if (!isEffect_) { return; }
 
 	BaseScar::Draw(camera);
+
+}
+
+void IceScar::OnCollision(DaiEngine::Collider* other) {
+
+	if (other->GetTag() == "BurnScar") {
+		lifeTimer_ = kFadeOutStartTime_;
+	}
 
 }
 

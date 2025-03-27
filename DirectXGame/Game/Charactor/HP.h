@@ -29,7 +29,7 @@ public:
 	/// <summary>
 	/// ダメージを受ける(HP減少)
 	/// </summary>
-	void TakeDamage() { hp_--; }
+	void TakeDamage(uint32_t damage = 1) { hp_ -= damage; }
 
 	uint32_t GetHP() const { return hp_; }
 

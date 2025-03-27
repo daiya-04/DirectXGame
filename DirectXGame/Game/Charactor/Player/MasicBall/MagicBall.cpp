@@ -15,7 +15,7 @@ void MagicBall::Init() {
 
 	collider_ = std::make_unique<DaiEngine::SphereCollider>();
 	collider_->Init("PlayerAttack", worldTransform_, 0.3f);
-	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
+	collider_->SetStayCallback([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->ColliderOff();
 	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 

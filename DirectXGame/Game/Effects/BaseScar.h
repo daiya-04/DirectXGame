@@ -13,6 +13,9 @@
 #include "Matrix44.h"
 #include "WorldTransform.h"
 #include "Camera.h"
+#include "SphereCollider.h"
+
+#include <memory>
 
 //跡の基底クラス
 class BaseScar {
@@ -72,10 +75,7 @@ protected: //グラフィックリソース
 
 protected: //オブジェクトパラメータ
 
-	//座標
-	Vector3 position_{};
-	//倍率
-	Vector2 scale_ = { 2.0f,2.0f };
+	DaiEngine::WorldTransform worldTransform_;
 	//回転
 	float rotate_{};
 	//ディゾルブ用閾値
@@ -85,12 +85,15 @@ protected: //オブジェクトパラメータ
 	//演出中か
 	bool isEffect_ = false;
 	//演出時間
-	int32_t lifeTime_ = 60 * 6;
+	int32_t lifeTime_ = 60 * 12;
 	//演出タイマー
 	int32_t lifeTimer_ = lifeTime_;
+	//コライダー
+	std::unique_ptr<DaiEngine::SphereCollider> collider_;
 
 protected:
 
+	virtual ~BaseScar();
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -110,6 +113,11 @@ protected:
 	/// <param name="camera">カメラ</param>
 	virtual void Draw(const DaiEngine::Camera& camera);
 	/// <summary>
+	/// 衝突時
+	/// </summary>
+	/// <param name="other"></param>
+	virtual void OnCollision(DaiEngine::Collider* other);
+	/// <summary>
 	/// 演出開始
 	/// </summary>
 	/// <param name="pos">中心座標</param>
@@ -125,7 +133,7 @@ public:
 	/// 位置座標の取得
 	/// </summary>
 	/// <returns></returns>
-	Vector3 GetPosition() { return position_; }
+	Vector3 GetPosition() { return worldTransform_.GetWorldPos(); }
 	/// <summary>
 	/// 演出中かどうか
 	/// </summary>
@@ -135,7 +143,7 @@ public:
 	/// 大きさ設定
 	/// </summary>
 	/// <param name="scale"></param>
-	void SetScale(float scale) { scale_ = { scale,scale }; }
+	void SetScale(float scale);
 
 private:
 	/// <summary>
