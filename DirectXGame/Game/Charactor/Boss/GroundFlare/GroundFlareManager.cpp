@@ -17,7 +17,7 @@ void GroundFlareManager::Init() {
 	collider_ = std::make_unique<DaiEngine::OBBCollider>();
 	collider_->Init("BossAttack", worldtransform_, Vector3(2.0, 3.0f, 2.0f));
 	collider_->SetPosition(Vector3(0.0, collider_->GetSize().y, 0.0f));
-	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) { OnCollision(other); });
+	collider_->SetStayCallback([this](DaiEngine::Collider* other) { OnCollision(other); });
 	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 	//中心を基準にした発射位置のオフセット

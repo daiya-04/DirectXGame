@@ -17,7 +17,7 @@ void PlasmaShot::Init() {
 
 	collider_ = std::make_unique<DaiEngine::SphereCollider>();
 	collider_->Init("BossAttack", obj_->worldTransform_, 0.5f);
-	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
+	collider_->SetStayCallback([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 	///エフェクト設定

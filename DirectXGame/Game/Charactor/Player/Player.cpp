@@ -14,6 +14,9 @@
 #include "PlayerAvoid.h"
 #include "ColliderManager.h"
 #include "ParticleManager.h"
+#include "BurnState.h"
+#include "ChilledState.h"
+#include "NormalState.h"
 
 void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 
@@ -33,17 +36,29 @@ void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
 	
 	collider_->Init("Player", obj_->worldTransform_, {});
-	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
+	collider_->SetStayCallback([this](DaiEngine::Collider* other) {this->OnCollision(other); });
+	collider_->SetEnterCallback([this](DaiEngine::Collider* other) {this->EnterCollision(other); });
+	collider_->SetExitCallback([this](DaiEngine::Collider* other) {this->ExitCollision(other); });
 	collider_->ColliderOn();
 
 	handEff_ = ParticleManager::Load("PlayerHandEff");
 	for (auto& [group, particle] : handEff_) {
 		particle->particleData_.isLoop_ = false;
 	}
+	chilledEff_ = ParticleManager::Load("ChilledEffect");
+	for (auto& [group, particle] : chilledEff_) {
+		particle->particleData_.isLoop_ = false;
+	}
+	burnEff_ = ParticleManager::Load("BurnEffect");
+	for (auto& [group, particle] : burnEff_) {
+		particle->particleData_.isLoop_ = false;
+	}
 
 
 	//状態の設定
 	ChangeBehavior("Idel");
+
+	ChangeState("Normal");
 	//HPの設定
 	hp_.Init(DaiEngine::TextureManager::Load("Player_HP.png"), { 440.0f,690.0f }, { 400.0f,10.0f });
 	hp_.SetMaxHP(maxHp_);
@@ -65,6 +80,7 @@ void Player::Update(){
 	}
 
 	behavior_->Update();
+	state_->Update();
 
 	///プレイヤーの移動制限
 	obj_->worldTransform_.translation_.x = std::clamp(obj_->worldTransform_.translation_.x, -30.0f, 30.0f);
@@ -83,6 +99,14 @@ void Player::Update(){
 	skinClusters_[actionIndex_].Update(skeletons_[actionIndex_]);
 
 	for (auto& [group, particle] : handEff_) {
+		particle->Update();
+	}
+	for (auto& [group, particle] : burnEff_) {
+		particle->particleData_.emitter_.translate = centerPos_;
+		particle->Update();
+	}
+	for (auto& [group, particle] : chilledEff_) {
+		particle->particleData_.emitter_.translate = centerPos_;
 		particle->Update();
 	}
 
@@ -111,6 +135,12 @@ void Player::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& [group, particle] : handEff_) {
 		particle->Draw(camera);
 	}
+	for (auto& [group, particle] : burnEff_) {
+		particle->Draw(camera);
+	}
+	for (auto& [group, particle] : chilledEff_) {
+		particle->Draw(camera);
+	}
 }
 
 void Player::DrawUI() {
@@ -121,7 +151,7 @@ void Player::DrawUI() {
 void Player::OnCollision(DaiEngine::Collider* other) {
 
 	if (other->GetTag() == "BossAttack") {
-		hp_.TakeDamage();
+		hp_.TakeDamage(3);
 
 		Vector3 attackPos = other->GetWorldPos();
 		attackPos.y = GetCenterPos().y;
@@ -133,8 +163,6 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 		EndHandEff();
 		ChangeBehavior("KnockBack");
 	}
-
-	
 
 	//ターゲットとの距離
 	float distance = (target_->GetWorldPos().GetXZ() - GetCenterPos().GetXZ()).Length();
@@ -153,6 +181,34 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 	}
 }
 
+void Player::EnterCollision(DaiEngine::Collider* other) {
+
+	if (other->GetTag() == "BurnScar") {
+		ChangeState("Burn");
+	}
+
+	if (other->GetTag() == "IceScar") {
+		ChangeState("Chilled");
+	}
+
+}
+
+void Player::ExitCollision(DaiEngine::Collider* other) {
+
+	if (other->GetTag() == "BurnScar") {
+		if (auto state = dynamic_cast<BurnState*>(state_.get())) {
+			state_->Exit();
+		}
+	}
+
+	if (other->GetTag() == "IceScar") {
+		if (auto state = dynamic_cast<ChilledState*>(state_.get())) {
+			state_->Exit();
+		}
+	}
+
+}
+
 void Player::ChangeBehavior(const std::string& behaviorName) {
 	//行動とそれに対応するStateクラスの生成処理のマップ
 	const std::map<std::string, std::function<std::unique_ptr<IPlayerBehavior>()>> behaviorTable{
@@ -169,6 +225,22 @@ void Player::ChangeBehavior(const std::string& behaviorName) {
 	if (nextBehavior != behaviorTable.end()) {
 		//対応するStateクラスの生成
 		behaviorRequest_ = nextBehavior->second();
+	}
+
+}
+
+void Player::ChangeState(const std::string& stateName) {
+
+	const std::map<std::string, std::function<std::unique_ptr<IPlayerState>()>> stateTable{
+		{"Normal", [this]() {return std::make_unique<NormalState>(this); }},
+		{"Burn", [this]() {return std::make_unique<BurnState>(this); }},
+		{"Chilled", [this]() {return std::make_unique<ChilledState>(this); }},
+	};
+	//検索
+	auto newState = stateTable.find(stateName);
+	if (newState != stateTable.end()) {
+		state_ = newState->second();
+		state_->Init();
 	}
 
 }
@@ -241,7 +313,7 @@ void Player::Move() {
 	Vector3 move{};
 
 	move = DaiEngine::Input::GetInstance()->GetMoveXZ();
-	move = (move / SHRT_MAX) * speed_;
+	move = (move / SHRT_MAX) * (speed_ * speedRate_);
 
 	move = TransformNormal(move, GetRotateYMatrix(followCamera_->GetRotateMat()));
 
@@ -259,6 +331,30 @@ void Player::StartHandEff() {
 
 void Player::EndHandEff() {
 	for (auto& [group, particle] : handEff_) {
+		particle->particleData_.isLoop_ = false;
+	}
+}
+
+void Player::StartBurnEff() {
+	for (auto& [group, particle] : burnEff_) {
+		particle->particleData_.isLoop_ = true;
+	}
+}
+
+void Player::EndBurnEff() {
+	for (auto& [group, particle] : burnEff_) {
+		particle->particleData_.isLoop_ = false;
+	}
+}
+
+void Player::StartChilledEff() {
+	for (auto& [group, particle] : chilledEff_) {
+		particle->particleData_.isLoop_ = true;
+	}
+}
+
+void Player::EndChilledEff() {
+	for (auto& [group, particle] : chilledEff_) {
 		particle->particleData_.isLoop_ = false;
 	}
 }

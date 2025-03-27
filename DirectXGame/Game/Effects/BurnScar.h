@@ -61,8 +61,12 @@ private: //メンバ変数
 	//跡から出てくる火の粉
 	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> residual_;
 
+	//ディゾルブ開始時間
+	const int32_t kDissolveStartTime_ = 60 * 2;
+
 public: //メンバ関数
 
+	~BurnScar() override {}
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -87,10 +91,19 @@ public: //メンバ関数
 	/// <param name="camera"></param>
 	void DrawParticle(const DaiEngine::Camera& camera);
 	/// <summary>
+	/// 衝突時
+	/// </summary>
+	/// <param name="other"></param>
+	void OnCollision(DaiEngine::Collider* other) override;
+	/// <summary>
 	/// 演出開始
 	/// </summary>
 	/// <param name="pos">中心座標</param>
 	void EffectStart(const Vector3& pos)override;
+	/// <summary>
+	/// 演出終了
+	/// </summary>
+	void EffectEnd();
 
 };
 

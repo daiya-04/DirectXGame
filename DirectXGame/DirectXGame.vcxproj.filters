@@ -185,6 +185,18 @@
     <Filter Include="Game\Charactor\Boss\IceImpact">
       <UniqueIdentifier>{1f873148-b364-4776-a7c1-315a67e50a49}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Charactor\Player\State">
+      <UniqueIdentifier>{3269e30a-28aa-43f9-baef-ab543bbf857a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Player\State\BurnState">
+      <UniqueIdentifier>{853ea377-39f0-48d0-8cd5-22edbad8b2cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Player\State\ChilledState">
+      <UniqueIdentifier>{06fc00cf-3787-4699-8717-0a1617531aed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Player\State\NormalState">
+      <UniqueIdentifier>{c53dda80-0b31-4621-bc63-493b5113bd61}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -499,6 +511,15 @@
     </ClCompile>
     <ClCompile Include="Game\Charactor\Player\Stamina.cpp">
       <Filter>Game\Charactor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Player\State\BurnState\BurnState.cpp">
+      <Filter>Game\Charactor\Player\State\BurnState</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Player\State\ChilledState\ChilledState.cpp">
+      <Filter>Game\Charactor\Player\State\ChilledState</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Player\State\NormalState\NormalState.cpp">
+      <Filter>Game\Charactor\Player\State\NormalState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -864,6 +885,18 @@
     </ClInclude>
     <ClInclude Include="Game\Charactor\Player\Stamina.h">
       <Filter>Game\Charactor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Player\State\IPlayerState.h">
+      <Filter>Game\Charactor\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Player\State\BurnState\BurnState.h">
+      <Filter>Game\Charactor\Player\State\BurnState</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Player\State\ChilledState\ChilledState.h">
+      <Filter>Game\Charactor\Player\State\ChilledState</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Player\State\NormalState\NormalState.h">
+      <Filter>Game\Charactor\Player\State\NormalState</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

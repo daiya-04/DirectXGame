@@ -8,6 +8,7 @@ void IcicleManager::Init() {
 
 	for (auto& iceScar : iceScars_) {
 		iceScar.reset(IceScar::Create(DaiEngine::TextureManager::Load("ScarBase.png")));
+		iceScar->SetScale(4.0f);
 	}
 
 	for (size_t index = 0; index < icicles_.size(); index++) {

@@ -14,7 +14,7 @@ void IceImpact::Init() {
 
 	collider_ = std::make_unique<DaiEngine::SphereCollider>();
 	collider_->Init("BossAttack", worldTrabsform_, 15.0f);
-	collider_->SetCallbackFunc([this](DaiEngine::Collider* other) {this->OnCollision(other); });
+	collider_->SetStayCallback([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 	setEff_ = ParticleManager::Load("IceImpactSet");
@@ -145,7 +145,7 @@ void IceImpact::ImpactInit() {
 		particle->Emit();
 	}
 	iceScar_->EffectStart(worldTrabsform_.GetWorldPos().GetXZ());
-	iceScar_->HeightAdjustment(0.0001f);
+	iceScar_->HeightAdjustment(0.001f);
 
 }
 

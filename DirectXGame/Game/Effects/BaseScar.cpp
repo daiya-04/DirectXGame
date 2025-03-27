@@ -2,9 +2,14 @@
 
 #include "TextureManager.h"
 #include "DirectXCommon.h"
+#include "ColliderManager.h"
 
 ID3D12Device* BaseScar::device_ = nullptr;
 ID3D12GraphicsCommandList* BaseScar::commandList_ = nullptr;
+
+BaseScar::~BaseScar() {
+	DaiEngine::ColliderManager::GetInstance()->RemoveCollider(collider_.get());
+}
 
 void BaseScar::Init(uint32_t textureHandle) {
 	textureHandle_ = textureHandle;
@@ -37,12 +42,20 @@ void BaseScar::Init(uint32_t textureHandle) {
 	//固有データのリソース生成
 	scarDataBuff_ = CreateBufferResource(DaiEngine::DirectXCommon::GetInstance()->GetDevice(), sizeof(float));
 	scarDataBuff_->Map(0, nullptr, reinterpret_cast<void**>(&scarData_));
+
+	worldTransform_.Init();
+	worldTransform_.scale_ = { 2.0f,0.0f,2.0f };
+
+	collider_ = std::make_unique<DaiEngine::SphereCollider>();
+	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
+
 }
 
 void BaseScar::Update() {
 
-
-
+	worldTransform_.rotation_ = { 0.0f,rotate_,0.0f };
+	worldTransform_.UpdateMatrix();
+	collider_->Update();
 }
 
 void BaseScar::Draw(const DaiEngine::Camera& camera) {
@@ -53,7 +66,7 @@ void BaseScar::Draw(const DaiEngine::Camera& camera) {
 	//ワールド行列の計算
 	Matrix4x4* MatData = nullptr;
 	worldMatBuff_->Map(0, nullptr, reinterpret_cast<void**>(&MatData));
-	*MatData = MakeAffineMatrix({ scale_.x,1.0f,scale_.y }, { 0.0f,rotate_,0.0f }, position_);
+	*MatData = worldTransform_.matWorld_;
 
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	commandList_->IASetIndexBuffer(&indexBufferView_);
@@ -72,17 +85,29 @@ void BaseScar::Draw(const DaiEngine::Camera& camera) {
 
 }
 
+void BaseScar::OnCollision([[maybe_unused]] DaiEngine::Collider* other) {
+
+}
+
 void BaseScar::EffectStart(const Vector3& pos) {
 
-	position_ = pos;
+	worldTransform_.translation_ = pos;
 	isEffect_ = true;
 	lifeTimer_ = lifeTime_;
 	threshold_ = 0.0f;
+	collider_->ColliderOn();
 
 }
 
 void BaseScar::HeightAdjustment(float height) {
-	position_.y = height;
+	worldTransform_.translation_.y = height;
+}
+
+void BaseScar::SetScale(float scale) {
+	worldTransform_.scale_ = { scale, 0.0f, scale };
+	float radius = collider_->GetRadius();
+	float ratio = scale / 2.0f;
+	collider_->SetRadius(radius * ratio);
 }
 
 void BaseScar::TransferVertex() {

@@ -6,6 +6,7 @@
 #include <functional>
 #include <string>
 #include <map>
+#include <array>
 
 namespace DaiEngine {
 	class Collider {
@@ -16,11 +17,19 @@ namespace DaiEngine {
 			OBB,
 		};
 
+		enum class CollisionPhase {
+			Enter,
+			Stay,
+			Exit,
+
+			PhaseNum,
+		};
+
 	protected:
 
 		std::variant<Shapes::Sphere, Shapes::OBB> shape_;
 		Type shapeType_;
-		std::function<void(Collider*)> callbackFunc_;
+		std::array<std::function<void(Collider*)>, static_cast<size_t>(CollisionPhase::PhaseNum)> callbackFuncs_;
 
 		WorldTransform worldTransform_;
 
@@ -32,12 +41,21 @@ namespace DaiEngine {
 
 	public:
 
-		void SetCallbackFunc(std::function<void(Collider*)> callbackFunc) {
-			callbackFunc_ = callbackFunc;
+		void SetEnterCallback(std::function<void(Collider*)> callbackFunc) {
+			callbackFuncs_[static_cast<size_t>(CollisionPhase::Enter)] = callbackFunc;
 		}
 
-		void OnCollision(Collider* collider) {
-			callbackFunc_(collider);
+		void SetStayCallback(std::function<void(Collider*)> callbackFunc) {
+			callbackFuncs_[static_cast<size_t>(CollisionPhase::Stay)] = callbackFunc;
+		}
+
+		void SetExitCallback(std::function<void(Collider*)> callbackFunc) {
+			callbackFuncs_[static_cast<size_t>(CollisionPhase::Exit)] = callbackFunc;
+		}
+
+		void OnCollision(CollisionPhase phase, Collider* collider) {
+			auto& callbackFunc = callbackFuncs_[static_cast<size_t>(phase)];
+			if (callbackFunc) { callbackFunc(collider); }
 		}
 
 		const std::string GetTag() const { return tag_; }

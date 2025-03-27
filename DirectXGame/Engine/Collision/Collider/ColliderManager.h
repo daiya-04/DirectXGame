@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <memory>
+#include <map>
 
 /// <summary>
 /// コライダー管理クラス
@@ -26,9 +27,16 @@ namespace DaiEngine {
 		bool CheckCollision(Collider* colliderA, Collider* colliderB);
 
 	private:
+
+		struct CollisionState {
+			bool preCollision = false;
+		};
+
+	private:
 		//コライダーのvector配列
 		std::vector<Collider*> colliders_;
-
+		//衝突ペアの状態を記録するもの
+		std::map<std::pair<Collider*, Collider*>, CollisionState> collisionMap_;
 
 	private:
 
