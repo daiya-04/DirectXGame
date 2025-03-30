@@ -17,6 +17,7 @@ void DebugTestScene::Init() {
 	///必須処理
 	//カメラ初期化
 	camera_.Init();
+	camera_.SetFOV(45.0f);
 	//ライト初期化
 	pointLight_.Init();
 	spotLight_.Init();

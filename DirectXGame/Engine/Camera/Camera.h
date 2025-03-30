@@ -65,6 +65,12 @@ namespace DaiEngine {
 			matView_ = matView;
 			cMap_->matView = matView;
 		}
+
+		void SetFOV(float angle) {
+			fovAngleY = angle * std::numbers::pi_v<float> / 180.0f;
+			UpdateProjectionMatrix();
+		}
+
 		const Matrix4x4 GetMatView() const { return matView_; }
 		const Matrix4x4 GetMatProj() const { return matProjection_; }
 

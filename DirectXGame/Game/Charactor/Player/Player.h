@@ -103,6 +103,8 @@ private:
 	//攻撃アニメーションのスピード
 	float attackAnimeSpeed_ = 1.0f / 30.0f;
 
+	float baseAnimationSpeed_ = 1.0f / 60.0f;
+
 	Vector3 knockBackBaseDict_ = {};
 
 	//追従カメラ
@@ -115,7 +117,7 @@ private:
 	//攻撃
 	std::vector<BasePlayerAttackManager*> attacks_;
 	//速度
-	float speed_ = 0.1f;
+	float speed_ = 3.0f * kDeltaTime_;
 
 	
 	float speedRate_ = 1.0f;

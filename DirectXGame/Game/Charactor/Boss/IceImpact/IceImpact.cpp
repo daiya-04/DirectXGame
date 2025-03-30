@@ -2,6 +2,7 @@
 
 #include "ColliderManager.h"
 #include "ParticleManager.h"
+#include "ModelManager.h"
 
 
 IceImpact::~IceImpact() {
@@ -10,10 +11,12 @@ IceImpact::~IceImpact() {
 
 void IceImpact::Init() {
 
-	worldTrabsform_.Init();
+	std::shared_ptr<DaiEngine::Model> model = DaiEngine::ModelManager::LoadOBJ("IceBlock");
+	obj_.reset(DaiEngine::Object3d::Create(model));
+	obj_->SetVisible(false);
 
 	collider_ = std::make_unique<DaiEngine::SphereCollider>();
-	collider_->Init("BossAttack", worldTrabsform_, 15.0f);
+	collider_->Init("BossAttack", obj_->worldTransform_, 1.0f);
 	collider_->SetStayCallback([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
@@ -42,7 +45,7 @@ void IceImpact::Update() {
 	phaseUpdateTable_[phase_]();
 
 	//行列更新
-	worldTrabsform_.UpdateMatrix();
+	obj_->worldTransform_.UpdateMatrix();
 
 	collider_->Update();
 
@@ -52,6 +55,12 @@ void IceImpact::Update() {
 	for (auto& [name, particle] : impactEff_) {
 		particle->Update();
 	}
+}
+
+void IceImpact::Draw(const DaiEngine::Camera& camera) {
+
+	obj_->Draw(camera);
+
 }
 
 void IceImpact::DrawParticle(const DaiEngine::Camera& camera) {
@@ -73,14 +82,23 @@ void IceImpact::OnCollision(DaiEngine::Collider* other) {
 
 void IceImpact::AttackStart() {
 
-	phaseRequest_ = Phase::kCharge;
+	float length = (target_->GetXZ() - obj_->GetWorldPos().GetXZ()).Length();
+
+	if (length >= baseLength_) {
+		phaseRequest_ = Phase::kShot;
+	}
+	else {
+		phaseRequest_ = Phase::kCharge;
+	}
+
+	
 	isAttack_ = true;
 
 }
 
 void IceImpact::SetAttackData(const Vector3& pos) {
 
-	worldTrabsform_.translation_ = pos;
+	obj_->worldTransform_.translation_ = pos;
 
 	for (auto& [name, particle] : setEff_) {
 		particle->particleData_.emitter_.translate = pos;
@@ -88,6 +106,16 @@ void IceImpact::SetAttackData(const Vector3& pos) {
 	for (auto& [name, particle] : impactEff_) {
 		particle->particleData_.emitter_.translate = pos;
 	}
+
+	obj_->worldTransform_.UpdateMatrix();
+}
+
+void IceImpact::ObjRotation() {
+
+	rotate_ += rotateSpeed_;
+	rotate_ = std::fmodf(rotate_, 2.0f * std::numbers::pi_v<float>);
+
+	obj_->worldTransform_.rotation_ = { rotate_,rotate_ ,rotate_ };
 
 }
 
@@ -103,16 +131,50 @@ void IceImpact::IdleUpdate() {
 
 }
 
+void IceImpact::ShotInit() {
+
+	collider_->ColliderOn();
+	collider_->SetRadius(shotRadius_);
+	obj_->SetVisible(true);
+
+	Vector3 sub = (target_->GetXZ() - obj_->GetWorldPos().GetXZ());
+	float offset = 1.5f;
+	workShot_.start = obj_->GetWorldPos() + (sub.Normalize() * offset);
+	float halfLen = (sub.Length() / 2.0f);
+	workShot_.end = obj_->GetWorldPos() + (sub.Normalize() * halfLen);
+	workShot_.end.y = workShot_.impactPointHeight_;
+	workShot_.param_ = 0.0f;
+
+}
+
+void IceImpact::ShotUpdate() {
+
+	workShot_.param_ += workShot_.speed_;
+	workShot_.param_ = std::clamp(workShot_.param_, 0.0f, 1.0f);
+
+	obj_->worldTransform_.translation_ = Lerp(workShot_.param_, workShot_.start, workShot_.end);
+	ObjRotation();
+
+	if (workShot_.param_ >= 1.0f) {
+		phaseRequest_ = Phase::kCharge;
+		collider_->ColliderOff();
+	}
+
+}
+
 void IceImpact::ChargeInit() {
 
 	counter_ = 0;
 	for (auto& [name, particle] : setEff_) {
+		particle->particleData_.emitter_.translate = obj_->GetWorldPos();
 		particle->particleData_.isLoop_ = true;
 	}
 
 }
 
 void IceImpact::ChargeUpdate() {
+
+	ObjRotation();
 
 	if (++counter_ >= chargeTime_) {
 		phaseRequest_ = Phase::kWait;
@@ -131,6 +193,8 @@ void IceImpact::WaitInit() {
 
 void IceImpact::WaitUpdate() {
 
+	ObjRotation();
+
 	if (++counter_ >= waitTime_) {
 		phaseRequest_ = Phase::kImpact;
 	}
@@ -141,11 +205,15 @@ void IceImpact::ImpactInit() {
 
 	counter_ = 0;
 	collider_->ColliderOn();
+	collider_->SetRadius(impactRadius_);
 	for (auto& [name, particle] : impactEff_) {
+		particle->particleData_.emitter_.translate = obj_->GetWorldPos();
 		particle->Emit();
 	}
-	iceScar_->EffectStart(worldTrabsform_.GetWorldPos().GetXZ());
+	iceScar_->EffectStart(obj_->worldTransform_.GetWorldPos().GetXZ());
 	iceScar_->HeightAdjustment(0.001f);
+
+	obj_->SetVisible(false);
 
 }
 

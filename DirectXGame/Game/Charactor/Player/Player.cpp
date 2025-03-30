@@ -315,6 +315,8 @@ void Player::Move() {
 	move = DaiEngine::Input::GetInstance()->GetMoveXZ();
 	move = (move / SHRT_MAX) * (speed_ * speedRate_);
 
+	GetNowAnimation().SetAnimationSpeed(baseAnimationSpeed_ * speedRate_);
+	
 	move = TransformNormal(move, GetRotateYMatrix(followCamera_->GetRotateMat()));
 
 	obj_->worldTransform_.translation_ += move.GetXZ();

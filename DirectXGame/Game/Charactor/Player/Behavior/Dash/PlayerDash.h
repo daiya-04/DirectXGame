@@ -26,7 +26,7 @@ private:
 	//加速量(スカラー)
 	float absAccel_ = 0.02f;
 	//ダッシュの速さ
-	float dashSpeed_ = 0.15f;
+	float dashSpeed_ = 5.0f * (1.0f / 60.0f);
 	//速さの最大値
 	float maxSpeed_ = 0.2f;
 

@@ -83,7 +83,7 @@ private:
 	//火の弾の配列
 	std::array<std::unique_ptr<ElementBall>, kElementBallNum_> elementBalls_;
 	//焼け跡の配列
-	std::array<std::unique_ptr<BurnScar>, kElementBallNum_> burnScareses_;
+	std::array<std::unique_ptr<BurnScar>, kElementBallNum_> burnScares_;
 
 	//攻撃フラグ
 	bool isAttack_ = false;

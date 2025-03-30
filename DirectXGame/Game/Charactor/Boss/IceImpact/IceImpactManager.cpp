@@ -29,6 +29,10 @@ void IceImpactManager::Update() {
 
 }
 
+void IceImpactManager::Draw(const DaiEngine::Camera& camera) {
+	iceImpact_->Draw(camera);
+}
+
 void IceImpactManager::DrawParticle(const DaiEngine::Camera& camera) {
 
 	iceImpact_->DrawParticle(camera);
@@ -52,4 +56,8 @@ void IceImpactManager::SetAttackData(const Vector3& pos) {
 
 	iceImpact_->SetAttackData(pos);
 
+}
+
+void IceImpactManager::SetTarget(const Vector3* target) {
+	iceImpact_->SetTarget(target);
 }

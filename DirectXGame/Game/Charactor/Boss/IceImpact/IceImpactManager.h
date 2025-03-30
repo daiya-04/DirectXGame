@@ -13,9 +13,13 @@ public:
 
 	void Update() override;
 
+	void Draw(const DaiEngine::Camera& camera) override;
+
 	void DrawParticle(const DaiEngine::Camera& camera)override;
 
 	void DrawScar(const DaiEngine::Camera& camera);
+
+	void SetTarget(const Vector3* target) override;
 
 	void AttackStart();
 
