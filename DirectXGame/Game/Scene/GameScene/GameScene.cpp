@@ -89,6 +89,7 @@ void GameScene::ApplyGlobalVariables() {
 void GameScene::Init(){
 	//カメラ初期化
 	camera_.Init();
+	camera_.SetFOV(60.0f);
 	//ライト初期化
 	pointLight_.Init();
 	spotLight_.Init();
@@ -361,6 +362,7 @@ void GameScene::DrawPostEffect() {
 	
 	BurnScar::preDraw();
 	GetBossAttackType<ElementBallManager>()->DrawBurnScars(camera_);
+	GetBossAttackType<GroundFlareManager>()->DrawBurnScars(camera_);
 
 	IceScar::preDraw();
 	GetBossAttackType<IcicleManager>()->DrawScar(camera_);

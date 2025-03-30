@@ -9,10 +9,10 @@
                     0.8665317893028259,
                     0.0
                 ],
-                "Count": 1,
+                "Count": 15,
                 "EmitterType": 3,
                 "Frequency": 0.10000000149011612,
-                "LifeTime": 2.0,
+                "LifeTime": 1.0,
                 "Radius": 1.0,
                 "Rotate": 360.0,
                 "Scale": 0.20000000298023224,

@@ -7,6 +7,7 @@
 
 #include "GroundFlare.h"
 #include "BaseBossAttackManager.h"
+#include "BurnScar.h"
 
 #include <array>
 
@@ -32,9 +33,10 @@ public:
 	/// <param name="camera"></param>
 	void DrawParticle(const DaiEngine::Camera& camera) override;
 	/// <summary>
-	/// 衝突時
+	/// 焼け跡描画
 	/// </summary>
-	void OnCollision(DaiEngine::Collider* other);
+	/// <param name="camera"></param>
+	void DrawBurnScars(const DaiEngine::Camera& camera);
 	/// <summary>
 	/// ターゲットセット
 	/// </summary>
@@ -44,11 +46,6 @@ public:
 	/// 攻撃開始
 	/// </summary>
 	void AttackStart();
-	/// <summary>
-	/// コライダー取得
-	/// </summary>
-	/// <returns>コライダー</returns>
-	DaiEngine::OBBCollider* GetCollider() const { return collider_.get(); }
 	/// <summary>
 	/// 攻撃が終了したか
 	/// </summary>
@@ -72,9 +69,11 @@ public:
 
 private:
 	//発車する炎の総数
-	static const uint32_t kGroundFlareNum_ = 5;
+	static const uint32_t kGroundFlareNum_ = 6;
 
 	std::array<std::unique_ptr<GroundFlare>, kGroundFlareNum_> groundFlares_;
+
+	std::array<std::unique_ptr<BurnScar>, kGroundFlareNum_> burnScares_;
 
 	//中心座標
 	DaiEngine::WorldTransform worldtransform_;
@@ -84,10 +83,7 @@ private:
 	//発車場所のオフセット
 	std::array<Vector3, kGroundFlareNum_> offsets_;
 	//オフセットの距離
-	const float offsetLength_ = 1.5f;
-	//コライダー
-	std::unique_ptr<DaiEngine::OBBCollider> collider_;
-	Matrix4x4 rotateMat_ = MakeIdentity44();
+	const float offsetLength_ = 4.5f;
 
 	//1フレーム前の攻撃フラグ
 	bool preIsAttack_ = false;

@@ -4,14 +4,14 @@
 
 void ElementBallManager::Init() {
 
-	for (auto& burnScars : burnScareses_) {
+	for (auto& burnScars : burnScares_) {
 		burnScars.reset(BurnScar::Create(DaiEngine::TextureManager::Load("BurnScars.png")));
 	}
 
 	for (size_t index = 0; index < elementBalls_.size(); index++) {
 		elementBalls_[index] = std::make_unique<ElementBall>();
 		elementBalls_[index]->Init();
-		elementBalls_[index]->SetBurnScar(burnScareses_[index].get());
+		elementBalls_[index]->SetBurnScar(burnScares_[index].get());
 	}
 
 	isAttack_ = false;
@@ -29,7 +29,7 @@ void ElementBallManager::Update() {
 		elementBall->Update();
 	}
 
-	for (auto& burnScars : burnScareses_) {
+	for (auto& burnScars : burnScares_) {
 		burnScars->Update();
 	}
 	//発射中か否か
@@ -52,7 +52,7 @@ void ElementBallManager::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& elementBall : elementBalls_) {
 		elementBall->DrawParticle(camera);
 	}
-	for (auto& burnScars : burnScareses_) {
+	for (auto& burnScars : burnScares_) {
 		burnScars->DrawParticle(camera);
 	}
 }
@@ -60,12 +60,12 @@ void ElementBallManager::DrawParticle(const DaiEngine::Camera& camera) {
 void ElementBallManager::DrawBurnScars(const DaiEngine::Camera& camera) {
 
 	//高さが低い順にソート
-	std::sort(burnScareses_.begin(), burnScareses_.end(), [](const std::unique_ptr<BurnScar>& scarA, const std::unique_ptr<BurnScar>& scarB) {
+	std::sort(burnScares_.begin(), burnScares_.end(), [](const std::unique_ptr<BurnScar>& scarA, const std::unique_ptr<BurnScar>& scarB) {
 		return scarA->GetPosition().y < scarB->GetPosition().y;
 		}
 	);
 
-	for (auto& burnScars : burnScareses_) {
+	for (auto& burnScars : burnScares_) {
 		burnScars->Draw(camera);
 	}
 

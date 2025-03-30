@@ -71,6 +71,7 @@ void TitleScene::Init() {
 	
 	//カメラ初期化
 	camera_.Init();
+	camera_.SetFOV(45.0f);
 	//ポイントライト初期化
 	pointLight_.Init();
 	//スポットライト初期化

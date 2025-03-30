@@ -85,7 +85,7 @@ private:
 	//溜めの時間
 	uint32_t chargeTime_ = 120;
 	//待ちの時間
-	uint32_t waitTime_ = 60;
+	uint32_t waitTime_ = 40;
 	//爆発の時間
 	uint32_t impactTime_ = 25;
 
