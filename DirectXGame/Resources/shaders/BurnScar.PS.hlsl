@@ -1,8 +1,10 @@
 #include "Sprite.hlsli"
+#include "Random.hlsli"
 
 struct ScarData {
 	float32_t4 color;
 	float32_t threshold;
+	float32_t time;
 };
 
 ConstantBuffer<ScarData> gScarData : register(b2);
@@ -63,6 +65,9 @@ PixelShaderOutput main(VertexShaderOutput input){
 	PixelShaderOutput output;
 	output.color = gTexture.Sample(gSampler, input.texcoord);
 
+	RandomGenerator generator;
+    generator.seed = gScarData.time;
+
 	float32_t2 center = float32_t2(0.5f, 0.5f);
 	float32_t distance = length(input.texcoord - center);
 
@@ -74,6 +79,13 @@ PixelShaderOutput main(VertexShaderOutput input){
 
 	float32_t n = step(0.965, sub);
 	output.color += float32_t4(n,n,n,output.color.a) * gScarData.color;
+
+	float32_t rate = PerlinNoise(50.0f, input.texcoord);
+	rate = pow(rate, 3.0f);
+	if(n == 1.0f){
+		output.color.rgb += (float32_t3(1.0f, 0.5f, 0.2f) * rate) * generator.GeneratedRange(5.0f, 5.4f);
+	}
+	
 	
 	float32_t mask = gMaskTex.Sample(gSampler, input.texcoord);
 	

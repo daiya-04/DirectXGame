@@ -16,6 +16,11 @@ void Icicle::Init() {
 
 	std::shared_ptr<DaiEngine::Model> model = DaiEngine::ModelManager::LoadOBJ("Icicle");
 	obj_.reset(DaiEngine::Object3d::Create(model));
+	obj_->SetAplha(0.5f);
+	obj_->SetSubsurfaceIntensity(0.4f);
+	obj_->SetFresnelPower(4.0f);
+	obj_->SetFresnelIntensity(1.0f);
+	obj_->SetEnvReflectIntensity(0.05f);
 
 	collider_ = std::make_unique<DaiEngine::SphereCollider>();
 	collider_->Init("BossAttack", obj_->worldTransform_, 1.0f);
@@ -77,7 +82,7 @@ void Icicle::Update() {
 }
 
 void Icicle::Draw(const DaiEngine::Camera& camera) {
-	obj_->Draw(camera, DaiEngine::BlendMode::kAdd);
+	obj_->Draw(camera, DaiEngine::BlendMode::kAlpha);
 }
 
 void Icicle::DrawParticle(const DaiEngine::Camera& camera) {

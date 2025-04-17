@@ -45,6 +45,21 @@ struct SpotLight{
 
 ConstantBuffer<SpotLight> gSpotLight : register(b5);
 
+struct ObjectData {
+	float32_t3 subsurfaceColor;
+    float32_t subsurfaceIntensity;
+
+    float32_t3 fresnelColor;
+    float32_t fresnelPower;
+	float32_t fresnelIntensity;
+
+    float32_t envReflectIntensity;
+
+	float32_t alpha;
+};
+
+ConstantBuffer<ObjectData> gObjectData : register(b6);
+
 struct PixelShaderOutput {
 	float32_t4 color : SV_TARGET0;
 };
@@ -60,9 +75,9 @@ PixelShaderOutput main(VertexShaderOutput input){
 	float32_t4 textureColor = gTexture.Sample(gSampler, input.texcoord);
 	
 
-	if(textureColor.a <= 0.5){
+	/*if(textureColor.a <= 0.5){
 		discard;
-	}
+	}*/
 	if(output.color.a == 0.0){
 		discard;
 	}
@@ -121,13 +136,40 @@ PixelShaderOutput main(VertexShaderOutput input){
 		float32_t3 cameraToPosition = normalize(input.worldPosition - gCamera.cameraPos);
 		float32_t3 reflectedVector = reflect(cameraToPosition,normalize(input.normal));
 		float32_t4 environmentColor = gEnvironmentTex.Sample(gSampler,reflectedVector);
+		float32_t3 environmentReflect = environmentColor.rgb * gObjectData.envReflectIntensity;
 
 		float32_t3 diffuseSL = gMaterial.color.rgb * textureColor.rgb * gSpotLight.color.rgb * cos * gSpotLight.intensity * attenuationFactor * falloffFactor;
 		float32_t3 specularSL = gSpotLight.color.rgb * gSpotLight.intensity * attenuationFactor * falloffFactor * specularPow * float32_t3(1.0f,1.0f,1.0f);
+
+
+		// 影側でも光るようにする部分
+		//法線がライトと同じ向きか（影になっているか）
+		float ndotDown = dot(normalize(input.normal), gDirectionalLight.direction);
+		float subsurface = pow(saturate(ndotDown), 2.0f) * gObjectData.subsurfaceIntensity;
+		float32_t3 subsurfaceLightColor = gObjectData.subsurfaceColor.rgb * subsurface;
+
+		//エッジ部分の光を強調
+		float fresnel = pow(1.0f - saturate(dot(toEye, normalize(input.normal))), gObjectData.fresnelPower) * gObjectData.fresnelIntensity;
+		float32_t3 fresnelReflect = gObjectData.fresnelColor * fresnel;
+
 		
 		//合計
-		output.color.rgb = diffuseDL + specularDL + diffusePL + specularPL + diffuseSL + specularSL + (environmentColor.rgb * 0.01f);
-        output.color.a = gMaterial.color.a * textureColor.a;
+
+		//ライト系の色加算
+		float32_t3 litColor = diffuseDL + specularDL + diffusePL + specularPL + diffuseSL + specularSL;
+
+		// 影部分の光り具合
+		litColor += subsurfaceLightColor;
+
+		// 環境マップ適用
+		litColor += environmentReflect;
+
+		// エッジ部分の光
+		litColor += fresnelReflect;
+
+		output.color.rgb = litColor;
+		//output.color.rgb = diffuseDL + specularDL + diffusePL + specularPL + diffuseSL + specularSL + (environmentColor.rgb * 0.01f);
+        output.color.a = gMaterial.color.a * textureColor.a * gObjectData.alpha;
 	} else {
 	    output.color = gMaterial.color * textureColor;
 	}

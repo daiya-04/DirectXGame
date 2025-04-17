@@ -63,6 +63,13 @@ void BaseScar::Draw(const DaiEngine::Camera& camera) {
 	scarData_->threshold_ = threshold_;
 	scarData_->color_ = color_;
 
+	time_ += 1.0f / 60.0f;
+	float resetTime = 0.1f;
+	if (time_ >= resetTime) {
+		scarData_->time_ += 1.0f;
+		time_ -= resetTime;
+	}
+
 	//ワールド行列の計算
 	Matrix4x4* MatData = nullptr;
 	worldMatBuff_->Map(0, nullptr, reinterpret_cast<void**>(&MatData));
