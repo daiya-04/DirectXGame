@@ -14,6 +14,7 @@ void PlasmaShot::Init() {
 
 	std::shared_ptr<DaiEngine::Model> model = DaiEngine::ModelManager::LoadOBJ("PlasmaBall");
 	obj_.reset(DaiEngine::Object3d::Create(model));
+	obj_->SetAplha(0.6f);
 
 	collider_ = std::make_unique<DaiEngine::SphereCollider>();
 	collider_->Init("BossAttack", obj_->worldTransform_, 0.5f);

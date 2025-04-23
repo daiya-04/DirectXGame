@@ -18,13 +18,13 @@ void PlayerAttack::Init() {
 
 	switch (comboIndex_) {
 		case static_cast<uint32_t>(ComboIndex::First):
-			player_->SetAnimation(Player::Action::AttackCombo1, false);
+			player_->SetAnimation(Player::Action::kAttackCombo1, false);
 			break;
 		case static_cast<uint32_t>(ComboIndex::Second):
-			player_->SetAnimation(Player::Action::AttackCombo2, false);
+			player_->SetAnimation(Player::Action::kAttackCombo2, false);
 			break;
 		case static_cast<uint32_t>(ComboIndex::Third):
-			player_->SetAnimation(Player::Action::AttackCombo3, false);
+			player_->SetAnimation(Player::Action::kAttackCombo3, false);
 			break;
 	}
 	

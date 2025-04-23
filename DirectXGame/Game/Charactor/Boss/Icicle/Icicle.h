@@ -190,6 +190,9 @@ private:
 	//ターゲットのいる方向
 	Vector3 targetDict_;
 
+	uint32_t lifeTime_ = 60 * 5;
+	int32_t count_ = lifeTime_;
+
 	//生存フラグ
 	bool isLife_ = false;
 	bool preIsLife_ = false;

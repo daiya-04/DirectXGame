@@ -67,9 +67,6 @@ void DebugTestScene::Init() {
 	ParticleEditor::GetInstance()->Init();
 
 	effect_ = ParticleManager::Load("FireBallImpact");
-
-	camera_.translation_ = { 0.0f, 3.0f, 0.0f };
-	camera_.rotation_ = { 1.53f,0.0f,0.0f };
 	
 }
 
@@ -155,7 +152,7 @@ void DebugTestScene::DrawModel() {
 	//ShapesDraw::DrawAABB(Shapes::AABB({ -1.0,-1.0,-1.0f }, { 1.0f,1.0f,1.0f }), camera_);
 
 	BurnScar::preDraw();
-	burnScars_->Draw(camera_);
+	//burnScars_->Draw(camera_);
 
 	IceScar::preDraw();
 	//iceScar_->Draw(camera_);
@@ -176,7 +173,7 @@ void DebugTestScene::DrawParticle() {
 		//particle->Draw(camera_);
 	}
 	
-	//ParticleEditor::GetInstance()->Draw(camera_);
+	ParticleEditor::GetInstance()->Draw(camera_);
 
 }
 

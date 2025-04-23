@@ -9,7 +9,7 @@ void PlayerKnockBack::Init() {
 
 	assert(player_);
 
-	player_->SetAnimation(Player::Action::KnockBack,false);
+	player_->SetAnimation(Player::Action::kKnockBack,false);
 	player_->GetNowAnimation().SetAnimationSpeed(attackAnimeSpeed_);
 	player_->SetDirection(player_->GetKnockBackBaseDict().Normalize());
 

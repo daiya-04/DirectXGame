@@ -47,23 +47,23 @@ public:
 	//アクション(アニメーション)
 	enum Action {
 		//立ち
-		Standing,
+		kStanding,
 		//ジョギング
-		Jogging,
+		kJogging,
 		//攻撃1
-		AttackCombo1,
+		kAttackCombo1,
 		//攻撃2
-		AttackCombo2,
+		kAttackCombo2,
 		//攻撃3
-		AttackCombo3,
+		kAttackCombo3,
 		//死亡
-		Dead,
+		kDead,
 		//走り
-		Dash,
+		kDash,
 		//ノックバック
-		KnockBack,
+		kKnockBack,
 		//回避
-		Avoid,
+		kAvoid,
 
 		//アクション総数
 		kActionNum,
@@ -242,6 +242,8 @@ public:
 	/// 移動
 	/// </summary>
 	void Move();
+
+	void Dead();
 
 	void SetSpeed(float speed) { speed_ = speed; }
 	void SetSpeedRate(float rate) { speedRate_ = rate; }

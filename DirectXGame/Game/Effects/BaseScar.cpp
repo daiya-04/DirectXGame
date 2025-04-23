@@ -103,6 +103,7 @@ void BaseScar::EffectStart(const Vector3& pos) {
 	lifeTimer_ = lifeTime_;
 	threshold_ = 0.0f;
 	collider_->ColliderOn();
+	worldTransform_.UpdateMatrix();
 
 }
 

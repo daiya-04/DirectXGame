@@ -8,7 +8,7 @@ void PlayerIdel::Init() {
 
 	assert(player_);
 
-	player_->SetAnimation(Player::Action::Standing);
+	player_->SetAnimation(Player::Action::kStanding);
 
 
 }

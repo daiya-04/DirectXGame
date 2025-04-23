@@ -29,7 +29,10 @@ public:
 	/// <summary>
 	/// ダメージを受ける(HP減少)
 	/// </summary>
-	void TakeDamage(uint32_t damage = 1) { hp_ -= damage; }
+	void TakeDamage(uint32_t damage = 1) { 
+		hp_ -= damage;
+		hp_ = std::clamp(hp_, 0, maxHp_);
+	}
 
 	uint32_t GetHP() const { return hp_; }
 
@@ -42,9 +45,9 @@ private:
 	Vector2 gaugeSize_;
 
 	//HP
-	uint32_t hp_;
+	int32_t hp_;
 	//最大HP
-	uint32_t maxHp_;
+	int32_t maxHp_;
 
 	float percent_ = 1.0f;
 	float currentPer_ = 1.0f;
