@@ -521,7 +521,9 @@
     <ClCompile Include="Game\Charactor\Player\State\NormalState\NormalState.cpp">
       <Filter>Game\Charactor\Player\State\NormalState</Filter>
     </ClCompile>
-    <ClCompile Include="GameTime.cpp" />
+    <ClCompile Include="Game\GameTime.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -899,6 +901,8 @@
     <ClInclude Include="Game\Charactor\Player\State\NormalState\NormalState.h">
       <Filter>Game\Charactor\Player\State\NormalState</Filter>
     </ClInclude>
-    <ClInclude Include="GameTime.h" />
+    <ClInclude Include="Game\GameTime.h">
+      <Filter>Game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
