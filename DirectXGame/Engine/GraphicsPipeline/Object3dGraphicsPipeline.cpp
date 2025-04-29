@@ -75,6 +75,10 @@ void Object3dGraphicsPipeline::Init() {
 	rootParameters[static_cast<size_t>(RootParameter::kSpotLight)].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;  //PixelShaderで使う
 	rootParameters[static_cast<size_t>(RootParameter::kSpotLight)].Descriptor.ShaderRegister = 5;  //レジスタ番号1を使う
 
+	rootParameters[static_cast<size_t>(RootParameter::kObjectData)].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; //CBVを使う
+	rootParameters[static_cast<size_t>(RootParameter::kObjectData)].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParameters[static_cast<size_t>(RootParameter::kObjectData)].Descriptor.ShaderRegister = 6; //レジスタ番号
+
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
 

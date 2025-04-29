@@ -11,6 +11,8 @@ void ClearState::Init() {
 
 	gameScene_->GetPlayer()->GetObj()->SetVisible(true);
 
+	gameScene_->GetGameTime()->PrepareTime();
+
 }
 
 void ClearState::Update() {
@@ -32,5 +34,6 @@ void ClearState::Update() {
 
 void ClearState::DrawUI() {
 	gameScene_->GetFinishUI()->Draw();
+	gameScene_->GetGameTime()->Draw();
 }
 

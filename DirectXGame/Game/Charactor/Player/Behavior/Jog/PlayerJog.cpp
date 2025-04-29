@@ -8,7 +8,7 @@ void PlayerJog::Init() {
 
 	assert(player_);
 
-	player_->SetAnimation(Player::Action::Jogging);
+	player_->SetAnimation(Player::Action::kJogging);
 	player_->GetFollowCamera()->SetDashFlag(false);
 	player_->SetSpeed(speed_);
 

@@ -33,7 +33,7 @@ void DebugTestScene::Init() {
 	model_ = DaiEngine::ModelManager::LoadOBJ("Rock");
 
 	skyBoxTex_ = DaiEngine::TextureManager::Load("skyBox.dds");
-	tex_ = DaiEngine::TextureManager::Load("test.png");
+	tex_ = DaiEngine::TextureManager::Load("Clear_text.png");
 	burnScarsTex_ = DaiEngine::TextureManager::Load("BurnScars.png");
 
 	skyBox_.reset(DaiEngine::SkyBox::Create(skyBoxTex_));
@@ -47,7 +47,7 @@ void DebugTestScene::Init() {
 	obj_.reset(DaiEngine::Object3d::Create(model_));
 	obj_->worldTransform_.rotation_.y = 3.14f;
 
-	sprite_.reset(DaiEngine::Sprite::Create(tex_, { 640.0f,360.0f }));
+	sprite_.reset(DaiEngine::Sprite::Create(tex_, { 670.0f,200.0f }));
 	
 	dissolve_ = Dissolve::GetInstance();
 	dissolve_->Init();
@@ -68,7 +68,8 @@ void DebugTestScene::Init() {
 
 	effect_ = ParticleManager::Load("FireBallImpact");
 
-
+	gameTime_ = std::make_unique<GameTime>();
+	gameTime_->Init();
 	
 }
 
@@ -111,6 +112,9 @@ void DebugTestScene::Update() {
 	}
 
 	ParticleEditor::GetInstance()->Update();
+
+	gameTime_->Update();
+	gameTime_->PrepareTime();
 
 	human_->worldTransform_.UpdateMatrix();
 	animation_.Play(skeleton_);
@@ -175,13 +179,15 @@ void DebugTestScene::DrawParticle() {
 		//particle->Draw(camera_);
 	}
 	
-	ParticleEditor::GetInstance()->Draw(camera_);
+	//ParticleEditor::GetInstance()->Draw(camera_);
 
 }
 
 void DebugTestScene::DrawUI() {
 
-
+	DaiEngine::Sprite::preDraw();
+	sprite_->Draw();
+	gameTime_->Draw();
 
 }
 
@@ -233,6 +239,16 @@ void DebugTestScene::DebugGUI() {
 	ImGui::ImageButton("ring_03", (ImTextureID)gpuHandle.ptr, ImVec2(128, 128));
 
 	ImGui::End();
+
+	Vector2 pos = sprite_->GetPosition();
+
+	ImGui::Begin("clear_text");
+
+	ImGui::DragFloat2("position", &pos.x, 0.01f);
+
+	ImGui::End();
+
+	sprite_->SetPosition(pos);
 
 #endif // _DEBUG
 }

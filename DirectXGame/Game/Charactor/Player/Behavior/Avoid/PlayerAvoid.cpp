@@ -9,7 +9,7 @@ void PlayerAvoid::Init() {
 
 	assert(player_);
 
-	player_->SetAnimation(Player::Action::Avoid,false);
+	player_->SetAnimation(Player::Action::kAvoid,false);
 	player_->GetNowAnimation().SetAnimationSpeed(1.0f / 30.0f);
 	
 	Vector3 zeroVector{};

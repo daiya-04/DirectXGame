@@ -20,6 +20,7 @@ namespace Object3dParam {
 		kDirectionLight,
 		kPointLight,
 		kSpotLight,
+		kObjectData,
 
 		kParamNum,
 	};

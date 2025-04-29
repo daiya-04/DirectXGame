@@ -8,7 +8,7 @@ void PlayerDash::Init() {
 
 	assert(player_);
 
-	player_->SetAnimation(Player::Action::Dash);
+	player_->SetAnimation(Player::Action::kDash);
 	player_->GetFollowCamera()->SetDashFlag(true);
 	player_->SetSpeed(dashSpeed_);
 

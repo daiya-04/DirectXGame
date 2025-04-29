@@ -21,7 +21,7 @@
 void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 
 	//アクション設定
-	actionIndex_ = Action::Standing;
+	actionIndex_ = Action::kStanding;
 
 	BaseCharactor::Init(models);
 
@@ -161,7 +161,9 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 			knockBackBaseDict_ = direction_;
 		}
 		EndHandEff();
-		ChangeBehavior("KnockBack");
+		if (hp_.GetHP() > 0) {
+			ChangeBehavior("KnockBack");
+		}
 	}
 
 	//ターゲットとの距離
@@ -175,9 +177,7 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 
 	//HPが0になったら...
 	if (hp_.GetHP() <= 0) {
-		isDead_ = true;
-		EndHandEff();
-		ChangeBehavior("Dead");
+		Dead();
 	}
 }
 
@@ -323,6 +323,13 @@ void Player::Move() {
 
 	SetDirection(move.Normalize());
 
+}
+
+void Player::Dead() {
+	isDead_ = true;
+	EndHandEff();
+	ChangeState("Normal");
+	ChangeBehavior("Dead");
 }
 
 void Player::StartHandEff() {

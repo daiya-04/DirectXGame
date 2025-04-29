@@ -26,6 +26,9 @@ void BurnState::Update() {
 
 			player_->GetHP().TakeDamage();
 			counter = damageCoolTime_;
+			if (player_->GetHP().GetHP() <= 0) {
+				player_->Dead();
+			}
 
 		}else {
 

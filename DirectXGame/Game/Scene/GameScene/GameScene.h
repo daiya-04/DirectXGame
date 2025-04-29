@@ -48,6 +48,7 @@
 #include "ISceneState.h"
 #include "BasePlayerAttackManager.h"
 #include "BaseBossAttackManager.h"
+#include "GameTime.h"
 
 //ゲームシーンクラス
 class GameScene : public DaiEngine::IScene {
@@ -160,6 +161,8 @@ private:
 	//ゲーム終了カウンター
 	uint32_t finishCount_ = finishTime_;
 
+	std::unique_ptr<GameTime> gameTime_;
+
 	///UI
 	//Xボタン
 	std::unique_ptr<DaiEngine::Sprite> XButton_;
@@ -232,6 +235,8 @@ public:
 	DaiEngine::Sprite* GetCharAvoidUI() { return charAvoid_.get(); }
 	DaiEngine::Sprite* GetFinishUI() { return finish_.get(); }
 	DaiEngine::Sprite* GetGameOverUI() { return gameOver_.get(); }
+
+	GameTime* GetGameTime() { return gameTime_.get(); }
 
 	/// <summary>
 	/// ボスの攻撃配列から特定の型取り出し

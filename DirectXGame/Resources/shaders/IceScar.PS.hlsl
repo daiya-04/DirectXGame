@@ -3,6 +3,7 @@
 struct ScarData {
 	float32_t4 color;
 	float32_t threshold;
+    float32_t time;
 };
 
 ConstantBuffer<ScarData> gScarData : register(b2);

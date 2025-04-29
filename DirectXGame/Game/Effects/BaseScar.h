@@ -45,6 +45,8 @@ protected:
 		Vector4 color_;
 		//閾値
 		float threshold_;
+		//経過時間
+		float time_;
 	};
 
 protected: //静的メンバ変数
@@ -90,6 +92,8 @@ protected: //オブジェクトパラメータ
 	int32_t lifeTimer_ = lifeTime_;
 	//コライダー
 	std::unique_ptr<DaiEngine::SphereCollider> collider_;
+
+	float time_ = 1.0f;
 
 protected:
 

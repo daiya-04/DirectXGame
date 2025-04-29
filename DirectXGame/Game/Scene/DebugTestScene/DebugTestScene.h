@@ -26,6 +26,7 @@
 #include "BurnScar.h"
 #include "IceScar.h"
 #include "GPUParticle.h"
+#include "GameTime.h"
 
 #include "Dissolve.h"
 #include "PostEffect.h"
@@ -113,6 +114,8 @@ private: //テスト用の変数
 	std::unique_ptr<IceScar> iceScar_;
 
 	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> effect_;
+
+	std::unique_ptr<GameTime> gameTime_;
 
 };
 

@@ -8,7 +8,7 @@ void PlayerDead::Init() {
 
 	assert(player_);
 
-	player_->SetAnimation(Player::Action::Dead, false);
+	player_->SetAnimation(Player::Action::kDead, false);
 	player_->SetDirection(Vector3(0.0f, 0.0f, 1.0f));
 
 }
