@@ -110,7 +110,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GameTime.cpp" />
+    <ClCompile Include="Game\GameTime.cpp" />
     <ClCompile Include="Game\Charactor\Player\State\ChilledState\ChilledState.cpp" />
     <ClCompile Include="Game\Charactor\Player\State\BurnState\BurnState.cpp" />
     <ClCompile Include="Game\Charactor\Player\Behavior\Avoid\PlayerAvoid.cpp" />
@@ -221,7 +221,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Charactor\Player\State\NormalState\NormalState.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameTime.h" />
+    <ClInclude Include="Game\GameTime.h" />
     <ClInclude Include="Game\Charactor\Player\State\ChilledState\ChilledState.h" />
     <ClInclude Include="Game\Charactor\Player\State\BurnState\BurnState.h" />
     <ClInclude Include="Game\Charactor\Player\Behavior\Avoid\PlayerAvoid.h" />
