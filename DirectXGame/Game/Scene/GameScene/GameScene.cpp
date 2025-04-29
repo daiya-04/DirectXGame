@@ -260,6 +260,9 @@ void GameScene::Init(){
 
 	///
 
+	gameTime_ = std::make_unique<GameTime>();
+	gameTime_->Init();
+
 	//調整項目の追加と代入
 	SetGlobalVariables();
 	ApplyGlobalVariables();

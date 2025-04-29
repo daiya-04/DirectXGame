@@ -1,0 +1,25 @@
+{
+    "TimerUI": {
+        "BasePosition": [
+            640.0,
+            400.0
+        ],
+        "MinOnesOffset": [
+            -80.0,
+            0.0
+        ],
+        "MinTensOffset": [
+            -180.0,
+            0.0
+        ],
+        "SecOnesOffset": [
+            180.0,
+            0.0
+        ],
+        "SecTensOffset": [
+            80.0,
+            0.0
+        ],
+        "UIScale": 2.5
+    }
+}

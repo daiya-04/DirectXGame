@@ -12,6 +12,9 @@ void BattleState::Init() {
 }
 
 void BattleState::Update() {
+
+	gameScene_->GetGameTime()->Update();
+
 	//プレイヤーが死んだら専用シーンへ
 	if (gameScene_->GetPlayer()->IsDead()) {
 		//ロックオンを外す
