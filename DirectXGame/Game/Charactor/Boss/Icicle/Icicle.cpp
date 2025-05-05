@@ -24,6 +24,7 @@ void Icicle::Init() {
 	collider_ = std::make_unique<DaiEngine::SphereCollider>();
 	collider_->Init("BossAttack", obj_->worldTransform_, 1.0f);
 	collider_->SetStayCallback([this](DaiEngine::Collider* other) { this->OnCollision(other); });
+	collider_->SetValue("Damage", damage_);
 	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 
 

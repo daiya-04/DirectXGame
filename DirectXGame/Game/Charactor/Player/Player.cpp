@@ -168,7 +168,7 @@ void Player::DrawUI() {
 void Player::OnCollision(DaiEngine::Collider* other) {
 
 	if (other->GetTag() == "BossAttack") {
-		hp_.TakeDamage(3);
+		hp_.TakeDamage(other->GetIntValue("Damage"));
 
 		Vector3 attackPos = other->GetWorldPos();
 		attackPos.y = GetCenterPos().y;

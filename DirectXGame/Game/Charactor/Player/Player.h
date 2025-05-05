@@ -71,7 +71,7 @@ private:
 	//ターゲット(ボス)
 	const DaiEngine::WorldTransform* target_ = nullptr;
 	//最大HP
-	int32_t maxHp_ = 60;
+	int32_t maxHp_ = 80;
 	//攻撃の射程
 	float attackRange_ = 20.0f;
 	//スタミナ

@@ -100,6 +100,7 @@ private:
 	uint32_t attackTime_ = 30;
 	uint32_t count_ = 0;
 
+	int32_t damage_ = 3;
 
 };
 

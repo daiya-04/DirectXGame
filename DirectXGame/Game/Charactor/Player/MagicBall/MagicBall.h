@@ -117,5 +117,7 @@ private:
 	//射程
 	float firingRange_ = 20.0f;
 
+	int32_t damage_ = 1;
+
 };
 

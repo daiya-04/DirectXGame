@@ -184,5 +184,7 @@ private:
 	//発射中か
 	bool isFire_ = false;
 
+	int32_t damage_ = 3;
+
 };
 

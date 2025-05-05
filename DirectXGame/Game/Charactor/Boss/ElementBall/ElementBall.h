@@ -133,6 +133,8 @@ private:
 	//焼け跡
 	BurnScar* burnScar_ = nullptr;
 
+	int32_t damage_ = 3;
+
 public:
 
 	~ElementBall();
