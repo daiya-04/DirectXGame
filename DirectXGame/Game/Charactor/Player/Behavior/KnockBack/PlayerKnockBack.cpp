@@ -25,16 +25,7 @@ void PlayerKnockBack::Update() {
 
 	if (!player_->GetNowAnimation().IsPlaying()) {
 		//スティック入力がされたままだったらJogStateへ
-		if (DaiEngine::Input::GetInstance()->TiltLStick(DaiEngine::Input::Stick::All)) {
-			if (DaiEngine::Input::GetInstance()->PushButton(DaiEngine::Input::Button::A) && player_->IsDash()) {
-				player_->ChangeBehavior("Dash");
-			}
-			else {
-				player_->ChangeBehavior("Jog");
-			}
-		}else {
-			player_->ChangeBehavior("Idel");
-		}
+		player_->DecideMoveBehavior();
 	}
 
 	if (++timer_ >= avoidCoolTime_) {

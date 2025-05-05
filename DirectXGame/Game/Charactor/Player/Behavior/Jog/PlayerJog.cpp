@@ -25,8 +25,7 @@ void PlayerJog::Update() {
 	}
 
 	//攻撃
-	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::X)) {
-		player_->ChangeBehavior("Attack");
+	if (player_->AttackCommand()) {
 		return;
 	}
 

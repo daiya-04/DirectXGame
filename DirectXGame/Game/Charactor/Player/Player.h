@@ -9,8 +9,7 @@
 #include "FollowCamera.h"
 #include "BaseCharactor.h"
 #include "IPlayerBehavior.h"
-#include "MagicBallManager.h"
-#include "GroundBurstManager.h"
+#include "BasePlayerAttackManager.h"
 #include "GPUParticle.h"
 #include "Stamina.h"
 #include "IPlayerState.h"
@@ -25,22 +24,6 @@
 
 //プレイヤークラス
 class Player : public BaseCharactor {
-private: //ふるまい用メンバ変数
-	//行動
-	enum class Behavior {
-		//通常
-		kIdel,
-		//攻撃
-		kAttack,
-		//移動(ジョギング)
-		kJog,
-		//ダッシュ
-		kDash,
-		//死亡
-		kDead,
-		//回避
-		Avoid,
-	};
 
 public:
 	
@@ -64,6 +47,8 @@ public:
 		kKnockBack,
 		//回避
 		kAvoid,
+		//チャージ
+		kCharge,
 
 		//アクション総数
 		kActionNum,
@@ -118,13 +103,17 @@ private:
 	std::vector<BasePlayerAttackManager*> attacks_;
 	//速度
 	float speed_ = 3.0f * kDeltaTime_;
-
-	
+	//速度倍率
 	float speedRate_ = 1.0f;
+
+	float chargeCount_ = 0.0f;
+	float chargeAttackTime_ = 0.3f;
+
 
 	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> handEff_;
 	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> burnEff_;
 	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> chilledEff_;
+	std::map<std::string, std::unique_ptr<DaiEngine::GPUParticle>> chargeEff_;
 
 
 public:
@@ -195,6 +184,11 @@ public:
 	/// </summary>
 	void AttackGroundBurst();
 	/// <summary>
+	/// チャージ攻撃の発射
+	/// </summary>
+	void ShotMagicCannon();
+
+	/// <summary>
 	/// アニメーションの設定
 	/// </summary>
 	void SetAnimation(size_t actionIndex, bool isLoop = true) override;
@@ -242,6 +236,14 @@ public:
 	/// 移動
 	/// </summary>
 	void Move();
+	/// <summary>
+	/// 移動系のにBehaviorへ
+	/// </summary>
+	void DecideMoveBehavior();
+	/// <summary>
+	/// 攻撃入力処理
+	/// </summary>
+	bool AttackCommand();
 
 	void Dead();
 
@@ -262,12 +264,20 @@ public:
 
 	void EndChilledEff();
 
+	void StartChargeEff();
+
+	void EndChargeEff();
+
+	void ChargeEffPosUpdate();
+
 	Stamina& GetStamina() { return stamina_; }
 	bool IsDash() { return stamina_.GetStamina() > dashStamina_; }
 	bool IsAvoid() { return stamina_.GetStamina() > avoidStamina_; }
 	void StaminaHeal() { stamina_.Healing(healStamina_); }
 
 	HP& GetHP() { return hp_; }
+
+	Vector3 GetPlayerMidHandPos(const Vector3& offset = { 0.0f,0.0f,0.0f });
 
 private:
 	/// <summary>

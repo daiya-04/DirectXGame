@@ -88,17 +88,7 @@ void PlayerAttack::Update() {
 		else {
 			//続かないなら...
 			//スティック入力がされたままだったらJogStateへ
-			if (DaiEngine::Input::GetInstance()->TiltLStick(DaiEngine::Input::Stick::All)) {
-				if (DaiEngine::Input::GetInstance()->PushButton(DaiEngine::Input::Button::A)) {
-					player_->ChangeBehavior("Dash");
-				}
-				else {
-					player_->ChangeBehavior("Jog");
-				}	
-			}
-			else {
-				player_->ChangeBehavior("Idel");
-			}
+			player_->DecideMoveBehavior();
 			comboIndex_ = static_cast<uint32_t>(ComboIndex::First);
 			player_->EndHandEff();
 			return;

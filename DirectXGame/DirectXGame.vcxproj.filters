@@ -197,6 +197,12 @@
     <Filter Include="Game\Charactor\Player\State\NormalState">
       <UniqueIdentifier>{c53dda80-0b31-4621-bc63-493b5113bd61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Charactor\Player\Behavior\ChargeAttack">
+      <UniqueIdentifier>{8b4f2e6d-74f7-4e9c-87b4-5562d5950812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Charactor\Player\MagicCannon">
+      <UniqueIdentifier>{eb0a7dbe-e68f-42e3-815b-59f806c5edc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -476,10 +482,10 @@
     <ClCompile Include="Game\Charactor\Player\LockOn.cpp">
       <Filter>Game\Charactor\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Charactor\Player\MasicBall\MagicBall.cpp">
+    <ClCompile Include="Game\Charactor\Player\MagicBall\MagicBall.cpp">
       <Filter>Game\Charactor\Player\MagicBall</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Charactor\Player\MasicBall\MagicBallManager.cpp">
+    <ClCompile Include="Game\Charactor\Player\MagicBall\MagicBallManager.cpp">
       <Filter>Game\Charactor\Player\MagicBall</Filter>
     </ClCompile>
     <ClCompile Include="Game\Charactor\Boss\GroundFlare\GroundFlare.cpp">
@@ -523,6 +529,15 @@
     </ClCompile>
     <ClCompile Include="Game\GameTime.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Player\Behavior\ChargeAttack\PlayerChargeAttack.cpp">
+      <Filter>Game\Charactor\Player\Behavior\ChargeAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Player\MagicCannon\MagicCannon.cpp">
+      <Filter>Game\Charactor\Player\MagicCannon</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Charactor\Player\MagicCannon\MagicCannonManager.cpp">
+      <Filter>Game\Charactor\Player\MagicCannon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -841,10 +856,10 @@
     <ClInclude Include="Game\Charactor\Player\LockOn.h">
       <Filter>Game\Charactor\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Charactor\Player\MasicBall\MagicBall.h">
+    <ClInclude Include="Game\Charactor\Player\MagicBall\MagicBall.h">
       <Filter>Game\Charactor\Player\MagicBall</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Charactor\Player\MasicBall\MagicBallManager.h">
+    <ClInclude Include="Game\Charactor\Player\MagicBall\MagicBallManager.h">
       <Filter>Game\Charactor\Player\MagicBall</Filter>
     </ClInclude>
     <ClInclude Include="Game\Charactor\Boss\GroundFlare\GroundFlare.h">
@@ -903,6 +918,15 @@
     </ClInclude>
     <ClInclude Include="Game\GameTime.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Player\Behavior\ChargeAttack\PlayerChargeAttack.h">
+      <Filter>Game\Charactor\Player\Behavior\ChargeAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Player\MagicCannon\MagicCannon.h">
+      <Filter>Game\Charactor\Player\MagicCannon</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Charactor\Player\MagicCannon\MagicCannonManager.h">
+      <Filter>Game\Charactor\Player\MagicCannon</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
