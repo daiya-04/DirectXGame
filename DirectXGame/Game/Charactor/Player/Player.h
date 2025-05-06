@@ -159,7 +159,6 @@ public:
 	void OnCollision(DaiEngine::Collider* other) override;
 
 	void EnterCollision(DaiEngine::Collider* other);
-	void ExitCollision(DaiEngine::Collider* other);
 	/// <summary>
 	/// 行動の切り替え
 	/// </summary>
