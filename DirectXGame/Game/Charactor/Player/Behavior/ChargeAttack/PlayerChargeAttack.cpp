@@ -43,7 +43,7 @@ void PlayerChargeAttack::Update() {
 			player_->DecideMoveBehavior();
 		}
 		//チャージキャンセルして回避へ
-		if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::B) && player_->IsAvoid()) {
+		if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::A) && player_->IsAvoid()) {
 			player_->ChangeBehavior("Avoid");
 		}
 
