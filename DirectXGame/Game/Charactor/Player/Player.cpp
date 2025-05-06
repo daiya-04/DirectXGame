@@ -45,7 +45,6 @@ void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 	collider_->Init("Player", obj_->worldTransform_, {});
 	collider_->SetStayCallback([this](DaiEngine::Collider* other) {this->OnCollision(other); });
 	collider_->SetEnterCallback([this](DaiEngine::Collider* other) {this->EnterCollision(other); });
-	collider_->SetExitCallback([this](DaiEngine::Collider* other) {this->ExitCollision(other); });
 	collider_->ColliderOn();
 
 	handEff_ = ParticleManager::Load("PlayerHandEff");
@@ -219,22 +218,6 @@ void Player::EnterCollision(DaiEngine::Collider* other) {
 	if (other->GetTag() == "IceScar") {
 		ChangeState("Chilled");
 	}
-
-}
-
-void Player::ExitCollision(DaiEngine::Collider* other) {
-
-	/*if (other->GetTag() == "BurnScar") {
-		if (auto state = dynamic_cast<BurnState*>(state_.get())) {
-			state_->Exit();
-		}
-	}
-
-	if (other->GetTag() == "IceScar") {
-		if (auto state = dynamic_cast<ChilledState*>(state_.get())) {
-			state_->Exit();
-		}
-	}*/
 
 }
 
