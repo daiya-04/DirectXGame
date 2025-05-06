@@ -23,6 +23,7 @@ void GroundFlare::Init() {
 	collider_->Init("BossAttack", worldTransform_, { 1.0f,3.0f,1.0f });
 	collider_->SetPosition(Vector3(0.0, collider_->GetSize().y, 0.0f));
 	collider_->SetStayCallback([this](DaiEngine::Collider* other) {this->OnCollision(other); });
+	collider_->SetValue("Damage", damage_);
 	collider_->ColliderOff();
 	DaiEngine::ColliderManager::GetInstance()->AddCollider(collider_.get());
 

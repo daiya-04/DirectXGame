@@ -5,6 +5,7 @@
 #include "TextureManager.h"
 #include "ShapesDraw.h"
 #include "AnimationManager.h"
+
 #include "PlayerIdel.h"
 #include "PlayerAttack.h"
 #include "PlayerDash.h"
@@ -12,11 +13,17 @@
 #include "PlayerJog.h"
 #include "PlayerKnockBack.h"
 #include "PlayerAvoid.h"
+#include "PlayerChargeAttack.h"
+
 #include "ColliderManager.h"
 #include "ParticleManager.h"
 #include "BurnState.h"
 #include "ChilledState.h"
 #include "NormalState.h"
+
+#include "MagicBallManager.h"
+#include "GroundBurstManager.h"
+#include "MagicCannonManager.h"
 
 void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 
@@ -53,7 +60,10 @@ void Player::Init(const std::vector<std::shared_ptr<DaiEngine::Model>>& models){
 	for (auto& [group, particle] : burnEff_) {
 		particle->particleData_.isLoop_ = false;
 	}
-
+	chargeEff_ = ParticleManager::Load("MagicCannonCharge");
+	for (auto& [group, particle] : chargeEff_) {
+		particle->particleData_.isLoop_ = false;
+	}
 
 	//状態の設定
 	ChangeBehavior("Idel");
@@ -109,6 +119,9 @@ void Player::Update(){
 		particle->particleData_.emitter_.translate = centerPos_;
 		particle->Update();
 	}
+	for (auto& [group, particle] : chargeEff_) {
+		particle->Update();
+	}
 
 	stamina_.Update();
 	BaseCharactor::Update();
@@ -141,6 +154,10 @@ void Player::DrawParticle(const DaiEngine::Camera& camera) {
 	for (auto& [group, particle] : chilledEff_) {
 		particle->Draw(camera);
 	}
+	for (auto& [group, particle] : chargeEff_) {
+		particle->Draw(camera);
+	}
+
 }
 
 void Player::DrawUI() {
@@ -151,7 +168,7 @@ void Player::DrawUI() {
 void Player::OnCollision(DaiEngine::Collider* other) {
 
 	if (other->GetTag() == "BossAttack") {
-		hp_.TakeDamage(3);
+		hp_.TakeDamage(other->GetIntValue("Damage"));
 
 		Vector3 attackPos = other->GetWorldPos();
 		attackPos.y = GetCenterPos().y;
@@ -163,6 +180,18 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 		EndHandEff();
 		if (hp_.GetHP() > 0) {
 			ChangeBehavior("KnockBack");
+		}
+	}
+
+	if (other->GetTag() == "BurnScar") {
+		if (auto state = dynamic_cast<BurnState*>(state_.get())) {
+			state_->OnCollision();
+		}
+	}
+
+	if (other->GetTag() == "IceScar") {
+		if (auto state = dynamic_cast<ChilledState*>(state_.get())) {
+			state_->OnCollision();
 		}
 	}
 
@@ -195,7 +224,7 @@ void Player::EnterCollision(DaiEngine::Collider* other) {
 
 void Player::ExitCollision(DaiEngine::Collider* other) {
 
-	if (other->GetTag() == "BurnScar") {
+	/*if (other->GetTag() == "BurnScar") {
 		if (auto state = dynamic_cast<BurnState*>(state_.get())) {
 			state_->Exit();
 		}
@@ -205,7 +234,7 @@ void Player::ExitCollision(DaiEngine::Collider* other) {
 		if (auto state = dynamic_cast<ChilledState*>(state_.get())) {
 			state_->Exit();
 		}
-	}
+	}*/
 
 }
 
@@ -219,6 +248,7 @@ void Player::ChangeBehavior(const std::string& behaviorName) {
 		{"Dead",[this]() {return std::make_unique<PlayerDead>(this); }},
 		{"KnockBack",[this]() {return std::make_unique<PlayerKnockBack>(this); }},
 		{"Avoid", [this]() {return std::make_unique<PlayerAvoid>(this); }},
+		{"ChargeAttack", [this]() {return std::make_unique<PlayerChargeAttack>(this); }},
 	};
 	//検索
 	auto nextBehavior = behaviorTable.find(behaviorName);
@@ -227,6 +257,7 @@ void Player::ChangeBehavior(const std::string& behaviorName) {
 		behaviorRequest_ = nextBehavior->second();
 	}
 
+	chargeCount_ = 0.0f;
 }
 
 void Player::ChangeState(const std::string& stateName) {
@@ -297,6 +328,22 @@ void Player::AttackGroundBurst() {
 
 }
 
+void Player::ShotMagicCannon() {
+
+	//攻撃を発射する方向の計算
+	Vector3 direction = { 0.0f,0.0f,1.0f };
+	direction = TransformNormal(direction, rotateMat_);
+
+	Vector3 offset = { 0.0f,0.0f,1.0f };
+	offset = TransformNormal(offset, rotateMat_);
+	//両手の間から発射
+	Vector3 shotPos = GetPlayerMidHandPos(offset);
+	//攻撃配列から魔法弾を取り出す
+	MagicCannonManager* magicBall = GetAttackType<MagicCannonManager>();
+	magicBall->AttackStart(shotPos, direction);
+
+}
+
 void Player::SetAnimation(size_t actionIndex, bool isLoop) {
 	BaseCharactor::SetAnimation(actionIndex, isLoop);
 	obj_->SetSkinCluster(&skinClusters_[actionIndex_]);
@@ -323,6 +370,43 @@ void Player::Move() {
 
 	SetDirection(move.Normalize());
 
+}
+
+void Player::DecideMoveBehavior() {
+
+	if (DaiEngine::Input::GetInstance()->TiltLStick(DaiEngine::Input::Stick::All)) {
+		if (DaiEngine::Input::GetInstance()->PushButton(DaiEngine::Input::Button::A) && IsDash()) {
+			ChangeBehavior("Dash");
+		}
+		else {
+			ChangeBehavior("Jog");
+		}
+	}
+	else {
+		ChangeBehavior("Idel");
+	}
+
+}
+
+bool Player::AttackCommand() {
+
+	if (DaiEngine::Input::GetInstance()->PushButton(DaiEngine::Input::Button::X)) {
+		chargeCount_ += kDeltaTime_;
+		//一定時間押したらチャージ開始
+		if (chargeCount_ >= chargeAttackTime_) {
+			ChangeBehavior("ChargeAttack");
+			return true;
+		}
+	}
+
+	if (DaiEngine::Input::GetInstance()->ReleaseButton(DaiEngine::Input::Button::X)) {
+		if (chargeCount_ < chargeAttackTime_) {
+			ChangeBehavior("Attack");
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Player::Dead() {
@@ -368,6 +452,27 @@ void Player::EndChilledEff() {
 	}
 }
 
+void Player::StartChargeEff() {
+	for (auto& [group, particle] : chargeEff_) {
+		particle->particleData_.isLoop_ = true;
+	}
+}
+
+void Player::EndChargeEff() {
+	for (auto& [group, particle] : chargeEff_) {
+		particle->particleData_.isLoop_ = false;
+	}
+}
+
+void Player::ChargeEffPosUpdate() {
+	Vector3 offset = { 0.0f,0.0f,1.0f };
+	offset = TransformNormal(offset, rotateMat_);
+
+	for (auto& [group, particle] : chargeEff_) {
+		particle->particleData_.emitter_.translate = GetPlayerMidHandPos(offset);
+	}
+}
+
 void Player::HandEffPosUpdate(const std::string& side) {
 	if (side == "right") {
 		for (auto& [group, particle] : handEff_) {
@@ -378,4 +483,17 @@ void Player::HandEffPosUpdate(const std::string& side) {
 			particle->particleData_.emitter_.translate = Transform(skeletons_[actionIndex_].GetSkeletonPos("mixamorig1:LeftHand"), obj_->worldTransform_.matWorld_);
 		}
 	}
+}
+
+Vector3 Player::GetPlayerMidHandPos(const Vector3& offset) {
+
+	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
+	skeletons_[actionIndex_].Update();
+	//両手の間から
+	Vector3 RHandPos = Transform(skeletons_[actionIndex_].GetSkeletonPos("mixamorig1:RightHand"), obj_->worldTransform_.matWorld_);
+	Vector3 LHandPos = Transform(skeletons_[actionIndex_].GetSkeletonPos("mixamorig1:LeftHand"), obj_->worldTransform_.matWorld_);
+	Vector3 pos = (RHandPos + LHandPos) / 2.0f;
+	pos += offset;
+
+	return pos;
 }

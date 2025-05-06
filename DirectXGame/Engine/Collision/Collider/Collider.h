@@ -37,7 +37,11 @@ namespace DaiEngine {
 
 		bool isHit_ = false;
 
+		struct Item {
+			std::variant<int32_t, float, Vector3> value;
+		};
 
+		std::map<std::string, Item> items_;
 
 	public:
 
@@ -57,6 +61,14 @@ namespace DaiEngine {
 			auto& callbackFunc = callbackFuncs_[static_cast<size_t>(phase)];
 			if (callbackFunc) { callbackFunc(collider); }
 		}
+
+		void SetValue(const std::string& name, int32_t value) { items_[name].value = value; }
+		void SetValue(const std::string& name, float value) { items_[name].value = value; }
+		void SetValue(const std::string& name, const Vector3& value) { items_[name].value = value; }
+
+		int32_t GetIntValue(const std::string& name);
+		float GetFloatValue(const std::string& name);
+		Vector3 GetVec3Value(const std::string& name);
 
 		const std::string GetTag() const { return tag_; }
 

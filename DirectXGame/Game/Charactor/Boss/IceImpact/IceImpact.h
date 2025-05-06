@@ -96,6 +96,8 @@ private:
 	float rotate_ = 0.0f;
 	float rotateSpeed_ = 0.1f;
 
+	int32_t damage_ = 5;
+
 private:
 
 	struct WorkShot {

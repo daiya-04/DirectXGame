@@ -11,38 +11,41 @@ void BurnState::Init() {
 
 	assert(player_);
 
-	player_->StartBurnEff();
-
-	counter = damageCoolTime_;
-	isDamage_ = true;
+	if (!isDamage_) {
+		player_->StartBurnEff();
+		damageTimeCounter_ = damageCoolTime_;
+		effTimeCounter_ = effCoolTime_;
+		isDamage_ = true;
+	}
 
 }
 
 void BurnState::Update() {
 
-	if (--counter <= 0) {
-
-		if (isDamage_) {
-
-			player_->GetHP().TakeDamage();
-			counter = damageCoolTime_;
-			if (player_->GetHP().GetHP() <= 0) {
-				player_->Dead();
-			}
-
-		}else {
-
+	if (!isDamage_) {
+		if (--effTimeCounter_ <= 0) {
 			player_->ChangeState("Normal");
+		}
+		
+		return;
+	}
 
+	if (--damageTimeCounter_ <= 0) {
+
+		player_->GetHP().TakeDamage();
+		damageTimeCounter_ = damageCoolTime_;
+
+		if (player_->GetHP().GetHP() <= 0) {
+			player_->Dead();
 		}
 		
 	}
 
+	isDamage_ = false;
 }
 
-void BurnState::Exit() {
+void BurnState::OnCollision() {
 
-	isDamage_ = false;
-	counter = effCoolTime_;
+	isDamage_ = true;
 
 }

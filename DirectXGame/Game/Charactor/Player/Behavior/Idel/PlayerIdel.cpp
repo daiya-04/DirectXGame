@@ -22,16 +22,18 @@ void PlayerIdel::Update() {
 		//Aボタンが入力されていたらダッシュ
 		if (DaiEngine::Input::GetInstance()->PushButton(DaiEngine::Input::Button::A) && player_->IsDash()) {
 			player_->ChangeBehavior("Dash");
+			return;
 		}
 		else {
 			player_->ChangeBehavior("Jog");
+			return;
 		}
 		
 	}
 
 	//攻撃
-	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::X)) {
-		player_->ChangeBehavior("Attack");
+	if (player_->AttackCommand()) {
+		return;
 	}
 
 	//回避

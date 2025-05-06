@@ -169,6 +169,8 @@ private:
 	//生存フラグ
 	bool isLife_ = false;
 
+	int32_t damage_ = 3;
+
 private:
 	
 	//待ちに必要なパラメータ

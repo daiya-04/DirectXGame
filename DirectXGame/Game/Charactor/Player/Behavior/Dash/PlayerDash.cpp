@@ -19,9 +19,8 @@ void PlayerDash::Init() {
 void PlayerDash::Update() {
 	
 	//攻撃
-	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::X)) {
+	if (player_->AttackCommand()) {
 		player_->GetFollowCamera()->SetDashFlag(false);
-		player_->ChangeBehavior("Attack");
 		return;
 	}
 

@@ -36,8 +36,6 @@
 #include "FollowCamera.h"
 #include "LockOn.h"
 #include "ElementBallManager.h"
-#include "MagicBallManager.h"
-#include "GroundBurstManager.h"
 #include "BurnScar.h"
 #include "IceScar.h"
 #include "GroundFlareManager.h"

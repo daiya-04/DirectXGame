@@ -197,6 +197,8 @@ private:
 	bool isLife_ = false;
 	bool preIsLife_ = false;
 
+	int32_t damage_ = 2;
+
 private:
 	//生成に必要なパラメータ
 	struct CreateData {

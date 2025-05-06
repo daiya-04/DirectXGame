@@ -122,7 +122,7 @@ void Boss::DrawParticle(const DaiEngine::Camera& camera) {
 void Boss::OnCollision(DaiEngine::Collider* other) {
 
 	if (other->GetTag() == "PlayerAttack") {
-		hp_.TakeDamage();
+		hp_.TakeDamage(other->GetIntValue("Damage"));
 	}
 	
 	//HPが0になったら...

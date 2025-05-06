@@ -18,6 +18,9 @@
 #include "ClearState.h"
 #include "GameOverState.h"
 #include "GlobalVariables.h"
+#include "MagicBallManager.h"
+#include "GroundBurstManager.h"
+#include "MagicCannonManager.h"
 
 GameScene::GameScene() {
 	
@@ -116,6 +119,7 @@ void GameScene::Init(){
 	std::shared_ptr<DaiEngine::Model> playerDashModel = DaiEngine::ModelManager::LoadGLTF("PlayerDash");
 	std::shared_ptr<DaiEngine::Model> playerKnockBackModel = DaiEngine::ModelManager::LoadGLTF("KnockBack");
 	std::shared_ptr<DaiEngine::Model> playerAvoidModel = DaiEngine::ModelManager::LoadGLTF("PlayerAvoid");
+	std::shared_ptr<DaiEngine::Model> playerChargeModel = DaiEngine::ModelManager::LoadGLTF("Charge");
 	//ボス
 	std::shared_ptr<DaiEngine::Model> bossStandingModel = DaiEngine::ModelManager::LoadGLTF("Standing");
 	std::shared_ptr<DaiEngine::Model> bossSetModel = DaiEngine::ModelManager::LoadGLTF("SetMotion");
@@ -167,7 +171,7 @@ void GameScene::Init(){
 	//プレイヤー
 	player_ = static_cast<Player*>(charactors_[static_cast<size_t>(CharactorType::kPlayer)].get());
 	assert(player_);
-	player_->Init({ playerStandingModel, playerRunningModel, playerAttackModel, playerAttackC2Model, playerAttackC3Model, playerDeadModel, playerDashModel, playerKnockBackModel, playerAvoidModel });
+	player_->Init({ playerStandingModel, playerRunningModel, playerAttackModel, playerAttackC2Model, playerAttackC3Model, playerDeadModel, playerDashModel, playerKnockBackModel, playerAvoidModel, playerChargeModel });
 
 
 	//ボス
@@ -220,6 +224,8 @@ void GameScene::Init(){
 	playerAttacks_.push_back(std::make_unique<MagicBallManager>());
 	//地面噴射
 	playerAttacks_.push_back(std::make_unique<GroundBurstManager>());
+	//チャージ攻撃
+	playerAttacks_.push_back(std::make_unique<MagicCannonManager>());
 
 	for (auto& playerAttack : playerAttacks_) {
 		playerAttack->Init();

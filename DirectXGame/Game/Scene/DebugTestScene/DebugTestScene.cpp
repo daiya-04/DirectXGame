@@ -29,7 +29,7 @@ void DebugTestScene::Init() {
 
 	humanModel_ = DaiEngine::ModelManager::LoadGLTF("Skin");
 	standingModel_ = DaiEngine::ModelManager::LoadGLTF("Standing");
-	sneakModel_ = DaiEngine::ModelManager::LoadGLTF("Running");
+	sneakModel_ = DaiEngine::ModelManager::LoadGLTF("Charge");
 	model_ = DaiEngine::ModelManager::LoadOBJ("Rock");
 
 	skyBoxTex_ = DaiEngine::TextureManager::Load("skyBox.dds");
@@ -179,15 +179,15 @@ void DebugTestScene::DrawParticle() {
 		//particle->Draw(camera_);
 	}
 	
-	//ParticleEditor::GetInstance()->Draw(camera_);
+	ParticleEditor::GetInstance()->Draw(camera_);
 
 }
 
 void DebugTestScene::DrawUI() {
 
 	DaiEngine::Sprite::preDraw();
-	sprite_->Draw();
-	gameTime_->Draw();
+	//sprite_->Draw();
+	//gameTime_->Draw();
 
 }
 
