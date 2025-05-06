@@ -16,7 +16,7 @@ void NormalState::Update() {
 
 }
 
-void NormalState::Exit() {
+void NormalState::OnCollision() {
 
 
 

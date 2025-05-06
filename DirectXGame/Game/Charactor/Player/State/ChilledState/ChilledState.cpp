@@ -28,15 +28,16 @@ void ChilledState::Update() {
 			player_->ChangeState("Normal");
 
 		}
-
+		return;
 	}
 
+	counter_ = effCoolTime_;
+	isSpeedDown_ = false;
 }
 
-void ChilledState::Exit() {
+void ChilledState::OnCollision() {
 
-	isSpeedDown_ = false;
-	counter_ = effCoolTime_;
-	player_->SetSpeedRate(normalRate_);
+	isSpeedDown_ = true;
+	player_->SetSpeedRate(chilledRate_);
 
 }

@@ -183,6 +183,18 @@ void Player::OnCollision(DaiEngine::Collider* other) {
 		}
 	}
 
+	if (other->GetTag() == "BurnScar") {
+		if (auto state = dynamic_cast<BurnState*>(state_.get())) {
+			state_->OnCollision();
+		}
+	}
+
+	if (other->GetTag() == "IceScar") {
+		if (auto state = dynamic_cast<ChilledState*>(state_.get())) {
+			state_->OnCollision();
+		}
+	}
+
 	//ターゲットとの距離
 	float distance = (target_->GetWorldPos().GetXZ() - GetCenterPos().GetXZ()).Length();
 	//射程内に入ったらズーム
@@ -212,7 +224,7 @@ void Player::EnterCollision(DaiEngine::Collider* other) {
 
 void Player::ExitCollision(DaiEngine::Collider* other) {
 
-	if (other->GetTag() == "BurnScar") {
+	/*if (other->GetTag() == "BurnScar") {
 		if (auto state = dynamic_cast<BurnState*>(state_.get())) {
 			state_->Exit();
 		}
@@ -222,7 +234,7 @@ void Player::ExitCollision(DaiEngine::Collider* other) {
 		if (auto state = dynamic_cast<ChilledState*>(state_.get())) {
 			state_->Exit();
 		}
-	}
+	}*/
 
 }
 
@@ -475,7 +487,7 @@ void Player::HandEffPosUpdate(const std::string& side) {
 
 Vector3 Player::GetPlayerMidHandPos(const Vector3& offset) {
 
-	obj_->worldTransform_.UpdateMatrix();
+	obj_->worldTransform_.UpdateMatrixRotate(rotateMat_);
 	skeletons_[actionIndex_].Update();
 	//両手の間から
 	Vector3 RHandPos = Transform(skeletons_[actionIndex_].GetSkeletonPos("mixamorig1:RightHand"), obj_->worldTransform_.matWorld_);

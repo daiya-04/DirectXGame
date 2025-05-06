@@ -12,7 +12,7 @@ public:
 
 	void Update() override;
 
-	void Exit() override;
+	void OnCollision() override;
 
 
 private:

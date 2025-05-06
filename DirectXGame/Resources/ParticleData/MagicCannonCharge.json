@@ -12,7 +12,7 @@
                 "Count": 7,
                 "EmitterType": 1,
                 "Frequency": 0.10000000149011612,
-                "LifeTime": 1.0,
+                "LifeTime": 0.30000001192092896,
                 "Radius": 0.0010000000474974513,
                 "Rotate": 360.0,
                 "Scale": 0.10000000149011612,
@@ -79,7 +79,7 @@
                     0.0,
                     0.0
                 ],
-                "startScale": 2.0,
+                "startScale": 3.0,
                 "startSpeed": 0.0,
                 "startVelocity": [
                     0.0,
@@ -104,8 +104,8 @@
                 ],
                 "Count": 1,
                 "EmitterType": 1,
-                "Frequency": 0.5,
-                "LifeTime": 0.699999988079071,
+                "Frequency": 0.30000001192092896,
+                "LifeTime": 0.5,
                 "Radius": 0.0010000000474974513,
                 "Rotate": 0.0,
                 "Scale": 0.10000000149011612,

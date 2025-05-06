@@ -11,6 +11,15 @@ void PlayerAvoid::Init() {
 
 	player_->SetAnimation(Player::Action::kAvoid,false);
 	player_->GetNowAnimation().SetAnimationSpeed(1.0f / 30.0f);
+
+	if (DaiEngine::Input::GetInstance()->TiltLStick(DaiEngine::Input::Stick::All)) {
+		//移動ベクトル
+		Vector3 move{};
+		move = DaiEngine::Input::GetInstance()->GetMoveXZ();
+		move = (move / SHRT_MAX);
+		move = TransformNormal(move, GetRotateYMatrix(player_->GetFollowCamera()->GetRotateMat()));
+		player_->SetDirection(move.Normalize());
+	}
 	
 	Vector3 zeroVector{};
 	if (player_->GetDirection() == zeroVector) {

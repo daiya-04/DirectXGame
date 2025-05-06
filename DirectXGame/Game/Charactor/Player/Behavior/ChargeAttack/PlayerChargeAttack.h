@@ -18,6 +18,6 @@ private:
 	Player* player_ = nullptr;
 
 	uint32_t count_ = 0;
-	uint32_t chargeTime_ = static_cast<uint32_t>(60 * 1.5f);
+	uint32_t chargeTime_ = static_cast<uint32_t>(60 * 1.2f);
 
 };

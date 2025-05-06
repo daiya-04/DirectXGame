@@ -16,10 +16,6 @@ void PlayerChargeAttack::Init() {
 	//モーション開始
 	player_->SetAnimation(Player::Action::kCharge);
 
-	//チャージエフェクトの開始
-	player_->StartChargeEff();
-	player_->ChargeEffPosUpdate();
-
 	//向き矯正
 	if (player_->GetTarget()) {
 		//攻撃の発射方向計算
@@ -29,6 +25,10 @@ void PlayerChargeAttack::Init() {
 			player_->SetDirection(direction);
 		}
 	}
+
+	//チャージエフェクトの開始
+	player_->StartChargeEff();
+	player_->ChargeEffPosUpdate();
 
 }
 

@@ -12,7 +12,7 @@ public:
 
 	void Update() override;
 
-	void Exit() override;
+	void OnCollision() override;
 
 private:
 
@@ -20,7 +20,8 @@ private:
 
 	uint32_t effCoolTime_ = 60 * 2;
 	uint32_t damageCoolTime_ = 20;
-	uint32_t counter = 0;
+	uint32_t effTimeCounter_ = 0;
+	uint32_t damageTimeCounter_ = 0;
 
 	bool isDamage_ = false;
 
