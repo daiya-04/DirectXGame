@@ -30,12 +30,12 @@ void PlayerJog::Update() {
 	}
 
 	//ダッシュ
-	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::A) && player_->IsDash()) {
+	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::B) && player_->IsDash()) {
 		player_->ChangeBehavior("Dash");
 	}
 	
 	//回避
-	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::B) && player_->IsAvoid()) {
+	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::A) && player_->IsAvoid()) {
 		player_->ChangeBehavior("Avoid");
 	}
 

@@ -29,7 +29,7 @@ void PlayerKnockBack::Update() {
 	}
 
 	if (++timer_ >= avoidCoolTime_) {
-		if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::B) && player_->IsAvoid()) {
+		if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::A) && player_->IsAvoid()) {
 			player_->ChangeBehavior("Avoid");
 		}
 	}

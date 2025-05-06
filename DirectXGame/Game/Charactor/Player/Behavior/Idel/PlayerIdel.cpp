@@ -20,7 +20,7 @@ void PlayerIdel::Update() {
 	//Lスティック入力がされたらJogStateへ
 	if (DaiEngine::Input::GetInstance()->TiltLStick(DaiEngine::Input::Stick::All)) {
 		//Aボタンが入力されていたらダッシュ
-		if (DaiEngine::Input::GetInstance()->PushButton(DaiEngine::Input::Button::A) && player_->IsDash()) {
+		if (DaiEngine::Input::GetInstance()->PushButton(DaiEngine::Input::Button::B) && player_->IsDash()) {
 			player_->ChangeBehavior("Dash");
 			return;
 		}
@@ -37,7 +37,7 @@ void PlayerIdel::Update() {
 	}
 
 	//回避
-	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::B) && player_->IsAvoid()) {
+	if (DaiEngine::Input::GetInstance()->TriggerButton(DaiEngine::Input::Button::A) && player_->IsAvoid()) {
 		player_->ChangeBehavior("Avoid");
 	}
 

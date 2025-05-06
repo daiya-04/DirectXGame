@@ -43,7 +43,7 @@ void PlayerAvoid::Update() {
 
 	if (!player_->GetNowAnimation().IsPlaying()) {
 		if (DaiEngine::Input::GetInstance()->TiltLStick(DaiEngine::Input::Stick::All)) {
-			if (DaiEngine::Input::GetInstance()->PushButton(DaiEngine::Input::Button::A)) {
+			if (DaiEngine::Input::GetInstance()->PushButton(DaiEngine::Input::Button::B)) {
 				player_->ChangeBehavior("Dash");
 			}else {
 				player_->ChangeBehavior("Jog");

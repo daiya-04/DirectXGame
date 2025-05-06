@@ -358,7 +358,7 @@ void Player::Move() {
 void Player::DecideMoveBehavior() {
 
 	if (DaiEngine::Input::GetInstance()->TiltLStick(DaiEngine::Input::Stick::All)) {
-		if (DaiEngine::Input::GetInstance()->PushButton(DaiEngine::Input::Button::A) && IsDash()) {
+		if (DaiEngine::Input::GetInstance()->PushButton(DaiEngine::Input::Button::B) && IsDash()) {
 			ChangeBehavior("Dash");
 		}
 		else {
