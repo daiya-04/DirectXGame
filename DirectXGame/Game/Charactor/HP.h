@@ -45,9 +45,9 @@ private:
 	Vector2 gaugeSize_;
 
 	//HP
-	int32_t hp_;
+	int32_t hp_ = 0;
 	//最大HP
-	int32_t maxHp_;
+	int32_t maxHp_ = 0;
 
 	float percent_ = 1.0f;
 	float currentPer_ = 1.0f;

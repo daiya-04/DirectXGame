@@ -68,9 +68,6 @@ PixelShaderOutput main(VertexShaderOutput input){
 	RandomGenerator generator;
     generator.seed = gScarData.time;
 
-	float32_t2 center = float32_t2(0.5f, 0.5f);
-	float32_t distance = length(input.texcoord - center);
-
 	
 	float32_t n1 = FractalSumNoize(15.0f, input.texcoord + float32_t2(1.5f,1.5f));
 	float32_t n2 = FractalSumNoize(15.0f, input.texcoord + float32_t2(-1.5f,-1.5f));
@@ -96,6 +93,9 @@ PixelShaderOutput main(VertexShaderOutput input){
 	float32_t edge = 1.0f - smoothstep(gScarData.threshold, gScarData.threshold + 0.1f, mask);
 	
 	output.color.rgb -= edge * float32_t3(1.0f, 1.0f, 1.0f);
+
+	float32_t2 center = float32_t2(0.5f, 0.5f);
+	float32_t distance = length(input.texcoord - center);
 
 	float32_t fade = 1.0f - smoothstep(0.0f, 0.5f, distance);
 	if(output.color.r < 0.1f && output.color.g < 0.1f && output.color.b < 0.1f){

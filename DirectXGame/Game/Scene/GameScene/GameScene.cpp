@@ -33,29 +33,50 @@ GameScene::~GameScene() {
 void GameScene::SetGlobalVariables() {
 	DaiEngine::GlobalVariables* globalVariables = DaiEngine::GlobalVariables::GetInstance();
 
-	std::string groupName = "XButton";
+	std::string groupName = "AttackButtonIcon";
 	globalVariables->CreateGroup(groupName);
-	globalVariables->AddItem(groupName, "Position", XButton_->GetPosition());
+	globalVariables->AddItem(groupName, "Position", attackButtonIcon_->GetPosition());
+	globalVariables->AddItem(groupName, "Scale", attackButtonIcon_->GetScale().x);
 
-	groupName = "AButton";
+	groupName = "AvoidButtonIcon";
 	globalVariables->CreateGroup(groupName);
-	globalVariables->AddItem(groupName, "Position", AButton_->GetPosition());
+	globalVariables->AddItem(groupName, "Position", avoidButtonIcon_->GetPosition());
+	globalVariables->AddItem(groupName, "Scale", avoidButtonIcon_->GetScale().x);
 
-	groupName = "BButton";
+	groupName = "DashButtonIcon";
 	globalVariables->CreateGroup(groupName);
-	globalVariables->AddItem(groupName, "Position", BButton_->GetPosition());
+	globalVariables->AddItem(groupName, "Position", dashButtonIcon_->GetPosition());
+	globalVariables->AddItem(groupName, "Scale", dashButtonIcon_->GetScale().x);
+
+	groupName = "ChargeAttackButtonIcon";
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "Position", chargeAttackButtonIcon_->GetPosition());
+	globalVariables->AddItem(groupName, "Scale", chargeAttackButtonIcon_->GetScale().x);
 
 	groupName = "charAttack";
 	globalVariables->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "Position", charAttack_->GetPosition());
+	globalVariables->AddItem(groupName, "Scale", charAttack_->GetScale().x);
 
 	groupName = "charDash";
 	globalVariables->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "Position", charDash_->GetPosition());
+	globalVariables->AddItem(groupName, "Scale", charDash_->GetScale().x);
 
 	groupName = "charAvoid";
 	globalVariables->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "Position", charAvoid_->GetPosition());
+	globalVariables->AddItem(groupName, "Scale", charAvoid_->GetScale().x);
+
+	groupName = "charChargeAttack";
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "Position", charChargeAttack_->GetPosition());
+	globalVariables->AddItem(groupName, "Scale", charChargeAttack_->GetScale().x);
+
+	groupName = "charLongPush";
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "Position", charLongPush_->GetPosition());
+	globalVariables->AddItem(groupName, "Scale", charLongPush_->GetScale().x);
 
 	groupName = "gameOver";
 	globalVariables->CreateGroup(groupName);
@@ -70,20 +91,45 @@ void GameScene::SetGlobalVariables() {
 void GameScene::ApplyGlobalVariables() {
 	DaiEngine::GlobalVariables* globalVariables = DaiEngine::GlobalVariables::GetInstance();
 	
-	std::string groupName = "XButton";
-	XButton_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
-	groupName = "AButton";
-	AButton_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
-	groupName = "BButton";
-	BButton_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	std::string groupName = "AttackButtonIcon";
+	attackButtonIcon_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	attackButtonIcon_->SetScale(globalVariables->GetFloatValue(groupName, "Scale"));
+
+	groupName = "AvoidButtonIcon";
+	avoidButtonIcon_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	avoidButtonIcon_->SetScale(globalVariables->GetFloatValue(groupName, "Scale"));
+
+	groupName = "DashButtonIcon";
+	dashButtonIcon_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	dashButtonIcon_->SetScale(globalVariables->GetFloatValue(groupName, "Scale"));
+
+	groupName = "ChargeAttackButtonIcon";
+	chargeAttackButtonIcon_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	chargeAttackButtonIcon_->SetScale(globalVariables->GetFloatValue(groupName, "Scale"));
+
 	groupName = "charAttack";
 	charAttack_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	charAttack_->SetScale(globalVariables->GetFloatValue(groupName, "Scale"));
+
 	groupName = "charDash";
 	charDash_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	charDash_->SetScale(globalVariables->GetFloatValue(groupName, "Scale"));
+
 	groupName = "charAvoid";
 	charAvoid_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	charAvoid_->SetScale(globalVariables->GetFloatValue(groupName, "Scale"));
+
+	groupName = "charChargeAttack";
+	charChargeAttack_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	charChargeAttack_->SetScale(globalVariables->GetFloatValue(groupName, "Scale"));
+
+	groupName = "charLongPush";
+	charLongPush_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+	charLongPush_->SetScale(globalVariables->GetFloatValue(groupName, "Scale"));
+
 	groupName = "gameOver";
 	gameOver_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
+
 	groupName = "finish";
 	finish_->SetPosition(globalVariables->GetVec2Value(groupName, "Position"));
 
@@ -141,6 +187,8 @@ void GameScene::Init(){
 	uint32_t char_AttackTex = DaiEngine::TextureManager::Load("char_Attack.png");
 	uint32_t char_DashTex = DaiEngine::TextureManager::Load("char_Dash.png");
 	uint32_t char_AvoidTex = DaiEngine::TextureManager::Load("char_Avoid.png");
+	uint32_t char_ChargeAttack = DaiEngine::TextureManager::Load("char_ChargeAttack.png");
+	uint32_t char_LongPush = DaiEngine::TextureManager::Load("char_longPush.png");
 	uint32_t gameOverTex = DaiEngine::TextureManager::Load("GameOver.png");
 	uint32_t skyBoxTex = DaiEngine::TextureManager::Load("skyBox.dds");
 
@@ -248,17 +296,23 @@ void GameScene::Init(){
 
 	//UI
 	
-	XButton_.reset(DaiEngine::Sprite::Create(XButtonTex, {}));
+	attackButtonIcon_.reset(DaiEngine::Sprite::Create(XButtonTex, {}));
 
-	AButton_.reset(DaiEngine::Sprite::Create(AButtonTex, {}));
+	avoidButtonIcon_.reset(DaiEngine::Sprite::Create(AButtonTex, {}));
 
-	BButton_.reset(DaiEngine::Sprite::Create(BButtonTex, {}));
+	dashButtonIcon_.reset(DaiEngine::Sprite::Create(BButtonTex, {}));
+
+	chargeAttackButtonIcon_.reset(DaiEngine::Sprite::Create(XButtonTex, {}));
 
 	charAttack_.reset(DaiEngine::Sprite::Create(char_AttackTex, {}));
 
 	charDash_.reset(DaiEngine::Sprite::Create(char_DashTex, {}));
 
 	charAvoid_.reset(DaiEngine::Sprite::Create(char_AvoidTex, {}));
+
+	charChargeAttack_.reset(DaiEngine::Sprite::Create(char_ChargeAttack, {}));
+
+	charLongPush_.reset(DaiEngine::Sprite::Create(char_LongPush, {}));
 
 	gameOver_.reset(DaiEngine::Sprite::Create(gameOverTex, {}));
 

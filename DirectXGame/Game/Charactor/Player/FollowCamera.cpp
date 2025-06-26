@@ -34,11 +34,11 @@ void FollowCamera::Update(){
 			halfPos_ = target_->translation_ + (sub.GetXZ() / 2.0f);
 
 			//ロックオン対象とカメラの差分
-			Vector3 ltoc = lockOnPos - camera_.translation_;
+			Vector3 lockToCamera = lockOnPos - camera_.translation_;
 			//間の半分の座標とカメラの差分
-			Vector3 htoc = halfPos_ - camera_.translation_;
+			Vector3 halfToCamera = halfPos_ - camera_.translation_;
 			//間の半分の座標を見るための回転行列の作成
-			subRMat = DirectionToDirection(ltoc.GetXZ(), htoc.GetXZ());
+			subRMat = DirectionToDirection(lockToCamera.GetXZ(), halfToCamera.GetXZ());
 		}
 		else {
 			zoomParam_ -= zoomSpeed_;
