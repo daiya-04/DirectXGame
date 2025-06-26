@@ -85,72 +85,71 @@ void main(uint32_t3 DTid : SV_DispatchThreadID) {
 
     uint32_t particleIndex = DTid.x;
 
+    if(particleIndex >= gMaxParticles.maxNum) { return; }
+
     RandomGenerator generator;
     generator.seed = (DTid + gPerFrame.time) * gPerFrame.time;
 
-    if(particleIndex < gMaxParticles.maxNum){
-        if(gParticles[particleIndex].currentTime < gParticles[particleIndex].lifeTime){
-            gParticles[particleIndex].currentTime += gPerFrame.deltaTime;
-            float32_t param = gParticles[particleIndex].currentTime / gParticles[particleIndex].lifeTime;
+    if(gParticles[particleIndex].currentTime < gParticles[particleIndex].lifeTime){
+        gParticles[particleIndex].currentTime += gPerFrame.deltaTime;
+        float32_t param = gParticles[particleIndex].currentTime / gParticles[particleIndex].lifeTime;
 
-            float32_t3 velocity = float32_t3(0.0f, 0.0f, 0.0f);
+        float32_t3 velocity = float32_t3(0.0f, 0.0f, 0.0f);
 
-            if(gOverLifeTime.isTransVelocity){
-                velocity = lerp(gOverLifeTime.startVelocity, gOverLifeTime.endVelocity, param);
-            }
-
-            if(gOverLifeTime.isTransSpeed){
-                gParticles[particleIndex].velocity = normalize(gParticles[particleIndex].velocity) * lerp(gOverLifeTime.startSpeed, gOverLifeTime.endSpeed, param);
-            }
-            
-            gParticles[particleIndex].velocity.y -= gOverLifeTime.gravity;
-
-            gParticles[particleIndex].translate += (gParticles[particleIndex].velocity + velocity) * gPerFrame.deltaTime;
-
-            if(gOverLifeTime.isScale){
-                gParticles[particleIndex].scale = lerp(gOverLifeTime.startScale, gOverLifeTime.endScale, param);
-            }
-
-            if(gOverLifeTime.isColor){
-                gParticles[particleIndex].color.rgb = lerp(gOverLifeTime.startColor, gOverLifeTime.endColor, param);
-            }
-            
-            float32_t alpha = 1.0f;
-
-            if(gOverLifeTime.isAlpha){
-                if(param <= 0.5f){
-                    alpha = lerp(gOverLifeTime.startAlpha, gOverLifeTime.midAlpha, param * 2.0f);
-                }else if(param > 0.5f){
-                    alpha = lerp(gOverLifeTime.midAlpha, gOverLifeTime.endAlpha, (param - 0.5) * 2.0f);
-                }
-            }
-            gParticles[particleIndex].color.a = saturate(alpha);
-
-            gParticles[particleIndex].rotate += gParticles[particleIndex].roringSpeed * gPerFrame.deltaTime;
-
-            if(gOverLifeTime.isNoise){
-                float32_t time = gPerFrame.time;
-                if(gOverLifeTime.isRandom){
-                    time = time + particleIndex;
-                }
-                float32_t noise0 = PerlinNoise(gOverLifeTime.density.x, gParticles[particleIndex].translate + float32_t3(time, time, time));
-                float32_t noise1 = PerlinNoise(gOverLifeTime.density.y, gParticles[particleIndex].translate + float32_t3(time, time, time));
-                float32_t noise2 = PerlinNoise(gOverLifeTime.density.z, gParticles[particleIndex].translate + float32_t3(time, time, time));
-                gParticles[particleIndex].noiseOffset = float32_t3(noise0, noise1, noise2) * gOverLifeTime.strength;
-            }
-
+        if(gOverLifeTime.isTransVelocity){
+            velocity = lerp(gOverLifeTime.startVelocity, gOverLifeTime.endVelocity, param);
         }
 
-        if(gParticles[particleIndex].currentTime >= gParticles[particleIndex].lifeTime){
-            gParticles[particleIndex] = (Particle)0;
-            int32_t freeListIndex;
-            InterlockedAdd(gFreeListIndex[0], 1, freeListIndex);
+        if(gOverLifeTime.isTransSpeed){
+            gParticles[particleIndex].velocity = normalize(gParticles[particleIndex].velocity) * lerp(gOverLifeTime.startSpeed, gOverLifeTime.endSpeed, param);
+        }
+        
+        gParticles[particleIndex].velocity.y -= gOverLifeTime.gravity;
 
-            if((freeListIndex + 1) < gMaxParticles.maxNum){
-                gFreeList[freeListIndex + 1] = particleIndex;
-            }else {
-                InterlockedAdd(gFreeListIndex[0], -1, freeListIndex);
+        gParticles[particleIndex].translate += (gParticles[particleIndex].velocity + velocity) * gPerFrame.deltaTime;
+
+        if(gOverLifeTime.isScale){
+            gParticles[particleIndex].scale = lerp(gOverLifeTime.startScale, gOverLifeTime.endScale, param);
+        }
+
+        if(gOverLifeTime.isColor){
+            gParticles[particleIndex].color.rgb = lerp(gOverLifeTime.startColor, gOverLifeTime.endColor, param);
+        }
+        
+        float32_t alpha = 1.0f;
+
+        if(gOverLifeTime.isAlpha){
+            if(param <= 0.5f){
+                alpha = lerp(gOverLifeTime.startAlpha, gOverLifeTime.midAlpha, param * 2.0f);
+            }else if(param > 0.5f){
+                alpha = lerp(gOverLifeTime.midAlpha, gOverLifeTime.endAlpha, (param - 0.5) * 2.0f);
             }
+        }
+        gParticles[particleIndex].color.a = saturate(alpha);
+        gParticles[particleIndex].rotate += gParticles[particleIndex].roringSpeed * gPerFrame.deltaTime;
+
+        if(gOverLifeTime.isNoise){
+            float32_t time = gPerFrame.time;
+            if(gOverLifeTime.isRandom){
+                time = time + particleIndex;
+            }
+            float32_t noise0 = PerlinNoise(gOverLifeTime.density.x, gParticles[particleIndex].translate + float32_t3(time, time, time));
+            float32_t noise1 = PerlinNoise(gOverLifeTime.density.y, gParticles[particleIndex].translate + float32_t3(time, time, time));
+            float32_t noise2 = PerlinNoise(gOverLifeTime.density.z, gParticles[particleIndex].translate + float32_t3(time, time, time));
+            gParticles[particleIndex].noiseOffset = float32_t3(noise0, noise1, noise2) * gOverLifeTime.strength;
+        }
+
+    }
+
+    if(gParticles[particleIndex].currentTime >= gParticles[particleIndex].lifeTime){
+        gParticles[particleIndex] = (Particle)0;
+        int32_t freeListIndex;
+        InterlockedAdd(gFreeListIndex[0], 1, freeListIndex);
+
+        if((freeListIndex + 1) < gMaxParticles.maxNum){
+            gFreeList[freeListIndex + 1] = particleIndex;
+        }else {
+            InterlockedAdd(gFreeListIndex[0], -1, freeListIndex);
         }
     }
 

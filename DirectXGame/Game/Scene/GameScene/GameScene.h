@@ -162,18 +162,24 @@ private:
 	std::unique_ptr<GameTime> gameTime_;
 
 	///UI
-	//Xボタン
-	std::unique_ptr<DaiEngine::Sprite> XButton_;
-	//Aボタン
-	std::unique_ptr<DaiEngine::Sprite> AButton_;
-	//Bボタン
-	std::unique_ptr<DaiEngine::Sprite> BButton_;
+	//攻撃ボタンアイコン
+	std::unique_ptr<DaiEngine::Sprite> attackButtonIcon_;
+	//回避ボタンアイコン
+	std::unique_ptr<DaiEngine::Sprite> avoidButtonIcon_;
+	//ダッシュボタンアイコン
+	std::unique_ptr<DaiEngine::Sprite> dashButtonIcon_;
+	//重撃ボタンアイコン
+	std::unique_ptr<DaiEngine::Sprite> chargeAttackButtonIcon_;
 	//攻撃文字
 	std::unique_ptr<DaiEngine::Sprite> charAttack_;
 	//走る文字
 	std::unique_ptr<DaiEngine::Sprite> charDash_;
 	//回避文字
 	std::unique_ptr<DaiEngine::Sprite> charAvoid_;
+	//重撃文字
+	std::unique_ptr<DaiEngine::Sprite> charChargeAttack_;
+	//長押し文字
+	std::unique_ptr<DaiEngine::Sprite> charLongPush_;
 	//ゲームオーバー文字
 	std::unique_ptr<DaiEngine::Sprite> gameOver_;
 	//終了文字
@@ -225,12 +231,15 @@ public:
 	FollowCamera* GetFollowCamera() { return followCamera_.get(); }
 
 	///UI各種取得
-	DaiEngine::Sprite* GetXButtonUI() { return XButton_.get(); }
-	DaiEngine::Sprite* GetAButtonUI() { return AButton_.get(); }
-	DaiEngine::Sprite* GetBButtonUI() { return BButton_.get(); }
+	DaiEngine::Sprite* GetAttackButtonIconUI() { return attackButtonIcon_.get(); }
+	DaiEngine::Sprite* GetAvoiButtonIconUI() { return avoidButtonIcon_.get(); }
+	DaiEngine::Sprite* GetDashButtonIconUI() { return dashButtonIcon_.get(); }
+	DaiEngine::Sprite* GetChargeAttackIcon() { return chargeAttackButtonIcon_.get(); }
 	DaiEngine::Sprite* GetCharAttackUI() { return charAttack_.get(); }
 	DaiEngine::Sprite* GetCharDashUI() { return charDash_.get(); }
 	DaiEngine::Sprite* GetCharAvoidUI() { return charAvoid_.get(); }
+	DaiEngine::Sprite* GetCharChargeAttack() { return charChargeAttack_.get(); }
+	DaiEngine::Sprite* GetCharLongPush() { return charLongPush_.get(); }
 	DaiEngine::Sprite* GetFinishUI() { return finish_.get(); }
 	DaiEngine::Sprite* GetGameOverUI() { return gameOver_.get(); }
 

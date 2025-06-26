@@ -60,23 +60,25 @@ namespace DaiEngine {
 		};
 
 		struct Emitter {
-			Vector3 translate;
-			float padding1;
-			Vector3 size;
+			Vector3 translate; //位置座標
+			float radius; //半径(球体、半球、円)
 
-			float radius;
-			float scale;
-			float rotate;
+			Vector3 size; //サイズ（ボックス、四角）
+			float scale; //スケール
+
+			float rotate; //回転
 			uint32_t count; //射出数
 			float frequency; //射出間隔
 			float frequencyTime; //射出間隔調整用時間
+
+			Vector4 color; //色
+
 			uint32_t emit; //射出許可
-			float padding2[2];
-			Vector4 color;
-			float lifeTime;
-			float speed;
-			uint32_t emitterType;
-			uint32_t billboardType;
+			float lifeTime; //寿命
+			float speed; //速さ
+			uint32_t emitterType; //エミッターの種類
+
+			uint32_t billboardType; //ビルボードタイプ
 		};
 
 		struct OverLifeTime {

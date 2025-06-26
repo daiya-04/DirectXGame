@@ -1,8 +1,8 @@
 {
-    "charAttack": {
+    "charChargeAttack": {
         "Position": [
-            1200.0,
-            50.0
+            1190.0,
+            140.0
         ],
         "Scale": 0.699999988079071
     }

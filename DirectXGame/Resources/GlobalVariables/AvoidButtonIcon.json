@@ -1,8 +1,8 @@
 {
-    "charAttack": {
+    "AvoidButtonIcon": {
         "Position": [
-            1200.0,
-            50.0
+            1070.0,
+            230.0
         ],
         "Scale": 0.699999988079071
     }

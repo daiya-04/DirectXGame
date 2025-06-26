@@ -58,12 +58,15 @@ void BattleState::Update() {
 
 void BattleState::DrawUI() {
 
-	gameScene_->GetXButtonUI()->Draw();
-	gameScene_->GetAButtonUI()->Draw();
-	gameScene_->GetBButtonUI()->Draw();
+	gameScene_->GetAttackButtonIconUI()->Draw();
+	gameScene_->GetAvoiButtonIconUI()->Draw();
+	gameScene_->GetDashButtonIconUI()->Draw();
+	gameScene_->GetChargeAttackIcon()->Draw();
 	gameScene_->GetCharAttackUI()->Draw();
 	gameScene_->GetCharDashUI()->Draw();
 	gameScene_->GetCharAvoidUI()->Draw();
+	gameScene_->GetCharChargeAttack()->Draw();
+	gameScene_->GetCharLongPush()->Draw();
 	gameScene_->GetPlayer()->DrawUI();
 	gameScene_->GetBoss()->DrawUI();
 
