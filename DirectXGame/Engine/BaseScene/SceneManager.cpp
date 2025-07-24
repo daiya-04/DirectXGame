@@ -29,7 +29,7 @@ namespace DaiEngine {
 		scene_ = sceneFactory_->CreateScene("Title");
 #endif // NDEBUG
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 		scene_ = sceneFactory_->CreateScene("Debug");
 #endif // _DEBUG
 

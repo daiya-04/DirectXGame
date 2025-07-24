@@ -1,6 +1,6 @@
 #include "ImGuiManager.h"
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 #include "DirectXCommon.h"
 #include "WinApp.h"
 #include <imgui_impl_dx12.h>
@@ -17,7 +17,7 @@ namespace DaiEngine {
 
 	void ImGuiManager::Initialize() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -42,7 +42,7 @@ namespace DaiEngine {
 
 	void ImGuiManager::Begin() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 		ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
@@ -52,7 +52,7 @@ namespace DaiEngine {
 
 	void ImGuiManager::End() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 		//ImGuiの内部コマンドを生成する
 		ImGui::Render();
 #endif // _DEBUG
@@ -61,7 +61,7 @@ namespace DaiEngine {
 
 	void ImGuiManager::Draw() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 		ID3D12GraphicsCommandList* commandList_;
 		commandList_ = DirectXCommon::GetInstance()->GetCommandList();
 
@@ -72,7 +72,7 @@ namespace DaiEngine {
 
 	void ImGuiManager::Finalize() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 		ImGui_ImplWin32_Shutdown();
 		ImGui_ImplDX12_Shutdown();
 		ImGui::DestroyContext();

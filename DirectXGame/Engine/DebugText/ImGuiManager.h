@@ -1,5 +1,5 @@
 #pragma once
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 #include <imgui.h>
 #endif // _DEBUG
 
