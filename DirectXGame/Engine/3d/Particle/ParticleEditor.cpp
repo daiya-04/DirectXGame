@@ -310,7 +310,7 @@ void ParticleEditor::LoadDataFile(const std::string& fileName) {
 }
 
 void ParticleEditor::DebugGUI() {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	ImGui::Begin("ParticleEditor");
 
 	bool isCheck = false;

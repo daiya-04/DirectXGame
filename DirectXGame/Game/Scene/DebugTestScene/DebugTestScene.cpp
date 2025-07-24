@@ -210,7 +210,7 @@ void DebugTestScene::DrawRenderTexture() {
 }
 
 void DebugTestScene::DebugGUI() {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	ImGui::Begin("camera");
 
 	ImGui::DragFloat3("pos", &camera_.translation_.x, 0.01f);
@@ -218,6 +218,9 @@ void DebugTestScene::DebugGUI() {
 
 	ImGui::End();
 
+#endif // _DEBUG
+
+#ifdef _DEBUG
 	ImGui::Begin("object");
 
 	ImGui::DragFloat3("rotate", &human_->worldTransform_.rotation_.x, 0.01f);
@@ -249,6 +252,7 @@ void DebugTestScene::DebugGUI() {
 	ImGui::End();
 
 	sprite_->SetPosition(pos);
-
 #endif // _DEBUG
+
+
 }
